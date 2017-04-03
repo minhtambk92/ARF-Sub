@@ -7531,7 +7531,7 @@ const dtz2 = {
     let t = e.env.ARF_HOST,
       n = location.search.indexOf('corejs_env=dev') !== -1 ? '' : '.min',
       r = document.createElement('script');
-    r.id = 'arf-core-js', r.type = 'text/javascript', r.src = `//localhost:63342/arf/build/Arf${n}.js`, document.getElementById(r.id) || document.getElementsByTagName('body')[0].appendChild(r), window.arfZonesQueue = window.arfZonesQueue || [], window.arfZonesQueue.push({
+    r.id = 'arf-core-js', r.type = 'text/javascript', r.src = `//localhost:63342/ARF-Sub/build/Arf${n}.js`, document.getElementById(r.id) || document.getElementsByTagName('body')[0].appendChild(r), window.arfZonesQueue = window.arfZonesQueue || [], window.arfZonesQueue.push({
       el: document.getElementById('3c813de9-1b22-48d2-9345-fe9fd65d3926'),
       propsData: {
         model: dtz2,

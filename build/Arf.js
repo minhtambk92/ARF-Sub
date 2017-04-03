@@ -11330,7 +11330,7 @@ var Zone = _vue2.default.component('zone', {
         cookie = 'Ver:25;';
       }
       _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
-      cookie += '' + (index === 0 ? '|' : '') + domain + '^' + _this.current.id + '^' + index + '^' + avenueType + ';';
+      cookie += '' + (index === 0 ? '|' : '') + domain + '^' + _this.current.id + '^' + index + '^' + avenueType;
       _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
       // console.log('test', adsStorage.
       // subCookie(cookie, `${domain}^${this.current.id}^${index}^`, 0).split('^'));
@@ -12032,7 +12032,7 @@ var Zone = function (_Entity) {
           var monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith);
           console.log('monopolyPlaces', monopolyPlaces);
           // variable "conputeAll" to compute all cases combination.
-          var computeAll = false;
+          var computeAll = true;
           if (computeAll) {
             // can use function combinations (1-n combination n)
             // instead of k_combination (k Combination n) for compute all cases.
@@ -12069,41 +12069,90 @@ var Zone = function (_Entity) {
       }
       var cpdShare = computeShareWithPlacementType(allPlace, 'cpd');
       // if cpdShare take all share percent in a place order -> filter
+      var shareConstruct = [];
 
       var _loop = function _loop(i) {
         var totalCPDSharePercent = allPlace.filter(function (place) {
           return place.index === i && place.data.revenueType === 'cpd';
         }).reduce(function (acc, place) {
-          return acc + place.data.cpdPercent;
+          return acc + place.data.cpdPercent * place.data.PlacementArea;
         }, 0);
+        shareConstruct.push([{ type: 'cpd', weight: totalCPDSharePercent }, { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
         if (100 - totalCPDSharePercent <= 0) {
           cpdShare = cpdShare.filter(function (share) {
             return share.placements[i].revenueType === 'cpd';
           });
         }
-        console.log('totalCPDSharePercent', totalCPDSharePercent);
+        console.log('totalCPDSharePercent', totalCPDSharePercent, i);
       };
 
       for (var i = 0; i < this.ZoneArea; i += 1) {
         _loop(i);
       }
+      var cookie = _vendor.adsStorage.getStorage('_cpt');
+      var ShareRendered = cookie.split('|');
+      // const lastShare = ShareRendered[ShareRendered.length - 1].split(';').map((x) => {
+      //   if (x.indexOf('timestamp') !== -1) {
+      //     return x.substring(24);
+      //   }
+      //   return x;
+      // });
+      // const previousPlaceType = lastShare[i].split('^')[3];
+      var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
+      console.log('lastShare', lastThreeShare);
+      var activeRevenue = function activeRevenue(allRevenueType) {
+        var randomNumber = Math.random() * 100;
+
+        var ratio = allRevenueType.reduce(function (acc, revenueType) {
+          return revenueType.weight + acc;
+        }, 0) / 100;
+
+        var res = allRevenueType.reduce(function (acc, revenueType) {
+          var nextRange = acc + revenueType.weight / ratio;
+
+          if ((typeof acc === 'undefined' ? 'undefined' : (0, _typeof3.default)(acc)) === 'object') {
+            return acc;
+          }
+
+          if (randomNumber >= acc && randomNumber < nextRange) {
+            return revenueType;
+          }
+
+          return nextRange;
+        }, 0);
+        return res;
+      };
+      var buildShareConstruct = [];
+
+      var _loop2 = function _loop2(i) {
+        var lastPlaceType = [];
+        lastThreeShare.reduce(function (acc, share, index) {
+          if (index === i) {
+            lastPlaceType.push(share.split('^')[3]);
+          }
+          return 0;
+        }, 0);
+        var cpdPercent = shareConstruct[i][0].weight;
+        var cpdAppear = lastPlaceType.reduce(function (acc, place) {
+          return place.type === 'cpd' ? acc + 1 : acc + 0;
+        }, 0);
+        if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
+          if (cpdAppear === 1) {
+            shareConstruct[i].splice(0, 1);
+          }
+        } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
+          if (cpdAppear === 2) {
+            shareConstruct[i].splice(0, 1);
+          }
+        }
+        var activeType = activeRevenue(shareConstruct[i]);
+        buildShareConstruct.push(activeType);
+      };
 
       for (var i = 0; i < this.ZoneArea; i += 1) {
-        if (_vendor.util.isCompete2(cpdShare, i)) {
-          var cookie = _vendor.adsStorage.getStorage('_cpt');
-          var lastShares = cookie.split('|');
-          var lastShare = lastShares[lastShares.length - 1].split(';').map(function (x) {
-            if (x.indexOf('timestamp') !== -1) {
-              return x.substring(24);
-            }
-            return x;
-          });
-          // const previousPlaceType = lastShare[i].split('^')[3];
-          console.log('lastShare', lastShare);
-          // console.log('previousPlaceType', previousPlaceType);
-          console.log('PlaceCompete', i);
-        }
+        _loop2(i);
       }
+      console.log('buildShareConstruct', buildShareConstruct);
       if (cpdShare.length > 0) {
         // console.log('allshare', cpmShare);
         return cpdShare;
@@ -12467,10 +12516,10 @@ var util = {
     return Channel;
   },
   convertArea: function convertArea(height, width) {
-    if (width === 1160) {
+    if (width === 1160 && height === 90) {
       return 2;
     }
-    if (height === 560) {
+    if (width === 336 && height === 560) {
       return 4;
     }
     if (width === 336 && height <= 560) {

@@ -17,10 +17,10 @@ const util = {
   },
 
   convertArea(height, width) {
-    if (width === 1160) {
+    if (width === 1160 && height === 90) {
       return 2;
     }
-    if (height === 560) {
+    if (width === 336 && height === 560) {
       return 4;
     }
     if (width === 336 && height <= 560) {

@@ -255,7 +255,7 @@ class Zone extends Entity {
         const monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith);
         console.log('monopolyPlaces', monopolyPlaces);
         // variable "conputeAll" to compute all cases combination.
-        const computeAll = false;
+        const computeAll = true;
         if (computeAll) {
           // can use function combinations (1-n combination n)
           // instead of k_combination (k Combination n) for compute all cases.
@@ -288,32 +288,75 @@ class Zone extends Entity {
     }
     let cpdShare = computeShareWithPlacementType(allPlace, 'cpd');
     // if cpdShare take all share percent in a place order -> filter
+    const shareConstruct = [];
     for (let i = 0; i < this.ZoneArea; i += 1) {
       const totalCPDSharePercent = allPlace.filter(place =>
       place.index === i && place.data.revenueType === 'cpd').reduce((acc, place) =>
-      acc + place.data.cpdPercent, 0);
+      acc + (place.data.cpdPercent * place.data.PlacementArea), 0);
+      shareConstruct.push([
+        { type: 'cpd', weight: totalCPDSharePercent },
+        { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
       if (100 - totalCPDSharePercent <= 0) {
         cpdShare = cpdShare.filter(share => share.placements[i].revenueType === 'cpd');
       }
-      console.log('totalCPDSharePercent', totalCPDSharePercent);
+      console.log('totalCPDSharePercent', totalCPDSharePercent, i);
     }
+    const cookie = adsStorage.getStorage('_cpt');
+    const ShareRendered = cookie.split('|');
+    // const lastShare = ShareRendered[ShareRendered.length - 1].split(';').map((x) => {
+    //   if (x.indexOf('timestamp') !== -1) {
+    //     return x.substring(24);
+    //   }
+    //   return x;
+    // });
+    // const previousPlaceType = lastShare[i].split('^')[3];
+    const lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
+    console.log('lastShare', lastThreeShare);
+    const activeRevenue = (allRevenueType) => {
+      const randomNumber = Math.random() * 100;
 
+      const ratio = allRevenueType.reduce((acc, revenueType) =>
+          (revenueType.weight + acc), 0) / 100;
+
+      const res = allRevenueType.reduce((acc, revenueType) => {
+        const nextRange = acc + (revenueType.weight / ratio);
+
+        if (typeof acc === 'object') {
+          return acc;
+        }
+
+        if (randomNumber >= acc && randomNumber < nextRange) {
+          return revenueType;
+        }
+
+        return nextRange;
+      }, 0);
+      return res;
+    };
+    const buildShareConstruct = [];
     for (let i = 0; i < this.ZoneArea; i += 1) {
-      if (util.isCompete2(cpdShare, i)) {
-        const cookie = adsStorage.getStorage('_cpt');
-        const lastShares = cookie.split('|');
-        const lastShare = lastShares[lastShares.length - 1].split(';').map((x) => {
-          if (x.indexOf('timestamp') !== -1) {
-            return x.substring(24);
-          }
-          return x;
-        });
-        // const previousPlaceType = lastShare[i].split('^')[3];
-        console.log('lastShare', lastShare);
-        // console.log('previousPlaceType', previousPlaceType);
-        console.log('PlaceCompete', i);
+      const lastPlaceType = [];
+      lastThreeShare.reduce((acc, share, index) => {
+        if (index === i) {
+          lastPlaceType.push(share.split('^')[3]);
+        }
+        return 0;
+      }, 0);
+      const cpdPercent = shareConstruct[i][0].weight;
+      const cpdAppear = lastPlaceType.reduce((acc, place) => (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
+      if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
+        if (cpdAppear === 1) {
+          shareConstruct[i].splice(0, 1);
+        }
+      } else if (cpdPercent > 100 / 3 && cpdPercent <= (200 / 3)) {
+        if (cpdAppear === 2) {
+          shareConstruct[i].splice(0, 1);
+        }
       }
+      const activeType = activeRevenue(shareConstruct[i]);
+      buildShareConstruct.push(activeType);
     }
+    console.log('buildShareConstruct', buildShareConstruct);
     if (cpdShare.length > 0) {
       // console.log('allshare', cpmShare);
       return cpdShare;

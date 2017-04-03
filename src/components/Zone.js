@@ -36,7 +36,7 @@ const Zone = Vue.component('zone', {
         cookie = 'Ver:25;';
       }
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
-      cookie += `${index === 0 ? '|' : ''}${domain}^${this.current.id}^${index}^${avenueType};`;
+      cookie += `${index === 0 ? '|' : ''}${domain}^${this.current.id}^${index}^${avenueType}`;
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
       // console.log('test', adsStorage.
       // subCookie(cookie, `${domain}^${this.current.id}^${index}^`, 0).split('^'));
