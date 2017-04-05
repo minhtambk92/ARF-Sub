@@ -302,7 +302,9 @@ class Zone extends Entity {
       console.log('totalCPDSharePercent', totalCPDSharePercent, i);
     }
     const cookie = adsStorage.getStorage('_cpt');
-    const ShareRendered = cookie.split('|');
+    let zoneCookie = adsStorage.subCookie(cookie, `${this.id}:`, 0);
+    zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
+    const ShareRendered = zoneCookie.split('|');
     // const lastShare = ShareRendered[ShareRendered.length - 1].split(';').map((x) => {
     //   if (x.indexOf('timestamp') !== -1) {
     //     return x.substring(24);
@@ -310,8 +312,7 @@ class Zone extends Entity {
     //   return x;
     // });
     // const previousPlaceType = lastShare[i].split('^')[3];
-    const lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
-    console.log('lastShare', lastThreeShare);
+    // console.log('lastShare', this.id, lastShares);
     const activeRevenue = (allRevenueType) => {
       const randomNumber = Math.random() * 100;
 
@@ -333,17 +334,20 @@ class Zone extends Entity {
       }, 0);
       return res;
     };
+    // build construct of current share.
+    const lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
     const buildShareConstruct = [];
     for (let i = 0; i < this.ZoneArea; i += 1) {
       const lastPlaceType = [];
       lastThreeShare.reduce((acc, share, index) => {
         if (index === i) {
-          lastPlaceType.push(share.split('^')[3]);
+          lastPlaceType.push(share.split(')(')[3]);
         }
         return 0;
       }, 0);
       const cpdPercent = shareConstruct[i][0].weight;
-      const cpdAppear = lastPlaceType.reduce((acc, place) => (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
+      const cpdAppear = lastPlaceType.reduce((acc, place) =>
+    (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
       if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
         if (cpdAppear === 1) {
           shareConstruct[i].splice(0, 1);

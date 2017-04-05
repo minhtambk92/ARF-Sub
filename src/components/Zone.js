@@ -27,8 +27,8 @@ const Zone = Vue.component('zone', {
   },
 
   mounted() {
-    this.$on('placementRendered', (index, avenueType) => {
-      console.log('compete', this.current.id, index, avenueType);
+    this.$on('placementRendered', (index, revenueType) => {
+      console.log('compete', this.current.id, index, revenueType);
       const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
       let cookie = adsStorage.getStorage('_cpt');
       const checkCookie = adsStorage.subCookie(cookie, 'Ver:', 0);
@@ -36,10 +36,13 @@ const Zone = Vue.component('zone', {
         cookie = 'Ver:25;';
       }
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
-      cookie += `${index === 0 ? '|' : ''}${domain}^${this.current.id}^${index}^${avenueType}`;
+      let zoneCookie = adsStorage.subCookie(cookie, `${this.current.id}:`, 0);
+      cookie = zoneCookie === '' || zoneCookie === undefined ? `${cookie};${this.current.id}:;` : cookie;
+      zoneCookie = adsStorage.subCookie(cookie, `${this.current.id}:`, 0);
+      const separateChar = `${index === 0 ? '|' : ']['}`;
+      const zoneCookieUpdate = `${zoneCookie}${separateChar}${domain})(${index})(${revenueType}`;
+      cookie = `${cookie}`.replace(zoneCookie, zoneCookieUpdate);
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
-      // console.log('test', adsStorage.
-      // subCookie(cookie, `${domain}^${this.current.id}^${index}^`, 0).split('^'));
     });
   },
 
