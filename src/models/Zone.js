@@ -362,7 +362,6 @@ class Zone extends Entity {
     }
     console.log('buildShareConstruct', buildShareConstruct);
     if (cpdShare.length > 0) {
-      // console.log('allshare', cpmShare);
       return cpdShare;
     }
     return allShare;
