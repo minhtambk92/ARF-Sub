@@ -69,7 +69,7 @@ class Banner extends Entity {
         type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
         type = optionChannelType.isVariable ? 'isVariable' : type;
         const value = options[i].value.toString().split(',');
-        console.log('valueCheck', value);
+        // console.log('valueCheck', value);
 
         // get optionChannelValueProperties
         let additionalDetail = [];
@@ -92,7 +92,8 @@ class Banner extends Entity {
               if (typeof (_ADM_Channel) !== 'undefined' && _ADM_Channel !== '') { // eslint-disable-line
                 _ADM_Channel = ''; // eslint-disable-line
               }
-              console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'), comparison, value[j]);
+              // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),
+              // comparison, value[j]);
               stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
               if (typeof (_ADM_Channel) !== 'undefined' && _ADM_Channel !== '') { // eslint-disable-line
                 _ADM_Channel = _ADM_Channel_temp; // eslint-disable-line
@@ -117,9 +118,9 @@ class Banner extends Entity {
                 }
                 // endregion : get link detail
 
-                console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
+                // console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
               }
-              console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
+              // console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
               switch (comparison) {
                 case '==':
                   stringCheck += value[j] === thisChannel[0];
