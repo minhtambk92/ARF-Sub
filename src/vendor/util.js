@@ -405,9 +405,8 @@ const util = {
   // insert default place if share lack places.
   fixShare(share) {
     const sumPlaceArea = share.allPlacements.reduce((acc, item) => acc + item.PlacementArea, 0);
-    console.log('sumPlaceArea', sumPlaceArea);
     const freeArea = share.shareArea - sumPlaceArea;
-    console.log('freeArea', freeArea);
+    // console.log('freeArea', freeArea);
     if (freeArea > 0) {
       console.log('placementFix');
       const PlacementTemplate = {

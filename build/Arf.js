@@ -10153,7 +10153,7 @@ var Banner = function (_Entity) {
         var currentCount = this.getFrequency();
         if (window.arfBanners[bannerID] && bannerID !== 'banner-undefined') {
           cookie = ('' + cookie).replace(FrequencyStr, bannerID + ':' + (currentCount + 1));
-          console.log(bannerID + ':' + (currentCount + 1));
+          // console.log(`${bannerID}:${currentCount + 1}`);
         }
       } else {
         cookie = bannerID === 'banner-undefined' ? cookie : cookie + ';' + bannerID + ':1;';
@@ -10339,7 +10339,7 @@ var Banner = function (_Entity) {
         var strlocation = '' + _vendor.util.convertLocation(window.ADSData.ADSLocation).R;
         var strcity = '' + _vendor.util.convertLocation(window.ADSData.ADSCity).RC;
         var strcitymain = '' + _vendor.util.convertLocation(window.ADSData.ADSCityMain).RC;
-        // console.log(`Check Location ${strcity} isBelongTo ${location.location}`);
+        console.log('Check Location ' + strcity + ' isBelongTo ' + location.location);
         return !!(location === '0' || ('' + location.location).indexOf(strcity) !== -1 && location.comparison === '==' || ('' + location.location).indexOf(strcitymain) !== -1 && location.comparison === '==' || ('' + location.location).indexOf(strlocation) !== -1 && location.comparison === '==');
       }
       return true;
@@ -11915,20 +11915,20 @@ var Zone = function (_Entity) {
         var monopolyPlaces = allPlacement.filter(function (y) {
           return y.data.AdsType.revenueType === placementType;
         });
-        console.log('monopolyPlaces', monopolyPlaces);
+        // console.log('monopolyPlaces', monopolyPlaces);
         var createShareByPlaceMonopolies = function createShareByPlaceMonopolies(placeMonopolies) {
           // Create Share : S(zone) - S(p) = S(free)
           var SumPrArea = placeMonopolies.reduce(function (temp, item) {
             return temp + item.data.PlacementArea;
           }, 0);
           var FreeArea = _this2.ZoneArea - SumPrArea;
-          console.log('FreeArea', FreeArea);
+          // console.log('FreeArea', FreeArea);
 
           for (var i = 1; i <= FreeArea; i += 1) {
-            console.log('i', i);
+            // console.log('i', i);
             // divide share base on free area and number of part.
             var shareRatios = _vendor.util.ComputeShare(FreeArea, i);
-            console.log('shareRatios', shareRatios);
+            // console.log('shareRatios', shareRatios);
             // Browse each shareRatio on above and create a share for it.
             shareRatios.reduce(function (temp, shareRatio) {
               // console.log('shareRatio', shareRatio);
@@ -11939,34 +11939,51 @@ var Zone = function (_Entity) {
               // Browse each placeRatio in shareRatio, then find a placement fit it.
               shareRatio.reduce(function (temp2, placeRatio, index) {
                 // console.log('placeRatio', placeRatio);
+
                 // find all placement fit with area place
                 var places = allPlacement.filter(function (place) {
-                  console.log('placeConditional', index, {
-                    area: place.data.PlacementArea === placeRatio,
-                    placeMonopolies: placeMonopolies.indexOf(place) === -1,
-                    revenueType: place.revenueType !== 'pr',
-                    chosen: placeChosen.indexOf(place) === -1,
-                    index: place.index === index,
-                    revenueTypeConstruct: place.data.revenueType === shareConstruct[place.index].type
-                  });
                   return place.data.PlacementArea === placeRatio && placeMonopolies.indexOf(place) === -1 && place.revenueType !== 'pr' &&
                   // placeChosen.indexOf(place) === -1 &&
                   place.index === index && place.data.revenueType === shareConstruct[place.index].type;
                 });
 
-                console.log('places.length', places.length);
                 // console.log(`place area ${placeRatio}`, places);
+
                 // if don't have any places fit in area => return empty share
                 if (places.length === 0) {
                   share = [];
                   return '';
                 } else {
                   // eslint-disable-line no-else-return
+                  // choose placement base on weight.
+                  var activePlacement = function activePlacement(allPlaces, type) {
+                    var randomNumber = Math.random() * 100;
+                    var ratio = allPlaces.reduce(function (tmp, place) {
+                      return (type === 'cpd' ? place.data.cpdPercent : place.data.weight) + tmp;
+                    }, 0) / 100;
+
+                    return allPlaces.reduce(function (range, placement) {
+                      var nextRange = range + (type === 'cpd' ? placement.data.cpdPercent : placement.data.weight) / ratio;
+
+                      if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
+                        return range;
+                      }
+
+                      if (randomNumber >= range && randomNumber < nextRange) {
+                        return placement;
+                      }
+
+                      return nextRange;
+                    }, 0);
+                  };
+
                   // choose random a placement which are collected on above
-                  var randomIndex = parseInt(Math.floor(Math.random() * places.length), 10);
-                  var place = places[randomIndex];
-                  console.log('random place', place);
-                  console.log('random', places.length, randomIndex);
+                  // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
+                  // const place = places[randomIndex];
+
+                  var place = activePlacement(places, shareConstruct[index]);
+                  // console.log('random place', place);
+                  // console.log('random', places.length, randomIndex);
                   share.push(place.data);
                   placeChosen.push(place);
                 }
@@ -11984,7 +12001,6 @@ var Zone = function (_Entity) {
                   return acc + item.PlacementArea;
                 }, 0);
                 var Free = _this2.ZoneArea - SumArea;
-                console.log('FreeAA', Free);
                 if (Free === 0) {
                   shares.push(share);
                 }
@@ -12026,7 +12042,7 @@ var Zone = function (_Entity) {
               return 0;
             }, 0);
           }, 0);
-          console.log('shareWith', shareWith);
+          // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
           var createMonopolyPlacesWithShare = function createMonopolyPlacesWithShare(array, lib) {
             var res = [];
             array.reduce(function (acc1, ArrayItem, index1, array1) {
@@ -12048,7 +12064,7 @@ var Zone = function (_Entity) {
               replace(lib, index1, array1);
               return 0;
             }, 0);
-            res.push(lib);
+            res.push(array);
             return res;
           };
           var combinationMonopolyPlaces = [];
@@ -12164,7 +12180,6 @@ var Zone = function (_Entity) {
             }
             return 0;
           }, 0);
-          console.log('abc', shareTemp);
           return 0;
         }, 0);
         // console.log('lastPlaceType', lastPlaceType);
@@ -12191,7 +12206,6 @@ var Zone = function (_Entity) {
       }
       console.log('buildShareConstruct', buildShareConstruct);
       var cpdShare = computeShareWithPlacementType(allPlace, 'cpd', buildShareConstruct);
-      console.log('cpdShare', cpdShare);
 
       var _loop3 = function _loop3(i) {
         if (100 - shareConstruct[i][0].weight <= 0) {
@@ -12966,9 +12980,8 @@ var util = {
     var sumPlaceArea = share.allPlacements.reduce(function (acc, item) {
       return acc + item.PlacementArea;
     }, 0);
-    console.log('sumPlaceArea', sumPlaceArea);
     var freeArea = share.shareArea - sumPlaceArea;
-    console.log('freeArea', freeArea);
+    // console.log('freeArea', freeArea);
     if (freeArea > 0) {
       console.log('placementFix');
       var PlacementTemplate = {

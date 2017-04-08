@@ -176,7 +176,7 @@ class Banner extends Entity {
       const strlocation = `${util.convertLocation(window.ADSData.ADSLocation).R}`;
       const strcity = `${util.convertLocation(window.ADSData.ADSCity).RC}`;
       const strcitymain = `${util.convertLocation(window.ADSData.ADSCityMain).RC}`;
-      // console.log(`Check Location ${strcity} isBelongTo ${location.location}`);
+      console.log(`Check Location ${strcity} isBelongTo ${location.location}`);
       return (!!((location === '0') ||
       ((`${location.location}`).indexOf(strcity) !== -1 && location.comparison === '==') ||
       ((`${location.location}`).indexOf(strcitymain) !== -1 && location.comparison === '==') ||
@@ -261,7 +261,7 @@ class Banner extends Entity {
       const currentCount = this.getFrequency();
       if (window.arfBanners[bannerID] && bannerID !== 'banner-undefined') {
         cookie = `${cookie}`.replace(FrequencyStr, `${bannerID}:${currentCount + 1}`);
-        console.log(`${bannerID}:${currentCount + 1}`);
+        // console.log(`${bannerID}:${currentCount + 1}`);
       }
     } else {
       cookie = bannerID === 'banner-undefined' ? cookie : `${cookie};${bannerID}:1;`;
