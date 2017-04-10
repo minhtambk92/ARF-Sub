@@ -117,6 +117,9 @@ class Zone extends Entity {
     this.allShares.reduce((temp, share) => allPlace.push(share.allPlacements.map((item, index) =>
       ({ data: item, index }))), 0);
     allPlace = util.flatten(allPlace);
+    // for (let i = 0; i < this.ZoneArea; i += 1) {
+    //
+    // }
     // console.log('all Place', allPlace);]
     const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
       const shareTemplate = {
@@ -347,7 +350,7 @@ class Zone extends Entity {
     //   return x;
     // });
     // const previousPlaceType = lastShare[i].split('^')[3];
-    // console.log('lastShare', this.id, lastShares);
+    console.log('lastShare', this.id, ShareRendered);
     const activeRevenue = (allRevenueType) => {
       const randomNumber = Math.random() * 100;
 
@@ -441,10 +444,13 @@ class Zone extends Entity {
     res = util.fixShare(res);
     // clear cookie _cpt
     const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
-    const cookie = adsStorage.getStorage('_cpt');
-    const lastShares = cookie.split('|');
-    if ((lastShares.length - 1) === allShare.length) {
-      adsStorage.setStorage('_cpt', '', '', '/', domain);
+    let cookie = adsStorage.getStorage('_cpt');
+    let zoneCookie = adsStorage.subCookie(cookie, `${this.id}:`, 0);
+    zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
+    const ShareRendered = zoneCookie.split('|');
+    if (ShareRendered.length === 100) {
+      cookie = `${cookie}`.replace(zoneCookie, '');
+      adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     }
     console.log('current share:', res);
     console.log('current Weight', res.weight / ratio);

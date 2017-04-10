@@ -27,7 +27,7 @@ const Zone = Vue.component('zone', {
   },
 
   mounted() {
-    this.$on('placementRendered', (index, revenueType) => {
+    this.$on('placementRendered', (index, revenueType, placeID) => {
       console.log('compete', this.current.id, index, revenueType);
       const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
       let cookie = adsStorage.getStorage('_cpt');
@@ -40,7 +40,7 @@ const Zone = Vue.component('zone', {
       cookie = zoneCookie === '' || zoneCookie === undefined ? `${cookie};${this.current.id}:;` : cookie;
       zoneCookie = adsStorage.subCookie(cookie, `${this.current.id}:`, 0);
       const separateChar = `${index === 0 ? '|' : ']['}`;
-      const zoneCookieUpdate = `${zoneCookie}${separateChar}${domain})(${index})(${revenueType}`;
+      const zoneCookieUpdate = `${zoneCookie}${separateChar}${domain})(${index})(${revenueType})(${placeID}`;
       cookie = `${cookie}`.replace(zoneCookie, zoneCookieUpdate);
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     });

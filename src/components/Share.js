@@ -26,14 +26,14 @@ const Share = Vue.component('share', {
   },
 
   mounted() {
-    this.$on('render', (placeID, avenueType) => {
+    this.$on('render', (placeID, revenueType) => {
       const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
         if (item.id === placeID) {
           return index;
         }
         return acc;
       }, 0);
-      this.$parent.$emit('placementRendered', placeIndex, avenueType);
+      this.$parent.$emit('placementRendered', placeIndex, revenueType, placeID);
     });
   },
 

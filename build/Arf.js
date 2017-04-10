@@ -11226,14 +11226,14 @@ var Share = _vue2.default.component('share', {
   mounted: function mounted() {
     var _this = this;
 
-    this.$on('render', function (placeID, avenueType) {
+    this.$on('render', function (placeID, revenueType) {
       var placeIndex = _this.activePlacementsModels.reduce(function (acc, item, index) {
         if (item.id === placeID) {
           return index;
         }
         return acc;
       }, 0);
-      _this.$parent.$emit('placementRendered', placeIndex, avenueType);
+      _this.$parent.$emit('placementRendered', placeIndex, revenueType, placeID);
     });
   },
 
@@ -11322,7 +11322,7 @@ var Zone = _vue2.default.component('zone', {
   mounted: function mounted() {
     var _this = this;
 
-    this.$on('placementRendered', function (index, revenueType) {
+    this.$on('placementRendered', function (index, revenueType, placeID) {
       console.log('compete', _this.current.id, index, revenueType);
       var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
       var cookie = _vendor.adsStorage.getStorage('_cpt');
@@ -11335,7 +11335,7 @@ var Zone = _vue2.default.component('zone', {
       cookie = zoneCookie === '' || zoneCookie === undefined ? cookie + ';' + _this.current.id + ':;' : cookie;
       zoneCookie = _vendor.adsStorage.subCookie(cookie, _this.current.id + ':', 0);
       var separateChar = '' + (index === 0 ? '|' : '][');
-      var zoneCookieUpdate = '' + zoneCookie + separateChar + domain + ')(' + index + ')(' + revenueType;
+      var zoneCookieUpdate = '' + zoneCookie + separateChar + domain + ')(' + index + ')(' + revenueType + ')(' + placeID;
       cookie = ('' + cookie).replace(zoneCookie, zoneCookieUpdate);
       _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     });
@@ -11755,8 +11755,10 @@ var Zone = function (_Entity) {
       // clear cookie _cpt
       var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
       var cookie = _vendor.adsStorage.getStorage('_cpt');
-      var lastShares = cookie.split('|');
-      if (lastShares.length - 1 === allShare.length) {
+      var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
+      zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
+      var ShareRendered = zoneCookie.split('|');
+      if (ShareRendered.length === 100) {
         _vendor.adsStorage.setStorage('_cpt', '', '', '/', domain);
       }
       console.log('current share:', res);
@@ -11891,6 +11893,9 @@ var Zone = function (_Entity) {
         }));
       }, 0);
       allPlace = _vendor.util.flatten(allPlace);
+      // for (let i = 0; i < this.ZoneArea; i += 1) {
+      //
+      // }
       // console.log('all Place', allPlace);]
       var computeShareWithPlacementType = function computeShareWithPlacementType(allPlacement, placementType, shareConstruct) {
         var shareTemplate = {
@@ -12146,7 +12151,7 @@ var Zone = function (_Entity) {
       //   return x;
       // });
       // const previousPlaceType = lastShare[i].split('^')[3];
-      // console.log('lastShare', this.id, lastShares);
+      console.log('lastShare', this.id, ShareRendered);
       var activeRevenue = function activeRevenue(allRevenueType) {
         var randomNumber = Math.random() * 100;
 
