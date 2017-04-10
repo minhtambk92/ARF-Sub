@@ -139,7 +139,7 @@ class Zone extends Entity {
 
       // get all places have type === placementType
       const monopolyPlaces = allPlacement.filter(y => y.data.AdsType.revenueType === placementType);
-      // console.log('monopolyPlaces', monopolyPlaces);
+      console.log('monopolyPlaces', monopolyPlaces);
       const createShareByPlaceMonopolies = (placeMonopolies) => {
         // Create Share : S(zone) - S(p) = S(free)
         const SumPrArea = placeMonopolies.reduce((temp, item) =>
@@ -157,27 +157,30 @@ class Zone extends Entity {
             // console.log('shareRatio', shareRatio);
             // this variable to store places in a share which are chosen bellow
             let share = [];
-            // this array to save placements are chosen. This to avoid duplicate placement.
-            const placeChosen = [];
+
+            placeMonopolies.reduce((x, y) =>
+              shareRatio.splice(y.index, 0, y.data.PlacementArea), 0);
             // Browse each placeRatio in shareRatio, then find a placement fit it.
             shareRatio.reduce((temp2, placeRatio, index) => {
               // console.log('placeRatio', placeRatio);
-
+              if (placeMonopolies.map(item => item.index).indexOf(index) !== -1) {
+                return 0;
+              }
               // find all placement fit with area place
               const places = allPlacement.filter(place =>
                 (place.data.PlacementArea === placeRatio &&
                 placeMonopolies.indexOf(place) === -1 &&
-                place.revenueType !== 'pr' &&
+                place.data.revenueType !== 'pr' &&
                 // placeChosen.indexOf(place) === -1 &&
                 place.index === index &&
-                place.data.revenueType === shareConstruct[place.index].type));
+                place.data.revenueType === shareConstruct[index].type));
 
-              // console.log(`place area ${placeRatio}`, places);
+              // console.log(`place area ${index}`, places);
 
               // if don't have any places fit in area => return empty share
               if (places.length === 0) {
                 share = [];
-                return '';
+                return 0;
               } else { // eslint-disable-line no-else-return
                 // choose placement base on weight.
                 const activePlacement = (allPlaces, type) => {
@@ -204,13 +207,11 @@ class Zone extends Entity {
                 // const place = places[randomIndex];
 
                 const place = activePlacement(places, shareConstruct[index]);
-                // console.log('random place', place);
                 // console.log('random', places.length, randomIndex);
                 share.push(place.data);
-                placeChosen.push(place);
               }
 
-              return '';
+              return 0;
             }, 0);
 
             // if share available => insert monopoly places
@@ -234,11 +235,6 @@ class Zone extends Entity {
         for (let i = 0; i < shares.length; i += 1) {
           shareTemplate.id = `DS-${i}`;
           shareTemplate.placements = shares[i];
-          if (placementType === 'cpd') {
-            shareTemplate.weight = shares[i].reduce((acc, item) => { // eslint-disable-line
-              return (item.cpdPercent > acc) ? item.cpdPercent : acc;
-            }, 0);
-          }
           const shareData = new Share(shareTemplate);
           shareDatas.push(shareData);
         }
@@ -306,8 +302,14 @@ class Zone extends Entity {
                   ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
           }
         }
-        combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item => item.filter(place =>
-        place.data.revenueType === shareConstruct[place.index].type).length > 0);
+        const numberOfMonopoly = shareConstruct.reduce((acc, item) => (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
+        combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item =>
+        (item.length >= numberOfMonopoly) && item.reduce((acc, item2, index) => {
+          if (index === 0) {
+            return item2.data.revenueType === shareConstruct[item2.index].type;
+          }
+          return acc && item2.data.revenueType === shareConstruct[item2.index].type;
+        }, 0));
         console.log('combination', combinationMonopolyPlaces);
         combinationMonopolyPlaces.reduce((acc, item) => createShareByPlaceMonopolies(item), 0);
 

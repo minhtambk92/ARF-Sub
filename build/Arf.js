@@ -11915,7 +11915,7 @@ var Zone = function (_Entity) {
         var monopolyPlaces = allPlacement.filter(function (y) {
           return y.data.AdsType.revenueType === placementType;
         });
-        // console.log('monopolyPlaces', monopolyPlaces);
+        console.log('monopolyPlaces', monopolyPlaces);
         var createShareByPlaceMonopolies = function createShareByPlaceMonopolies(placeMonopolies) {
           // Create Share : S(zone) - S(p) = S(free)
           var SumPrArea = placeMonopolies.reduce(function (temp, item) {
@@ -11934,25 +11934,31 @@ var Zone = function (_Entity) {
               // console.log('shareRatio', shareRatio);
               // this variable to store places in a share which are chosen bellow
               var share = [];
-              // this array to save placements are chosen. This to avoid duplicate placement.
-              var placeChosen = [];
+
+              placeMonopolies.reduce(function (x, y) {
+                return shareRatio.splice(y.index, 0, y.data.PlacementArea);
+              }, 0);
               // Browse each placeRatio in shareRatio, then find a placement fit it.
               shareRatio.reduce(function (temp2, placeRatio, index) {
                 // console.log('placeRatio', placeRatio);
-
+                if (placeMonopolies.map(function (item) {
+                  return item.index;
+                }).indexOf(index) !== -1) {
+                  return 0;
+                }
                 // find all placement fit with area place
                 var places = allPlacement.filter(function (place) {
-                  return place.data.PlacementArea === placeRatio && placeMonopolies.indexOf(place) === -1 && place.revenueType !== 'pr' &&
+                  return place.data.PlacementArea === placeRatio && placeMonopolies.indexOf(place) === -1 && place.data.revenueType !== 'pr' &&
                   // placeChosen.indexOf(place) === -1 &&
-                  place.index === index && place.data.revenueType === shareConstruct[place.index].type;
+                  place.index === index && place.data.revenueType === shareConstruct[index].type;
                 });
 
-                // console.log(`place area ${placeRatio}`, places);
+                // console.log(`place area ${index}`, places);
 
                 // if don't have any places fit in area => return empty share
                 if (places.length === 0) {
                   share = [];
-                  return '';
+                  return 0;
                 } else {
                   // eslint-disable-line no-else-return
                   // choose placement base on weight.
@@ -11982,13 +11988,11 @@ var Zone = function (_Entity) {
                   // const place = places[randomIndex];
 
                   var place = activePlacement(places, shareConstruct[index]);
-                  // console.log('random place', place);
                   // console.log('random', places.length, randomIndex);
                   share.push(place.data);
-                  placeChosen.push(place);
                 }
 
-                return '';
+                return 0;
               }, 0);
 
               // if share available => insert monopoly places
@@ -12015,12 +12019,6 @@ var Zone = function (_Entity) {
           for (var _i = 0; _i < shares.length; _i += 1) {
             shareTemplate.id = 'DS-' + _i;
             shareTemplate.placements = shares[_i];
-            if (placementType === 'cpd') {
-              shareTemplate.weight = shares[_i].reduce(function (acc, item) {
-                // eslint-disable-line
-                return item.cpdPercent > acc ? item.cpdPercent : acc;
-              }, 0);
-            }
             var shareData = new _Share2.default(shareTemplate);
             shareDatas.push(shareData);
           }
@@ -12093,10 +12091,16 @@ var Zone = function (_Entity) {
               }));
             }
           }
+          var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
+            return item.type === 'cpd' ? acc + 1 : acc + 0;
+          }, 0);
           combinationMonopolyPlaces = combinationMonopolyPlaces.filter(function (item) {
-            return item.filter(function (place) {
-              return place.data.revenueType === shareConstruct[place.index].type;
-            }).length > 0;
+            return item.length >= numberOfMonopoly && item.reduce(function (acc, item2, index) {
+              if (index === 0) {
+                return item2.data.revenueType === shareConstruct[item2.index].type;
+              }
+              return acc && item2.data.revenueType === shareConstruct[item2.index].type;
+            }, 0);
           });
           console.log('combination', combinationMonopolyPlaces);
           combinationMonopolyPlaces.reduce(function (acc, item) {
