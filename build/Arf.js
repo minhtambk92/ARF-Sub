@@ -11758,8 +11758,12 @@ var Zone = function (_Entity) {
       var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
       zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
       var ShareRendered = zoneCookie.split('|');
-      if (ShareRendered.length === 100) {
-        _vendor.adsStorage.setStorage('_cpt', '', '', '/', domain);
+      var numberOfChannel = _vendor.util.uniqueItem(ShareRendered.slice(Math.max(ShareRendered.length - 3, 1)).map(function (item) {
+        return item.split(')(')[0];
+      })).length;
+      if (numberOfChannel > 1 || ShareRendered.length > 50) {
+        cookie = ('' + cookie).replace(zoneCookie, '');
+        _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
       }
       console.log('current share:', res);
       console.log('current Weight', res.weight / ratio);
@@ -11939,7 +11943,6 @@ var Zone = function (_Entity) {
               // console.log('shareRatio', shareRatio);
               // this variable to store places in a share which are chosen bellow
               var share = [];
-
               placeMonopolies.reduce(function (x, y) {
                 return shareRatio.splice(y.index, 0, y.data.PlacementArea);
               }, 0);
@@ -11996,7 +11999,6 @@ var Zone = function (_Entity) {
                   // console.log('random', places.length, randomIndex);
                   share.push(place.data);
                 }
-
                 return 0;
               }, 0);
 
@@ -12176,7 +12178,17 @@ var Zone = function (_Entity) {
       };
       // build construct of current share.
       var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
-      // console.log('lastThreeShare', lastThreeShare);
+      console.log('lastThreeShare', lastThreeShare);
+      var numberOfChannel = _vendor.util.uniqueItem(lastThreeShare.map(function (item) {
+        return item.split(')(')[0];
+      })).length;
+      console.log('domain', numberOfChannel);
+      if (numberOfChannel > 1) {
+        lastThreeShare = [];
+        var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
+        cookie = ('' + cookie).replace(zoneCookie, '');
+        _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
+      }
       var buildShareConstruct = [];
 
       var _loop2 = function _loop2(i) {
@@ -12628,6 +12640,17 @@ var util = {
     }
 
     throw new Error('Unable to copy array!.');
+  },
+  uniqueItem: function uniqueItem(arr) {
+    var n = {};
+    var r = [];
+    for (var i = 0; i < arr.length; i += 1) {
+      if (!n[arr[i]]) {
+        n[arr[i]] = true;
+        r.push(arr[i]);
+      }
+    }
+    return r;
   },
 
 

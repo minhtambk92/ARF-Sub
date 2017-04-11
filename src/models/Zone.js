@@ -160,7 +160,6 @@ class Zone extends Entity {
             // console.log('shareRatio', shareRatio);
             // this variable to store places in a share which are chosen bellow
             let share = [];
-
             placeMonopolies.reduce((x, y) =>
               shareRatio.splice(y.index, 0, y.data.PlacementArea), 0);
             // Browse each placeRatio in shareRatio, then find a placement fit it.
@@ -213,7 +212,6 @@ class Zone extends Entity {
                 // console.log('random', places.length, randomIndex);
                 share.push(place.data);
               }
-
               return 0;
             }, 0);
 
@@ -339,7 +337,7 @@ class Zone extends Entity {
       console.log('totalCPDSharePercent', totalCPDSharePercent, i);
     }
 
-    const cookie = adsStorage.getStorage('_cpt');
+    let cookie = adsStorage.getStorage('_cpt');
     let zoneCookie = adsStorage.subCookie(cookie, `${this.id}:`, 0);
     zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
     const ShareRendered = zoneCookie.split('|');
@@ -373,8 +371,16 @@ class Zone extends Entity {
       return res;
     };
     // build construct of current share.
-    const lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
-    // console.log('lastThreeShare', lastThreeShare);
+    let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
+    console.log('lastThreeShare', lastThreeShare);
+    const numberOfChannel = util.uniqueItem(lastThreeShare.map(item => item.split(')(')[0])).length;
+    console.log('domain', numberOfChannel);
+    if (numberOfChannel > 1) {
+      lastThreeShare = [];
+      const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
+      cookie = `${cookie}`.replace(zoneCookie, '');
+      adsStorage.setStorage('_cpt', cookie, '', '/', domain);
+    }
     const buildShareConstruct = [];
     for (let i = 0; i < this.ZoneArea; i += 1) {
       const lastPlaceType = [];
@@ -448,7 +454,8 @@ class Zone extends Entity {
     let zoneCookie = adsStorage.subCookie(cookie, `${this.id}:`, 0);
     zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
     const ShareRendered = zoneCookie.split('|');
-    if (ShareRendered.length === 100) {
+    const numberOfChannel = util.uniqueItem(ShareRendered.slice(Math.max(ShareRendered.length - 3, 1)).map(item => item.split(')(')[0])).length;
+    if (numberOfChannel > 1 || ShareRendered.length > 50) {
       cookie = `${cookie}`.replace(zoneCookie, '');
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     }

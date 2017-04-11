@@ -54,6 +54,18 @@ const util = {
     throw new Error('Unable to copy array!.');
   },
 
+  uniqueItem(arr) {
+    const n = {};
+    const r = [];
+    for (let i = 0; i < arr.length; i += 1) {
+      if (!n[arr[i]]) {
+        n[arr[i]] = true;
+        r.push(arr[i]);
+      }
+    }
+    return r;
+  },
+
   // permute item in array and return a array store permutations
   permuteArray(array) {
     const permArr = [];
