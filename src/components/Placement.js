@@ -25,6 +25,12 @@ const Placement = Vue.component('placement', {
     window.arfPlacements[this.current.id] = this;
   },
 
+  // mounted() {
+  //   this.$on('relativeBannerRender', (keyword) => {
+  //     this.$parent.$emit('relativeBannerRender', keyword);
+  //   });
+  // },
+
   computed: {
     current() {
       return (this.model instanceof PlacementModel) ? this.model : new PlacementModel(this.model);

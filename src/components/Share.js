@@ -26,6 +26,9 @@ const Share = Vue.component('share', {
   },
 
   mounted() {
+    // this.$on('relativeBannerRender', (keyword) => {
+    //   this.$parent.$emit('relativeBannerRender', keyword);
+    // });
     this.$on('render', (placeID, revenueType) => {
       const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
         if (item.id === placeID) {

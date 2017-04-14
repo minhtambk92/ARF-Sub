@@ -34,7 +34,15 @@ class Placement extends Entity {
   }
 
   filterBanner() {
-    return this.allBanners.filter(x => x.isRenderable());
+    let result = this.allBanners.filter(x => x.isRenderable());
+    const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));
+    if (arrayKeyword.length > 0) {
+      const filterBannerWithKeyword = result.filter(banner => banner.keyword.split(',').map(item => item.replace(' ', '')).filter(item => arrayKeyword.indexOf(item) !== -1).length > 0);
+      if (filterBannerWithKeyword.length > 0) {
+        result = filterBannerWithKeyword;
+      }
+    }
+    return result;
   }
 
   /**
@@ -62,23 +70,7 @@ class Placement extends Entity {
     }
 
     // default banner here
-    // // console.log(`place none banner: ${this.id} `);
-    const randomNumber = Math.random() * 100;
-    const ratio = this.allBanners.reduce((tmp, banner) => (tmp + banner.weight) / 100, 0);
-
-    return this.allBanners.reduce((range, banner) => {
-      const nextRange = range + (banner.weight / ratio);
-
-      if (typeof range === 'object') {
-        return range;
-      }
-
-      if (randomNumber >= range && randomNumber < nextRange) {
-        return banner;
-      }
-
-      return nextRange;
-    }, 0);
+    return util.getDefaultBanner(this.width, this.height);
   }
 
   get AdsType() {

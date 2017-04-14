@@ -111,15 +111,45 @@ class Zone extends Entity {
     return allShare;
   }
 
-  get filterShareDynamic() {
+  filterShareDynamic(relativeKeyword) {
+    // choose placement base on weight.
+    const activePlacement = (allPlaces, type) => {
+      const randomNumber = Math.random() * 100;
+      const ratio = allPlaces.reduce((tmp, place) => ((type === 'cpd' ? place.data.cpdPercent : place.data.weight) + tmp), 0) / 100;
+
+      return allPlaces.reduce((range, placement) => {
+        const nextRange = range + ((type === 'cpd' ? placement.data.cpdPercent : placement.data.weight) / ratio);
+
+        if (typeof range === 'object') {
+          return range;
+        }
+
+        if (randomNumber >= range && randomNumber < nextRange) {
+          return placement;
+        }
+
+        return nextRange;
+      }, 0);
+    };
+    const filterPlaceWithKeyword = (places, arrRelativeKeyword) => {
+      const placesWithKeyword = places.filter(place =>
+        place.data.allBanners.reduce((acc1, banner) => {
+          const bannerKeyword = banner.keyword.split(',').map(item => item.replace(' ', ''));
+          return arrRelativeKeyword.filter(key =>
+              bannerKeyword.reduce((acc2, bannerKey, index2) =>
+                (index2 === 0 ? bannerKey === key :
+                  (acc2 || bannerKey === key)), 0)).length > 0;
+        }, 0));
+      return placesWithKeyword;
+    };
+    let arrayRelativeKeyword = [];
     const allShare = this.allShares;
     let allPlace = [];
     this.allShares.reduce((temp, share) => allPlace.push(share.allPlacements.map((item, index) =>
       ({ data: item, index }))), 0);
     allPlace = util.flatten(allPlace);
-    // for (let i = 0; i < this.ZoneArea; i += 1) {
-    //
-    // }
+    arrayRelativeKeyword = relativeKeyword.split(',').map(item => item.replace(' ', ''));
+    console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);
     // console.log('all Place', allPlace);]
     const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
       const shareTemplate = {
@@ -162,6 +192,7 @@ class Zone extends Entity {
             let share = [];
             placeMonopolies.reduce((x, y) =>
               shareRatio.splice(y.index, 0, y.data.PlacementArea), 0);
+            let isRelative = false;
             // Browse each placeRatio in shareRatio, then find a placement fit it.
             shareRatio.reduce((temp2, placeRatio, index) => {
               // console.log('placeRatio', placeRatio);
@@ -169,7 +200,7 @@ class Zone extends Entity {
                 return 0;
               }
               // find all placement fit with area place
-              const places = allPlacement.filter(place =>
+              let places = allPlacement.filter(place =>
                 (place.data.PlacementArea === placeRatio &&
                 placeMonopolies.indexOf(place) === -1 &&
                 place.data.revenueType !== 'pr' &&
@@ -177,33 +208,21 @@ class Zone extends Entity {
                 place.index === index &&
                 place.data.revenueType === shareConstruct[index].type));
 
-              // console.log(`place area ${index}`, places);
+              // filter place with relative keyword
+              let placesWithKeyword = [];
+              if (arrayRelativeKeyword.length > 0) {
+                placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+                if (placesWithKeyword.length > 0) {
+                  isRelative = true;
+                  places = placesWithKeyword;
+                }
+              }
 
               // if don't have any places fit in area => return empty share
               if (places.length === 0) {
                 share = [];
                 return 0;
               } else { // eslint-disable-line no-else-return
-                // choose placement base on weight.
-                const activePlacement = (allPlaces, type) => {
-                  const randomNumber = Math.random() * 100;
-                  const ratio = allPlaces.reduce((tmp, place) => ((type === 'cpd' ? place.data.cpdPercent : place.data.weight) + tmp), 0) / 100;
-
-                  return allPlaces.reduce((range, placement) => {
-                    const nextRange = range + ((type === 'cpd' ? placement.data.cpdPercent : placement.data.weight) / ratio);
-
-                    if (typeof range === 'object') {
-                      return range;
-                    }
-
-                    if (randomNumber >= range && randomNumber < nextRange) {
-                      return placement;
-                    }
-
-                    return nextRange;
-                  }, 0);
-                };
-
                 // choose random a placement which are collected on above
                 // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
                 // const place = places[randomIndex];
@@ -222,8 +241,9 @@ class Zone extends Entity {
               const SumArea = share.reduce((acc, item) =>
               acc + item.PlacementArea, 0);
               const Free = this.ZoneArea - SumArea;
-              if (Free === 0) {
+              if (Free === 0 && relativeKeyword !== '' && isRelative) {
                 shares.push(share);
+                isRelative = false;
               }
               share = [];
             }
@@ -248,7 +268,7 @@ class Zone extends Entity {
           return shareDatas;
         }
         // collect placements which share the place order with monopoly places ('cpd').
-        const shareWith = [];
+        let shareWith = [];
         monopolyPlaces.reduce((acc, monopolyPlace) => allPlace.reduce((acc2, place) => {
           if (place.index === monopolyPlace.index &&
             place.data.revenueType !== monopolyPlace.data.revenueType) {
@@ -256,6 +276,15 @@ class Zone extends Entity {
           }
           return 0;
         }, 0), 0);
+        // filter keyword
+        let shareWithKeyword = [];
+        if (arrayRelativeKeyword.length > 0) {
+          shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
+          if (shareWithKeyword.length > 0) {
+            shareWith = shareWithKeyword;
+          }
+        }
+
         // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
         const createMonopolyPlacesWithShare = (array, lib) => {
           const res = [];
@@ -320,21 +349,25 @@ class Zone extends Entity {
       return [];
     };
 
-    const pr = computeShareWithPlacementType(allPlace, 'pr');
-    if (pr.length > 0) {
-      return pr;
-    }
-
     // if cpdShare take all share percent in a place order -> filter
     const shareConstruct = [];
     for (let i = 0; i < this.ZoneArea; i += 1) {
+      const isPr = allPlace.filter(place => place.index === i && place.data.revenueType === 'pr').length > 0;
       const totalCPDSharePercent = allPlace.filter(place =>
       place.index === i && place.data.revenueType === 'cpd').reduce((acc, place) =>
       acc + (place.data.cpdPercent * place.data.PlacementArea), 0);
-      shareConstruct.push([
-        { type: 'cpd', weight: totalCPDSharePercent },
-        { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
-      console.log('totalCPDSharePercent', totalCPDSharePercent, i);
+      if (isPr) {
+        shareConstruct.push([
+          { type: 'pr', weight: 100 },
+          { type: 'cpd', weight: 0 },
+          { type: 'cpm', weight: 0 }]);
+      } else {
+        shareConstruct.push([
+          { type: 'pr', weight: 0 },
+          { type: 'cpd', weight: totalCPDSharePercent },
+          { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
+        console.log('totalCPDSharePercent', totalCPDSharePercent, i);
+      }
     }
 
     let cookie = adsStorage.getStorage('_cpt');
@@ -348,7 +381,7 @@ class Zone extends Entity {
     //   return x;
     // });
     // const previousPlaceType = lastShare[i].split('^')[3];
-    console.log('lastShare', this.id, ShareRendered);
+    // console.log('lastShare', this.id, ShareRendered);
     const activeRevenue = (allRevenueType) => {
       const randomNumber = Math.random() * 100;
 
@@ -372,7 +405,7 @@ class Zone extends Entity {
     };
     // build construct of current share.
     let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
-    console.log('lastThreeShare', lastThreeShare);
+    // console.log('lastThreeShare', lastThreeShare);
     const numberOfChannel = util.uniqueItem(lastThreeShare.map(item => item.split(')(')[0])).length;
     console.log('domain', numberOfChannel);
     if (numberOfChannel > 1) {
@@ -383,35 +416,43 @@ class Zone extends Entity {
     }
     const buildShareConstruct = [];
     for (let i = 0; i < this.ZoneArea; i += 1) {
-      const lastPlaceType = [];
-      lastThreeShare.reduce((acc, share) => {
-        const shareTemp = share.split('][');
-        shareTemp.reduce((acc2, item, index) => {
-          if (index === i) {
-            lastPlaceType.push(item.split(')(')[2]);
-          }
+      if (shareConstruct[i][0].weight === 100) {
+        buildShareConstruct.push(shareConstruct[i][0]);
+      } else {
+        const lastPlaceType = [];
+        lastThreeShare.reduce((acc, share) => {
+          const shareTemp = share.split('][');
+          shareTemp.reduce((acc2, item, index) => {
+            if (index === i) {
+              lastPlaceType.push(item.split(')(')[2]);
+            }
+            return 0;
+          }, 0);
           return 0;
         }, 0);
-        return 0;
-      }, 0);
-      // console.log('lastPlaceType', lastPlaceType);
+        // console.log('lastPlaceType', lastPlaceType, i);
 
-      const cpdPercent = shareConstruct[i][0].weight;
-      const cpdAppear = lastPlaceType.reduce((acc, place) =>
-        (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
-      if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
-        if (cpdAppear === 1 && lastPlaceType.length > 1) {
-          shareConstruct[i].splice(0, 1);
+        const cpdPercent = shareConstruct[i][1].weight;
+        const cpdAppear = lastPlaceType.reduce((acc, place) =>
+          (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
+        if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
+          if (cpdAppear === 1 && lastPlaceType.length > 1) {
+            shareConstruct[i].splice(1, 1);
+          }
+        } else if (cpdPercent > 100 / 3 && cpdPercent <= (200 / 3)) {
+          if (cpdAppear === 2 && lastPlaceType.length > 2) {
+            shareConstruct[i].splice(1, 1);
+          }
         }
-      } else if (cpdPercent > 100 / 3 && cpdPercent <= (200 / 3)) {
-        if (cpdAppear === 2 && lastPlaceType.length > 2) {
-          shareConstruct[i].splice(0, 1);
-        }
+        const activeType = activeRevenue(shareConstruct[i]);
+        buildShareConstruct.push(activeType);
       }
-      const activeType = activeRevenue(shareConstruct[i]);
-      buildShareConstruct.push(activeType);
     }
     console.log('buildShareConstruct', buildShareConstruct);
+    const pr = computeShareWithPlacementType(allPlace, 'pr', buildShareConstruct);
+    if (pr.length > 0) {
+      return pr;
+    }
     let cpdShare = computeShareWithPlacementType(allPlace, 'cpd', buildShareConstruct);
     for (let i = 0; i < this.ZoneArea; i += 1) {
       if (100 - shareConstruct[i][0].weight <= 0) {
@@ -428,8 +469,8 @@ class Zone extends Entity {
    * Get a active share randomly by its weight
    * @return {Share}
    */
-  activeShare() {
-    const allShare = this.filterShareDynamic;
+  activeShare(relativeKeyword) {
+    const allShare = this.filterShareDynamic(relativeKeyword);
     const randomNumber = Math.random() * 100;
     const ratio = allShare.reduce((tmp, share) => (share.weight + tmp), 0) / 100;
 

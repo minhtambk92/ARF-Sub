@@ -21,6 +21,17 @@ const Zone = Vue.component('zone', {
   mixins: [dom],
 
   created() {
+    if ((typeof window.ZoneConnect === 'undefined' && window.ZoneConnect === undefined)) {
+      window.ZoneConnect = {
+        relativeKeyword: '',
+        setRelativeKeyword(keyword) {
+          this.relativeKeyword += `${this.relativeKeyword === '' ? '' : ','}${keyword}`;
+        },
+        clearRelativeKeyword() {
+          this.relativeKeyword = '';
+        },
+      };
+    }
     // Init global container object
     window.arfZones = window.arfZones || {};
     window.arfZones[this.current.id] = this;
@@ -52,7 +63,7 @@ const Zone = Vue.component('zone', {
     },
 
     activeShareModel() {
-      return this.current.activeShare();
+      return this.current.activeShare(window.ZoneConnect.relativeKeyword);
     },
   },
 

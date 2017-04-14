@@ -11,7 +11,8 @@ class Banner extends Entity {
     super(banner);
 
     this.id = `banner-${banner.id}`;
-    this.relative = banner.relative;
+    this.isRelative = banner.isRelative;
+    this.keyword = banner.keyword;
     this.terms = banner.terms;
     this.location = banner.location;
     this.fr = banner.fr;

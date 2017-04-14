@@ -560,6 +560,7 @@ const util = {
     }
     return combs;
   },
+
   // check compete with places
   isCompete(allPlacement, placeOrder) {
     let count = 0;
@@ -579,6 +580,18 @@ const util = {
       (placeInShare = placeInShare.concat(share.allPlacements.map((item, index) =>
         ({ data: item, index })))), 0);
     return this.isCompete(placeInShare, placeOrder);
+  },
+
+  filterPlaceWithKeyword(places, arrRelativeKeyword) {
+    const placesWithKeyword = places.filter(place =>
+      place.data.allBanners.reduce((acc1, banner) => {
+        const bannerKeyword = banner.keyword.split(',').map(item => item.replace(' ', ''));
+        return arrRelativeKeyword.filter(key =>
+            bannerKeyword.reduce((acc2, bannerKey, index2) =>
+              (index2 === 0 ? bannerKey === key :
+                (acc2 || bannerKey === key)), 0)).length > 0;
+      }, 0));
+    return placesWithKeyword;
   },
 };
 
