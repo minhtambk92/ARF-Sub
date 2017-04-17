@@ -10230,11 +10230,12 @@ var Banner = function (_Entity) {
               }, 0);
             });
           }
-
+          var globalVariableName = options[i].globalVariables;
+          var globalVariable = a('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
           var logical = options[i].logical === 'and' ? '&&' : '||';
           var comparison = options[i].comparison;
           var stringCheck = '';
-          var _ADM_Channel_temp = typeof _ADM_Channel !== 'undefined' && _ADM_Channel !== '' ? _ADM_Channel : ''; // eslint-disable-line
+          var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : ''; // eslint-disable-line
           var currentAdditionalDetail = '';
           // console.log('value', value);
           for (var j = 0; j < value.length; j += 1) {
@@ -10242,37 +10243,37 @@ var Banner = function (_Entity) {
             switch (type) {
               case 'isInputLink' || 'isVariable':
                 {
-                  if (typeof _ADM_Channel !== 'undefined' && _ADM_Channel !== '') {
+                  if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
                     // eslint-disable-line
-                    _ADM_Channel = ''; // eslint-disable-line
+                    a(globalVariableName + ' = \'\''); // eslint-disable-line
                   }
                   // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),
                   // comparison, value[j]);
                   stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
-                  if (typeof _ADM_Channel !== 'undefined' && _ADM_Channel !== '') {
+                  if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
                     // eslint-disable-line
-                    _ADM_Channel = _ADM_Channel_temp; // eslint-disable-line
+                    a(globalVariableName + ' = globalVariableTemp'); // eslint-disable-line
                   }
                   break;
                 }
               case 'isSelectOption':
                 {
-                  var Pageurl = _vendor.term.getPath2Check('Site:Pageurl');
+                  var Pageurl = _vendor.term.getPath2Check('Site:Pageurl', globalVariableName);
                   var thisChannel = _vendor.util.getThisChannel(Pageurl);
                   thisChannel.shift();
 
                   // do smt with additionalDetail
                   if (additionalDetail.length > 0) {
                     // region : get link detail
-                    if (typeof _ADM_Channel !== 'undefined' && _ADM_Channel !== '') {
+                    if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
                       // eslint-disable-line
-                      _ADM_Channel = ''; // eslint-disable-line
+                      a(globalVariableName + ' = \'\'');
                     }
                     currentAdditionalDetail = _vendor.util.getThisChannel(Pageurl).pop();
                     currentAdditionalDetail.shift();
-                    if (typeof _ADM_Channel !== 'undefined' && _ADM_Channel !== '') {
+                    if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
                       // eslint-disable-line
-                      _ADM_Channel = _ADM_Channel_temp; // eslint-disable-line
+                      a(globalVariableName + ' = globalVariableTemp');
                     }
                     // endregion : get link detail
 
@@ -11387,7 +11388,8 @@ var Zone = _vue2.default.component('zone', {
         'class': 'arf-zone',
         style: {
           width: vm.current.width + 'px',
-          height: vm.current.height + 'px'
+          height: vm.current.height + 'px',
+          margin: 'auto'
         }
       },
       [h(
@@ -12553,10 +12555,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var term = {
   // get the path (admChannel or pageUrl) to check
-  getPath2Check: function getPath2Check(type) {
-    if (typeof _ADM_Channel !== 'undefined' && _ADM_Channel !== '') {
+  getPath2Check: function getPath2Check(type, variableName) {
+    var globalVariable = eval('typeof (' + variableName + ') !== \'undefined\' && ' + variableName + ' !== \'\'') ? eval(variableName) : undefined; // eslint-disable-line no-eval
+    if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
       // eslint-disable-line no-undef,camelcase
-      return decodeURIComponent(_ADM_Channel); // eslint-disable-line no-undef,camelcase
+      return decodeURIComponent('' + globalVariable); // eslint-disable-line no-undef,camelcase
     }
     var url = document.URL;
     var ref = document.referrer;

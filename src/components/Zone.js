@@ -77,6 +77,7 @@ const Zone = Vue.component('zone', {
         style={{
           width: `${vm.current.width}px`,
           height: `${vm.current.height}px`,
+          margin: 'auto',
         }}
       >
         <Share model={vm.activeShareModel} />

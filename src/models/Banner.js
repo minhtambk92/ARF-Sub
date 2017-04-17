@@ -79,43 +79,44 @@ class Banner extends Entity {
             value.reduce((acc, valueItem) => acc || (item.value === valueItem
             && item.optionChannelValueProperties.length > 0), 0));
         }
-
+        const globalVariableName = options[i].globalVariables;
+        const globalVariable = a(`typeof (${globalVariableName}) !== 'undefined' && ${globalVariableName} !== ''`) ? a(globalVariableName) : undefined;
         const logical = options[i].logical === 'and' ? '&&' : '||';
         const comparison = options[i].comparison;
         let stringCheck = '';
-        let _ADM_Channel_temp = typeof (_ADM_Channel) !== 'undefined' && _ADM_Channel !== '' ? _ADM_Channel : ''; // eslint-disable-line
+        let globalVariableTemp = typeof (globalVariable) !== 'undefined' && globalVariable !== '' ? globalVariable : ''; // eslint-disable-line
         let currentAdditionalDetail = '';
         // console.log('value', value);
         for (let j = 0; j < value.length; j += 1) {
           if (j > 0) stringCheck += '||';
           switch (type) {
             case 'isInputLink' || 'isVariable': {
-              if (typeof (_ADM_Channel) !== 'undefined' && _ADM_Channel !== '') { // eslint-disable-line
-                _ADM_Channel = ''; // eslint-disable-line
+              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
+                a(`${globalVariableName} = ''`); // eslint-disable-line
               }
               // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),
               // comparison, value[j]);
               stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
-              if (typeof (_ADM_Channel) !== 'undefined' && _ADM_Channel !== '') { // eslint-disable-line
-                _ADM_Channel = _ADM_Channel_temp; // eslint-disable-line
+              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
+                  a(`${globalVariableName} = globalVariableTemp`); // eslint-disable-line
               }
               break;
             }
             case 'isSelectOption': {
-              const Pageurl = term.getPath2Check('Site:Pageurl');
+              const Pageurl = term.getPath2Check('Site:Pageurl', globalVariableName);
               const thisChannel = util.getThisChannel(Pageurl);
               thisChannel.shift();
 
               // do smt with additionalDetail
               if (additionalDetail.length > 0) {
                 // region : get link detail
-                if (typeof (_ADM_Channel) !== 'undefined' && _ADM_Channel !== '') { // eslint-disable-line
-                  _ADM_Channel = ''; // eslint-disable-line
+                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
+                  a(`${globalVariableName} = ''`);
                 }
                 currentAdditionalDetail = util.getThisChannel(Pageurl).pop();
                 currentAdditionalDetail.shift();
-                if (typeof (_ADM_Channel) !== 'undefined' && _ADM_Channel !== '') { // eslint-disable-line
-                  _ADM_Channel = _ADM_Channel_temp; // eslint-disable-line
+                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
+                  a(`${globalVariableName} = globalVariableTemp`);
                 }
                 // endregion : get link detail
 
