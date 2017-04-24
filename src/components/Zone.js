@@ -38,11 +38,9 @@ const Zone = Vue.component('zone', {
   },
 
   mounted() {
-    this.$on('shareHeight', (PlaceHeight) => {
-      let height = 0;
-      height += PlaceHeight;
+    this.$on('shareHeight', (height) => {
       console.log('shareHeight', height);
-      document.getElementById(`${this.current.id}`).width = `${height}px`;
+      document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     });
 
     this.$on('placementRendered', (index, revenueType, placeID) => {

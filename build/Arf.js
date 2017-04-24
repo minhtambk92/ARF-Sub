@@ -11254,7 +11254,7 @@ var Placement = _vue2.default.component('placement', {
 
     this.$on('bannerHeight', function (bannerHeight) {
       console.log('bannerHeightsPlace', bannerHeight);
-      document.getElementById('' + _this.current.id).width = bannerHeight + 'px';
+      document.getElementById('' + _this.current.id).style.height = bannerHeight + 'px';
       _this.$parent.$emit('PlaceHeight', bannerHeight);
     });
   },
@@ -11348,11 +11348,15 @@ var Share = _vue2.default.component('share', {
     var _this = this;
 
     this.$on('PlaceHeight', function (PlaceHeight) {
+      var count = 0;
       var height = 0;
       height += PlaceHeight;
-      _this.$parent.$emit('shareHeight', PlaceHeight);
-      console.log('PlaceHeight', _this.current.height);
-      document.getElementById('' + _this.current.id).width = height + 'px';
+      count += 1;
+      if (count === _this.current.allPlacements.length) {
+        console.log('PlaceHeight', _this.current.height);
+        document.getElementById('' + _this.current.id).style.height = height + 'px';
+        _this.$parent.$emit('shareHeight', height);
+      }
     });
     this.$on('render', function (placeID, revenueType) {
       var placeIndex = _this.activePlacementsModels.reduce(function (acc, item, index) {
@@ -11461,11 +11465,9 @@ var Zone = _vue2.default.component('zone', {
   mounted: function mounted() {
     var _this = this;
 
-    this.$on('shareHeight', function (PlaceHeight) {
-      var height = 0;
-      height += PlaceHeight;
+    this.$on('shareHeight', function (height) {
       console.log('shareHeight', height);
-      document.getElementById('' + _this.current.id).width = height + 'px';
+      document.getElementById('' + _this.current.id).style.height = height + 'px';
     });
 
     this.$on('placementRendered', function (index, revenueType, placeID) {

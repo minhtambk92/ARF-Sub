@@ -27,11 +27,15 @@ const Share = Vue.component('share', {
 
   mounted() {
     this.$on('PlaceHeight', (PlaceHeight) => {
+      let count = 0;
       let height = 0;
       height += PlaceHeight;
-      this.$parent.$emit('shareHeight', PlaceHeight);
-      console.log('PlaceHeight', this.current.height);
-      document.getElementById(`${this.current.id}`).width = `${height}px`;
+      count += 1;
+      if (count === this.current.allPlacements.length) {
+        console.log('PlaceHeight', this.current.height);
+        document.getElementById(`${this.current.id}`).style.height = `${height}px`;
+        this.$parent.$emit('shareHeight', height);
+      }
     });
     this.$on('render', (placeID, revenueType) => {
       const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
