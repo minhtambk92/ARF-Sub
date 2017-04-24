@@ -85,11 +85,11 @@
 
 /* eslint-disable quotes */
 
-// const env = (location.search.indexOf('corejs_env=dev') !== -1) ? '' : '.min';
+var env = location.search.indexOf('corejs_env=dev') !== -1 ? '' : '.min';
 var script = document.createElement('script');
 script.id = 'arf-core-js';
 script.type = 'text/javascript';
-script.src = '//raw.githubusercontent.com/minhtambk92/ARF-Sub/master/build/Arf.min.js';
+script.src = '//raw.githubusercontent.com/minhtambk92/ARF-Sub/master/build/Arf' + env + '.js';
 
 // Async load core-js script
 if (!document.getElementById(script.id)) {
