@@ -42,6 +42,9 @@ class Placement extends Entity {
         result = filterBannerWithKeyword;
       }
     }
+    if (result.length === 0) {
+      return this.allBanners;
+    }
     return result;
   }
 

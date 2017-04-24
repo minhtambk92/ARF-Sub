@@ -38,6 +38,13 @@ const Zone = Vue.component('zone', {
   },
 
   mounted() {
+    this.$on('shareHeight', (PlaceHeight) => {
+      let height = 0;
+      height += PlaceHeight;
+      console.log('shareHeight', height);
+      document.getElementById(`${this.current.id}`).width = `${height}px`;
+    });
+
     this.$on('placementRendered', (index, revenueType, placeID) => {
       console.log('compete', this.current.id, index, revenueType);
       const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');

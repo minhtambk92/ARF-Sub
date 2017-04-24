@@ -593,6 +593,31 @@ const util = {
       }, 0));
     return placesWithKeyword;
   },
+
+  admLoadJs(urlLibrary, libName, callBack) { // eslint-disable-line
+    const thisLib = document.getElementById(`${libName}`);
+    if (thisLib == null) {
+      const a = document.createElement('script');
+      a.id = `${libName}`;
+      a.type = 'text/javascript';
+      a.src = urlLibrary;
+      a.onload = () => {
+        window.isLoadLib = true;
+        callBack();
+      };
+      a.onreadystatechange = () => {
+        ((a.readyState !== 4) && (a.readyState !== 'complete')) || callBack(); //eslint-disable-line
+      };
+      document.getElementsByTagName('head')[0].appendChild(a);
+    }
+  },
+
+  resizeIFrameToFitContent(iFrame) {
+    const temp = iFrame;
+    temp.width = iFrame.contentWindow.document.body.scrollWidth;
+    temp.height = iFrame.contentWindow.document.body.scrollHeight;
+    return temp;
+  },
 };
 
 export default util;

@@ -103,13 +103,53 @@ if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
+
+var _adsStorage = __webpack_require__(65);
+
+var _adsStorage2 = _interopRequireDefault(_adsStorage);
+
+var _term = __webpack_require__(67);
+
+var _term2 = _interopRequireDefault(_term);
+
+var _screen = __webpack_require__(66);
+
+var _screen2 = _interopRequireDefault(_screen);
+
+var _util = __webpack_require__(68);
+
+var _util2 = _interopRequireDefault(_util);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Created by tlm on 06/03/2017.
+ */
+
+exports.adsStorage = _adsStorage2.default;
+exports.term = _term2.default;
+exports.screen = _screen2.default;
+exports.util = _util2.default;
+exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default };
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // Thank's IE8 for his funny defineProperty
 module.exports = !__webpack_require__(15)(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 var hasOwnProperty = {}.hasOwnProperty;
@@ -118,7 +158,7 @@ module.exports = function(it, key){
 };
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject       = __webpack_require__(14)
@@ -126,7 +166,7 @@ var anObject       = __webpack_require__(14)
   , toPrimitive    = __webpack_require__(38)
   , dP             = Object.defineProperty;
 
-exports.f = __webpack_require__(2) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+exports.f = __webpack_require__(3) ? Object.defineProperty : function defineProperty(O, P, Attributes){
   anObject(O);
   P = toPrimitive(P, true);
   anObject(Attributes);
@@ -139,7 +179,7 @@ exports.f = __webpack_require__(2) ? Object.defineProperty : function defineProp
 };
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
@@ -150,7 +190,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9403,46 +9443,6 @@ module.exports = Vue$3;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(112)))
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
-
-var _adsStorage = __webpack_require__(65);
-
-var _adsStorage2 = _interopRequireDefault(_adsStorage);
-
-var _term = __webpack_require__(67);
-
-var _term2 = _interopRequireDefault(_term);
-
-var _screen = __webpack_require__(66);
-
-var _screen2 = _interopRequireDefault(_screen);
-
-var _util = __webpack_require__(68);
-
-var _util2 = _interopRequireDefault(_util);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Created by tlm on 06/03/2017.
- */
-
-exports.adsStorage = _adsStorage2.default;
-exports.term = _term2.default;
-exports.screen = _screen2.default;
-exports.util = _util2.default;
-exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default };
-
-/***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9539,9 +9539,9 @@ module.exports = $export;
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP         = __webpack_require__(4)
+var dP         = __webpack_require__(5)
   , createDesc = __webpack_require__(25);
-module.exports = __webpack_require__(2) ? function(object, key, value){
+module.exports = __webpack_require__(3) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
 } : function(object, key, value){
   object[key] = value;
@@ -9975,8 +9975,8 @@ exports.f = {}.propertyIsEnumerable;
 /* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var def = __webpack_require__(4).f
-  , has = __webpack_require__(3)
+var def = __webpack_require__(5).f
+  , has = __webpack_require__(4)
   , TAG = __webpack_require__(11)('toStringTag');
 
 module.exports = function(it, tag, stat){
@@ -10050,7 +10050,7 @@ var global         = __webpack_require__(1)
   , core           = __webpack_require__(0)
   , LIBRARY        = __webpack_require__(30)
   , wksExt         = __webpack_require__(40)
-  , defineProperty = __webpack_require__(4).f;
+  , defineProperty = __webpack_require__(5).f;
 module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
@@ -10097,7 +10097,7 @@ var _Entity2 = __webpack_require__(20);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _vendor = __webpack_require__(7);
+var _vendor = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10120,6 +10120,12 @@ var Banner = function (_Entity) {
     _this.location = banner.location;
     _this.fr = banner.fr;
     _this.channel = banner.channel;
+    _this.bannerType = banner.bannerType;
+    _this.test = banner.test;
+    _this.bannerType = banner.bannerType;
+    _this.dataBannerHtml = banner.dataBannerHtml;
+    _this.linkFormatBannerHtml = banner.linkFormatBannerHtml;
+    _this.isIFrame = banner.isIFrame;
     return _this;
   }
 
@@ -10471,7 +10477,7 @@ var _Banner = __webpack_require__(41);
 
 var _Banner2 = _interopRequireDefault(_Banner);
 
-var _vendor = __webpack_require__(7);
+var _vendor = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10514,6 +10520,9 @@ var Placement = function (_Entity) {
         if (filterBannerWithKeyword.length > 0) {
           result = filterBannerWithKeyword;
         }
+      }
+      if (result.length === 0) {
+        return this.allBanners;
       }
       return result;
     }
@@ -10641,7 +10650,7 @@ var _Placement = __webpack_require__(42);
 
 var _Placement2 = _interopRequireDefault(_Placement);
 
-var _vendor = __webpack_require__(7);
+var _vendor = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10775,7 +10784,7 @@ module.exports = function(it){
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = !__webpack_require__(2) && !__webpack_require__(15)(function(){
+module.exports = !__webpack_require__(3) && !__webpack_require__(15)(function(){
   return Object.defineProperty(__webpack_require__(46)('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
 
@@ -10789,7 +10798,7 @@ var LIBRARY        = __webpack_require__(30)
   , $export        = __webpack_require__(9)
   , redefine       = __webpack_require__(55)
   , hide           = __webpack_require__(10)
-  , has            = __webpack_require__(3)
+  , has            = __webpack_require__(4)
   , Iterators      = __webpack_require__(29)
   , $iterCreate    = __webpack_require__(90)
   , setToStringTag = __webpack_require__(33)
@@ -10861,13 +10870,13 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 
 var pIE            = __webpack_require__(32)
   , createDesc     = __webpack_require__(25)
-  , toIObject      = __webpack_require__(5)
+  , toIObject      = __webpack_require__(6)
   , toPrimitive    = __webpack_require__(38)
-  , has            = __webpack_require__(3)
+  , has            = __webpack_require__(4)
   , IE8_DOM_DEFINE = __webpack_require__(47)
   , gOPD           = Object.getOwnPropertyDescriptor;
 
-exports.f = __webpack_require__(2) ? gOPD : function getOwnPropertyDescriptor(O, P){
+exports.f = __webpack_require__(3) ? gOPD : function getOwnPropertyDescriptor(O, P){
   O = toIObject(O);
   P = toPrimitive(P, true);
   if(IE8_DOM_DEFINE)try {
@@ -10899,7 +10908,7 @@ exports.f = Object.getOwnPropertySymbols;
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has         = __webpack_require__(3)
+var has         = __webpack_require__(4)
   , toObject    = __webpack_require__(37)
   , IE_PROTO    = __webpack_require__(34)('IE_PROTO')
   , ObjectProto = Object.prototype;
@@ -10916,8 +10925,8 @@ module.exports = Object.getPrototypeOf || function(O){
 /* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var has          = __webpack_require__(3)
-  , toIObject    = __webpack_require__(5)
+var has          = __webpack_require__(4)
+  , toIObject    = __webpack_require__(6)
   , arrayIndexOf = __webpack_require__(85)(false)
   , IE_PROTO     = __webpack_require__(34)('IE_PROTO');
 
@@ -10972,7 +10981,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(6);
+var _vue = __webpack_require__(7);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -10980,7 +10989,15 @@ var _models = __webpack_require__(12);
 
 var _mixins = __webpack_require__(19);
 
+var _vendor = __webpack_require__(2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Created by Manhhailua on 11/23/16.
+ */
+
+/* eslint-disable import/no-extraneous-dependencies */
 
 var Banner = _vue2.default.component('banner', {
 
@@ -11022,7 +11039,16 @@ var Banner = _vue2.default.component('banner', {
     window.arfBanners[this.current.id] = this;
   },
   mounted: function mounted() {
-    this.renderToIFrame();
+    if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === true && this.current.isIFrame === true) {
+      console.log('renderBannerHTML');
+      this.renderBannerHTML();
+    } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === true) {
+      console.log('renderToIFrame');
+      this.renderToIFrame();
+    } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === false) {
+      console.log('renderBannerNoIframe');
+      this.renderBannerNoIframe();
+    }
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
@@ -11049,7 +11075,7 @@ var Banner = _vue2.default.component('banner', {
           iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
           iframe.contentWindow.document.open();
-          iframe.contentWindow.document.write(vm.current.script);
+          iframe.contentWindow.document.write(vm.current.html);
           iframe.contentWindow.document.close();
 
           // Prevent scroll on IE
@@ -11067,53 +11093,95 @@ var Banner = _vue2.default.component('banner', {
       }
     },
     renderBannerHTML: function renderBannerHTML() {
-      var _arguments = arguments;
-
       var vm = this;
-      var iframe = vm.iframe.el;
       var urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
-      var admLoadJs = function admLoadJs(c, b) {
-        // eslint-disable-line no-unused-vars, class-methods-use-this
-        var a = document.createElement('script');
-        a.type = 'text/javascript';
-        a.src = c;
-        /* eslint-disable no-unused-expressions */
-        /* eslint-disable no-mixed-operators */
-        _arguments.length >= 2 && (a.onload = b, a.onreadystatechange = function () {
-          a.readyState !== 4 && a.readyState !== 'complete' || b();
-        });
-        document.getElementsByTagName('head')[0].appendChild(a);
+      var sponsorFormat = vm.current.linkFormatBannerHtml;
+      console.log('linkFormatBannerHtml', sponsorFormat);
+      var loadIfrm = function loadIfrm() {
+        var ifrm = vm.iframe.el;
+        ifrm.onload = function () {
+          ifrm.width = vm.current.width;
+          ifrm.height = vm.current.height;
+          ifrm.frameBorder = vm.iframe.frameBorder;
+          ifrm.marginWidth = vm.iframe.marginWidth;
+          ifrm.marginHeight = vm.iframe.marginHeight;
+          ifrm.scrolling = 'no'; // Prevent iframe body scrolling
+          ifrm.style.display = 'block';
+          ifrm.style.border = 'none';
+          ifrm.scrolling = 'no';
+          ifrm.allowfullscreen = 'true';
+          ifrm.webkitallowfullscreen = 'true';
+          ifrm.mozallowfullscreen = 'true';
+          ifrm.src = 'about:blank';
+
+          // document.getElementById(`${vm.current.id}`).appendChild(ifrm);
+
+          /* eslint-disable no-useless-concat */
+          // window.data = JSON.parse(vm.current.dataBannerHtml.replace(/\r?\n|\r/g, ''));
+          eval('window.data = ' + vm.current.dataBannerHtml.replace(/\r?\n|\r/g, '') + ';'); // eslint-disable-line
+
+          ifrm = ifrm.contentWindow ? ifrm.contentWindow.document : // eslint-disable-line
+          ifrm.contentDocument ? ifrm.contentDocument : ifrm.document;
+          ifrm.open();
+          ifrm.write('' + ('<head>' + '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">' + '<script>inDapIF = true;function mobileCallbackMedium(){window.parent.callbackMedium();}</sc' + 'ript>' + '</head><body style="border: none;display: block;margin: 0 auto;">' + '<scri' + 'pt>' + ' </scr' + 'ipt>' + '<scri' + 'pt src="') + sponsorFormat.toString() + '" type="text/javascript"> </scr' + 'ipt>' + '<scri' + 'pt >sponsoradx(parent.data)</scr' + 'ipt></body>');
+          ifrm.close();
+          document.getElementById('' + vm.current.id).style.display = 'block';
+        };
+
+        try {
+          vm.$el.replaceChild(ifrm, vm.$refs.banner); // Do the trick
+        } catch (error) {
+          throw new Error(error);
+        }
       };
-      admLoadJs(urlCore, function () {
-        var ifrm = iframe;
-        ifrm.style.width = '300px';
-        ifrm.style.height = '600px';
-        ifrm.style.display = 'block';
-        ifrm.style.border = 'none';
-        ifrm.scrolling = 'no';
-        ifrm.allowfullscreen = 'true';
-        ifrm.webkitallowfullscreen = 'true';
-        ifrm.mozallowfullscreen = 'true';
-        ifrm.src = 'about:blank';
-
-        document.getElementById('banner').appendChild(ifrm);
-        /* eslint-disable no-useless-concat */
-
-        window.data = vm.current.html;
-
-        var ifrmlRender = ifrm.contentWindow || ifrm.contentDocument.document || ifrm.contentDocument;
-        ifrmlRender.document.open();
-        ifrmlRender.document.write('<head>' + '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">' + '<script>inDapIF = true;function mobileCallbackMedium(){window.parent.callbackMedium();}</sc' + 'ript>' + '</head><body style="border: none;display: block;margin: 0 auto;">' + '<scri' + 'pt>' + ' </scr' + 'ipt>' + '<scri' + 'pt src="http://media1.admicro.vn/core/sponsoradx3.js" type="text/javascript"> </scr' + 'ipt>' + '<script>sponsoradx(parent.data)</scr' + 'ipt></body>');
-        ifrmlRender.document.close();
-        document.getElementById('banner').style.display = 'block';
+      var loadAsync = setInterval(function () {
+        if (window.isLoadLib !== undefined && window.isLoadLib) {
+          loadIfrm();
+          clearInterval(loadAsync);
+        }
+      }, 500);
+      _vendor.util.admLoadJs(urlCore, 'admicro_core_nld', function () {
+        loadIfrm();
+        clearInterval(loadAsync);
+      });
+    },
+    renderBannerNoIframe: function renderBannerNoIframe() {
+      var vm = this;
+      var urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
+      var loadAsync = setInterval(function () {
+        if (window.isLoadLib !== undefined && window.isLoadLib) {
+          var idw = document.getElementById('' + vm.current.id);
+          if (idw) {
+            idw.innerHTML = '';
+            var data = vm.current.html;
+            admExecJs(data, '' + vm.current.id); // eslint-disable-line no-undef
+          }
+          clearInterval(loadAsync);
+        }
+      }, 500);
+      _vendor.util.admLoadJs(urlCore, 'admicro_core_nld', function () {
+        var idw = document.getElementById('' + vm.current.id);
+        if (idw) {
+          idw.innerHTML = '';
+          var data = vm.current.html;
+          admExecJs(data, '' + vm.current.id); // eslint-disable-line no-undef
+        }
+        clearInterval(loadAsync);
       });
     }
   },
 
   render: function render(h) {
+    var _this = this;
+
     // eslint-disable-line no-unused-vars
     var vm = this;
-
+    var height = setInterval(function () {
+      if (document.getElementById('' + vm.current.id)) {
+        _this.$parent.$emit('bannerHeight', document.getElementById('' + vm.current.id).clientHeight);
+        clearInterval(height);
+      }
+    }, 100);
     return h(
       'div',
       {
@@ -11129,15 +11197,11 @@ var Banner = _vue2.default.component('banner', {
       [h(
         'div',
         { ref: 'banner' },
-        [vm.current.html]
+        ['banner content']
       )]
     );
   }
-}); /**
-     * Created by Manhhailua on 11/23/16.
-     */
-
-/* eslint-disable import/no-extraneous-dependencies */
+});
 
 exports.default = Banner;
 
@@ -11152,7 +11216,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(6);
+var _vue = __webpack_require__(7);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -11185,13 +11249,16 @@ var Placement = _vue2.default.component('placement', {
     window.arfPlacements = window.arfPlacements || {};
     window.arfPlacements[this.current.id] = this;
   },
+  mounted: function mounted() {
+    var _this = this;
 
+    this.$on('bannerHeight', function (bannerHeight) {
+      console.log('bannerHeightsPlace', bannerHeight);
+      document.getElementById('' + _this.current.id).width = bannerHeight + 'px';
+      _this.$parent.$emit('PlaceHeight', bannerHeight);
+    });
+  },
 
-  // mounted() {
-  //   this.$on('relativeBannerRender', (keyword) => {
-  //     this.$parent.$emit('relativeBannerRender', keyword);
-  //   });
-  // },
 
   computed: {
     current: function current() {
@@ -11244,7 +11311,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(6);
+var _vue = __webpack_require__(7);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -11280,9 +11347,13 @@ var Share = _vue2.default.component('share', {
   mounted: function mounted() {
     var _this = this;
 
-    // this.$on('relativeBannerRender', (keyword) => {
-    //   this.$parent.$emit('relativeBannerRender', keyword);
-    // });
+    this.$on('PlaceHeight', function (PlaceHeight) {
+      var height = 0;
+      height += PlaceHeight;
+      _this.$parent.$emit('shareHeight', PlaceHeight);
+      console.log('PlaceHeight', _this.current.height);
+      document.getElementById('' + _this.current.id).width = height + 'px';
+    });
     this.$on('render', function (placeID, revenueType) {
       var placeIndex = _this.activePlacementsModels.reduce(function (acc, item, index) {
         if (item.id === placeID) {
@@ -11347,7 +11418,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(6);
+var _vue = __webpack_require__(7);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -11357,7 +11428,7 @@ var _components = __webpack_require__(18);
 
 var _mixins = __webpack_require__(19);
 
-var _vendor = __webpack_require__(7);
+var _vendor = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11389,6 +11460,13 @@ var Zone = _vue2.default.component('zone', {
   },
   mounted: function mounted() {
     var _this = this;
+
+    this.$on('shareHeight', function (PlaceHeight) {
+      var height = 0;
+      height += PlaceHeight;
+      console.log('shareHeight', height);
+      document.getElementById('' + _this.current.id).width = height + 'px';
+    });
 
     this.$on('placementRendered', function (index, revenueType, placeID) {
       console.log('compete', _this.current.id, index, revenueType);
@@ -11469,7 +11547,7 @@ var _stringify = __webpack_require__(56);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _vue = __webpack_require__(6);
+var _vue = __webpack_require__(7);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -11561,11 +11639,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(6);
+var _vue = __webpack_require__(7);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vendor = __webpack_require__(7);
+var _vendor = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11768,7 +11846,7 @@ var _Share = __webpack_require__(43);
 
 var _Share2 = _interopRequireDefault(_Share);
 
-var _vendor = __webpack_require__(7);
+var _vendor = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11785,13 +11863,17 @@ var Zone = function (_Entity) {
     return _this;
   }
 
-  /**
-   * Get all shares from this zone
-   * @returns [Share]
-   */
-
-
   (0, _createClass3.default)(Zone, [{
+    key: 'fixZoneHeight',
+    value: function fixZoneHeight(height) {
+      this.height = height;
+    }
+    /**
+     * Get all shares from this zone
+     * @returns [Share]
+     */
+
+  }, {
     key: 'filterShareDynamic',
     value: function filterShareDynamic(relativeKeyword) {
       var _this2 = this;
@@ -12241,6 +12323,38 @@ var Zone = function (_Entity) {
       }
       console.log('current share:', res);
       console.log('current Weight', res.weight / ratio);
+      // const isFixHeight = res.placements.reduce((acc, place, index1) => {
+      //   if (index1 === 0) {
+      //     place.allBanners.reduce((acc2, banner, index2) => {
+      //       if (index2 === 0) {
+      //         return ((banner.bannerType.isInputData !== undefined &&
+      //         banner.bannerType.isInputData) ||
+      //         (!(banner.bannerType.isInputData !== undefined &&
+      //         banner.bannerType.isInputData) &&
+      //         banner.isIFrame));
+      //       }
+      //       return acc2 && ((banner.bannerType.isInputData !== undefined &&
+      //         banner.bannerType.isInputData) ||
+      //         (!(banner.bannerType.isInputData !== undefined &&
+      //         banner.bannerType.isInputData) &&
+      //         banner.isIFrame));
+      //     }, 0);
+      //   }
+      //   return acc && place.allBanners.reduce((acc2, banner, index2) => {
+      //     if (index2 === 0) {
+      //       return ((banner.bannerType.isInputData !== undefined &&
+      //       banner.bannerType.isInputData) ||
+      //         (!(banner.bannerType.isInputData !== undefined &&
+      //         banner.bannerType.isInputData) &&
+      //         banner.isIFrame));
+      //     }
+      //     return acc2 && ((banner.bannerType.isInputData !== undefined &&
+      //       banner.bannerType.isInputData) ||
+      //       (!(banner.bannerType.isInputData !== undefined &&
+      //       banner.bannerType.isInputData) &&
+      //       banner.isIFrame));
+      //   }, 0);
+      // }, 0);
       return res;
     }
 
@@ -13315,6 +13429,30 @@ var util = {
       }, 0);
     });
     return placesWithKeyword;
+  },
+  admLoadJs: function admLoadJs(urlLibrary, libName, callBack) {
+    // eslint-disable-line
+    var thisLib = document.getElementById('' + libName);
+    if (thisLib == null) {
+      var a = document.createElement('script');
+      a.id = '' + libName;
+      a.type = 'text/javascript';
+      a.src = urlLibrary;
+      a.onload = function () {
+        window.isLoadLib = true;
+        callBack();
+      };
+      a.onreadystatechange = function () {
+        a.readyState !== 4 && a.readyState !== 'complete' || callBack(); //eslint-disable-line
+      };
+      document.getElementsByTagName('head')[0].appendChild(a);
+    }
+  },
+  resizeIFrameToFitContent: function resizeIFrameToFitContent(iFrame) {
+    var temp = iFrame;
+    temp.width = iFrame.contentWindow.document.body.scrollWidth;
+    temp.height = iFrame.contentWindow.document.body.scrollHeight;
+    return temp;
   }
 }; /**
     * Created by tlm on 14/03/2017.
@@ -13447,7 +13585,7 @@ module.exports = function(){ /* empty */ };
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = __webpack_require__(5)
+var toIObject = __webpack_require__(6)
   , toLength  = __webpack_require__(99)
   , toIndex   = __webpack_require__(98);
 module.exports = function(IS_INCLUDES){
@@ -13545,7 +13683,7 @@ module.exports = function(done, value){
 /***/ (function(module, exports, __webpack_require__) {
 
 var getKeys   = __webpack_require__(17)
-  , toIObject = __webpack_require__(5);
+  , toIObject = __webpack_require__(6);
 module.exports = function(object, el){
   var O      = toIObject(object)
     , keys   = getKeys(O)
@@ -13561,8 +13699,8 @@ module.exports = function(object, el){
 
 var META     = __webpack_require__(26)('meta')
   , isObject = __webpack_require__(16)
-  , has      = __webpack_require__(3)
-  , setDesc  = __webpack_require__(4).f
+  , has      = __webpack_require__(4)
+  , setDesc  = __webpack_require__(5).f
   , id       = 0;
 var isExtensible = Object.isExtensible || function(){
   return true;
@@ -13617,11 +13755,11 @@ var meta = module.exports = {
 /* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP       = __webpack_require__(4)
+var dP       = __webpack_require__(5)
   , anObject = __webpack_require__(14)
   , getKeys  = __webpack_require__(17);
 
-module.exports = __webpack_require__(2) ? Object.defineProperties : function defineProperties(O, Properties){
+module.exports = __webpack_require__(3) ? Object.defineProperties : function defineProperties(O, Properties){
   anObject(O);
   var keys   = getKeys(Properties)
     , length = keys.length
@@ -13636,7 +13774,7 @@ module.exports = __webpack_require__(2) ? Object.defineProperties : function def
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject = __webpack_require__(5)
+var toIObject = __webpack_require__(6)
   , gOPN      = __webpack_require__(50).f
   , toString  = {}.toString;
 
@@ -13740,7 +13878,7 @@ module.exports = function(it){
 var addToUnscopables = __webpack_require__(84)
   , step             = __webpack_require__(91)
   , Iterators        = __webpack_require__(29)
-  , toIObject        = __webpack_require__(5);
+  , toIObject        = __webpack_require__(6);
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
@@ -13785,7 +13923,7 @@ $export($export.S, 'Object', {create: __webpack_require__(31)});
 
 var $export = __webpack_require__(9);
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !__webpack_require__(2), 'Object', {defineProperty: __webpack_require__(4).f});
+$export($export.S + $export.F * !__webpack_require__(3), 'Object', {defineProperty: __webpack_require__(5).f});
 
 /***/ }),
 /* 103 */
@@ -13860,8 +13998,8 @@ __webpack_require__(48)(String, 'String', function(iterated){
 
 // ECMAScript 6 symbols shim
 var global         = __webpack_require__(1)
-  , has            = __webpack_require__(3)
-  , DESCRIPTORS    = __webpack_require__(2)
+  , has            = __webpack_require__(4)
+  , DESCRIPTORS    = __webpack_require__(3)
   , $export        = __webpack_require__(9)
   , redefine       = __webpack_require__(55)
   , META           = __webpack_require__(93).KEY
@@ -13876,13 +14014,13 @@ var global         = __webpack_require__(1)
   , enumKeys       = __webpack_require__(86)
   , isArray        = __webpack_require__(89)
   , anObject       = __webpack_require__(14)
-  , toIObject      = __webpack_require__(5)
+  , toIObject      = __webpack_require__(6)
   , toPrimitive    = __webpack_require__(38)
   , createDesc     = __webpack_require__(25)
   , _create        = __webpack_require__(31)
   , gOPNExt        = __webpack_require__(95)
   , $GOPD          = __webpack_require__(49)
-  , $DP            = __webpack_require__(4)
+  , $DP            = __webpack_require__(5)
   , $keys          = __webpack_require__(17)
   , gOPD           = $GOPD.f
   , dP             = $DP.f

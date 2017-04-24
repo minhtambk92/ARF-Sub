@@ -26,9 +26,13 @@ const Share = Vue.component('share', {
   },
 
   mounted() {
-    // this.$on('relativeBannerRender', (keyword) => {
-    //   this.$parent.$emit('relativeBannerRender', keyword);
-    // });
+    this.$on('PlaceHeight', (PlaceHeight) => {
+      let height = 0;
+      height += PlaceHeight;
+      this.$parent.$emit('shareHeight', PlaceHeight);
+      console.log('PlaceHeight', this.current.height);
+      document.getElementById(`${this.current.id}`).width = `${height}px`;
+    });
     this.$on('render', (placeID, revenueType) => {
       const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
         if (item.id === placeID) {

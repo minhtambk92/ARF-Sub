@@ -15,6 +15,9 @@ class Zone extends Entity {
     this.shares = zone.shares;
   }
 
+  fixZoneHeight(height) {
+    this.height = height;
+  }
   /**
    * Get all shares from this zone
    * @returns [Share]
@@ -502,6 +505,38 @@ class Zone extends Entity {
     }
     console.log('current share:', res);
     console.log('current Weight', res.weight / ratio);
+    // const isFixHeight = res.placements.reduce((acc, place, index1) => {
+    //   if (index1 === 0) {
+    //     place.allBanners.reduce((acc2, banner, index2) => {
+    //       if (index2 === 0) {
+    //         return ((banner.bannerType.isInputData !== undefined &&
+    //         banner.bannerType.isInputData) ||
+    //         (!(banner.bannerType.isInputData !== undefined &&
+    //         banner.bannerType.isInputData) &&
+    //         banner.isIFrame));
+    //       }
+    //       return acc2 && ((banner.bannerType.isInputData !== undefined &&
+    //         banner.bannerType.isInputData) ||
+    //         (!(banner.bannerType.isInputData !== undefined &&
+    //         banner.bannerType.isInputData) &&
+    //         banner.isIFrame));
+    //     }, 0);
+    //   }
+    //   return acc && place.allBanners.reduce((acc2, banner, index2) => {
+    //     if (index2 === 0) {
+    //       return ((banner.bannerType.isInputData !== undefined &&
+    //       banner.bannerType.isInputData) ||
+    //         (!(banner.bannerType.isInputData !== undefined &&
+    //         banner.bannerType.isInputData) &&
+    //         banner.isIFrame));
+    //     }
+    //     return acc2 && ((banner.bannerType.isInputData !== undefined &&
+    //       banner.bannerType.isInputData) ||
+    //       (!(banner.bannerType.isInputData !== undefined &&
+    //       banner.bannerType.isInputData) &&
+    //       banner.isIFrame));
+    //   }, 0);
+    // }, 0);
     return res;
   }
 
