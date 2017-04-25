@@ -12309,7 +12309,7 @@ var Zone = function (_Entity) {
         return nextRange;
       }, 0);
       // if share lack of place, it'll fill default place into share.
-      res = _vendor.util.fixShare(res);
+      // res = util.fixShare(res);
       // clear cookie _cpt
       var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
       var cookie = _vendor.adsStorage.getStorage('_cpt');

@@ -477,7 +477,7 @@ class Zone extends Entity {
     const randomNumber = Math.random() * 100;
     const ratio = allShare.reduce((tmp, share) => (share.weight + tmp), 0) / 100;
 
-    let res = allShare.reduce((range, share) => {
+    const res = allShare.reduce((range, share) => {
       const nextRange = range + (share.weight / ratio);
 
       if (typeof range === 'object') {
@@ -491,7 +491,7 @@ class Zone extends Entity {
       return nextRange;
     }, 0);
     // if share lack of place, it'll fill default place into share.
-    res = util.fixShare(res);
+    // res = util.fixShare(res);
     // clear cookie _cpt
     const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
     let cookie = adsStorage.getStorage('_cpt');
