@@ -11253,7 +11253,6 @@ var Placement = _vue2.default.component('placement', {
     var _this = this;
 
     this.$on('bannerHeight', function (bannerHeight) {
-      console.log('bannerHeightsPlace', bannerHeight);
       document.getElementById('' + _this.current.id).style.height = bannerHeight + 'px';
       _this.$parent.$emit('PlaceHeight', bannerHeight);
     });
@@ -11353,7 +11352,6 @@ var Share = _vue2.default.component('share', {
       height += PlaceHeight;
       count += 1;
       if (count === _this.current.allPlacements.length) {
-        console.log('PlaceHeight', _this.current.height);
         document.getElementById('' + _this.current.id).style.height = height + 'px';
         _this.$parent.$emit('shareHeight', height);
       }
@@ -11466,7 +11464,6 @@ var Zone = _vue2.default.component('zone', {
     var _this = this;
 
     this.$on('shareHeight', function (height) {
-      console.log('shareHeight', height);
       document.getElementById('' + _this.current.id).style.height = height + 'px';
     });
 
