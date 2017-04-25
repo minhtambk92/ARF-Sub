@@ -32,7 +32,6 @@ const Share = Vue.component('share', {
       height += PlaceHeight;
       count += 1;
       if (count === this.current.allPlacements.length) {
-        console.log('PlaceHeight', this.current.height);
         document.getElementById(`${this.current.id}`).style.height = `${height}px`;
         this.$parent.$emit('shareHeight', height);
       }

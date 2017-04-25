@@ -27,7 +27,6 @@ const Placement = Vue.component('placement', {
 
   mounted() {
     this.$on('bannerHeight', (bannerHeight) => {
-      console.log('bannerHeightsPlace', bannerHeight);
       document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
       this.$parent.$emit('PlaceHeight', bannerHeight);
     });

@@ -39,7 +39,6 @@ const Zone = Vue.component('zone', {
 
   mounted() {
     this.$on('shareHeight', (height) => {
-      console.log('shareHeight', height);
       document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     });
 
