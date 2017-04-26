@@ -65,7 +65,7 @@ const Share = Vue.component('share', {
     return (
       <div
         id={vm.current.id}
-        // class="arf-share"
+        class="arf-share"
         // style={{
         //   width: `${vm.current.width}px`,
         //   height: `${vm.current.height}px`,
