@@ -11040,13 +11040,13 @@ var Banner = _vue2.default.component('banner', {
   },
   mounted: function mounted() {
     if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === true && this.current.isIFrame === true) {
-      console.log('renderBannerHTML');
+      // console.log('renderBannerHTML');
       this.renderBannerHTML();
     } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === true) {
-      console.log('renderToIFrame');
+      // console.log('renderToIFrame');
       this.renderToIFrame();
     } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === false) {
-      console.log('renderBannerNoIframe');
+      // console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
     }
     this.current.countFrequency();

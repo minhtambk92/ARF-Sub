@@ -89,7 +89,7 @@ var env = location.search.indexOf('corejs_env=dev') !== -1 ? '' : '.min';
 var script = document.createElement('script');
 script.id = 'arf-core-js';
 script.type = 'application/javascript';
-script.src = 'http://cdn.rawgit.com/minhtambk92/ARF-Sub/master/build/Arf' + env + '.js';
+script.src = 'http://rawgit.com/minhtambk92/ARF-Sub/master/build/Arf' + env + '.js';
 
 // Async load core-js script
 if (!document.getElementById(script.id)) {
