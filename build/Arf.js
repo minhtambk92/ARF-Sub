@@ -11507,12 +11507,12 @@ var Zone = _vue2.default.component('zone', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-zone',
-        style: {
-          // width: `${vm.current.width}px`,
-          // height: 'auto',
-          margin: 'auto'
-        }
+        'class': 'arf-zone'
+        // style={{
+        //   // width: `${vm.current.width}px`,
+        //   // height: 'auto',
+        //   margin: 'auto',
+        // }}
       },
       [h(
         _components.Share,
