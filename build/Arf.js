@@ -11346,16 +11346,16 @@ var Share = _vue2.default.component('share', {
   mounted: function mounted() {
     var _this = this;
 
-    this.$on('PlaceHeight', function (PlaceHeight) {
-      var count = 0;
-      var height = 0;
-      height += PlaceHeight;
-      count += 1;
-      if (count === _this.current.allPlacements.length) {
-        document.getElementById('' + _this.current.id).style.height = height + 'px';
-        _this.$parent.$emit('shareHeight', height);
-      }
-    });
+    // this.$on('PlaceHeight', (PlaceHeight) => {
+    //   let count = 0;
+    //   let height = 0;
+    //   height += PlaceHeight;
+    //   count += 1;
+    //   if (count === this.current.allPlacements.length) {
+    //     document.getElementById(`${this.current.id}`).style.height = `${height}px`;
+    //     this.$parent.$emit('shareHeight', height);
+    //   }
+    // });
     this.$on('render', function (placeID, revenueType) {
       var placeIndex = _this.activePlacementsModels.reduce(function (acc, item, index) {
         if (item.id === placeID) {

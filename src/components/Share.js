@@ -26,16 +26,16 @@ const Share = Vue.component('share', {
   },
 
   mounted() {
-    this.$on('PlaceHeight', (PlaceHeight) => {
-      let count = 0;
-      let height = 0;
-      height += PlaceHeight;
-      count += 1;
-      if (count === this.current.allPlacements.length) {
-        document.getElementById(`${this.current.id}`).style.height = `${height}px`;
-        this.$parent.$emit('shareHeight', height);
-      }
-    });
+    // this.$on('PlaceHeight', (PlaceHeight) => {
+    //   let count = 0;
+    //   let height = 0;
+    //   height += PlaceHeight;
+    //   count += 1;
+    //   if (count === this.current.allPlacements.length) {
+    //     document.getElementById(`${this.current.id}`).style.height = `${height}px`;
+    //     this.$parent.$emit('shareHeight', height);
+    //   }
+    // });
     this.$on('render', (placeID, revenueType) => {
       const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
         if (item.id === placeID) {
