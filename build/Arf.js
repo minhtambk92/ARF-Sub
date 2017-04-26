@@ -11380,6 +11380,7 @@ var Share = _vue2.default.component('share', {
 
   render: function render(h) {
     // eslint-disable-line no-unused-vars
+    console.log('removeStyle');
     var vm = this;
 
     return h(

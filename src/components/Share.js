@@ -60,6 +60,7 @@ const Share = Vue.component('share', {
   },
 
   render(h) { // eslint-disable-line no-unused-vars
+    console.log('removeStyle');
     const vm = this;
 
     return (
