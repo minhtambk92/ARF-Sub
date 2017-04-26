@@ -11250,12 +11250,10 @@ var Placement = _vue2.default.component('placement', {
     window.arfPlacements[this.current.id] = this;
   },
   mounted: function mounted() {
-    var _this = this;
-
-    this.$on('bannerHeight', function (bannerHeight) {
-      document.getElementById('' + _this.current.id).style.height = bannerHeight + 'px';
-      _this.$parent.$emit('PlaceHeight', bannerHeight);
-    });
+    // this.$on('bannerHeight', (bannerHeight) => {
+    //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
+    //   this.$parent.$emit('PlaceHeight', bannerHeight);
+    // });
   },
 
 
