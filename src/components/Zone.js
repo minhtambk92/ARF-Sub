@@ -78,10 +78,11 @@ const Zone = Vue.component('zone', {
       <div
         id={vm.current.id}
         class="arf-zone"
-        // style={{
-        //   width: `${vm.current.width}px`,
-        //   height: 'auto',
-        // }}
+        style={{
+          // width: `${vm.current.width}px`,
+          // height: 'auto',
+          margin: 'auto',
+        }}
       >
         <Share model={vm.activeShareModel} />
       </div>
