@@ -12163,7 +12163,7 @@ var Zone = function (_Entity) {
         }
       };
 
-      for (var i = 0; i < this.ZoneArea; i += 1) {
+      for (var i = 0; i < 10; i += 1) {
         _loop(i);
       }
 
@@ -12251,7 +12251,7 @@ var Zone = function (_Entity) {
         }
       };
 
-      for (var i = 0; i < this.ZoneArea; i += 1) {
+      for (var i = 0; i < 10; i += 1) {
         _loop2(i);
       }
       console.log('buildShareConstruct', buildShareConstruct);

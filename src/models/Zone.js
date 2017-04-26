@@ -354,7 +354,7 @@ class Zone extends Entity {
 
     // if cpdShare take all share percent in a place order -> filter
     const shareConstruct = [];
-    for (let i = 0; i < this.ZoneArea; i += 1) {
+    for (let i = 0; i < 10; i += 1) {
       const isPr = allPlace.filter(place => place.index === i && place.data.revenueType === 'pr').length > 0;
       const totalCPDSharePercent = allPlace.filter(place =>
       place.index === i && place.data.revenueType === 'cpd').reduce((acc, place) =>
@@ -418,7 +418,7 @@ class Zone extends Entity {
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     }
     const buildShareConstruct = [];
-    for (let i = 0; i < this.ZoneArea; i += 1) {
+    for (let i = 0; i < 10; i += 1) {
       if (shareConstruct[i][0].weight === 100) {
         buildShareConstruct.push(shareConstruct[i][0]);
       } else {
