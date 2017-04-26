@@ -11388,11 +11388,11 @@ var Share = _vue2.default.component('share', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-share',
-        style: {
-          width: vm.current.width + 'px',
-          height: vm.current.height + 'px'
-        }
+        'class': 'arf-share'
+        // style={{
+        //   width: `${vm.current.width}px`,
+        //   height: `${vm.current.height}px`,
+        // }}
       },
       [vm.activePlacementsModels.map(function (placement) {
         return h(
@@ -11506,12 +11506,11 @@ var Zone = _vue2.default.component('zone', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-zone',
-        style: {
-          width: vm.current.width + 'px',
-          height: vm.current.height + 'px',
-          margin: 'auto'
-        }
+        'class': 'arf-zone'
+        // style={{
+        //   width: `${vm.current.width}px`,
+        //   height: 'auto',
+        // }}
       },
       [h(
         _components.Share,
@@ -12144,6 +12143,7 @@ var Zone = function (_Entity) {
       };
 
       // if cpdShare take all share percent in a place order -> filter
+      var numberOfPlaceInShare = 10;
       var shareConstruct = [];
 
       var _loop = function _loop(i) {
@@ -12163,7 +12163,7 @@ var Zone = function (_Entity) {
         }
       };
 
-      for (var i = 0; i < 10; i += 1) {
+      for (var i = 0; i < numberOfPlaceInShare; i += 1) {
         _loop(i);
       }
 
@@ -12251,7 +12251,7 @@ var Zone = function (_Entity) {
         }
       };
 
-      for (var i = 0; i < 10; i += 1) {
+      for (var i = 0; i < numberOfPlaceInShare; i += 1) {
         _loop2(i);
       }
       console.log('buildShareConstruct', buildShareConstruct);
