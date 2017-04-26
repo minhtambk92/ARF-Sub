@@ -11380,7 +11380,6 @@ var Share = _vue2.default.component('share', {
 
   render: function render(h) {
     // eslint-disable-line no-unused-vars
-    console.log('removeStyle');
     var vm = this;
 
     return h(
@@ -11464,9 +11463,9 @@ var Zone = _vue2.default.component('zone', {
   mounted: function mounted() {
     var _this = this;
 
-    this.$on('shareHeight', function (height) {
-      document.getElementById('' + _this.current.id).style.height = height + 'px';
-    });
+    // this.$on('shareHeight', (height) => {
+    //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
+    // });
 
     this.$on('placementRendered', function (index, revenueType, placeID) {
       console.log('compete', _this.current.id, index, revenueType);

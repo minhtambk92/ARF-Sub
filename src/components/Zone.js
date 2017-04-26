@@ -38,9 +38,9 @@ const Zone = Vue.component('zone', {
   },
 
   mounted() {
-    this.$on('shareHeight', (height) => {
-      document.getElementById(`${this.current.id}`).style.height = `${height}px`;
-    });
+    // this.$on('shareHeight', (height) => {
+    //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
+    // });
 
     this.$on('placementRendered', (index, revenueType, placeID) => {
       console.log('compete', this.current.id, index, revenueType);
