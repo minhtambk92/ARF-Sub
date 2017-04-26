@@ -77,7 +77,7 @@ const Zone = Vue.component('zone', {
     return (
       <div
         id={vm.current.id}
-        class="arf-zone"
+        // class="arf-zone"
         style={{
           // width: `${vm.current.width}px`,
           // height: 'auto',

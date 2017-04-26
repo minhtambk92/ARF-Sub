@@ -11387,12 +11387,12 @@ var Share = _vue2.default.component('share', {
       {
         attrs: {
           id: vm.current.id
-        },
-        'class': 'arf-share'
-        // style={{
-        //   width: `${vm.current.width}px`,
-        //   height: `${vm.current.height}px`,
-        // }}
+          // class="arf-share"
+          // style={{
+          //   width: `${vm.current.width}px`,
+          //   height: `${vm.current.height}px`,
+          // }}
+        }
       },
       [vm.activePlacementsModels.map(function (placement) {
         return h(
@@ -11505,8 +11505,8 @@ var Zone = _vue2.default.component('zone', {
       {
         attrs: {
           id: vm.current.id
+          // class="arf-zone"
         },
-        'class': 'arf-zone',
         style: {
           // width: `${vm.current.width}px`,
           // height: 'auto',
