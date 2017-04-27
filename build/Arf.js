@@ -11306,7 +11306,9 @@ var Placement = _vue2.default.component('placement', {
             zIndex: 9999,
             margin: 'auto',
             position: 'absolute',
-            color: 'red'
+            color: 'red',
+            paddingTop: '5px',
+            backgroundColor: 'yellow'
           }
         },
         [h(

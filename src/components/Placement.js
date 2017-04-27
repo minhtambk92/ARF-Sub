@@ -63,6 +63,8 @@ const Placement = Vue.component('placement', {
             margin: 'auto',
             position: 'absolute',
             color: 'red',
+            paddingTop: '5px',
+            backgroundColor: 'yellow',
           }}
         ><p>{vm.current.revenueType}</p></div>
       </div>
