@@ -11298,6 +11298,18 @@ var Placement = _vue2.default.component('placement', {
           attrs: { model: vm.activeBannerModel }
         },
         []
+      ), h(
+        'div',
+        {
+          style: {
+            zIndex: 9999
+          }
+        },
+        []
+      ), h(
+        'p',
+        null,
+        [vm.current.revenueType]
       )]
     );
   }
