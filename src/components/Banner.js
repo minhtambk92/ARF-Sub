@@ -79,6 +79,9 @@ const Banner = Vue.component('banner', {
         if (vm.$data.isRendered === false) {
           iframe.width = vm.current.width;
           iframe.height = vm.current.height;
+          iframe.id = `iframe-${vm.current.id}`;
+          iframe.style.zIndex = 0;
+          iframe.style.position = 'absolute';
           iframe.frameBorder = vm.iframe.frameBorder;
           iframe.marginWidth = vm.iframe.marginWidth;
           iframe.marginHeight = vm.iframe.marginHeight;

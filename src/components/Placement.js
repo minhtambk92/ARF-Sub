@@ -57,19 +57,6 @@ const Placement = Vue.component('placement', {
         }}
       >
         <Banner model={vm.activeBannerModel} />
-        <div
-          style={{
-            zIndex: 9999,
-            margin: 'auto',
-            position: 'relative',
-            color: 'red',
-            paddingTop: '5px',
-            backgroundColor: 'yellow',
-            opacity: 0.5,
-            width: `${vm.current.width}px`,
-            height: `${vm.current.height}px`,
-          }}
-        >{vm.current.revenueType}</div>
       </div>
     );
   },

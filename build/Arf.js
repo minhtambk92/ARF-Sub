@@ -11069,6 +11069,9 @@ var Banner = _vue2.default.component('banner', {
         if (vm.$data.isRendered === false) {
           iframe.width = vm.current.width;
           iframe.height = vm.current.height;
+          iframe.id = 'iframe-' + vm.current.id;
+          iframe.style.zIndex = 0;
+          iframe.style.position = 'absolute';
           iframe.frameBorder = vm.iframe.frameBorder;
           iframe.marginWidth = vm.iframe.marginWidth;
           iframe.marginHeight = vm.iframe.marginHeight;
@@ -11301,22 +11304,6 @@ var Placement = _vue2.default.component('placement', {
           attrs: { model: vm.activeBannerModel }
         },
         []
-      ), h(
-        'div',
-        {
-          style: {
-            zIndex: 9999,
-            margin: 'auto',
-            position: 'relative',
-            color: 'red',
-            paddingTop: '5px',
-            backgroundColor: 'yellow',
-            opacity: 0.5,
-            width: vm.current.width + 'px',
-            height: vm.current.height + 'px'
-          }
-        },
-        [vm.current.revenueType]
       )]
     );
   }
