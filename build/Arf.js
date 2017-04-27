@@ -11303,7 +11303,13 @@ var Placement = _vue2.default.component('placement', {
         {
           style: {
             zIndex: 9999,
-            margin: 'auto'
+            margin: 'auto',
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            color: 'red'
           }
         },
         [h(
