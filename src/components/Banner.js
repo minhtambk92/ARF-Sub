@@ -211,6 +211,7 @@ const Banner = Vue.component('banner', {
         class="arf-banner"
         style={{
           width: `${vm.current.width}px`,
+          zIndex: 0,
           // height: `${vm.current.height}px`,
         }}
       >

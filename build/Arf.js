@@ -11199,7 +11199,8 @@ var Banner = _vue2.default.component('banner', {
         },
         'class': 'arf-banner',
         style: {
-          width: vm.current.width + 'px'
+          width: vm.current.width + 'px',
+          zIndex: 0
         }
       },
       [h(
