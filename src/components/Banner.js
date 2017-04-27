@@ -153,8 +153,8 @@ const Banner = Vue.component('banner', {
             if (iframe !== undefined) {
               const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
               iframe.height = innerDoc.documentElement.getElementsByTagName('body')[0].offsetHeight;
-              iframe.style.zIndex = 0;
-              ifrm.style.position = 'absolute';
+              // iframe.style.zIndex = 0;
+              // ifrm.style.position = 'absolute';
               clearInterval(setHeightIframe);
             }
           }, 100);
