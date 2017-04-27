@@ -11114,6 +11114,7 @@ var Banner = _vue2.default.component('banner', {
           ifrm.webkitallowfullscreen = 'true';
           ifrm.mozallowfullscreen = 'true';
           ifrm.src = 'about:blank';
+          ifrm.zIndex = 0;
 
           // document.getElementById(`${vm.current.id}`).appendChild(ifrm);
 
