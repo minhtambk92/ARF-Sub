@@ -11101,7 +11101,7 @@ var Banner = _vue2.default.component('banner', {
         var ifrm = vm.iframe.el;
         ifrm.onload = function () {
           ifrm.width = vm.current.width;
-          // ifrm.height = vm.current.height;
+          ifrm.height = vm.current.height;
           ifrm.frameBorder = vm.iframe.frameBorder;
           ifrm.marginWidth = vm.iframe.marginWidth;
           ifrm.marginHeight = vm.iframe.marginHeight;
@@ -11190,8 +11190,7 @@ var Banner = _vue2.default.component('banner', {
         },
         'class': 'arf-banner',
         style: {
-          width: vm.current.width + 'px',
-          height: vm.current.height + 'px'
+          width: vm.current.width + 'px'
         }
       },
       [h(
