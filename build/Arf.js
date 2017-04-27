@@ -11308,14 +11308,13 @@ var Placement = _vue2.default.component('placement', {
             position: 'absolute',
             color: 'red',
             paddingTop: '5px',
-            backgroundColor: 'yellow'
+            backgroundColor: 'yellow',
+            opacity: 0.5,
+            width: vm.current.width + 'px',
+            height: vm.current.height + 'px'
           }
         },
-        [h(
-          'p',
-          null,
-          [vm.current.revenueType]
-        )]
+        [vm.current.revenueType]
       )]
     );
   }
