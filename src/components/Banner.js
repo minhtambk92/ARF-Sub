@@ -111,7 +111,7 @@ const Banner = Vue.component('banner', {
         let ifrm = vm.iframe.el;
         ifrm.onload = () => {
           ifrm.width = vm.current.width;
-          ifrm.height = vm.current.height;
+          // ifrm.height = vm.current.height;
           ifrm.frameBorder = vm.iframe.frameBorder;
           ifrm.marginWidth = vm.iframe.marginWidth;
           ifrm.marginHeight = vm.iframe.marginHeight;
