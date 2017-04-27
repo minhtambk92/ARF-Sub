@@ -125,6 +125,7 @@ const Banner = Vue.component('banner', {
           ifrm.mozallowfullscreen = 'true';
           ifrm.src = 'about:blank';
           ifrm.zIndex = 0;
+          ifrm.position = 'absolute';
 
           // document.getElementById(`${vm.current.id}`).appendChild(ifrm);
 
