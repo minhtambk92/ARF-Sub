@@ -11114,8 +11114,6 @@ var Banner = _vue2.default.component('banner', {
           ifrm.webkitallowfullscreen = 'true';
           ifrm.mozallowfullscreen = 'true';
           ifrm.src = 'about:blank';
-          ifrm.zIndex = 0;
-          ifrm.position = 'absolute';
 
           // document.getElementById(`${vm.current.id}`).appendChild(ifrm);
 
@@ -11138,6 +11136,8 @@ var Banner = _vue2.default.component('banner', {
             if (iframe !== undefined) {
               var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
               iframe.height = innerDoc.documentElement.getElementsByTagName('body')[0].offsetHeight;
+              iframe.style.zIndex = 0;
+              ifrm.style.position = 'absolute';
               clearInterval(setHeightIframe);
             }
           }, 100);
