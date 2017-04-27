@@ -61,7 +61,7 @@ const Placement = Vue.component('placement', {
           style={{
             zIndex: 9999,
             margin: 'auto',
-            position: 'absolute',
+            position: 'relative',
             color: 'red',
             paddingTop: '5px',
             backgroundColor: 'yellow',
