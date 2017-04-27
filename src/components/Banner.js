@@ -111,7 +111,8 @@ const Banner = Vue.component('banner', {
         let ifrm = vm.iframe.el;
         ifrm.onload = () => {
           ifrm.width = vm.current.width;
-          ifrm.height = vm.current.height;
+          // ifrm.height = vm.current.height;
+          ifrm.id = `iframe-${vm.current.id}`;
           ifrm.frameBorder = vm.iframe.frameBorder;
           ifrm.marginWidth = vm.iframe.marginWidth;
           ifrm.marginHeight = vm.iframe.marginHeight;
@@ -147,6 +148,14 @@ const Banner = Vue.component('banner', {
 
         try {
           vm.$el.replaceChild(ifrm, vm.$refs.banner); // Do the trick
+          const setHeightIframe = setInterval(() => {
+            const iframe = document.getElementById(`iframe-${vm.current.id}`);
+            if (iframe !== undefined) {
+              const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+              iframe.height = innerDoc.documentElement.getElementsByTagName('body').clientHeight;
+              clearInterval(setHeightIframe);
+            }
+          }, 100);
         } catch (error) {
           throw new Error(error);
         }

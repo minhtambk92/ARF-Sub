@@ -11101,7 +11101,8 @@ var Banner = _vue2.default.component('banner', {
         var ifrm = vm.iframe.el;
         ifrm.onload = function () {
           ifrm.width = vm.current.width;
-          ifrm.height = vm.current.height;
+          // ifrm.height = vm.current.height;
+          ifrm.id = 'iframe-' + vm.current.id;
           ifrm.frameBorder = vm.iframe.frameBorder;
           ifrm.marginWidth = vm.iframe.marginWidth;
           ifrm.marginHeight = vm.iframe.marginHeight;
@@ -11130,6 +11131,14 @@ var Banner = _vue2.default.component('banner', {
 
         try {
           vm.$el.replaceChild(ifrm, vm.$refs.banner); // Do the trick
+          var setHeightIframe = setInterval(function () {
+            var iframe = document.getElementById('iframe-' + vm.current.id);
+            if (iframe !== undefined) {
+              var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+              iframe.height = innerDoc.documentElement.getElementsByTagName('body').clientHeight;
+              clearInterval(setHeightIframe);
+            }
+          }, 100);
         } catch (error) {
           throw new Error(error);
         }
