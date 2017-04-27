@@ -11067,11 +11067,14 @@ var Banner = _vue2.default.component('banner', {
 
       iframe.onload = function () {
         if (vm.$data.isRendered === false) {
+          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
+          // if (dev) {
+          //   iframe.style.zIndex = 0;
+          //   iframe.style.position = 'absolute';
+          // }
           iframe.width = vm.current.width;
           iframe.height = vm.current.height;
           iframe.id = 'iframe-' + vm.current.id;
-          iframe.style.zIndex = 0;
-          iframe.style.position = 'absolute';
           iframe.frameBorder = vm.iframe.frameBorder;
           iframe.marginWidth = vm.iframe.marginWidth;
           iframe.marginHeight = vm.iframe.marginHeight;
@@ -11103,6 +11106,11 @@ var Banner = _vue2.default.component('banner', {
       var loadIfrm = function loadIfrm() {
         var ifrm = vm.iframe.el;
         ifrm.onload = function () {
+          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
+          // if (dev) {
+          //   ifrm.style.zIndex = 0;
+          //   ifrm.style.position = 'absolute';
+          // }
           ifrm.width = vm.current.width;
           // ifrm.height = vm.current.height;
           ifrm.id = 'iframe-' + vm.current.id;
@@ -11139,8 +11147,6 @@ var Banner = _vue2.default.component('banner', {
             if (iframe !== undefined) {
               var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
               iframe.height = innerDoc.documentElement.getElementsByTagName('body')[0].offsetHeight;
-              // iframe.style.zIndex = 0;
-              // ifrm.style.position = 'absolute';
               clearInterval(setHeightIframe);
             }
           }, 100);
@@ -11196,6 +11202,28 @@ var Banner = _vue2.default.component('banner', {
         clearInterval(height);
       }
     }, 100);
+    var dev = location.search.indexOf('checkPlace=dev') !== -1;
+    if (dev) {
+      return h(
+        'div',
+        {
+          attrs: {
+            id: vm.current.id
+          },
+          'class': 'arf-banner',
+          style: {
+            width: vm.current.width + 'px',
+            zIndex: 0,
+            position: 'absolute'
+          }
+        },
+        [h(
+          'div',
+          { ref: 'banner' },
+          ['banner content']
+        )]
+      );
+    }
     return h(
       'div',
       {
@@ -11204,8 +11232,7 @@ var Banner = _vue2.default.component('banner', {
         },
         'class': 'arf-banner',
         style: {
-          width: vm.current.width + 'px',
-          zIndex: 0
+          width: vm.current.width + 'px'
         }
       },
       [h(
@@ -11286,6 +11313,57 @@ var Placement = _vue2.default.component('placement', {
     var vm = this;
     // make a trigger to parent component(share) and send place;
     this.$parent.$emit('render', this.current.id, this.current.revenueType);
+    var dev = location.search.indexOf('checkPlace=dev') !== -1;
+    if (dev) {
+      return h(
+        'div',
+        {
+          attrs: {
+            id: vm.current.id
+          },
+          'class': 'arf-placement',
+          style: {
+            width: vm.current.width + 'px',
+            height: vm.current.height + 'px'
+          }
+        },
+        [h(
+          _components.Banner,
+          {
+            attrs: { model: vm.activeBannerModel }
+          },
+          []
+        ), h(
+          'div',
+          {
+            style: {
+              zIndex: 9999,
+              margin: 'auto',
+              position: 'relative',
+              color: 'red',
+              paddingTop: '5px',
+              // backgroundColor: 'yellow',
+              // opacity: 0.5,
+              width: vm.current.width + 'px',
+              height: vm.current.height + 'px'
+            }
+          },
+          [h(
+            'p',
+            {
+              style: {
+                backgroundColor: 'black',
+                color: 'white',
+                fontSize: '15pt',
+                width: '35%',
+                textAlign: 'center'
+              }
+            },
+            [vm.current.revenueType]
+          )]
+        )]
+      );
+    }
     return h(
       'div',
       {

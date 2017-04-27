@@ -38,7 +38,7 @@
 }([function (e, t, n) {
   let r = location.search.indexOf('corejs_env=dev') !== -1 ? '' : '.min',
     o = document.createElement('script');
-  o.id = 'arf-core-js', o.type = 'text/javascript', o.src = `https://rawgit.com/minhtambk92/ARF-Sub/master/build/Arf${r}.js`, document.getElementById(o.id) || document.getElementsByTagName('body')[0].appendChild(o), window.arfZonesQueue = window.arfZonesQueue || [], window.arfZonesQueue.push({
+  o.id = 'arf-core-js', o.type = 'text/javascript', o.src = `//localhost:63342/ARF-Sub/build/Arf${r}.js`, document.getElementById(o.id) || document.getElementsByTagName('body')[0].appendChild(o), window.arfZonesQueue = window.arfZonesQueue || [], window.arfZonesQueue.push({
     el: document.getElementById('f5f832bd-fe91-4191-b2de-e729daf345c9'),
     propsData: {
       model: {

@@ -47,6 +47,42 @@ const Placement = Vue.component('placement', {
     const vm = this;
     // make a trigger to parent component(share) and send place;
     this.$parent.$emit('render', this.current.id, this.current.revenueType);
+    const dev = location.search.indexOf('checkPlace=dev') !== -1;
+    if (dev) {
+      return (
+        <div
+          id={vm.current.id}
+          class="arf-placement"
+          style={{
+            width: `${vm.current.width}px`,
+            height: `${vm.current.height}px`,
+          }}
+        >
+          <Banner model={vm.activeBannerModel} />
+          <div
+            style={{
+              zIndex: 9999,
+              margin: 'auto',
+              position: 'relative',
+              color: 'red',
+              paddingTop: '5px',
+              // backgroundColor: 'yellow',
+              // opacity: 0.5,
+              width: `${vm.current.width}px`,
+              height: `${vm.current.height}px`,
+            }}
+          ><p
+            style={{
+              backgroundColor: 'black',
+              color: 'white',
+              fontSize: '15pt',
+              width: '35%',
+              textAlign: 'center',
+            }}
+          >{vm.current.revenueType}</p></div>
+        </div>
+      );
+    }
     return (
       <div
         id={vm.current.id}

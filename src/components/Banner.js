@@ -77,11 +77,14 @@ const Banner = Vue.component('banner', {
 
       iframe.onload = () => {
         if (vm.$data.isRendered === false) {
+          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
+          // if (dev) {
+          //   iframe.style.zIndex = 0;
+          //   iframe.style.position = 'absolute';
+          // }
           iframe.width = vm.current.width;
           iframe.height = vm.current.height;
           iframe.id = `iframe-${vm.current.id}`;
-          iframe.style.zIndex = 0;
-          iframe.style.position = 'absolute';
           iframe.frameBorder = vm.iframe.frameBorder;
           iframe.marginWidth = vm.iframe.marginWidth;
           iframe.marginHeight = vm.iframe.marginHeight;
@@ -113,6 +116,11 @@ const Banner = Vue.component('banner', {
       const loadIfrm = () => {
         let ifrm = vm.iframe.el;
         ifrm.onload = () => {
+          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
+          // if (dev) {
+          //   ifrm.style.zIndex = 0;
+          //   ifrm.style.position = 'absolute';
+          // }
           ifrm.width = vm.current.width;
           // ifrm.height = vm.current.height;
           ifrm.id = `iframe-${vm.current.id}`;
@@ -156,8 +164,6 @@ const Banner = Vue.component('banner', {
             if (iframe !== undefined) {
               const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
               iframe.height = innerDoc.documentElement.getElementsByTagName('body')[0].offsetHeight;
-              // iframe.style.zIndex = 0;
-              // ifrm.style.position = 'absolute';
               clearInterval(setHeightIframe);
             }
           }, 100);
@@ -210,13 +216,29 @@ const Banner = Vue.component('banner', {
         clearInterval(height);
       }
     }, 100);
+    const dev = location.search.indexOf('checkPlace=dev') !== -1;
+    if (dev) {
+      return (
+        <div
+          id={vm.current.id}
+          class="arf-banner"
+          style={{
+            width: `${vm.current.width}px`,
+            zIndex: 0,
+            position: 'absolute',
+            // height: `${vm.current.height}px`,
+          }}
+        >
+          <div ref="banner">{'banner content'}</div>
+        </div>
+      );
+    }
     return (
       <div
         id={vm.current.id}
         class="arf-banner"
         style={{
           width: `${vm.current.width}px`,
-          zIndex: 0,
           // height: `${vm.current.height}px`,
         }}
       >
