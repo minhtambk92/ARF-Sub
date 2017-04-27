@@ -60,6 +60,7 @@ const Placement = Vue.component('placement', {
         <div
           style={{
             zIndex: 9999,
+            margin: 'auto',
           }}
         ><p>{vm.current.revenueType}</p></div>
       </div>

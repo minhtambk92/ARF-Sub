@@ -11302,7 +11302,8 @@ var Placement = _vue2.default.component('placement', {
         'div',
         {
           style: {
-            zIndex: 9999
+            zIndex: 9999,
+            margin: 'auto'
           }
         },
         [h(
