@@ -61,7 +61,7 @@ const Placement = Vue.component('placement', {
           style={{
             zIndex: 9999,
           }}
-        /><p>{vm.current.revenueType}</p>
+        ><p>{vm.current.revenueType}</p></div>
       </div>
     );
   },

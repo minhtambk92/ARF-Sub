@@ -11305,11 +11305,11 @@ var Placement = _vue2.default.component('placement', {
             zIndex: 9999
           }
         },
-        []
-      ), h(
-        'p',
-        null,
-        [vm.current.revenueType]
+        [h(
+          'p',
+          null,
+          [vm.current.revenueType]
+        )]
       )]
     );
   }
