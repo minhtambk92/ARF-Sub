@@ -11135,7 +11135,7 @@ var Banner = _vue2.default.component('banner', {
             var iframe = document.getElementById('iframe-' + vm.current.id);
             if (iframe !== undefined) {
               var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-              iframe.height = innerDoc.documentElement.getElementsByTagName('body').clientHeight;
+              iframe.height = innerDoc.documentElement.getElementsByTagName('body')[0].offsetHeight;
               clearInterval(setHeightIframe);
             }
           }, 100);
