@@ -53,11 +53,22 @@ class Placement extends Entity {
    * @returns {Banner}
    */
   activeBanner() {
-    if (this.filterBanner().length > 0) {
+    const allBanner = this.filterBanner();
+    if (allBanner.length > 0) {
+      const isExitsWeight = allBanner.reduce((acc, banner, index) => {
+        if (index === 0) {
+          return banner.weight > 0;
+        }
+        return acc && banner.weight > 0;
+      }, 0);
+      if (!isExitsWeight) {
+        const weight = 100 / allBanner.length;
+        allBanner.reduce((acc, banner) => (banner.weight = weight), 0); // eslint-disable-line
+      }
       const randomNumber = Math.random() * 100;
-      const ratio = this.filterBanner().reduce((tmp, banner) => (tmp + banner.weight), 0) / 100;
+      const ratio = allBanner.reduce((tmp, banner) => (tmp + banner.weight), 0) / 100;
 
-      return this.filterBanner().reduce((range, banner) => {
+      return allBanner.reduce((range, banner) => {
         const nextRange = range + (banner.weight / ratio);
 
         if (typeof range === 'object') {

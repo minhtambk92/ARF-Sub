@@ -10535,13 +10535,26 @@ var Placement = function (_Entity) {
   }, {
     key: 'activeBanner',
     value: function activeBanner() {
-      if (this.filterBanner().length > 0) {
+      var allBanner = this.filterBanner();
+      if (allBanner.length > 0) {
+        var isExitsWeight = allBanner.reduce(function (acc, banner, index) {
+          if (index === 0) {
+            return banner.weight > 0;
+          }
+          return acc && banner.weight > 0;
+        }, 0);
+        if (!isExitsWeight) {
+          var weight = 100 / allBanner.length;
+          allBanner.reduce(function (acc, banner) {
+            return banner.weight = weight;
+          }, 0); // eslint-disable-line
+        }
         var randomNumber = Math.random() * 100;
-        var ratio = this.filterBanner().reduce(function (tmp, banner) {
+        var ratio = allBanner.reduce(function (tmp, banner) {
           return tmp + banner.weight;
         }, 0) / 100;
 
-        return this.filterBanner().reduce(function (range, banner) {
+        return allBanner.reduce(function (range, banner) {
           var nextRange = range + banner.weight / ratio;
 
           if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
