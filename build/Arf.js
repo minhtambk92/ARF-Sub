@@ -11102,6 +11102,15 @@ var Banner = _vue2.default.component('banner', {
       var vm = this;
       var urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
       var sponsorFormat = vm.current.linkFormatBannerHtml;
+      var writeIfrm = function writeIfrm(ifrm) {
+        ifrm = ifrm.contentWindow ? ifrm.contentWindow.document : // eslint-disable-line
+        ifrm.contentDocument ? ifrm.contentDocument : ifrm.document;
+        ifrm.open();
+        ifrm.write('' + ('<head>' + '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">' + '<script>inDapIF = true;function mobileCallbackMedium(){window.parent.callbackMedium();}</script>' + '</head><body style="border: none;display: block;margin: 0 auto;">' + '<script>' + ' </script>' + '<script src="') + sponsorFormat.toString() + '" type="text/javascript"> </script>' + '<script >sponsoradx(parent.data)</script></body>');
+        ifrm.close();
+        document.getElementById('' + vm.current.id).style.display = 'block';
+      };
+
       console.log('linkFormatBannerHtml', sponsorFormat);
       var loadIfrm = function loadIfrm() {
         var ifrm = vm.iframe.el;
@@ -11130,14 +11139,28 @@ var Banner = _vue2.default.component('banner', {
 
           /* eslint-disable no-useless-concat */
           // window.data = JSON.parse(vm.current.dataBannerHtml.replace(/\r?\n|\r/g, ''));
-          eval('window.data = ' + vm.current.dataBannerHtml.replace(/\r?\n|\r/g, '') + ';'); // eslint-disable-line
-
-          ifrm = ifrm.contentWindow ? ifrm.contentWindow.document : // eslint-disable-line
-          ifrm.contentDocument ? ifrm.contentDocument : ifrm.document;
-          ifrm.open();
-          ifrm.write('' + ('<head>' + '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">' + '<script>inDapIF = true;function mobileCallbackMedium(){window.parent.callbackMedium();}</sc' + 'ript>' + '</head><body style="border: none;display: block;margin: 0 auto;">' + '<scri' + 'pt>' + ' </scr' + 'ipt>' + '<scri' + 'pt src="') + sponsorFormat.toString() + '" type="text/javascript"> </scr' + 'ipt>' + '<scri' + 'pt >sponsoradx(parent.data)</scr' + 'ipt></body>');
-          ifrm.close();
-          document.getElementById('' + vm.current.id).style.display = 'block';
+          try {
+            eval('window.data = ' + vm.current.dataBannerHtml.replace(/\r?\n|\r/g, '') + ';'); // eslint-disable-line
+          } catch (err) {
+            writeIfrm(ifrm);
+          }
+          // ifrm = ifrm.contentWindow ? ifrm.contentWindow.document : // eslint-disable-line
+          //   ifrm.contentDocument ? ifrm.contentDocument : ifrm.document;
+          // ifrm.open();
+          // ifrm.write(`${`${'<head>' +
+          //   '<meta name="viewport" content="width=device-width,
+          // initial-scale=1.0, maximum-scale=1.0, user-scalable=0">' +
+          //   '<script>inDapIF = true;
+          // function mobileCallbackMedium(){window.parent.callbackMedium();}</sc' + 'ript>' +
+          //   '</head><body style="border: none;display: block;margin: 0 auto;">' +
+          //   '<scri' + 'pt>'} </scr` + 'ipt>' +
+          //   '<scri' + 'pt src="'}${sponsorFormat.toString()}"
+          // type="text/javascript"> </scr` + 'ipt>' +
+          //   '<scri' + 'pt >sponsoradx(parent.data)</scr' +
+          //   'ipt></body>');
+          // ifrm.close();
+          // document.getElementById(`${vm.current.id}`).style.display = 'block';
+          writeIfrm(ifrm);
         };
 
         try {
@@ -11192,16 +11215,15 @@ var Banner = _vue2.default.component('banner', {
   },
 
   render: function render(h) {
-    var _this = this;
-
     // eslint-disable-line no-unused-vars
     var vm = this;
-    var height = setInterval(function () {
-      if (document.getElementById('' + vm.current.id)) {
-        _this.$parent.$emit('bannerHeight', document.getElementById('' + vm.current.id).clientHeight);
-        clearInterval(height);
-      }
-    }, 100);
+    // const height = setInterval(() => {
+    //   if (document.getElementById(`${vm.current.id}`)) {
+    //     this.$parent.$emit('bannerHeight', document.getElementById(`${vm.current.id}`)
+    // .clientHeight);
+    //     clearInterval(height);
+    //   }
+    // }, 100);
     var dev = location.search.indexOf('checkPlace=dev') !== -1;
     if (dev) {
       return h(
