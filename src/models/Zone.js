@@ -352,7 +352,7 @@ class Zone extends Entity {
       return [];
     };
     // if cpdShare take all share percent in a place order -> filter
-    const numberOfPlaceInShare = 10;
+    const numberOfPlaceInShare = this.ZoneArea;
     const shareConstruct = [];
     for (let i = 0; i < numberOfPlaceInShare; i += 1) {
       const isPr = allPlace.filter(place => place.index === i && place.data.revenueType === 'pr').length > 0;

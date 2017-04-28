@@ -12268,7 +12268,7 @@ var Zone = function (_Entity) {
         return [];
       };
       // if cpdShare take all share percent in a place order -> filter
-      var numberOfPlaceInShare = 10;
+      var numberOfPlaceInShare = this.ZoneArea;
       var shareConstruct = [];
 
       var _loop = function _loop(i) {
