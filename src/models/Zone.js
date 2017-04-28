@@ -438,11 +438,11 @@ class Zone extends Entity {
         const cpdPercent = shareConstruct[i][1].weight;
         const cpdAppear = lastPlaceType.reduce((acc, place) =>
           (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
-        if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
+        if (cpdPercent > 0 && cpdPercent <= (33)) {
           if (cpdAppear === 1 && lastPlaceType.length > 1) {
             shareConstruct[i].splice(1, 1);
           }
-        } else if (cpdPercent > 100 / 3 && cpdPercent <= (200 / 3)) {
+        } else if (cpdPercent > 33 && cpdPercent <= (66)) {
           if (cpdAppear === 2 && lastPlaceType.length > 2) {
             shareConstruct[i].splice(1, 1);
           }
