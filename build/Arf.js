@@ -12254,7 +12254,6 @@ var Zone = function (_Entity) {
         }
         return [];
       };
-
       // if cpdShare take all share percent in a place order -> filter
       var numberOfPlaceInShare = 10;
       var shareConstruct = [];
@@ -12942,7 +12941,7 @@ var util = {
     return Channel;
   },
   convertArea: function convertArea(height, width) {
-    if (width === 1160 && height === 90) {
+    if ((width === 1160 || width === 1158) && height === 90) {
       return 2;
     }
     if (width === 336 && height === 560) {
@@ -12952,7 +12951,7 @@ var util = {
       return height / 140;
     }
     if (height === 90 && width <= 1160) {
-      return width / 468;
+      return 1;
     }
     return 1;
   },

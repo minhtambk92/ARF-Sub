@@ -351,7 +351,6 @@ class Zone extends Entity {
       }
       return [];
     };
-
     // if cpdShare take all share percent in a place order -> filter
     const numberOfPlaceInShare = 10;
     const shareConstruct = [];
