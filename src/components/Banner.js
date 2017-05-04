@@ -60,6 +60,10 @@ const Banner = Vue.component('banner', {
       // console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
     }
+    if (this.current.bannerType.isUpload !== undefined &&
+      this.current.bannerType.isUpload === true) {
+      this.renderBannerImg();
+    }
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
@@ -227,6 +231,16 @@ const Banner = Vue.component('banner', {
         }
         clearInterval(loadAsync);
       });
+    },
+    renderBannerImg() {
+      const vm = this;
+      const imgTag = document.createElement('img');
+      imgTag.src = vm.current.imgUrl;
+      try {
+        vm.$el.replaceChild(imgTag, vm.$refs.banner); // Do the trick
+      } catch (error) {
+        throw new Error(error);
+      }
     },
   },
 

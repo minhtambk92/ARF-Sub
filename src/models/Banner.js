@@ -23,6 +23,7 @@ class Banner extends Entity {
     this.dataBannerHtml = banner.dataBannerHtml;
     this.linkFormatBannerHtml = banner.linkFormatBannerHtml;
     this.isIFrame = banner.isIFrame;
+    this.imgUrl = banner.imgUrl;
   }
 
   // Banner Checking Process

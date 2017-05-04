@@ -10126,6 +10126,7 @@ var Banner = function (_Entity) {
     _this.dataBannerHtml = banner.dataBannerHtml;
     _this.linkFormatBannerHtml = banner.linkFormatBannerHtml;
     _this.isIFrame = banner.isIFrame;
+    _this.imgUrl = banner.imgUrl;
     return _this;
   }
 
@@ -11062,6 +11063,9 @@ var Banner = _vue2.default.component('banner', {
       // console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
     }
+    if (this.current.bannerType.isUpload !== undefined && this.current.bannerType.isUpload === true) {
+      this.renderBannerImg();
+    }
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
@@ -11224,6 +11228,16 @@ var Banner = _vue2.default.component('banner', {
         }
         clearInterval(loadAsync);
       });
+    },
+    renderBannerImg: function renderBannerImg() {
+      var vm = this;
+      var imgTag = document.createElement('img');
+      imgTag.src = vm.current.imgUrl;
+      try {
+        vm.$el.replaceChild(imgTag, vm.$refs.banner); // Do the trick
+      } catch (error) {
+        throw new Error(error);
+      }
     }
   },
 
@@ -12052,6 +12066,21 @@ var Zone = function (_Entity) {
       });
       console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);
       // console.log('all Place', allPlace);]
+      // get place min area
+      var getMinPlace = function getMinPlace(allPlaces) {
+        var min = allPlaces[0].data.height;
+        for (var i = 0, leng = allPlaces.length; i < leng; i += 1) {
+          if (allPlaces[i].data.height < min) {
+            min = allPlaces[i].data.height;
+          }
+        }
+        return min;
+      };
+      var minPlace = getMinPlace(allPlace);
+      var getNumberOfParts = function getNumberOfParts(height) {
+        return Math.round(height / minPlace);
+      };
+      console.log(getNumberOfParts(this.height));
       var computeShareWithPlacementType = function computeShareWithPlacementType(allPlacement, placementType, shareConstruct) {
         var shareTemplate = {
           id: 'DS',
@@ -12267,6 +12296,206 @@ var Zone = function (_Entity) {
         }
         return [];
       };
+      // const computeShareWithPlacementType2 = (allPlacement, placementType, shareConstruct) => {
+      //   const shareTemplate = {
+      //     id: 'DS',
+      //     name: 'Dynamic Share',
+      //     html: '<div class="hello"></div>',
+      //     css: '.arf-placement{display:inline-block;margin-left:50px;}',
+      //     outputCss: '',
+      //     width: this.width,
+      //     height: this.height,
+      //     classes: '',
+      //     weight: 0,
+      //     type: 'multiple',
+      //     description: `Share ${this.width}x${this.height}`,
+      //     zoneId: this.id,
+      //     placements: [],
+      //   };
+      //   const shares = [];
+      //   const shareDatas = [];
+      //
+      //   // get all places have type === placementType
+      //   const monopolyPlaces = allPlacement.filter(y =>
+      // y.data.AdsType.revenueType === placementType);
+      //   console.log('monopolyPlaces', monopolyPlaces);
+      //   const createShareByPlaceMonopolies = (placeMonopolies) => {
+      //     // Create Share : S(zone) - S(p) = S(free)
+      //     const SumPrArea = placeMonopolies.reduce((temp, item) =>
+      //     temp + item.data.height, 0);
+      //     const FreeArea = this.height - SumPrArea;
+      //     // console.log('FreeArea', FreeArea);
+      //     const numberOfParts = getNumberOfParts(FreeArea);
+      //     for (let i = 1; i <= numberOfParts; i += 1) {
+      //       // console.log('i', i);
+      //       // divide share base on free area and number of part.
+      //       const shareRatios = util.ComputeShare(numberOfParts, i);
+      //       // console.log('shareRatios', shareRatios);
+      //       // Browse each shareRatio on above and create a share for it.
+      //       shareRatios.reduce((temp, shareRatio) => {
+      //         // console.log('shareRatio', shareRatio);
+      //         // this variable to store places in a share which are chosen bellow
+      //         let share = [];
+      //         placeMonopolies.reduce((x, y) =>
+      //           shareRatio.splice(y.index, 0, y.data.PlacementArea), 0);
+      //         let isRelative = false;
+      //         // Browse each placeRatio in shareRatio, then find a placement fit it.
+      //         shareRatio.reduce((temp2, placeRatio, index) => {
+      //           // console.log('placeRatio', placeRatio);
+      //           if (placeMonopolies.map(item => item.index).indexOf(index) !== -1) {
+      //             return 0;
+      //           }
+      //           // find all placement fit with area place
+      //           let places = allPlacement.filter(place =>
+      //             (getNumberOfParts(place.data.height) < FreeArea &&
+      //             place.data.PlacementArea === placeRatio &&
+      //             placeMonopolies.indexOf(place) === -1 &&
+      //             place.data.revenueType !== 'pr' &&
+      //             // placeChosen.indexOf(place) === -1 &&
+      //             place.index === index &&
+      //             place.data.revenueType === shareConstruct[index].type));
+      //
+      //           // filter place with relative keyword
+      //           let placesWithKeyword = [];
+      //           if (arrayRelativeKeyword.length > 0) {
+      //             placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+      //             if (placesWithKeyword.length > 0) {
+      //               isRelative = true;
+      //               places = placesWithKeyword;
+      //             }
+      //           }
+      //
+      //           // if don't have any places fit in area => return empty share
+      //           if (places.length === 0) {
+      //             share = [];
+      //             return 0;
+      //           } else { // eslint-disable-line no-else-return
+      //             // choose random a placement which are collected on above
+      //             // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
+      //             // const place = places[randomIndex];
+      //
+      //             const place = activePlacement(places, shareConstruct[index]);
+      //             // console.log('random', places.length, randomIndex);
+      //             share.push(place.data);
+      //           }
+      //           return 0;
+      //         }, 0);
+      //
+      //         // if share available => insert monopoly places
+      //         if (share.length !== 0) {
+      //           // push (all places have type === placementType) into share.
+      //           placeMonopolies.reduce((x, y) => share.splice(y.index, 0, y.data), 0);
+      //           const SumArea = share.reduce((acc, item) =>
+      //           acc + item.PlacementArea, 0);
+      //           const Free = this.ZoneArea - SumArea;
+      //           if (Free === 0 && relativeKeyword !== '' && isRelative) {
+      //             shares.push(share);
+      //             isRelative = false;
+      //           }
+      //           share = [];
+      //         }
+      //
+      //         return '';
+      //       }, 0);
+      //     }
+      //
+      //     shareTemplate.weight = 100 / shares.length;
+      //     for (let i = 0; i < shares.length; i += 1) {
+      //       shareTemplate.id = `DS-${i}`;
+      //       shareTemplate.placements = shares[i];
+      //       const shareData = new Share(shareTemplate);
+      //       shareDatas.push(shareData);
+      //     }
+      //   };
+      //   if (monopolyPlaces.length > 0) {
+      //     if (placementType === 'pr') {
+      //       createShareByPlaceMonopolies(monopolyPlaces);
+      //
+      //       console.log('shareDatas', shareDatas);
+      //       return shareDatas;
+      //     }
+      //     // collect placements which share the place order with monopoly places ('cpd').
+      //     let shareWith = [];
+      //     monopolyPlaces.reduce((acc, monopolyPlace) => allPlace.reduce((acc2, place) => {
+      //       if (place.index === monopolyPlace.index &&
+      //         place.data.revenueType !== monopolyPlace.data.revenueType) {
+      //         shareWith.push(place);
+      //       }
+      //       return 0;
+      //     }, 0), 0);
+      //     // filter keyword
+      //     let shareWithKeyword = [];
+      //     if (arrayRelativeKeyword.length > 0) {
+      //       shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
+      //       if (shareWithKeyword.length > 0) {
+      //         shareWith = shareWithKeyword;
+      //       }
+      //     }
+      //
+      //     // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
+      //     const createMonopolyPlacesWithShare = (array, lib) => {
+      //       const res = [];
+      //       array.reduce((acc1, ArrayItem, index1, array1) => {
+      //         const replace = (library, index2, arrTemp) => {
+      //           const arrayTemp = arrTemp.map(item => item);
+      //           library.reduce((acc2, item) => {
+      //             if (item.index === array1[index2].index) {
+      //               arrayTemp.splice(index2, 1, item);
+      //               res.push(arrayTemp);
+      //               if (index2 < (arrTemp.length - 1)) {
+      //                 replace(library, index2 + 1, arrayTemp);
+      //               }
+      //             }
+      //             return 0;
+      //           }, 0);
+      //         };
+      //         replace(lib, index1, array1);
+      //         return 0;
+      //       }, 0);
+      //       res.push(array);
+      //       return res;
+      //     };
+      //     let combinationMonopolyPlaces = [];
+      //     // const numberOfCombination = monopolyPlaces.length;
+      //     const monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith);
+      //     // console.log('monopolyPlaces', monopolyPlaces);
+      //     console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
+      //     // variable "conputeAll" to compute all cases combination.
+      //     const computeAll = true;
+      //     if (computeAll) {
+      //       // can use function combinations (1-n combination n)
+      //       // instead of k_combination (k Combination n) for compute all cases.
+      //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
+      //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
+      //           util.combinations(monopolyPlacesWithShare[i]).filter(item =>
+      //             item.reduce((acc, item2) =>
+      //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
+      //       }
+      //     } else {
+      //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
+      //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
+      //           util.k_combinations(monopolyPlacesWithShare[i], 1).filter(item =>
+      //             item.reduce((acc, item2) =>
+      //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
+      //       }
+      //     }
+      //     const numberOfMonopoly = shareConstruct.reduce((acc, item) =>
+      // (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
+      //     combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item =>
+      //     (item.length >= numberOfMonopoly) && item.reduce((acc, item2, index) => {
+      //       if (index === 0) {
+      //         return item2.data.revenueType === shareConstruct[item2.index].type;
+      //       }
+      //       return acc && item2.data.revenueType === shareConstruct[item2.index].type;
+      //     }, 0));
+      //     console.log('combination', combinationMonopolyPlaces);
+      //     combinationMonopolyPlaces.reduce((acc, item) => createShareByPlaceMonopolies(item), 0);
+      //
+      //     console.log('shareDatas', shareDatas);
+      //     return shareDatas;
+      //   }
+      //   return [];
+      // };
       // if cpdShare take all share percent in a place order -> filter
       var numberOfPlaceInShare = this.ZoneArea;
       var shareConstruct = [];
@@ -12296,13 +12525,6 @@ var Zone = function (_Entity) {
       var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
       zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
       var ShareRendered = zoneCookie.split('|');
-      // const lastShare = ShareRendered[ShareRendered.length - 1].split(';').map((x) => {
-      //   if (x.indexOf('timestamp') !== -1) {
-      //     return x.substring(24);
-      //   }
-      //   return x;
-      // });
-      // const previousPlaceType = lastShare[i].split('^')[3];
       // console.log('lastShare', this.id, ShareRendered);
       var activeRevenue = function activeRevenue(allRevenueType) {
         var randomNumber = Math.random() * 100;
@@ -13577,6 +13799,112 @@ var util = {
     temp.width = iFrame.contentWindow.document.body.scrollWidth;
     temp.height = iFrame.contentWindow.document.body.scrollHeight;
     return temp;
+  },
+  admExecJs: function admExecJs(html, id) {
+    var _arguments = arguments;
+
+    var element = html;
+    var evlScript = [];
+    var script = [];
+
+    this.trim = function (str) {
+      var strTemp = str;
+      strTemp = str.replace(/^\s+/, '');
+      for (var i = str.length - 1; i >= 0; i -= 1) {
+        if (/\S/.test(str.charAt(i))) {
+          strTemp = str.substring(0, i + 1);
+          break;
+        }
+      }
+      return strTemp;
+    };
+
+    this.explode = function () {
+      // boc tach script
+      var b = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
+      if (b) {
+        var d = '';
+        for (var i = 0, len = b.length; i < len; i += 1) {
+          element = element.replace(b[i], '');
+          d = b[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
+          if (this.trim(d) !== '') {
+            evlScript.push(this.trim(d));
+          }
+
+          var t = b[i].match(/src="([^]*)"/gi);
+          if (t) {
+            script.push(t[0].replace(/src="([^]*)"/gi, '$1'));
+          }
+        }
+      }
+    };
+
+    var callScript = this.getFileScript;
+    this.getFileScript = function (url) {
+      var a = document.createElement('script');
+      a.type = 'text/javascript';
+      a.async = true;
+      a.src = url;
+      var c = document.getElementsByTagName('script')[0];
+      var args = _arguments; // eslint-disable-line
+      if (args.length >= 2) {
+        var arrLength = args[1];
+        a.onload = function () {
+          var arr = arrLength;
+          var strUrl = arr[0];
+          arr.shift();
+          if (arr.length >= 1) {
+            callScript(strUrl, arr);
+          } else {
+            callScript(strUrl);
+          }
+        };
+      }
+      c.parentNode.insertBefore(a, c);
+    };
+
+    this.explode();
+
+    var id1 = document.getElementById(id);
+    if (arguments.length >= 3) {
+      if (id1) {
+        var strDiv = element.match(/id=[^]+/i);
+        if (strDiv) {
+          var strId = strDiv[0].replace(/id="|"/gi, '');
+          if (strId) {
+            id1.innerHTML = element;
+            var id2 = document.getElementById(strId);
+            if (id2) {
+              id2.setAttribute('rel', id);
+              var parentNode = id1.parentNode;
+              parentNode.replaceChild(id2, id1);
+            }
+          }
+        }
+      }
+    } else if (id1) {
+      id1.innerHTML = element;
+      window.setTimeout(function () {
+        id1.style.display = '';
+      }, 1000);
+    }
+
+    if (script.length > 0) {
+      if (script.length > 1) {
+        var arr = script;
+        var strUrl = script[0];
+        console.log(arr, strUrl);
+        arr.shift();
+        this.getFileScript(strUrl, arr);
+      } else {
+        this.getFileScript(script[0]);
+      }
+    }
+    if (evlScript.length > 0) {
+      for (var i = 0, len = evlScript.length; i < len; i += 1) {
+        eval(evlScript[i]); // eslint-disable-line
+      }
+    }
   }
 }; /**
     * Created by tlm on 14/03/2017.
