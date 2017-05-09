@@ -165,7 +165,12 @@ class Zone extends Entity {
       return min;
     };
     const minPlace = getMinPlace(allPlace);
-    const getNumberOfParts = height => Math.round(height / minPlace);
+    const getNumberOfParts = (height, isRoundUp) => {
+      if (height % minPlace > 0 && isRoundUp) {
+        return Math.round(height / minPlace) + 1;
+      }
+      return Math.round(height / minPlace);
+    };
     console.log(getNumberOfParts(this.height));
     const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
       const shareTemplate = {
@@ -200,10 +205,10 @@ class Zone extends Entity {
           // console.log('i', i);
           // divide share base on free area and number of part.
           const shareRatios = util.ComputeShare(FreeArea, i);
-          // console.log('shareRatios', shareRatios);
+          console.log('shareRatios', shareRatios);
           // Browse each shareRatio on above and create a share for it.
           shareRatios.reduce((temp, shareRatio) => {
-            // console.log('shareRatio', shareRatio);
+            console.log('shareRatio', shareRatio);
             // this variable to store places in a share which are chosen bellow
             let share = [];
             placeMonopolies.reduce((x, y) =>
@@ -211,7 +216,7 @@ class Zone extends Entity {
             let isRelative = false;
             // Browse each placeRatio in shareRatio, then find a placement fit it.
             shareRatio.reduce((temp2, placeRatio, index) => {
-              // console.log('placeRatio', placeRatio);
+              console.log('placeRatio', placeRatio);
               if (placeMonopolies.map(item => item.index).indexOf(index) !== -1) {
                 return 0;
               }
@@ -244,7 +249,7 @@ class Zone extends Entity {
                 // const place = places[randomIndex];
 
                 const place = activePlacement(places, shareConstruct[index]);
-                // console.log('random', places.length, randomIndex);
+                console.log('activePlacement', place);
                 share.push(place.data);
               }
               return 0;
@@ -263,11 +268,10 @@ class Zone extends Entity {
               }
               share = [];
             }
-
             return '';
           }, 0);
         }
-
+        console.log('shares', shares);
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
           shareTemplate.id = `DS-${i}`;
@@ -349,6 +353,9 @@ class Zone extends Entity {
           }
         }
         const numberOfMonopoly = shareConstruct.reduce((acc, item) => (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
+        console.log('numberOfMonopoly', numberOfMonopoly);
+        console.log('combinationMonopolyPlaces', combinationMonopolyPlaces);
+        // filter place have revenueType same with share constructor
         combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item =>
         (item.length >= numberOfMonopoly) && item.reduce((acc, item2, index) => {
           if (index === 0) {
@@ -386,7 +393,7 @@ class Zone extends Entity {
     //   // get all places have type === placementType
     //   const monopolyPlaces = allPlacement.filter(y =>
     // y.data.AdsType.revenueType === placementType);
-    //   console.log('monopolyPlaces', monopolyPlaces);
+    //   console.log('monopolyPlaces2', monopolyPlaces);
     //   const createShareByPlaceMonopolies = (placeMonopolies) => {
     //     // Create Share : S(zone) - S(p) = S(free)
     //     const SumPrArea = placeMonopolies.reduce((temp, item) =>
@@ -415,8 +422,10 @@ class Zone extends Entity {
     //           }
     //           // find all placement fit with area place
     //           let places = allPlacement.filter(place =>
-    //             (getNumberOfParts(place.data.height) < FreeArea &&
-    //             place.data.PlacementArea === placeRatio &&
+    //             (
+    //             // getNumberOfParts(place.data.height, true) < numberOfParts &&
+    //             getNumberOfParts(place.data.height, true) === placeRatio &&
+    //             // place.data.PlacementArea === placeRatio &&
     //             placeMonopolies.indexOf(place) === -1 &&
     //             place.data.revenueType !== 'pr' &&
     //             // placeChosen.indexOf(place) === -1 &&
@@ -479,7 +488,7 @@ class Zone extends Entity {
     //     if (placementType === 'pr') {
     //       createShareByPlaceMonopolies(monopolyPlaces);
     //
-    //       console.log('shareDatas', shareDatas);
+    //       console.log('shareDatas2', shareDatas);
     //       return shareDatas;
     //     }
     //     // collect placements which share the place order with monopoly places ('cpd').
@@ -556,10 +565,10 @@ class Zone extends Entity {
     //       }
     //       return acc && item2.data.revenueType === shareConstruct[item2.index].type;
     //     }, 0));
-    //     console.log('combination', combinationMonopolyPlaces);
+    //     console.log('combination2', combinationMonopolyPlaces);
     //     combinationMonopolyPlaces.reduce((acc, item) => createShareByPlaceMonopolies(item), 0);
     //
-    //     console.log('shareDatas', shareDatas);
+    //     console.log('shareDatas2', shareDatas);
     //     return shareDatas;
     //   }
     //   return [];
@@ -639,16 +648,16 @@ class Zone extends Entity {
           }, 0);
           return 0;
         }, 0);
-        // console.log('lastPlaceType', lastPlaceType, i);
+        console.log('lastPlaceType', lastPlaceType, i);
 
         const cpdPercent = shareConstruct[i][1].weight;
         const cpdAppear = lastPlaceType.reduce((acc, place) =>
           (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
-        if (cpdPercent > 0 && cpdPercent <= (33)) {
+        if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
           if (cpdAppear === 1 && lastPlaceType.length > 1) {
             shareConstruct[i].splice(1, 1);
           }
-        } else if (cpdPercent > 33 && cpdPercent <= (66)) {
+        } else if (cpdPercent > 33 && cpdPercent <= (200 / 3)) {
           if (cpdAppear === 2 && lastPlaceType.length > 2) {
             shareConstruct[i].splice(1, 1);
           }
@@ -659,10 +668,14 @@ class Zone extends Entity {
     }
     console.log('buildShareConstruct', buildShareConstruct);
     const pr = computeShareWithPlacementType(allPlace, 'pr', buildShareConstruct);
+    // const testPR = computeShareWithPlacementType2(allPlace, 'pr', buildShareConstruct);
+    // console.log('testPR', testPR);
     if (pr.length > 0) {
       return pr;
     }
     let cpdShare = computeShareWithPlacementType(allPlace, 'cpd', buildShareConstruct);
+    // const testCPD = computeShareWithPlacementType2(allPlace, 'cpd', buildShareConstruct);
+    // console.log('testCPD', testCPD);
     for (let i = 0; i < this.ZoneArea; i += 1) {
       if (100 - shareConstruct[i][0].weight <= 0) {
         cpdShare = cpdShare.filter(share => share.placements[i].revenueType === 'cpd');

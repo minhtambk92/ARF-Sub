@@ -49,20 +49,23 @@ const Banner = Vue.component('banner', {
   mounted() {
     if (this.current.bannerType.isInputData !== undefined &&
       this.current.bannerType.isInputData === true && this.current.isIFrame === true) {
-      // console.log('renderBannerHTML');
+      console.log('renderBannerHTML');
       this.renderBannerHTML();
     } else if (this.current.bannerType.isInputData !== undefined &&
-      this.current.bannerType.isInputData === false && this.current.isIFrame === true) {
-      // console.log('renderToIFrame');
+      this.current.bannerType.isInputData === false && this.current.isIFrame === true &&
+      this.current.bannerType.isUpload !== undefined &&
+      this.current.bannerType.isUpload === false) {
+      console.log('renderToIFrame');
       this.renderToIFrame();
     } else if (this.current.bannerType.isInputData !== undefined &&
       this.current.bannerType.isInputData === false && this.current.isIFrame === false) {
-      // console.log('renderBannerNoIframe');
+      console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
     }
     if (this.current.bannerType.isUpload !== undefined &&
       this.current.bannerType.isUpload === true) {
-      this.renderBannerImg();
+      // this.renderBannerImg();
+      this.renderToIFrame();
     }
     this.current.countFrequency();
     if (this.current.isRelative) {
@@ -81,11 +84,6 @@ const Banner = Vue.component('banner', {
 
       iframe.onload = () => {
         if (vm.$data.isRendered === false) {
-          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
-          // if (dev) {
-          //   iframe.style.zIndex = 0;
-          //   iframe.style.position = 'absolute';
-          // }
           iframe.width = vm.current.width;
           iframe.height = vm.current.height;
           iframe.id = `iframe-${vm.current.id}`;
@@ -95,7 +93,12 @@ const Banner = Vue.component('banner', {
           iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
           iframe.contentWindow.document.open();
-          iframe.contentWindow.document.write(vm.current.html);
+          if (this.current.bannerType.isUpload !== undefined &&
+            this.current.bannerType.isUpload === true) {
+            iframe.contentWindow.document.write(`<img src="${vm.current.imageUrl}">`);
+          } else {
+            iframe.contentWindow.document.write(vm.current.html);
+          }
           iframe.contentWindow.document.close();
 
           // Prevent scroll on IE
@@ -232,16 +235,12 @@ const Banner = Vue.component('banner', {
         clearInterval(loadAsync);
       });
     },
-    renderBannerImg() {
-      const vm = this;
-      const imgTag = document.createElement('img');
-      imgTag.src = vm.current.imgUrl;
-      try {
-        vm.$el.replaceChild(imgTag, vm.$refs.banner); // Do the trick
-      } catch (error) {
-        throw new Error(error);
-      }
-    },
+    // renderBannerImg() {
+    //   console.log('renderBannerImg');
+    //   const imgTag = document.createElement('img');
+    //   imgTag.src = this.current.imageUrl;
+    //   document.getElementById(`${this.current.id}`).appendChild(imgTag);
+    // },
   },
 
   render(h) { // eslint-disable-line no-unused-vars

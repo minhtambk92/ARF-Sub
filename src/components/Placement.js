@@ -39,6 +39,7 @@ const Placement = Vue.component('placement', {
 
     activeBannerModel() {
       // console.log('placement is rendered', this.current.id);
+      console.log('allbanner', this.current.allBanners);
       return this.current.activeBanner();
     },
   },

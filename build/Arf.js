@@ -10126,7 +10126,7 @@ var Banner = function (_Entity) {
     _this.dataBannerHtml = banner.dataBannerHtml;
     _this.linkFormatBannerHtml = banner.linkFormatBannerHtml;
     _this.isIFrame = banner.isIFrame;
-    _this.imgUrl = banner.imgUrl;
+    _this.imageUrl = banner.imageUrl;
     return _this;
   }
 
@@ -10213,8 +10213,9 @@ var Banner = function (_Entity) {
   }, {
     key: 'checkChannel',
     get: function get() {
-      if (this.channel !== undefined && this.channel !== '') {
+      if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
         var channel = this.channel;
+        console.log('channel', channel);
         var options = channel.options.filter(function (item) {
           return item.name !== 'Location' && item.name !== 'Browser';
         });
@@ -10361,7 +10362,7 @@ var Banner = function (_Entity) {
   }, {
     key: 'getLocation',
     get: function get() {
-      if (this.channel !== undefined && this.channel !== '') {
+      if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
         // console.log('getLocation run');
         var onlocations = this.channel.options.filter(function (item) {
           return item.name === 'Location' && item.comparison === '==';
@@ -10537,6 +10538,7 @@ var Placement = function (_Entity) {
     key: 'activeBanner',
     value: function activeBanner() {
       var allBanner = this.filterBanner();
+      console.log('sfsfsdsfsfsd');
       if (allBanner.length > 0) {
         var isExitsWeight = allBanner.reduce(function (acc, banner, index) {
           if (index === 0) {
@@ -10544,6 +10546,7 @@ var Placement = function (_Entity) {
           }
           return acc && banner.weight > 0;
         }, 0);
+        console.log('isExitsWeight', isExitsWeight);
         if (!isExitsWeight) {
           var weight = 100 / allBanner.length;
           allBanner.reduce(function (acc, banner) {
@@ -11054,17 +11057,18 @@ var Banner = _vue2.default.component('banner', {
   },
   mounted: function mounted() {
     if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === true && this.current.isIFrame === true) {
-      // console.log('renderBannerHTML');
+      console.log('renderBannerHTML');
       this.renderBannerHTML();
-    } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === true) {
-      // console.log('renderToIFrame');
+    } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === true && this.current.bannerType.isUpload !== undefined && this.current.bannerType.isUpload === false) {
+      console.log('renderToIFrame');
       this.renderToIFrame();
     } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === false) {
-      // console.log('renderBannerNoIframe');
+      console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
     }
     if (this.current.bannerType.isUpload !== undefined && this.current.bannerType.isUpload === true) {
-      this.renderBannerImg();
+      // this.renderBannerImg();
+      this.renderToIFrame();
     }
     this.current.countFrequency();
     if (this.current.isRelative) {
@@ -11079,16 +11083,13 @@ var Banner = _vue2.default.component('banner', {
      * Wrap ads by an iframe
      */
     renderToIFrame: function renderToIFrame() {
+      var _this = this;
+
       var vm = this;
       var iframe = vm.iframe.el;
 
       iframe.onload = function () {
         if (vm.$data.isRendered === false) {
-          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
-          // if (dev) {
-          //   iframe.style.zIndex = 0;
-          //   iframe.style.position = 'absolute';
-          // }
           iframe.width = vm.current.width;
           iframe.height = vm.current.height;
           iframe.id = 'iframe-' + vm.current.id;
@@ -11098,7 +11099,11 @@ var Banner = _vue2.default.component('banner', {
           iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
           iframe.contentWindow.document.open();
-          iframe.contentWindow.document.write(vm.current.html);
+          if (_this.current.bannerType.isUpload !== undefined && _this.current.bannerType.isUpload === true) {
+            iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
+          } else {
+            iframe.contentWindow.document.write(vm.current.html);
+          }
           iframe.contentWindow.document.close();
 
           // Prevent scroll on IE
@@ -11228,16 +11233,6 @@ var Banner = _vue2.default.component('banner', {
         }
         clearInterval(loadAsync);
       });
-    },
-    renderBannerImg: function renderBannerImg() {
-      var vm = this;
-      var imgTag = document.createElement('img');
-      imgTag.src = vm.current.imgUrl;
-      try {
-        vm.$el.replaceChild(imgTag, vm.$refs.banner); // Do the trick
-      } catch (error) {
-        throw new Error(error);
-      }
     }
   },
 
@@ -11353,6 +11348,7 @@ var Placement = _vue2.default.component('placement', {
     },
     activeBannerModel: function activeBannerModel() {
       // console.log('placement is rendered', this.current.id);
+      console.log('allbanner', this.current.allBanners);
       return this.current.activeBanner();
     }
   },
@@ -12077,7 +12073,10 @@ var Zone = function (_Entity) {
         return min;
       };
       var minPlace = getMinPlace(allPlace);
-      var getNumberOfParts = function getNumberOfParts(height) {
+      var getNumberOfParts = function getNumberOfParts(height, isRoundUp) {
+        if (height % minPlace > 0 && isRoundUp) {
+          return Math.round(height / minPlace) + 1;
+        }
         return Math.round(height / minPlace);
       };
       console.log(getNumberOfParts(this.height));
@@ -12117,10 +12116,10 @@ var Zone = function (_Entity) {
             // console.log('i', i);
             // divide share base on free area and number of part.
             var shareRatios = _vendor.util.ComputeShare(FreeArea, i);
-            // console.log('shareRatios', shareRatios);
+            console.log('shareRatios', shareRatios);
             // Browse each shareRatio on above and create a share for it.
             shareRatios.reduce(function (temp, shareRatio) {
-              // console.log('shareRatio', shareRatio);
+              console.log('shareRatio', shareRatio);
               // this variable to store places in a share which are chosen bellow
               var share = [];
               placeMonopolies.reduce(function (x, y) {
@@ -12129,7 +12128,7 @@ var Zone = function (_Entity) {
               var isRelative = false;
               // Browse each placeRatio in shareRatio, then find a placement fit it.
               shareRatio.reduce(function (temp2, placeRatio, index) {
-                // console.log('placeRatio', placeRatio);
+                console.log('placeRatio', placeRatio);
                 if (placeMonopolies.map(function (item) {
                   return item.index;
                 }).indexOf(index) !== -1) {
@@ -12163,7 +12162,7 @@ var Zone = function (_Entity) {
                   // const place = places[randomIndex];
 
                   var place = activePlacement(places, shareConstruct[index]);
-                  // console.log('random', places.length, randomIndex);
+                  console.log('activePlacement', place);
                   share.push(place.data);
                 }
                 return 0;
@@ -12185,11 +12184,10 @@ var Zone = function (_Entity) {
                 }
                 share = [];
               }
-
               return '';
             }, 0);
           }
-
+          console.log('shares', shares);
           shareTemplate.weight = 100 / shares.length;
           for (var _i = 0; _i < shares.length; _i += 1) {
             shareTemplate.id = 'DS-' + _i;
@@ -12278,6 +12276,9 @@ var Zone = function (_Entity) {
           var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
             return item.type === 'cpd' ? acc + 1 : acc + 0;
           }, 0);
+          console.log('numberOfMonopoly', numberOfMonopoly);
+          console.log('combinationMonopolyPlaces', combinationMonopolyPlaces);
+          // filter place have revenueType same with share constructor
           combinationMonopolyPlaces = combinationMonopolyPlaces.filter(function (item) {
             return item.length >= numberOfMonopoly && item.reduce(function (acc, item2, index) {
               if (index === 0) {
@@ -12318,7 +12319,7 @@ var Zone = function (_Entity) {
       //   // get all places have type === placementType
       //   const monopolyPlaces = allPlacement.filter(y =>
       // y.data.AdsType.revenueType === placementType);
-      //   console.log('monopolyPlaces', monopolyPlaces);
+      //   console.log('monopolyPlaces2', monopolyPlaces);
       //   const createShareByPlaceMonopolies = (placeMonopolies) => {
       //     // Create Share : S(zone) - S(p) = S(free)
       //     const SumPrArea = placeMonopolies.reduce((temp, item) =>
@@ -12347,8 +12348,10 @@ var Zone = function (_Entity) {
       //           }
       //           // find all placement fit with area place
       //           let places = allPlacement.filter(place =>
-      //             (getNumberOfParts(place.data.height) < FreeArea &&
-      //             place.data.PlacementArea === placeRatio &&
+      //             (
+      //             // getNumberOfParts(place.data.height, true) < numberOfParts &&
+      //             getNumberOfParts(place.data.height, true) === placeRatio &&
+      //             // place.data.PlacementArea === placeRatio &&
       //             placeMonopolies.indexOf(place) === -1 &&
       //             place.data.revenueType !== 'pr' &&
       //             // placeChosen.indexOf(place) === -1 &&
@@ -12411,7 +12414,7 @@ var Zone = function (_Entity) {
       //     if (placementType === 'pr') {
       //       createShareByPlaceMonopolies(monopolyPlaces);
       //
-      //       console.log('shareDatas', shareDatas);
+      //       console.log('shareDatas2', shareDatas);
       //       return shareDatas;
       //     }
       //     // collect placements which share the place order with monopoly places ('cpd').
@@ -12488,10 +12491,10 @@ var Zone = function (_Entity) {
       //       }
       //       return acc && item2.data.revenueType === shareConstruct[item2.index].type;
       //     }, 0));
-      //     console.log('combination', combinationMonopolyPlaces);
+      //     console.log('combination2', combinationMonopolyPlaces);
       //     combinationMonopolyPlaces.reduce((acc, item) => createShareByPlaceMonopolies(item), 0);
       //
-      //     console.log('shareDatas', shareDatas);
+      //     console.log('shareDatas2', shareDatas);
       //     return shareDatas;
       //   }
       //   return [];
@@ -12578,17 +12581,17 @@ var Zone = function (_Entity) {
             }, 0);
             return 0;
           }, 0);
-          // console.log('lastPlaceType', lastPlaceType, i);
+          console.log('lastPlaceType', lastPlaceType, i);
 
           var cpdPercent = shareConstruct[i][1].weight;
           var cpdAppear = lastPlaceType.reduce(function (acc, place) {
             return place.type === 'cpd' ? acc + 1 : acc + 0;
           }, 0);
-          if (cpdPercent > 0 && cpdPercent <= 33) {
+          if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
             if (cpdAppear === 1 && lastPlaceType.length > 1) {
               shareConstruct[i].splice(1, 1);
             }
-          } else if (cpdPercent > 33 && cpdPercent <= 66) {
+          } else if (cpdPercent > 33 && cpdPercent <= 200 / 3) {
             if (cpdAppear === 2 && lastPlaceType.length > 2) {
               shareConstruct[i].splice(1, 1);
             }
@@ -12603,10 +12606,14 @@ var Zone = function (_Entity) {
       }
       console.log('buildShareConstruct', buildShareConstruct);
       var pr = computeShareWithPlacementType(allPlace, 'pr', buildShareConstruct);
+      // const testPR = computeShareWithPlacementType2(allPlace, 'pr', buildShareConstruct);
+      // console.log('testPR', testPR);
       if (pr.length > 0) {
         return pr;
       }
       var cpdShare = computeShareWithPlacementType(allPlace, 'cpd', buildShareConstruct);
+      // const testCPD = computeShareWithPlacementType2(allPlace, 'cpd', buildShareConstruct);
+      // console.log('testCPD', testCPD);
 
       var _loop3 = function _loop3(i) {
         if (100 - shareConstruct[i][0].weight <= 0) {

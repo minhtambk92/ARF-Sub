@@ -54,6 +54,7 @@ class Placement extends Entity {
    */
   activeBanner() {
     const allBanner = this.filterBanner();
+    console.log('sfsfsdsfsfsd');
     if (allBanner.length > 0) {
       const isExitsWeight = allBanner.reduce((acc, banner, index) => {
         if (index === 0) {
@@ -61,6 +62,7 @@ class Placement extends Entity {
         }
         return acc && banner.weight > 0;
       }, 0);
+      console.log('isExitsWeight', isExitsWeight);
       if (!isExitsWeight) {
         const weight = 100 / allBanner.length;
         allBanner.reduce((acc, banner) => (banner.weight = weight), 0); // eslint-disable-line

@@ -23,7 +23,7 @@ class Banner extends Entity {
     this.dataBannerHtml = banner.dataBannerHtml;
     this.linkFormatBannerHtml = banner.linkFormatBannerHtml;
     this.isIFrame = banner.isIFrame;
-    this.imgUrl = banner.imgUrl;
+    this.imageUrl = banner.imageUrl;
   }
 
   // Banner Checking Process
@@ -64,8 +64,9 @@ class Banner extends Entity {
 
   // check channel with new data (using)
   get checkChannel() {
-    if (this.channel !== undefined && this.channel !== '') {
+    if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
       const channel = this.channel;
+      console.log('channel', channel);
       const options = channel.options.filter(item => item.name !== 'Location' && item.name !== 'Browser');
       const optionslen = options.length;
       const a = eval; // eslint-disable-line no-eval
@@ -196,7 +197,7 @@ class Banner extends Entity {
 
   // get location from channel's options
   get getLocation() {
-    if (this.channel !== undefined && this.channel !== '') {
+    if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
       // console.log('getLocation run');
       const onlocations = this.channel.options.filter(item => item.name === 'Location' && item.comparison === '==');
       if (onlocations.length > 0) {
