@@ -10141,7 +10141,7 @@ var Banner = function (_Entity) {
       var isFitLocation = this.checkLocation;
       var a = this.checkFrequency;
       var res = isBannerAvailable && isFitChannel && isFitLocation && a;
-      // console.log(`${this.id}: ${this.getFrequency()}`);
+      console.log(this.id + ': fre:' + a + ', channel: ' + isFitChannel + ', location: ' + isFitLocation + ', isBannerAvailable: ' + isBannerAvailable);
       return res;
     }
 
@@ -10538,7 +10538,6 @@ var Placement = function (_Entity) {
     key: 'activeBanner',
     value: function activeBanner() {
       var allBanner = this.filterBanner();
-      console.log('sfsfsdsfsfsd');
       if (allBanner.length > 0) {
         var isExitsWeight = allBanner.reduce(function (acc, banner, index) {
           if (index === 0) {
@@ -11348,7 +11347,6 @@ var Placement = _vue2.default.component('placement', {
     },
     activeBannerModel: function activeBannerModel() {
       // console.log('placement is rendered', this.current.id);
-      console.log('allbanner', this.current.allBanners);
       return this.current.activeBanner();
     }
   },
@@ -11415,11 +11413,11 @@ var Placement = _vue2.default.component('placement', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-placement',
-        style: {
-          width: vm.current.width + 'px',
-          height: vm.current.height + 'px'
-        }
+        'class': 'arf-placement'
+        // style={{
+        //   width: `${vm.current.width}px`,
+        //   height: `${vm.current.height}px`,
+        // }}
       },
       [h(
         _components.Banner,

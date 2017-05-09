@@ -54,7 +54,6 @@ class Placement extends Entity {
    */
   activeBanner() {
     const allBanner = this.filterBanner();
-    console.log('sfsfsdsfsfsd');
     if (allBanner.length > 0) {
       const isExitsWeight = allBanner.reduce((acc, banner, index) => {
         if (index === 0) {

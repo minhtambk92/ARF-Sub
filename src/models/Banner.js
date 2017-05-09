@@ -33,7 +33,7 @@ class Banner extends Entity {
     const isFitLocation = this.checkLocation;
     const a = this.checkFrequency;
     const res = isBannerAvailable && isFitChannel && isFitLocation && a;
-    // console.log(`${this.id}: ${this.getFrequency()}`);
+    console.log(`${this.id}: fre:${a}, channel: ${isFitChannel}, location: ${isFitLocation}, isBannerAvailable: ${isBannerAvailable}`);
     return res;
   }
 
