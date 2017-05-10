@@ -71,7 +71,7 @@
           id: '5cef8982-c9c7-4b85-91c7-08e070b1bbd5',
           name: 'Zone Right Xa Hoi Slot 2',
           css: '',
-          outputCss: '',
+          outputCss: '.arf-placement{display:inline-block;text-align:center ;}',
           width: 300,
           height: 600,
           classes: '',

@@ -138,11 +138,6 @@ const Banner = Vue.component('banner', {
       const loadIfrm = () => {
         const ifrm = vm.iframe.el;
         ifrm.onload = () => {
-          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
-          // if (dev) {
-          //   ifrm.style.zIndex = 0;
-          //   ifrm.style.position = 'absolute';
-          // }
           ifrm.width = vm.current.width;
           // ifrm.height = vm.current.height;
           ifrm.id = `iframe-${vm.current.id}`;
@@ -157,8 +152,6 @@ const Banner = Vue.component('banner', {
           ifrm.webkitallowfullscreen = 'true';
           ifrm.mozallowfullscreen = 'true';
           ifrm.src = 'about:blank';
-
-          // document.getElementById(`${vm.current.id}`).appendChild(ifrm);
 
           /* eslint-disable no-useless-concat */
           // window.data = JSON.parse(vm.current.dataBannerHtml.replace(/\r?\n|\r/g, ''));

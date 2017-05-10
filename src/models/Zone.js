@@ -694,7 +694,12 @@ class Zone extends Entity {
   activeShare(relativeKeyword) {
     const allShare = this.filterShareDynamic(relativeKeyword);
     const randomNumber = Math.random() * 100;
-    const ratio = allShare.reduce((tmp, share) => (share.weight + tmp), 0) / 100;
+    const ratio = allShare.reduce((tmp, share) => {
+      if (share.weight === undefined) {
+        share.weight = 100 / allShare.length; // eslint-disable-line
+      }
+      return (share.weight + tmp);
+    }, 0) / 100;
 
     const res = allShare.reduce((range, share) => {
       const nextRange = range + (share.weight / ratio);

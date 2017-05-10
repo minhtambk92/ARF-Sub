@@ -10215,24 +10215,30 @@ var Banner = function (_Entity) {
     get: function get() {
       if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
         var channel = this.channel;
-        console.log('channel', channel);
         var options = channel.options.filter(function (item) {
           return item.name !== 'Location' && item.name !== 'Browser';
         });
-        var optionslen = options.length;
+        var optionsLength = options.length;
         var a = eval; // eslint-disable-line no-eval
         var strChk = '';
 
         var _loop = function _loop(i) {
           var optionChannelType = options[i].optionChannelType;
-          var type = optionChannelType.isInputLink ? 'isInputLink' : '';
-          type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
-          type = optionChannelType.isVariable ? 'isVariable' : type;
           var value = options[i].value.toString().split(',');
-          // console.log('valueCheck', value);
-
+          var comparison = options[i].comparison;
+          var logical = options[i].logical === 'and' ? '&&' : '||';
+          var globalVariableName = options[i].globalVariables;
+          var globalVariable = a('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
+          var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : ''; // eslint-disable-line
+          var currentAdditionalDetail = '';
+          var type = optionChannelType.isInputLink ? 'isInputLink' : '';
+          var stringCheck = '';
           // get optionChannelValueProperties
           var additionalDetail = [];
+          type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
+          type = optionChannelType.isVariable ? 'isVariable' : type;
+
+          // console.log('valueCheck', value);
           if (optionChannelType.optionChannelValues.length > 0) {
             additionalDetail = optionChannelType.optionChannelValues.filter(function (item) {
               return value.reduce(function (acc, valueItem) {
@@ -10240,13 +10246,6 @@ var Banner = function (_Entity) {
               }, 0);
             });
           }
-          var globalVariableName = options[i].globalVariables;
-          var globalVariable = a('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
-          var logical = options[i].logical === 'and' ? '&&' : '||';
-          var comparison = options[i].comparison;
-          var stringCheck = '';
-          var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : ''; // eslint-disable-line
-          var currentAdditionalDetail = '';
           // console.log('value', value);
           for (var j = 0; j < value.length; j += 1) {
             if (j > 0) stringCheck += '||';
@@ -10313,7 +10312,7 @@ var Banner = function (_Entity) {
           strChk += CheckValue;
         };
 
-        for (var i = 0; i < optionslen; i += 1) {
+        for (var i = 0; i < optionsLength; i += 1) {
           _loop(i);
         }
         console.log('checkChannel', strChk);
@@ -10367,6 +10366,9 @@ var Banner = function (_Entity) {
         var onlocations = this.channel.options.filter(function (item) {
           return item.name === 'Location' && item.comparison === '==';
         });
+        var exceptLocation = this.channel.options.filter(function (item) {
+          return item.name === 'Location' && item.comparison === '!=';
+        });
         if (onlocations.length > 0) {
           return {
             location: onlocations.reduce(function (acc, item, index) {
@@ -10375,9 +10377,6 @@ var Banner = function (_Entity) {
             comparison: '=='
           };
         }
-        var exceptLocation = this.channel.options.filter(function (item) {
-          return item.name === 'Location' && item.comparison === '!=';
-        });
         return {
           location: exceptLocation.reduce(function (acc, item, index) {
             return (index > 0 ? acc + ',' : '') + item.value;
@@ -10396,9 +10395,10 @@ var Banner = function (_Entity) {
       var browser = this.browser;
       browser = typeof browser === 'undefined' || browser === 'undefined' || browser == null || browser === '' ? 0 : browser;
       browser = (',' + browser + ',').toLowerCase();
-      var ua = navigator.userAgent;
       var tem = void 0;
-      var M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+      var M = void 0;
+      var ua = navigator.userAgent;
+      M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
       if (/trident/i.test(M[1])) {
         tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
         return 'IE ' + (tem[1] || '');
@@ -10419,11 +10419,11 @@ var Banner = function (_Entity) {
     key: 'checkFrequency',
     get: function get() {
       var fr = this.fr;
+      var count = this.getFrequency();
       if (fr === '' || fr === 'undefined' || fr === undefined) {
         return true;
       }
       fr = parseInt(fr, 10);
-      var count = this.getFrequency();
       if (count > fr) {
         console.log(this.id + ': ', this.getFrequency());
         return false;
@@ -11136,11 +11136,6 @@ var Banner = _vue2.default.component('banner', {
       var loadIfrm = function loadIfrm() {
         var ifrm = vm.iframe.el;
         ifrm.onload = function () {
-          // const dev = location.search.indexOf('checkPlace=dev') !== -1;
-          // if (dev) {
-          //   ifrm.style.zIndex = 0;
-          //   ifrm.style.position = 'absolute';
-          // }
           ifrm.width = vm.current.width;
           // ifrm.height = vm.current.height;
           ifrm.id = 'iframe-' + vm.current.id;
@@ -11155,8 +11150,6 @@ var Banner = _vue2.default.component('banner', {
           ifrm.webkitallowfullscreen = 'true';
           ifrm.mozallowfullscreen = 'true';
           ifrm.src = 'about:blank';
-
-          // document.getElementById(`${vm.current.id}`).appendChild(ifrm);
 
           /* eslint-disable no-useless-concat */
           // window.data = JSON.parse(vm.current.dataBannerHtml.replace(/\r?\n|\r/g, ''));
@@ -12640,6 +12633,9 @@ var Zone = function (_Entity) {
       var allShare = this.filterShareDynamic(relativeKeyword);
       var randomNumber = Math.random() * 100;
       var ratio = allShare.reduce(function (tmp, share) {
+        if (share.weight === undefined) {
+          share.weight = 100 / allShare.length; // eslint-disable-line
+        }
         return share.weight + tmp;
       }, 0) / 100;
 
