@@ -10738,9 +10738,26 @@ var Share = function (_Entity) {
   }, {
     key: 'allPlacements',
     get: function get() {
-      return this.placements.map(function (placement) {
+      var allPlace = this.placements.map(function (placement) {
         return new _Placement2.default(placement);
       });
+
+      var isUsePlacePosition = allPlace.reduce(function (acc, item, index) {
+        if (index === 0) {
+          return item.positionOnShare !== undefined || item.positionOnShare !== 0;
+        }
+        return acc && (item.positionOnShare !== undefined || item.positionOnShare !== 0);
+      }, 0);
+
+      console.log('isUsePlacePosition', isUsePlacePosition);
+      if (isUsePlacePosition) {
+        allPlace.sort(function (a, b) {
+          return a.positionOnShare - b.positionOnShare;
+        });
+        console.log('sort', allPlace);
+        return allPlace;
+      }
+      return allPlace;
     }
   }]);
   return Share;
@@ -11396,7 +11413,7 @@ var Placement = _vue2.default.component('placement', {
                 textAlign: 'center'
               }
             },
-            [vm.current.revenueType]
+            [vm.current.revenueType, ' ', vm.current.positionOnShare]
           )]
         )]
       );
@@ -12051,7 +12068,7 @@ var Zone = function (_Entity) {
         }, 0);
         if (isUsePlacePosition) {
           return allPlace.push(share.allPlacements.map(function (item) {
-            return { data: item, index: item.positionOnShare };
+            return { data: item, index: item.positionOnShare - 1 };
           }));
         }
         return allPlace.push(share.allPlacements.map(function (item, index) {

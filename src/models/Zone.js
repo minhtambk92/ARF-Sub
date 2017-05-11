@@ -157,7 +157,7 @@ class Zone extends Entity {
       }, 0);
       if (isUsePlacePosition) {
         return allPlace.push(share.allPlacements.map(item =>
-          ({ data: item, index: item.positionOnShare })));
+          ({ data: item, index: item.positionOnShare - 1 })));
       }
       return allPlace.push(share.allPlacements.map((item, index) =>
           ({ data: item, index })));

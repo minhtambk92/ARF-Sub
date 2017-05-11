@@ -24,7 +24,22 @@ class Share extends Entity {
    * @returns [Placement]
    */
   get allPlacements() {
-    return this.placements.map(placement => new Placement(placement));
+    const allPlace = this.placements.map(placement => new Placement(placement));
+
+    const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
+      if (index === 0) {
+        return item.positionOnShare !== undefined || item.positionOnShare !== 0;
+      }
+      return acc && (item.positionOnShare !== undefined || item.positionOnShare !== 0);
+    }, 0);
+
+    console.log('isUsePlacePosition', isUsePlacePosition);
+    if (isUsePlacePosition) {
+      allPlace.sort((a, b) => a.positionOnShare - b.positionOnShare);
+      console.log('sort', allPlace);
+      return allPlace;
+    }
+    return allPlace;
   }
 
   /**

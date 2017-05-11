@@ -79,7 +79,7 @@ const Placement = Vue.component('placement', {
               width: '35%',
               textAlign: 'center',
             }}
-          >{vm.current.revenueType}</p></div>
+          >{vm.current.revenueType} {vm.current.positionOnShare}</p></div>
         </div>
       );
     }
