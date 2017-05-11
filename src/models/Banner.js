@@ -198,11 +198,11 @@ class Banner extends Entity {
   get getLocation() {
     if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
       // console.log('getLocation run');
-      const onlocations = this.channel.options.filter(item => item.name === 'Location' && item.comparison === '==');
+      const onLocations = this.channel.options.filter(item => item.name === 'Location' && item.comparison === '==');
       const exceptLocation = this.channel.options.filter(item => item.name === 'Location' && item.comparison === '!=');
-      if (onlocations.length > 0) {
+      if (onLocations.length > 0) {
         return {
-          location: onlocations.reduce((acc, item, index) => (index > 0 ? `${acc},` : '') + item.value, 0),
+          location: onLocations.reduce((acc, item, index) => (index > 0 ? `${acc},` : '') + item.value, 0),
           comparison: '==',
         };
       }
@@ -222,25 +222,7 @@ class Banner extends Entity {
     browser == null ||
     browser === '') ? 0 : browser;
     browser = `,${browser},`.toLowerCase();
-    let tem;
-    let M;
-    const ua = navigator.userAgent;
-    M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-    if (/trident/i.test(M[1])) {
-      tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
-      return `IE ${tem[1] || ''}`;
-    }
-    if (M[1] === 'Chrome') {
-      tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
-      if (tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
-    }
-    M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
-    tem = ua.match(/version\/(\d+)/i);
-    if (tem != null) {
-      M.splice(1, 1, tem[1]);
-    }
-    const currentBrowser = M.join(' ').substring(0, (M.join(' ').indexOf(' '))).toLowerCase();
-    return (browser !== ',,' && browser !== ',0,') ? (`${browser}`.indexOf(currentBrowser) !== -1) : true;
+    return (browser !== ',,' && browser !== ',0,') ? (`${browser}`.indexOf(util.getCurrentBrowser) !== -1) : true;
   }
 
   get checkFrequency() {
