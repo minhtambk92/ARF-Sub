@@ -10499,6 +10499,7 @@ var Placement = function (_Entity) {
     _this.cpd = placement.cpd;
     _this.cpm = placement.cpm;
     _this.campaign = placement.campaign;
+    _this.positionOnShare = placement.positionOnShare;
     return _this;
   }
 
@@ -12042,6 +12043,17 @@ var Zone = function (_Entity) {
       var allShare = this.allShares;
       var allPlace = [];
       this.allShares.reduce(function (temp, share) {
+        var isUsePlacePosition = share.allPlacements.reduce(function (acc, item, index) {
+          if (index === 0) {
+            return item.positionOnShare === undefined || item.positionOnShare === 0;
+          }
+          return acc && (item.positionOnShare === undefined || item.positionOnShare === 0);
+        }, 0);
+        if (isUsePlacePosition) {
+          return allPlace.push(share.allPlacements.map(function (item) {
+            return { data: item, index: item.positionOnShare };
+          }));
+        }
         return allPlace.push(share.allPlacements.map(function (item, index) {
           return { data: item, index: index };
         }));

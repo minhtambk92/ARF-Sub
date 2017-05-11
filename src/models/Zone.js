@@ -148,8 +148,20 @@ class Zone extends Entity {
     let arrayRelativeKeyword = [];
     const allShare = this.allShares;
     let allPlace = [];
-    this.allShares.reduce((temp, share) => allPlace.push(share.allPlacements.map((item, index) =>
-      ({ data: item, index }))), 0);
+    this.allShares.reduce((temp, share) => {
+      const isUsePlacePosition = share.allPlacements.reduce((acc, item, index) => {
+        if (index === 0) {
+          return item.positionOnShare === undefined || item.positionOnShare === 0;
+        }
+        return acc && (item.positionOnShare === undefined || item.positionOnShare === 0);
+      }, 0);
+      if (isUsePlacePosition) {
+        return allPlace.push(share.allPlacements.map(item =>
+          ({ data: item, index: item.positionOnShare })));
+      }
+      return allPlace.push(share.allPlacements.map((item, index) =>
+          ({ data: item, index })));
+    }, 0);
     allPlace = util.flatten(allPlace);
     arrayRelativeKeyword = relativeKeyword.split(',').map(item => item.replace(' ', ''));
     console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);

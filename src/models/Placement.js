@@ -19,6 +19,7 @@ class Placement extends Entity {
     this.cpd = placement.cpd;
     this.cpm = placement.cpm;
     this.campaign = placement.campaign;
+    this.positionOnShare = placement.positionOnShare;
   }
 
   get PlacementArea() {
