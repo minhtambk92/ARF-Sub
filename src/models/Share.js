@@ -28,9 +28,9 @@ class Share extends Entity {
 
     const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
       if (index === 0) {
-        return item.positionOnShare !== undefined || item.positionOnShare !== 0;
+        return item.positionOnShare !== undefined && item.positionOnShare !== 0;
       }
-      return acc && (item.positionOnShare !== undefined || item.positionOnShare !== 0);
+      return acc && (item.positionOnShare !== undefined && item.positionOnShare !== 0);
     }, 0);
 
     console.log('isUsePlacePosition', isUsePlacePosition);

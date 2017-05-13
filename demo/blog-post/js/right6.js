@@ -91,7 +91,7 @@
                 height: 140,
                 weight: 25,
                 startTime: '2016-12-22T17:00:00.000Z',
-                revenueType: 'cpd',
+                revenueType: 'cpm',
                 cpdPercent: 33,
                 positionOnShare: 3,
                 endTime: '2017-12-12T16:59:59.000Z',

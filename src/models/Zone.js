@@ -30,6 +30,13 @@ class Zone extends Entity {
     return util.convertArea(this.height, this.width);
   }
 
+  get zoneType() {
+    if ((this.height >= 257) && (this.width < 600 && this.width > 160)) {
+      return 'right';
+    }
+    return 'top';
+  }
+
   get filterShare() {
     const allShare = this.allShares;
     const Prs = [];
@@ -151,10 +158,11 @@ class Zone extends Entity {
     this.allShares.reduce((temp, share) => {
       const isUsePlacePosition = share.allPlacements.reduce((acc, item, index) => {
         if (index === 0) {
-          return item.positionOnShare === undefined || item.positionOnShare === 0;
+          return item.positionOnShare !== undefined && item.positionOnShare !== 0;
         }
-        return acc && (item.positionOnShare === undefined || item.positionOnShare === 0);
+        return acc && (item.positionOnShare !== undefined && item.positionOnShare !== 0);
       }, 0);
+      console.log('isUserPlacePositionZone', isUsePlacePosition);
       if (isUsePlacePosition) {
         return allPlace.push(share.allPlacements.map(item =>
           ({ data: item, index: item.positionOnShare - 1 })));
@@ -163,27 +171,44 @@ class Zone extends Entity {
           ({ data: item, index })));
     }, 0);
     allPlace = util.flatten(allPlace);
+    console.log('allPlaceZone', allPlace);
     arrayRelativeKeyword = relativeKeyword.split(',').map(item => item.replace(' ', ''));
     console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);
     // console.log('all Place', allPlace);]
     // get place min area
     const getMinPlace = (allPlaces) => {
-      let min = allPlaces[0].data.height;
+      if (this.zoneType === 'right') {
+        let min = allPlaces[0].data.height;
+        for (let i = 0, leng = allPlaces.length; i < leng; i += 1) {
+          if (allPlaces[i].data.height < min) {
+            min = allPlaces[i].data.height;
+          }
+        }
+        return min;
+      }
+      let min = allPlaces[0].data.width;
       for (let i = 0, leng = allPlaces.length; i < leng; i += 1) {
-        if (allPlaces[i].data.height < min) {
-          min = allPlaces[i].data.height;
+        if (allPlaces[i].data.width < min) {
+          min = allPlaces[i].data.width;
         }
       }
       return min;
     };
     const minPlace = getMinPlace(allPlace);
+    console.log('minPlace', minPlace);
     const getNumberOfParts = (height, isRoundUp) => {
-      if (height % minPlace > 0 && isRoundUp) {
+      if (this.zoneType === 'right') {
+        if (height % minPlace > 0 && isRoundUp) {
+          return Math.round(height / minPlace) + 1;
+        }
+        return Math.round(height / minPlace);
+      }
+      if (((height / minPlace) % 1) > 0.1 && isRoundUp) {
         return Math.round(height / minPlace) + 1;
       }
       return Math.round(height / minPlace);
     };
-    console.log(getNumberOfParts(this.height));
+    console.log(getNumberOfParts(this.zoneType === 'right' ? this.height : this.width));
     // const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
     //   const shareTemplate = {
     //     id: 'DS',
@@ -415,8 +440,8 @@ class Zone extends Entity {
       const createShareByPlaceMonopolies = (placeMonopolies) => {
         // Create Share : S(zone) - S(p) = S(free)
         const SumPrArea = placeMonopolies.reduce((temp, item) =>
-        temp + item.data.height, 0);
-        const FreeArea = this.height - SumPrArea;
+          (this.zoneType === 'right' ? temp + item.data.height : temp + item.data.width), 0);
+        const FreeArea = this.zoneType === 'right' ? this.height - SumPrArea : this.width - SumPrArea;
         // console.log('FreeArea', FreeArea);
         const numberOfParts = getNumberOfParts(FreeArea);
         for (let i = 1; i <= numberOfParts; i += 1) {
@@ -430,7 +455,7 @@ class Zone extends Entity {
             // this variable to store places in a share which are chosen bellow
             let share = [];
             placeMonopolies.reduce((x, y) =>
-              shareRatio.splice(y.index, 0, getNumberOfParts(y.data.height, true)), 0);
+              shareRatio.splice(y.index, 0, this.zoneType === 'right' ? getNumberOfParts(y.data.height, true) : getNumberOfParts(y.data.width, true)), 0);
             let isRelative = false;
             // Browse each placeRatio in shareRatio, then find a placement fit it.
             shareRatio.reduce((temp2, placeRatio, index) => {
@@ -442,7 +467,7 @@ class Zone extends Entity {
               let places = allPlacement.filter(place =>
                 (
                 // getNumberOfParts(place.data.height, true) < numberOfParts &&
-                getNumberOfParts(place.data.height, true) === placeRatio &&
+                getNumberOfParts(this.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio &&
                 // place.data.PlacementArea === placeRatio &&
                 placeMonopolies.indexOf(place) === -1 &&
                 place.data.revenueType !== 'pr' &&
@@ -481,8 +506,8 @@ class Zone extends Entity {
               // push (all places have type === placementType) into share.
               placeMonopolies.reduce((x, y) => share.splice(y.index, 0, y.data), 0);
               const SumArea = share.reduce((acc, item) =>
-              acc + getNumberOfParts(item.height, true), 0);
-              const Free = getNumberOfParts(this.height) - SumArea;
+              acc + getNumberOfParts(this.zoneType === 'right' ? item.height : item.width, true), 0);
+              const Free = getNumberOfParts(this.zoneType === 'right' ? this.height : this.width) - SumArea;
               console.log('Freeasd', Free);
               if (Free === 0 && relativeKeyword !== '' && isRelative) {
                 console.log('ShareTest', share);
@@ -510,10 +535,12 @@ class Zone extends Entity {
         }
       };
       const createShareByPlaceCpm = () => {
-        const numberOfParts = getNumberOfParts(this.height);
+        const numberOfParts = getNumberOfParts(this.zoneType === 'right' ? this.height : this.width);
+        console.log('numberOfParts', numberOfParts);
         for (let i = 1; i <= numberOfParts; i += 1) {
           // divide share base on free area and number of part.
           const shareRatios = util.ComputeShare(numberOfParts, i);
+          console.log('shareRatios', shareRatios);
           // Browse each shareRatio on above and create a share for it.
           shareRatios.reduce((temp, shareRatio) => {
             // this variable to store places in a share which are chosen bellow
@@ -524,10 +551,11 @@ class Zone extends Entity {
               // find all placement fit with area place
               let places = allPlacement.filter(place =>
                 (
-                getNumberOfParts(place.data.height, true) === placeRatio &&
+                getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
                 place.data.revenueType !== 'pr' &&
                 place.index === index));
 
+              console.log('placeTest', getNumberOfParts((this.zoneType === 'right' ? allPlacement[0].data.height : allPlacement[0].data.width), true));
               // filter place with relative keyword
               let placesWithKeyword = [];
               if (arrayRelativeKeyword.length > 0) {
@@ -549,6 +577,7 @@ class Zone extends Entity {
 
                 share.push(place.data);
               }
+              console.log('shareTest', share);
               return 0;
             }, 0);
 
@@ -556,8 +585,9 @@ class Zone extends Entity {
             if (share.length !== 0) {
               // push (all places have type === placementType) into share.
               const SumArea = share.reduce((acc, item) =>
-              acc + getNumberOfParts(item.height, true), 0);
-              const Free = getNumberOfParts(this.height) - SumArea;
+              acc + getNumberOfParts(this.zoneType === 'right' ? item.height : item.width, true), 0);
+              const Free = getNumberOfParts(this.zoneType === 'right' ? this.height : this.width) - SumArea;
+              console.log('freeTest', Free);
               if (Free === 0 && relativeKeyword !== '' && isRelative) {
                 shares.push(share);
                 isRelative = false;
@@ -673,13 +703,13 @@ class Zone extends Entity {
           return shareDatas;
         }
       } else {
-        console.log('shareData', placementType, shareDatas);
+        console.log('shareData', placementType, shareDatas, this.zoneType);
         createShareByPlaceCpm();
       }
       return shareDatas;
     };
     // if cpdShare take all share percent in a place order -> filter
-    const numberOfPlaceInShare = getNumberOfParts(this.height);
+    const numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
     const shareConstruct = [];
     for (let i = 0; i < numberOfPlaceInShare; i += 1) {
       const isPr = allPlace.filter(place => place.index === i && place.data.revenueType === 'pr').length > 0;
@@ -783,7 +813,7 @@ class Zone extends Entity {
     // const testCPD = computeShareWithPlacementType(allPlace, 'cpd', buildShareConstruct);
     // console.log('testCPD', computeShareWithPlacementType);
     if (cpdShare.length > 0) {
-      for (let i = 0; i < getNumberOfParts(this.height); i += 1) {
+      for (let i = 0; i < numberOfPlaceInShare; i += 1) {
         if (100 - shareConstruct[i][0].weight <= 0) {
           cpdShare = cpdShare.filter(share => share.placements[i].revenueType === 'cpd');
         }
