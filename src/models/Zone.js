@@ -392,7 +392,7 @@ class Zone extends Entity {
     //     } else {
     //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
     //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
-    //           util.k_combinations(monopolyPlacesWithShare[i], 1).filter(item =>
+    //           util.kCombinations(monopolyPlacesWithShare[i], 1).filter(item =>
     //             item.reduce((acc, item2) =>
     //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
     //       }
@@ -681,7 +681,7 @@ class Zone extends Entity {
           } else {
             for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
               combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
-                util.k_combinations(monopolyPlacesWithShare[i], 1).filter(item =>
+                util.kCombinations(monopolyPlacesWithShare[i], 1).filter(item =>
                   item.reduce((acc, item2) =>
                     ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
             }

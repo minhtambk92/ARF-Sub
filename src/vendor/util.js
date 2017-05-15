@@ -501,7 +501,7 @@ const util = {
   },
 
   // create these combinations : k of array set => collection into array
-  k_combinations(set, k) {
+  kCombinations(set, k) {
     let i;
     let j;
     let combs;
@@ -533,7 +533,7 @@ const util = {
       // head is a list that includes only our current element.
       head = set.slice(i, i + 1);
       // We take smaller combinations from the subsequent elements
-      tailcombs = this.k_combinations(set.slice(i + 1), k - 1);
+      tailcombs = this.kCombinations(set.slice(i + 1), k - 1);
       // For each (k-1)-combination we join it with the current
       // and store it to the set of k-combinations.
       for (j = 0; j < tailcombs.length; j += 1) {
@@ -550,7 +550,7 @@ const util = {
 
     // Calculate all non-empty k-combinations
     for (let k = 1; k <= set.length; k += 1) {
-      kCombs = this.k_combinations(set, k);
+      kCombs = this.kCombinations(set, k);
       for (let i = 0; i < kCombs.length; i += 1) {
         combs.push(kCombs[i]);
       }

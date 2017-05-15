@@ -12275,7 +12275,7 @@ var Zone = function (_Entity) {
       //     } else {
       //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
       //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
-      //           util.k_combinations(monopolyPlacesWithShare[i], 1).filter(item =>
+      //           util.kCombinations(monopolyPlacesWithShare[i], 1).filter(item =>
       //             item.reduce((acc, item2) =>
       //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
       //       }
@@ -12576,7 +12576,7 @@ var Zone = function (_Entity) {
               }
             } else {
               for (var _i4 = 0; _i4 < monopolyPlacesWithShare.length; _i4 += 1) {
-                combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.k_combinations(monopolyPlacesWithShare[_i4], 1).filter(function (item) {
+                combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i4], 1).filter(function (item) {
                   return item.reduce(function (acc, item2) {
                     return acc + item2.data.PlacementArea < _this2.ZoneArea;
                   }, 0);
@@ -13804,7 +13804,7 @@ var util = {
 
 
   // create these combinations : k of array set => collection into array
-  k_combinations: function k_combinations(set, k) {
+  kCombinations: function kCombinations(set, k) {
     var i = void 0;
     var j = void 0;
     var combs = void 0;
@@ -13836,7 +13836,7 @@ var util = {
       // head is a list that includes only our current element.
       head = set.slice(i, i + 1);
       // We take smaller combinations from the subsequent elements
-      tailcombs = this.k_combinations(set.slice(i + 1), k - 1);
+      tailcombs = this.kCombinations(set.slice(i + 1), k - 1);
       // For each (k-1)-combination we join it with the current
       // and store it to the set of k-combinations.
       for (j = 0; j < tailcombs.length; j += 1) {
@@ -13854,7 +13854,7 @@ var util = {
 
     // Calculate all non-empty k-combinations
     for (var k = 1; k <= set.length; k += 1) {
-      kCombs = this.k_combinations(set, k);
+      kCombs = this.kCombinations(set, k);
       for (var i = 0; i < kCombs.length; i += 1) {
         combs.push(kCombs[i]);
       }
