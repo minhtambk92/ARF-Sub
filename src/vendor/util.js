@@ -70,7 +70,6 @@ const util = {
   permuteArray(array) {
     const permArr = [];
     const usedChars = [];
-
     const UniqueItem = (arr) => {
       const n = {};
       const r = [];
@@ -82,8 +81,7 @@ const util = {
       }
       return r;
     };
-
-    function permute(input) {
+    const permute = (input) => {
       let i;
       let ch;
       for (i = 0; i < input.length; i += 1) {
@@ -97,8 +95,7 @@ const util = {
         usedChars.pop();
       }
       return UniqueItem(permArr);
-    }
-
+    };
     return permute(array);
   },
 

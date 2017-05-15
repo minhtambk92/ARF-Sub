@@ -10129,7 +10129,6 @@ var Banner = function (_Entity) {
     _this.imageUrl = banner.imageUrl;
     return _this;
   }
-
   // Banner Checking Process
 
 
@@ -10144,7 +10143,6 @@ var Banner = function (_Entity) {
       console.log(this.id + ': fre:' + a + ', channel: ' + isFitChannel + ', location: ' + isFitLocation + ', isBannerAvailable: ' + isBannerAvailable);
       return res;
     }
-
     // check term old data (not use)
 
   }, {
@@ -10207,7 +10205,6 @@ var Banner = function (_Entity) {
 
       return true;
     }
-
     // check channel with new data (using)
 
   }, {
@@ -10233,8 +10230,7 @@ var Banner = function (_Entity) {
           var currentAdditionalDetail = '';
           var type = optionChannelType.isInputLink ? 'isInputLink' : '';
           var stringCheck = '';
-          // get optionChannelValueProperties
-          var additionalDetail = [];
+          var additionalDetail = []; // get optionChannelValueProperties
           type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
           type = optionChannelType.isVariable ? 'isVariable' : type;
 
@@ -10256,8 +10252,8 @@ var Banner = function (_Entity) {
                     // eslint-disable-line
                     a(globalVariableName + ' = \'\''); // eslint-disable-line
                   }
-                  // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),
-                  // comparison, value[j]);
+                  // eslint-disable-next-line
+                  // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),comparison, value[j]);
                   stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
                   if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
                     // eslint-disable-line
@@ -10320,7 +10316,6 @@ var Banner = function (_Entity) {
       }
       return true;
     }
-
     // get CheckLocation() {
     //   let location = this.location;
     //   location = (typeof (location) === 'undefined' ||
@@ -10355,7 +10350,6 @@ var Banner = function (_Entity) {
       }
       return true;
     }
-
     // get location from channel's options
 
   }, {
@@ -10386,7 +10380,6 @@ var Banner = function (_Entity) {
       }
       return 0;
     }
-
     // old data(not use)
 
   }, {
@@ -12038,8 +12031,8 @@ var Zone = function (_Entity) {
         });
         return placesWithKeyword;
       };
-      var arrayRelativeKeyword = [];
       var allShare = this.allShares;
+      var arrayRelativeKeyword = [];
       var allPlace = [];
       this.allShares.reduce(function (temp, share) {
         var isUsePlacePosition = share.allPlacements.reduce(function (acc, item, index) {
@@ -12064,7 +12057,7 @@ var Zone = function (_Entity) {
         return item.replace(' ', '');
       });
       console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);
-      // console.log('all Place', allPlace);]
+      // console.log('all Place', allPlace);
       // get place min area
       var getMinPlace = function getMinPlace(allPlaces) {
         if (_this2.zoneType === 'right') {
@@ -12085,7 +12078,6 @@ var Zone = function (_Entity) {
         return min;
       };
       var minPlace = getMinPlace(allPlace);
-      console.log('minPlace', minPlace);
       var getNumberOfParts = function getNumberOfParts(height, isRoundUp) {
         if (_this2.zoneType === 'right') {
           if (height % minPlace > 0 && isRoundUp) {
@@ -12098,7 +12090,8 @@ var Zone = function (_Entity) {
         }
         return Math.round(height / minPlace);
       };
-      console.log(getNumberOfParts(this.zoneType === 'right' ? this.height : this.width));
+      var numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
+      console.log('minPlace', minPlace);
       // const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
       //   const shareTemplate = {
       //     id: 'DS',
@@ -12325,7 +12318,6 @@ var Zone = function (_Entity) {
         };
         var shares = [];
         var shareDatas = [];
-
         var createShareByPlaceMonopolies = function createShareByPlaceMonopolies(placeMonopolies) {
           // Create Share : S(zone) - S(p) = S(free)
           var SumPrArea = placeMonopolies.reduce(function (temp, item) {
@@ -12615,9 +12607,8 @@ var Zone = function (_Entity) {
         }
         return shareDatas;
       };
-      // if cpdShare take all share percent in a place order -> filter
-      var numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
       var shareConstruct = [];
+      // if cpdShare take all share percent in a place order -> filter
 
       var _loop = function _loop(i) {
         var isPr = allPlace.filter(function (place) {
@@ -12644,7 +12635,6 @@ var Zone = function (_Entity) {
       var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
       zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
       var ShareRendered = zoneCookie.split('|');
-      // console.log('lastShare', this.id, ShareRendered);
       var activeRevenue = function activeRevenue(allRevenueType) {
         var randomNumber = Math.random() * 100;
 
@@ -12990,7 +12980,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var adsStorage = {
   lcStorage: {
     timestamp: 'timestamp_',
-    get_exprises: function get_exprises(cookie, type, start, endkey) {
+    getExprises: function getExprises(cookie, type, start, endkey) {
       var cookietmp = '' + cookie;
       var cstart = cookietmp.indexOf(type, start);
       var cookLen = cookietmp.length - 1;
@@ -13003,7 +12993,7 @@ var adsStorage = {
       }
       return '';
     },
-    set_item: function set_item(key, value, exprises) {
+    setItem: function setItem(key, value, exprises) {
       var endchar = '';
       var date = new Date();
       var time = date.getTime();
@@ -13019,7 +13009,7 @@ var adsStorage = {
       } else {
         endchar = ',';
       }
-      var strTimeStamp = this.get_exprises(value, timestamp, 0, endchar);
+      var strTimeStamp = this.getExprises(value, timestamp, 0, endchar);
       var valuetmp = value;
       if (strTimeStamp === '') {
         valuetmp += timestamp + time.toString() + endchar;
@@ -13028,7 +13018,7 @@ var adsStorage = {
       }
       localStorage.setItem(key, valuetmp);
     },
-    get_item: function get_item(key, chkTime) {
+    getItem: function getItem(key, chkTime) {
       var a = localStorage.getItem(key);
       var endchar = '';
       var date = new Date();
@@ -13041,7 +13031,7 @@ var adsStorage = {
       } else {
         endchar = ',';
       }
-      var strTimeStamp = this.get_exprises(a, timestamp, 0, endchar);
+      var strTimeStamp = this.getExprises(a, timestamp, 0, endchar);
       strTimeStamp = strTimeStamp.replace(timestamp, '');
       if (strTimeStamp === '' || isNaN(parseInt(strTimeStamp, 10)) || parseInt(strTimeStamp, 10) < time) {
         return '';
@@ -13052,7 +13042,7 @@ var adsStorage = {
       }
       return a;
     },
-    remove_item: function remove_item(key) {
+    removeItem: function removeItem(key) {
       localStorage.removeItem(key);
     },
 
@@ -13063,7 +13053,7 @@ var adsStorage = {
   },
   setStorage: function setStorage(name, value, expires, path, domain, secure) {
     if (window.admislocalStorage) {
-      this.lcStorage.set_item(name, value, expires);
+      this.lcStorage.setItem(name, value, expires);
       if (name === '__R' || name === '__RC') {
         this.setCookie(name, value, expires, path, domain, secure);
       }
@@ -13076,7 +13066,7 @@ var adsStorage = {
       if (name === '__R' || name === '__RC') {
         return this.getCookie(name);
       }
-      return this.lcStorage.get_item(name);
+      return this.lcStorage.getItem(name);
     }
     return this.getCookie(name);
   },
@@ -13234,9 +13224,9 @@ var term = {
       case '!=':
         return path2check !== data;
       case '=~':
-        return this.stripos(path2check, data, 0);
+        return this.stringPosition(path2check, data, 0);
       case '!~':
-        return !this.stripos(path2check, data, 0);
+        return !this.stringPosition(path2check, data, 0);
       case '=x':
         {
           var reg = new RegExp(data);
@@ -13275,7 +13265,7 @@ var term = {
     }
     return false;
   },
-  stripos: function stripos(path, data, offset) {
+  stringPosition: function stringPosition(path, data, offset) {
     var haystack = ('' + path).toLowerCase();
     var needle = ('' + data).toLowerCase();
     return haystack.indexOf(needle, offset) !== -1;
@@ -13373,7 +13363,6 @@ var util = {
   permuteArray: function permuteArray(array) {
     var permArr = [];
     var usedChars = [];
-
     var UniqueItem = function UniqueItem(arr) {
       var n = {};
       var r = [];
@@ -13385,8 +13374,7 @@ var util = {
       }
       return r;
     };
-
-    function permute(input) {
+    var permute = function permute(input) {
       var i = void 0;
       var ch = void 0;
       for (i = 0; i < input.length; i += 1) {
@@ -13400,8 +13388,7 @@ var util = {
         usedChars.pop();
       }
       return UniqueItem(permArr);
-    }
-
+    };
     return permute(array);
   },
 

@@ -152,8 +152,8 @@ class Zone extends Entity {
         }, 0));
       return placesWithKeyword;
     };
-    let arrayRelativeKeyword = [];
     const allShare = this.allShares;
+    let arrayRelativeKeyword = [];
     let allPlace = [];
     this.allShares.reduce((temp, share) => {
       const isUsePlacePosition = share.allPlacements.reduce((acc, item, index) => {
@@ -174,7 +174,7 @@ class Zone extends Entity {
     console.log('allPlaceZone', allPlace);
     arrayRelativeKeyword = relativeKeyword.split(',').map(item => item.replace(' ', ''));
     console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);
-    // console.log('all Place', allPlace);]
+    // console.log('all Place', allPlace);
     // get place min area
     const getMinPlace = (allPlaces) => {
       if (this.zoneType === 'right') {
@@ -195,7 +195,6 @@ class Zone extends Entity {
       return min;
     };
     const minPlace = getMinPlace(allPlace);
-    console.log('minPlace', minPlace);
     const getNumberOfParts = (height, isRoundUp) => {
       if (this.zoneType === 'right') {
         if (height % minPlace > 0 && isRoundUp) {
@@ -208,7 +207,8 @@ class Zone extends Entity {
       }
       return Math.round(height / minPlace);
     };
-    console.log(getNumberOfParts(this.zoneType === 'right' ? this.height : this.width));
+    const numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
+    console.log('minPlace', minPlace);
     // const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
     //   const shareTemplate = {
     //     id: 'DS',
@@ -435,8 +435,6 @@ class Zone extends Entity {
       };
       const shares = [];
       const shareDatas = [];
-
-
       const createShareByPlaceMonopolies = (placeMonopolies) => {
         // Create Share : S(zone) - S(p) = S(free)
         const SumPrArea = placeMonopolies.reduce((temp, item) =>
@@ -708,9 +706,8 @@ class Zone extends Entity {
       }
       return shareDatas;
     };
-    // if cpdShare take all share percent in a place order -> filter
-    const numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
     const shareConstruct = [];
+    // if cpdShare take all share percent in a place order -> filter
     for (let i = 0; i < numberOfPlaceInShare; i += 1) {
       const isPr = allPlace.filter(place => place.index === i && place.data.revenueType === 'pr').length > 0;
       const totalCPDSharePercent = allPlace.filter(place =>
@@ -734,7 +731,6 @@ class Zone extends Entity {
     let zoneCookie = adsStorage.subCookie(cookie, `${this.id}:`, 0);
     zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
     const ShareRendered = zoneCookie.split('|');
-    // console.log('lastShare', this.id, ShareRendered);
     const activeRevenue = (allRevenueType) => {
       const randomNumber = Math.random() * 100;
 

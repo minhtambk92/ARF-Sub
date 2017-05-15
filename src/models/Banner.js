@@ -25,7 +25,6 @@ class Banner extends Entity {
     this.isIFrame = banner.isIFrame;
     this.imageUrl = banner.imageUrl;
   }
-
   // Banner Checking Process
   isRenderable() {
     const isBannerAvailable = this.id !== 'banner-undefined';
@@ -36,7 +35,6 @@ class Banner extends Entity {
     console.log(`${this.id}: fre:${a}, channel: ${isFitChannel}, location: ${isFitLocation}, isBannerAvailable: ${isBannerAvailable}`);
     return res;
   }
-
   // check term old data (not use)
   get checkTerm() {
     if (this.terms) {
@@ -61,7 +59,6 @@ class Banner extends Entity {
 
     return true;
   }
-
   // check channel with new data (using)
   get checkChannel() {
     if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
@@ -82,8 +79,7 @@ class Banner extends Entity {
         let currentAdditionalDetail = '';
         let type = optionChannelType.isInputLink ? 'isInputLink' : '';
         let stringCheck = '';
-        // get optionChannelValueProperties
-        let additionalDetail = [];
+        let additionalDetail = []; // get optionChannelValueProperties
         type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
         type = optionChannelType.isVariable ? 'isVariable' : type;
 
@@ -101,8 +97,8 @@ class Banner extends Entity {
               if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
                 a(`${globalVariableName} = ''`); // eslint-disable-line
               }
-              // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),
-              // comparison, value[j]);
+              // eslint-disable-next-line
+              // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),comparison, value[j]);
               stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
               if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
                   a(`${globalVariableName} = globalVariableTemp`); // eslint-disable-line
@@ -157,7 +153,6 @@ class Banner extends Entity {
     }
     return true;
   }
-
   // get CheckLocation() {
   //   let location = this.location;
   //   location = (typeof (location) === 'undefined' ||
@@ -193,7 +188,6 @@ class Banner extends Entity {
     }
     return true;
   }
-
   // get location from channel's options
   get getLocation() {
     if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
@@ -213,7 +207,6 @@ class Banner extends Entity {
     }
     return 0;
   }
-
   // old data(not use)
   get checkBrowser() {
     let browser = this.browser;

@@ -37,9 +37,9 @@ const term = {
       case '!=':
         return (path2check !== data);
       case '=~':
-        return this.stripos(path2check, data, 0);
+        return this.stringPosition(path2check, data, 0);
       case '!~':
-        return !this.stripos(path2check, data, 0);
+        return !this.stringPosition(path2check, data, 0);
       case '=x': {
         const reg = new RegExp(data);
         return reg.test(path2check);
@@ -76,7 +76,7 @@ const term = {
     return false;
   },
 
-  stripos(path, data, offset) {
+  stringPosition(path, data, offset) {
     const haystack = (`${path}`).toLowerCase();
     const needle = (`${data}`).toLowerCase();
     return haystack.indexOf(needle, offset) !== -1;

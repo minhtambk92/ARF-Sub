@@ -5,7 +5,7 @@
 const adsStorage = {
   lcStorage: {
     timestamp: 'timestamp_',
-    get_exprises(cookie, type, start, endkey) {
+    getExprises(cookie, type, start, endkey) {
       const cookietmp = `${cookie}`;
       const cstart = cookietmp.indexOf(type, start);
       const cookLen = cookietmp.length - 1;
@@ -18,7 +18,7 @@ const adsStorage = {
       }
       return '';
     },
-    set_item(key, value, exprises) {
+    setItem(key, value, exprises) {
       let endchar = '';
       const date = new Date();
       let time = date.getTime();
@@ -34,7 +34,7 @@ const adsStorage = {
       } else {
         endchar = ',';
       }
-      const strTimeStamp = this.get_exprises(value, timestamp, 0, endchar);
+      const strTimeStamp = this.getExprises(value, timestamp, 0, endchar);
       let valuetmp = value;
       if (strTimeStamp === '') {
         valuetmp += timestamp + time.toString() + endchar;
@@ -43,7 +43,7 @@ const adsStorage = {
       }
       localStorage.setItem(key, valuetmp);
     },
-    get_item(key, chkTime) {
+    getItem(key, chkTime) {
       let a = localStorage.getItem(key);
       let endchar = '';
       const date = new Date();
@@ -56,7 +56,7 @@ const adsStorage = {
       } else {
         endchar = ',';
       }
-      let strTimeStamp = this.get_exprises(a, timestamp, 0, endchar);
+      let strTimeStamp = this.getExprises(a, timestamp, 0, endchar);
       strTimeStamp = strTimeStamp.replace(timestamp, '');
       if (strTimeStamp === '' || isNaN(parseInt(strTimeStamp, 10)) || parseInt(strTimeStamp, 10) < time) {
         return '';
@@ -67,7 +67,7 @@ const adsStorage = {
       }
       return a;
     },
-    remove_item(key) {
+    removeItem(key) {
       localStorage.removeItem(key);
     },
     // clear all key value item
@@ -77,7 +77,7 @@ const adsStorage = {
   },
   setStorage(name, value, expires, path, domain, secure) {
     if (window.admislocalStorage) {
-      this.lcStorage.set_item(name, value, expires);
+      this.lcStorage.setItem(name, value, expires);
       if (name === '__R' || name === '__RC') {
         this.setCookie(name, value, expires, path, domain, secure);
       }
@@ -90,7 +90,7 @@ const adsStorage = {
       if (name === '__R' || name === '__RC') {
         return this.getCookie(name);
       }
-      return this.lcStorage.get_item(name);
+      return this.lcStorage.getItem(name);
     }
     return this.getCookie(name);
   },
