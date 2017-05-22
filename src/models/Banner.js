@@ -127,21 +127,25 @@ class Banner extends Entity {
               }
               // console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
               switch (comparison) {
-                case '==':
+                case '==': {
                   stringCheck += value[j] === thisChannel[0];
                   break;
-                case '!=':
+                }
+                case '!=': {
                   stringCheck += value[j] !== thisChannel[0];
                   break;
-                default:
+                }
+                default: {
                   stringCheck += false;
                   break;
+                }
               }
               break;
             }
-            default:
+            default: {
               stringCheck += false;
               break;
+            }
           }
         }
         const CheckValue = a(stringCheck);

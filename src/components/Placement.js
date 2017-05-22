@@ -25,12 +25,12 @@ const Placement = Vue.component('placement', {
     window.arfPlacements[this.current.id] = this;
   },
 
-  mounted() {
+  // mounted() {
     // this.$on('bannerHeight', (bannerHeight) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
-  },
+  // },
 
   computed: {
     current() {

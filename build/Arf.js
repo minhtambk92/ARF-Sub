@@ -10287,20 +10287,28 @@ var Banner = function (_Entity) {
                   // console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
                   switch (comparison) {
                     case '==':
-                      stringCheck += value[j] === thisChannel[0];
-                      break;
+                      {
+                        stringCheck += value[j] === thisChannel[0];
+                        break;
+                      }
                     case '!=':
-                      stringCheck += value[j] !== thisChannel[0];
-                      break;
+                      {
+                        stringCheck += value[j] !== thisChannel[0];
+                        break;
+                      }
                     default:
-                      stringCheck += false;
-                      break;
+                      {
+                        stringCheck += false;
+                        break;
+                      }
                   }
                   break;
                 }
               default:
-                stringCheck += false;
-                break;
+                {
+                  stringCheck += false;
+                  break;
+                }
             }
           }
           var CheckValue = a(stringCheck);
@@ -11319,13 +11327,14 @@ var Placement = _vue2.default.component('placement', {
     window.arfPlacements = window.arfPlacements || {};
     window.arfPlacements[this.current.id] = this;
   },
-  mounted: function mounted() {
-    // this.$on('bannerHeight', (bannerHeight) => {
-    //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
-    //   this.$parent.$emit('PlaceHeight', bannerHeight);
-    // });
-  },
 
+
+  // mounted() {
+  // this.$on('bannerHeight', (bannerHeight) => {
+  //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
+  //   this.$parent.$emit('PlaceHeight', bannerHeight);
+  // });
+  // },
 
   computed: {
     current: function current() {
@@ -12001,7 +12010,6 @@ var Zone = function (_Entity) {
         var ratio = allPlaces.reduce(function (tmp, place) {
           return (type === 'cpd' ? place.data.cpdPercent : place.data.weight) + tmp;
         }, 0) / 100;
-
         return allPlaces.reduce(function (range, placement) {
           var nextRange = range + (type === 'cpd' ? placement.data.cpdPercent : placement.data.weight) / ratio;
 
@@ -12359,7 +12367,6 @@ var Zone = function (_Entity) {
                     place.index === index && place.data.revenueType === shareConstruct[index].type
                   );
                 });
-
                 // filter place with relative keyword
                 var placesWithKeyword = [];
                 if (arrayRelativeKeyword.length > 0) {
@@ -12369,7 +12376,6 @@ var Zone = function (_Entity) {
                     places = placesWithKeyword;
                   }
                 }
-
                 // if don't have any places fit in area => return empty share
                 if (places.length === 0) {
                   share = [];
@@ -12379,14 +12385,12 @@ var Zone = function (_Entity) {
                   // choose random a placement which are collected on above
                   // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
                   // const place = places[randomIndex];
-
                   var place = activePlacement(places, shareConstruct[index]);
                   // console.log('random', places.length, randomIndex);
                   share.push(place.data);
                 }
                 return 0;
               }, 0);
-
               // if share available => insert monopoly places
               if (share.length !== 0) {
                 // push (all places have type === placementType) into share.
@@ -12410,11 +12414,9 @@ var Zone = function (_Entity) {
                   share = [];
                 }
               }
-
               return '';
             }, 0);
           }
-
           shareTemplate.weight = 100 / shares.length;
           for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
             shareTemplate.id = 'DS-' + _i2;
@@ -12531,7 +12533,6 @@ var Zone = function (_Entity) {
                 shareWith = shareWithKeyword;
               }
             }
-
             // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
             var createMonopolyPlacesWithShare = function createMonopolyPlacesWithShare(array, lib) {
               var res = [];
@@ -12637,12 +12638,10 @@ var Zone = function (_Entity) {
       var ShareRendered = zoneCookie.split('|');
       var activeRevenue = function activeRevenue(allRevenueType) {
         var randomNumber = Math.random() * 100;
-
         var ratio = allRevenueType.reduce(function (acc, revenueType) {
           return revenueType.weight + acc;
         }, 0) / 100;
-
-        var res = allRevenueType.reduce(function (acc, revenueType) {
+        var result = allRevenueType.reduce(function (acc, revenueType) {
           var nextRange = acc + revenueType.weight / ratio;
 
           if ((typeof acc === 'undefined' ? 'undefined' : (0, _typeof3.default)(acc)) === 'object') {
@@ -12655,7 +12654,7 @@ var Zone = function (_Entity) {
 
           return nextRange;
         }, 0);
-        return res;
+        return result;
       };
       // build construct of current share.
       var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));

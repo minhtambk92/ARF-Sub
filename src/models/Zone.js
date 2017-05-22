@@ -126,7 +126,6 @@ class Zone extends Entity {
     const activePlacement = (allPlaces, type) => {
       const randomNumber = Math.random() * 100;
       const ratio = allPlaces.reduce((tmp, place) => ((type === 'cpd' ? place.data.cpdPercent : place.data.weight) + tmp), 0) / 100;
-
       return allPlaces.reduce((range, placement) => {
         const nextRange = range + ((type === 'cpd' ? placement.data.cpdPercent : placement.data.weight) / ratio);
 
@@ -472,7 +471,6 @@ class Zone extends Entity {
                 // placeChosen.indexOf(place) === -1 &&
                 place.index === index &&
                 place.data.revenueType === shareConstruct[index].type));
-
               // filter place with relative keyword
               let placesWithKeyword = [];
               if (arrayRelativeKeyword.length > 0) {
@@ -482,7 +480,6 @@ class Zone extends Entity {
                   places = placesWithKeyword;
                 }
               }
-
               // if don't have any places fit in area => return empty share
               if (places.length === 0) {
                 share = [];
@@ -491,14 +488,12 @@ class Zone extends Entity {
                 // choose random a placement which are collected on above
                 // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
                 // const place = places[randomIndex];
-
                 const place = activePlacement(places, shareConstruct[index]);
                 // console.log('random', places.length, randomIndex);
                 share.push(place.data);
               }
               return 0;
             }, 0);
-
             // if share available => insert monopoly places
             if (share.length !== 0) {
               // push (all places have type === placementType) into share.
@@ -519,11 +514,9 @@ class Zone extends Entity {
                 share = [];
               }
             }
-
             return '';
           }, 0);
         }
-
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
           shareTemplate.id = `DS-${i}`;
@@ -638,7 +631,6 @@ class Zone extends Entity {
               shareWith = shareWithKeyword;
             }
           }
-
           // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
           const createMonopolyPlacesWithShare = (array, lib) => {
             const res = [];
@@ -733,11 +725,9 @@ class Zone extends Entity {
     const ShareRendered = zoneCookie.split('|');
     const activeRevenue = (allRevenueType) => {
       const randomNumber = Math.random() * 100;
-
       const ratio = allRevenueType.reduce((acc, revenueType) =>
           (revenueType.weight + acc), 0) / 100;
-
-      const res = allRevenueType.reduce((acc, revenueType) => {
+      const result = allRevenueType.reduce((acc, revenueType) => {
         const nextRange = acc + (revenueType.weight / ratio);
 
         if (typeof acc === 'object') {
@@ -750,7 +740,7 @@ class Zone extends Entity {
 
         return nextRange;
       }, 0);
-      return res;
+      return result;
     };
     // build construct of current share.
     let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
