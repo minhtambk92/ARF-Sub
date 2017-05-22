@@ -31,12 +31,10 @@ const util = {
     }
     return 1;
   },
-
   // flatten array
   flatten(arr) {
     return arr.reduce((acc, val) => acc.concat(Array.isArray(val) ? util.flatten(val) : val), []);
   },
-
   // Clone Array that don't reference to Array copy.
   cloneArray(arr) {
     let copy;
@@ -65,7 +63,6 @@ const util = {
     }
     return r;
   },
-
   // permute item in array and return a array store permutations
   permuteArray(array) {
     const permArr = [];
@@ -98,7 +95,6 @@ const util = {
     };
     return permute(array);
   },
-
   // compute share base on area and number of place => return a array store these share-ratios
   ComputeShare(FreeAreaData, numberPlacesData) {
     // save output result
@@ -162,7 +158,6 @@ const util = {
     }, 0);
     return (shares);
   },
-
   // filter Share base on Campaign place position
   filterShareAfterCompute(shares, ...OrderArea) {
     let sharesTemp = shares;
@@ -177,7 +172,6 @@ const util = {
     }
     return sharesTemp;
   },
-
   // convert location value (1->101) to location name
   convertLocation(locationValue) {
     locationValue = parseInt(locationValue, 10); // eslint-disable-line no-param-reassign
@@ -410,7 +404,6 @@ const util = {
       return acc;
     }, 0);
   },
-
   // insert default place if share lack places.
   fixShare(share) {
     const sumPlaceArea = share.allPlacements.reduce((acc, item) => acc + item.PlacementArea, 0);
@@ -473,7 +466,6 @@ const util = {
     }
     return share;
   },
-
   // compute factorial
   factorial(number) {
     let factored = 1;
@@ -494,12 +486,10 @@ const util = {
     };
     return compute(number);
   },
-
   // get result of combination : k of n elements.
   Combination(k, n) {
     return this.factorial(n) / (this.factorial(k) * this.factorial(n - k));
   },
-
   // create these combinations : k of array set => collection into array
   kCombinations(set, k) {
     let i;
@@ -542,13 +532,12 @@ const util = {
     }
     return combs;
   },
-
   // create these combinations k-set.length of array set => collection into array
   combinations(set) {
     let kCombs;
     const combs = [];
 
-    // Calculate all non-empty k-combinations
+    // Calculate all non-empty k-combinationsr
     for (let k = 1; k <= set.length; k += 1) {
       kCombs = this.kCombinations(set, k);
       for (let i = 0; i < kCombs.length; i += 1) {
@@ -557,7 +546,6 @@ const util = {
     }
     return combs;
   },
-
   // check compete with places
   isCompete(allPlacement, placeOrder) {
     let count = 0;
@@ -569,8 +557,7 @@ const util = {
     }, 0);
     return count > 1;
   },
-
-// check compete with shares
+  // check compete with shares
   isCompete2(shares, placeOrder) {
     let placeInShare = [];
     shares.reduce((temp, share) =>

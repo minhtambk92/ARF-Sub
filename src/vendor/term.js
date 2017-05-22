@@ -18,6 +18,7 @@ const term = {
     }
     return http.toLowerCase();
   },
+
   getCurrentDomain(type) {
     const url = document.URL;
     const ref = document.referrer;

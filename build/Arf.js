@@ -13321,14 +13321,12 @@ var util = {
     return 1;
   },
 
-
   // flatten array
   flatten: function flatten(arr) {
     return arr.reduce(function (acc, val) {
       return acc.concat(Array.isArray(val) ? util.flatten(val) : val);
     }, []);
   },
-
 
   // Clone Array that don't reference to Array copy.
   cloneArray: function cloneArray(arr) {
@@ -13357,7 +13355,6 @@ var util = {
     }
     return r;
   },
-
 
   // permute item in array and return a array store permutations
   permuteArray: function permuteArray(array) {
@@ -13391,7 +13388,6 @@ var util = {
     };
     return permute(array);
   },
-
 
   // compute share base on area and number of place => return a array store these share-ratios
   ComputeShare: function ComputeShare(FreeAreaData, numberPlacesData) {
@@ -13460,7 +13456,6 @@ var util = {
     return shares;
   },
 
-
   // filter Share base on Campaign place position
   filterShareAfterCompute: function filterShareAfterCompute(shares) {
     for (var _len = arguments.length, OrderArea = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -13481,7 +13476,6 @@ var util = {
     }
     return sharesTemp;
   },
-
 
   // convert location value (1->101) to location name
   convertLocation: function convertLocation(locationValue) {
@@ -13708,7 +13702,6 @@ var util = {
     }, 0);
   },
 
-
   // insert default place if share lack places.
   fixShare: function fixShare(share) {
     var sumPlaceArea = share.allPlacements.reduce(function (acc, item) {
@@ -13774,7 +13767,6 @@ var util = {
     return share;
   },
 
-
   // compute factorial
   factorial: function factorial(number) {
     var factored = 1;
@@ -13796,12 +13788,10 @@ var util = {
     return compute(number);
   },
 
-
   // get result of combination : k of n elements.
   Combination: function Combination(k, n) {
     return this.factorial(n) / (this.factorial(k) * this.factorial(n - k));
   },
-
 
   // create these combinations : k of array set => collection into array
   kCombinations: function kCombinations(set, k) {
@@ -13846,13 +13836,12 @@ var util = {
     return combs;
   },
 
-
   // create these combinations k-set.length of array set => collection into array
   combinations: function combinations(set) {
     var kCombs = void 0;
     var combs = [];
 
-    // Calculate all non-empty k-combinations
+    // Calculate all non-empty k-combinationsr
     for (var k = 1; k <= set.length; k += 1) {
       kCombs = this.kCombinations(set, k);
       for (var i = 0; i < kCombs.length; i += 1) {
@@ -13861,7 +13850,6 @@ var util = {
     }
     return combs;
   },
-
 
   // check compete with places
   isCompete: function isCompete(allPlacement, placeOrder) {
@@ -13876,7 +13864,6 @@ var util = {
     }, 0);
     return count > 1;
   },
-
 
   // check compete with shares
   isCompete2: function isCompete2(shares, placeOrder) {
