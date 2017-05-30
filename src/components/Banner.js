@@ -194,31 +194,46 @@ const Banner = Vue.component('banner', {
     renderBannerNoIframe() {
       const vm = this;
       const urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
+      const idw = document.getElementById(`${vm.current.id}`);
+      // let isRender = false;
       const loadAsync = setInterval(() => {
         if (window.isLoadLib !== undefined && window.isLoadLib) {
-          const idw = document.getElementById(`${vm.current.id}`);
           if (idw) {
             idw.innerHTML = '';
             const data = vm.current.html;
+            // isRender = true;
             admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
+            // if (idw.innerHTML === '') {
+            //   console.log('abcd');
+            //   idw.innerHTML = data;
+            // }
           }
           clearInterval(loadAsync);
         }
       }, 500);
       util.admLoadJs(urlCore, 'admicro_core_nld', () => {
-        const idw = document.getElementById(`${vm.current.id}`);
         if (idw) {
           idw.innerHTML = '';
           const data = vm.current.html;
+          // isRender = true;
           admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
+          // if (idw.innerHTML === '') {
+          //   console.log('abcd');
+          //   idw.innerHTML = vm.current.html;
+          // }
         }
         clearInterval(loadAsync);
       });
-      try {
-        vm.$el.replaceChild(vm.current.html, vm.$refs.banner); // Do the trick
-      } catch (error) {
-        throw new Error(error);
-      }
+      // const loadAsync2 = setInterval(() => {
+      //   if (isRender) {
+      //     if (idw && idw.innerHTML === '') {
+      //       console.log('testxx');
+      //       const data = vm.current.html;
+      //       idw.innerHTML = data;
+      //     }
+      //     clearInterval(loadAsync2);
+      //   }
+      // }, 500);
     },
     // renderBannerImg() {
     //   console.log('renderBannerImg');

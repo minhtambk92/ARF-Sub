@@ -11199,26 +11199,46 @@ var Banner = _vue2.default.component('banner', {
     renderBannerNoIframe: function renderBannerNoIframe() {
       var vm = this;
       var urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
+      var idw = document.getElementById('' + vm.current.id);
+      // let isRender = false;
       var loadAsync = setInterval(function () {
         if (window.isLoadLib !== undefined && window.isLoadLib) {
-          var idw = document.getElementById('' + vm.current.id);
           if (idw) {
             idw.innerHTML = '';
             var data = vm.current.html;
+            // isRender = true;
             admExecJs(data, '' + vm.current.id); // eslint-disable-line no-undef
+            // if (idw.innerHTML === '') {
+            //   console.log('abcd');
+            //   idw.innerHTML = data;
+            // }
           }
           clearInterval(loadAsync);
         }
       }, 500);
       _vendor.util.admLoadJs(urlCore, 'admicro_core_nld', function () {
-        var idw = document.getElementById('' + vm.current.id);
         if (idw) {
           idw.innerHTML = '';
           var data = vm.current.html;
+          // isRender = true;
           admExecJs(data, '' + vm.current.id); // eslint-disable-line no-undef
+          // if (idw.innerHTML === '') {
+          //   console.log('abcd');
+          //   idw.innerHTML = vm.current.html;
+          // }
         }
         clearInterval(loadAsync);
       });
+      // const loadAsync2 = setInterval(() => {
+      //   if (isRender) {
+      //     if (idw && idw.innerHTML === '') {
+      //       console.log('testxx');
+      //       const data = vm.current.html;
+      //       idw.innerHTML = data;
+      //     }
+      //     clearInterval(loadAsync2);
+      //   }
+      // }, 500);
     }
   },
 
