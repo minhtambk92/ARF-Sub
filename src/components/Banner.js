@@ -214,6 +214,11 @@ const Banner = Vue.component('banner', {
         }
         clearInterval(loadAsync);
       });
+      try {
+        vm.$el.replaceChild(vm.current.html, vm.$refs.banner); // Do the trick
+      } catch (error) {
+        throw new Error(error);
+      }
     },
     // renderBannerImg() {
     //   console.log('renderBannerImg');
