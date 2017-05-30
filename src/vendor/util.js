@@ -104,10 +104,9 @@ const util = {
     let count = 0;
     let nps = 0;
 
-    function CreateShare(FreeAreasDt, numberPlacesDt) {
+    const CreateShare = (FreeAreasDt, numberPlacesDt) => {
       let FreeArea = FreeAreasDt;
       let numberPlaces = numberPlacesDt;
-
       while (FreeArea > 0) {
         const PlaceArea = (FreeArea - (FreeArea % numberPlaces)) / numberPlaces;
         if (count === 0) {
@@ -122,7 +121,6 @@ const util = {
             if (thisLever.indexOf(temp) === -1) {
               let FreeAreaTemp = FreeArea;
               let numberPlacesTemp = numberPlaces;
-
               thisLever.push(temp);
               share.push(temp);
               numberPlacesTemp -= 1;
@@ -132,7 +130,6 @@ const util = {
             }
           }
         }
-
         numberPlaces -= 1;
         FreeArea -= PlaceArea;
         share.push(PlaceArea);
@@ -148,8 +145,7 @@ const util = {
           share = [];
         }
       }
-    }
-
+    };
     CreateShare(FreeAreaData, numberPlacesData);
 
     shares.reduce((acc, sh) => { // eslint-disable-line array-callback-return

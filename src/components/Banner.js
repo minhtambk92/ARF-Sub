@@ -47,25 +47,12 @@ const Banner = Vue.component('banner', {
   },
 
   mounted() {
-    if (this.current.bannerType.isInputData !== undefined &&
-      this.current.bannerType.isInputData === true && this.current.isIFrame === true) {
+    if (this.current.isIFrame) {
       console.log('renderBannerHTML');
-      this.renderBannerHTML();
-    } else if (this.current.bannerType.isInputData !== undefined &&
-      this.current.bannerType.isInputData === false && this.current.isIFrame === true &&
-      this.current.bannerType.isUpload !== undefined &&
-      this.current.bannerType.isUpload === false) {
-      console.log('renderToIFrame');
       this.renderToIFrame();
-    } else if (this.current.bannerType.isInputData !== undefined &&
-      this.current.bannerType.isInputData === false && this.current.isIFrame === false) {
+    } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
-    }
-    if (this.current.bannerType.isUpload !== undefined &&
-      this.current.bannerType.isUpload === true) {
-      // this.renderBannerImg();
-      this.renderToIFrame();
     }
     this.current.countFrequency();
     if (this.current.isRelative) {

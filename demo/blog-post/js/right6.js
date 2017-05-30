@@ -41,7 +41,7 @@
 }([function (e, t, n) {
   let r = location.search.indexOf('corejs_env=dev') !== -1 ? '' : '.min',
     o = document.createElement('script');
-  o.id = 'arf-core-js', o.type = 'application/javascript', o.src = `//localhost:63342/ARF-Sub/build/Arf${r}.js`, document.getElementById(o.id) || document.getElementsByTagName('body')[0].appendChild(o), window.arfZonesQueue = window.arfZonesQueue || [], window.arfZonesQueue.push({
+  o.id = 'arf-core-js', o.type = 'application/javascript', o.src = `//localhost:63343/ARF-Sub/build/Arf${r}.js`, document.getElementById(o.id) || document.getElementsByTagName('body')[0].appendChild(o), window.arfZonesQueue = window.arfZonesQueue || [], window.arfZonesQueue.push({
     el: document.getElementById('d4e65ac4-9630-4a0e-b2c0-11fe9d07b2f0'),
     propsData: {
       model: {

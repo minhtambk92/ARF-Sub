@@ -11056,19 +11056,12 @@ var Banner = _vue2.default.component('banner', {
     window.arfBanners[this.current.id] = this;
   },
   mounted: function mounted() {
-    if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === true && this.current.isIFrame === true) {
+    if (this.current.isIFrame) {
       console.log('renderBannerHTML');
-      this.renderBannerHTML();
-    } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === true && this.current.bannerType.isUpload !== undefined && this.current.bannerType.isUpload === false) {
-      console.log('renderToIFrame');
       this.renderToIFrame();
-    } else if (this.current.bannerType.isInputData !== undefined && this.current.bannerType.isInputData === false && this.current.isIFrame === false) {
+    } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
-    }
-    if (this.current.bannerType.isUpload !== undefined && this.current.bannerType.isUpload === true) {
-      // this.renderBannerImg();
-      this.renderToIFrame();
     }
     this.current.countFrequency();
     if (this.current.isRelative) {
@@ -13167,6 +13160,14 @@ var screen = {
       myHeight = document.body.clientHeight;
     }
     return myHeight;
+  },
+  isInViewport: function isInViewport(element, isCompletelyInViewport) {
+    var rect = element.getBoundingClientRect();
+    var html = document.documentElement;
+    if (isCompletelyInViewport) {
+      return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || html.clientHeight) && rect.right <= (window.innerWidth || html.clientWidth);
+    }
+    return rect.top < 0 && rect.left < 0 && rect.bottom > (window.innerHeight || html.clientHeight) && rect.right > (window.innerWidth || html.clientWidth);
   }
 };
 
@@ -13397,10 +13398,9 @@ var util = {
     var count = 0;
     var nps = 0;
 
-    function CreateShare(FreeAreasDt, numberPlacesDt) {
+    var CreateShare = function CreateShare(FreeAreasDt, numberPlacesDt) {
       var FreeArea = FreeAreasDt;
       var numberPlaces = numberPlacesDt;
-
       while (FreeArea > 0) {
         var PlaceArea = (FreeArea - FreeArea % numberPlaces) / numberPlaces;
         if (count === 0) {
@@ -13415,7 +13415,6 @@ var util = {
             if (thisLever.indexOf(temp) === -1) {
               var FreeAreaTemp = FreeArea;
               var numberPlacesTemp = numberPlaces;
-
               thisLever.push(temp);
               share.push(temp);
               numberPlacesTemp -= 1;
@@ -13425,7 +13424,6 @@ var util = {
             }
           }
         }
-
         numberPlaces -= 1;
         FreeArea -= PlaceArea;
         share.push(PlaceArea);
@@ -13443,8 +13441,7 @@ var util = {
           share = [];
         }
       }
-    }
-
+    };
     CreateShare(FreeAreaData, numberPlacesData);
 
     shares.reduce(function (acc, sh) {
