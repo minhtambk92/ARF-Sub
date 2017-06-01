@@ -11099,9 +11099,11 @@ var Banner = _vue2.default.component('banner', {
           if (_this.current.bannerType.isUpload !== undefined && _this.current.bannerType.isUpload === true) {
             iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
           } else {
-            var bannerData = _vendor.macro.replaceMacro(vm.current.html);
+            var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
+            // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
             console.log(bannerData);
             iframe.contentWindow.document.write(bannerData);
+            // iframe.contentWindow.document.write(bannerDataWithMacro);
           }
           iframe.contentWindow.document.close();
 
@@ -11109,6 +11111,14 @@ var Banner = _vue2.default.component('banner', {
           if (iframe.contentWindow.document.body !== null) {
             iframe.contentWindow.document.body.style.margin = 0;
           }
+
+          // resize iframe fit with content
+          var fixIframe = setInterval(function () {
+            if (document.getElementById('iframe-' + vm.current.id)) {
+              _vendor.util.resizeIFrameToFitContent(iframe);
+              clearInterval(fixIframe);
+            }
+          }, 200);
 
           // Prevent AppleWebKit iframe.onload loop
           vm.$data.isRendered = true;
@@ -11490,10 +11500,11 @@ var Placement = _vue2.default.component('placement', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-placement',
-        style: {
-          width: vm.current.width + 'px'
-        }
+        'class': 'arf-placement'
+        // style={{
+        // width: `${vm.current.width}px`,
+        // height: `${vm.current.height}px`,
+        // }}
       },
       [h(
         _components.Banner,
@@ -13221,7 +13232,7 @@ Object.defineProperty(exports, "__esModule", {
  * Created by TamLeMinh on 6/1/2017.
  */
 var macro = {
-  linkReplace: [{ macro: '%%WIDTH%%', link: 'http://width.com' }, { macro: '%%HEIGHT%%', link: 'http://height.com' }, { macro: '%%CLICK_URL_ESC%%', link: 'http://clickUrlEsc.com' }, { macro: '%%CACHEBUSTER%%', link: 'http://CacheBuster.com' }, { macro: '%%CLICK_URL_UNESC%%', link: 'http://clickURLUNEsc.com' }],
+  linkReplace: [{ macro: '%%WIDTH%%', link: 'width' }, { macro: '%%HEIGHT%%', link: 'http://height.com' }, { macro: '%%CLICK_URL_ESC%%', link: 'http://clickUrlEsc.com' }, { macro: '%%CACHEBUSTER%%', link: 'http://CacheBuster.com' }, { macro: '%%CLICK_URL_UNESC%%', link: 'http://clickURLUNEsc.com' }],
   getAllMacro: function getAllMacro(str) {
     var result = str.match(/%%(.+?)%%/g);
     return result !== null ? result : [];
@@ -13234,13 +13245,13 @@ var macro = {
     }
     return '';
   },
-  replaceMacro: function replaceMacro(str) {
+  replaceMacro: function replaceMacro(str, isRemoveMacro) {
     var strTemp = str;
     var allMacro = this.getAllMacro(strTemp);
     console.log('allMacro', allMacro);
     if (allMacro.length > 0) {
       for (var i = 0; i < allMacro.length; i += 1) {
-        var link = this.getLinkMacro(allMacro[i]);
+        var link = isRemoveMacro ? '' : this.getLinkMacro(allMacro[i]);
         strTemp = strTemp.replace(allMacro[i], link);
         console.log('macro', strTemp);
       }
@@ -14038,10 +14049,11 @@ var util = {
     }
   },
   resizeIFrameToFitContent: function resizeIFrameToFitContent(iFrame) {
-    var temp = iFrame;
-    temp.width = iFrame.contentWindow.document.body.scrollWidth;
-    temp.height = iFrame.contentWindow.document.body.scrollHeight;
-    return temp;
+    console.log(iFrame.contentWindow.document.body.scrollWidth, iFrame.contentWindow.document.body.scrollHeight);
+    /* eslint-disable */
+    iFrame.width = iFrame.contentWindow.document.body.scrollWidth;
+    iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
+    /* eslint-enable */
   },
 
 

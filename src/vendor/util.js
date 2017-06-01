@@ -593,10 +593,12 @@ const util = {
   },
 
   resizeIFrameToFitContent(iFrame) {
-    const temp = iFrame;
-    temp.width = iFrame.contentWindow.document.body.scrollWidth;
-    temp.height = iFrame.contentWindow.document.body.scrollHeight;
-    return temp;
+    console.log(iFrame.contentWindow.document.body.scrollWidth,
+        iFrame.contentWindow.document.body.scrollHeight);
+    /* eslint-disable */
+    iFrame.width = iFrame.contentWindow.document.body.scrollWidth;
+    iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
+    /* eslint-enable */
   },
 
   /* eslint-disable */

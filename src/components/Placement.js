@@ -87,10 +87,10 @@ const Placement = Vue.component('placement', {
       <div
         id={vm.current.id}
         class="arf-placement"
-        style={{
-          width: `${vm.current.width}px`,
+        // style={{
+          // width: `${vm.current.width}px`,
           // height: `${vm.current.height}px`,
-        }}
+        // }}
       >
         <Banner model={vm.activeBannerModel} />
       </div>

@@ -2,7 +2,7 @@
  * Created by TamLeMinh on 6/1/2017.
  */
 const macro = {
-  linkReplace: [{ macro: '%%WIDTH%%', link: 'http://width.com' },
+  linkReplace: [{ macro: '%%WIDTH%%', link: 'width' },
     { macro: '%%HEIGHT%%', link: 'http://height.com' },
     { macro: '%%CLICK_URL_ESC%%', link: 'http://clickUrlEsc.com' },
     { macro: '%%CACHEBUSTER%%', link: 'http://CacheBuster.com' },
@@ -19,13 +19,13 @@ const macro = {
     }
     return '';
   },
-  replaceMacro(str) {
+  replaceMacro(str, isRemoveMacro) {
     let strTemp = str;
     const allMacro = this.getAllMacro(strTemp);
     console.log('allMacro', allMacro);
     if (allMacro.length > 0) {
       for (let i = 0; i < allMacro.length; i += 1) {
-        const link = this.getLinkMacro(allMacro[i]);
+        const link = isRemoveMacro ? '' : this.getLinkMacro(allMacro[i]);
         strTemp = strTemp.replace(allMacro[i], link);
         console.log('macro', strTemp);
       }

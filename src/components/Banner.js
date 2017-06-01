@@ -84,9 +84,11 @@ const Banner = Vue.component('banner', {
             this.current.bannerType.isUpload === true) {
             iframe.contentWindow.document.write(`<img src="${vm.current.imageUrl}">`);
           } else {
-            const bannerData = macro.replaceMacro(vm.current.html);
+            const bannerData = macro.replaceMacro(vm.current.html, true);
+            // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
             console.log(bannerData);
             iframe.contentWindow.document.write(bannerData);
+            // iframe.contentWindow.document.write(bannerDataWithMacro);
           }
           iframe.contentWindow.document.close();
 
@@ -94,6 +96,14 @@ const Banner = Vue.component('banner', {
           if (iframe.contentWindow.document.body !== null) {
             iframe.contentWindow.document.body.style.margin = 0;
           }
+
+          // resize iframe fit with content
+          const fixIframe = setInterval(() => {
+            if (document.getElementById(`iframe-${vm.current.id}`)) {
+              util.resizeIFrameToFitContent(iframe);
+              clearInterval(fixIframe);
+            }
+          }, 200);
 
           // Prevent AppleWebKit iframe.onload loop
           vm.$data.isRendered = true;
