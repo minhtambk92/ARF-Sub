@@ -13236,6 +13236,7 @@ var macro = {
   replaceMacro: function replaceMacro(str) {
     var strTemp = str;
     var allMacro = this.getAllMacro(strTemp);
+    console.log('allMacro', allMacro);
     if (allMacro.length > 0) {
       for (var i = 0; i < allMacro.length; i += 1) {
         var link = this.getLinkMacro(allMacro[i]);

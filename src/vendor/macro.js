@@ -21,6 +21,7 @@ const macro = {
   replaceMacro(str) {
     let strTemp = str;
     const allMacro = this.getAllMacro(strTemp);
+    console.log('allMacro', allMacro);
     if (allMacro.length > 0) {
       for (let i = 0; i < allMacro.length; i += 1) {
         const link = this.getLinkMacro(allMacro[i]);
