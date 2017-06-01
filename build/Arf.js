@@ -13223,7 +13223,8 @@ Object.defineProperty(exports, "__esModule", {
 var macro = {
   linkReplace: [{ macro: '%%WIDTH%%', link: 'http://width.com' }, { macro: '%%HEIGHT%%', link: 'http://height.com' }, { macro: '%%CLICK_URL_ESC%%', link: 'http://clickUrlEsc.com' }, { macro: '%%CACHEBUSTER%%', link: 'http://CacheBuster.com' }, { macro: '%%CLICK_URL_UNESC%%', link: 'http://clickURLUNEsc.com' }],
   getAllMacro: function getAllMacro(str) {
-    return str.match(/%%(.+?)%%/g);
+    var result = str.match(/%%(.+?)%%/g);
+    return result !== null ? result : [];
   },
   getLinkMacro: function getLinkMacro(macroStr) {
     for (var i = 0; i < this.linkReplace.length; i += 1) {

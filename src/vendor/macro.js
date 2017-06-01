@@ -8,7 +8,8 @@ const macro = {
     { macro: '%%CACHEBUSTER%%', link: 'http://CacheBuster.com' },
     { macro: '%%CLICK_URL_UNESC%%', link: 'http://clickURLUNEsc.com' }],
   getAllMacro(str) {
-    return str.match(/%%(.+?)%%/g);
+    const result = str.match(/%%(.+?)%%/g);
+    return result !== null ? result : [];
   },
   getLinkMacro(macroStr) {
     for (let i = 0; i < this.linkReplace.length; i += 1) {
