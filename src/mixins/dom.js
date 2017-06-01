@@ -17,6 +17,7 @@ const dom = {
      * Attach entity's styles to header
      */
     attachStyles() {
+      console.log('attachStyle', this.current.css);
       if (!this.current.css) return;
 
       const head = document.head || document.getElementsByTagName('head')[0];
@@ -30,7 +31,6 @@ const dom = {
       } else {
         style.appendChild(document.createTextNode(this.current.css));
       }
-
       head.appendChild(style);
     },
 

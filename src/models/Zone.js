@@ -520,6 +520,7 @@ class Zone extends Entity {
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
           shareTemplate.id = `DS-${i}`;
+          shareTemplate.outputCss = `#DS-${i} .arf-placement {\n  margin: auto;\n}\n`;
           shareTemplate.placements = shares[i];
           const shareData = new Share(shareTemplate);
           shareDatas.push(shareData);
@@ -597,6 +598,7 @@ class Zone extends Entity {
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
           shareTemplate.id = `DS-${i}`;
+          shareTemplate.outputCss = `#DS-${i} .arf-placement {\n  margin: auto;\n}\n`;
           shareTemplate.placements = shares[i];
           const shareData = new Share(shareTemplate);
           shareDatas.push(shareData);

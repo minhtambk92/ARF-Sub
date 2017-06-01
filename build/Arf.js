@@ -11983,6 +11983,7 @@ var dom = {
      * Attach entity's styles to header
      */
     attachStyles: function attachStyles() {
+      console.log('attachStyle', this.current.css);
       if (!this.current.css) return;
 
       var head = document.head || document.getElementsByTagName('head')[0];
@@ -11996,7 +11997,6 @@ var dom = {
       } else {
         style.appendChild(document.createTextNode(this.current.css));
       }
-
       head.appendChild(style);
     },
 
@@ -12513,6 +12513,7 @@ var Zone = function (_Entity) {
           shareTemplate.weight = 100 / shares.length;
           for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
             shareTemplate.id = 'DS-' + _i2;
+            shareTemplate.outputCss = '#DS-' + _i2 + ' .arf-placement {\n  margin: auto;\n}\n';
             shareTemplate.placements = shares[_i2];
             var shareData = new _Share2.default(shareTemplate);
             shareDatas.push(shareData);
@@ -12590,6 +12591,7 @@ var Zone = function (_Entity) {
           shareTemplate.weight = 100 / shares.length;
           for (var _i3 = 0; _i3 < shares.length; _i3 += 1) {
             shareTemplate.id = 'DS-' + _i3;
+            shareTemplate.outputCss = '#DS-' + _i3 + ' .arf-placement {\n  margin: auto;\n}\n';
             shareTemplate.placements = shares[_i3];
             var shareData = new _Share2.default(shareTemplate);
             shareDatas.push(shareData);
