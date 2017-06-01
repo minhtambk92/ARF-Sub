@@ -7,7 +7,7 @@
 import Vue from 'vue';
 import { Banner as BannerModel } from '../models';
 import { dom } from '../mixins';
-import { util } from '../vendor';
+import { util, macro } from '../vendor';
 
 const Banner = Vue.component('banner', {
 
@@ -84,12 +84,16 @@ const Banner = Vue.component('banner', {
             this.current.bannerType.isUpload === true) {
             iframe.contentWindow.document.write(`<img src="${vm.current.imageUrl}">`);
           } else {
-            iframe.contentWindow.document.write(vm.current.html);
+            const bannerData = macro.replaceMacro(vm.current.html);
+            console.log(bannerData);
+            iframe.contentWindow.document.write(bannerData);
           }
           iframe.contentWindow.document.close();
 
           // Prevent scroll on IE
-          iframe.contentWindow.document.body.style.margin = 0;
+          if (iframe.contentWindow.document.body !== null) {
+            iframe.contentWindow.document.body.style.margin = 0;
+          }
 
           // Prevent AppleWebKit iframe.onload loop
           vm.$data.isRendered = true;
@@ -193,47 +197,104 @@ const Banner = Vue.component('banner', {
     },
     renderBannerNoIframe() {
       const vm = this;
-      const urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
-      const idw = document.getElementById(`${vm.current.id}`);
-      // let isRender = false;
-      const loadAsync = setInterval(() => {
-        if (window.isLoadLib !== undefined && window.isLoadLib) {
-          if (idw) {
-            idw.innerHTML = '';
-            const data = vm.current.html;
-            // isRender = true;
-            admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
-            // if (idw.innerHTML === '') {
-            //   console.log('abcd');
-            //   idw.innerHTML = data;
-            // }
+      const explode = (html) => {
+        let element = html;
+        const evlScript = [];
+        const scripts = [];
+        const trim = (str) => {
+          let strTemp = str;
+          strTemp = strTemp.replace(/^\s+/, '');
+          for (let i = strTemp.length - 1; i >= 0; i -= 1) {
+            if (/\S/.test(strTemp.charAt(i))) {
+              strTemp = strTemp.substring(0, i + 1);
+              break;
+            }
           }
-          clearInterval(loadAsync);
+          return strTemp;
+        };
+        // boc tach script
+        const allScriptTag = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
+
+        if (allScriptTag) {
+          let jsCodeInsideScriptTag = '';
+          for (let i = 0, len = allScriptTag.length; i < len; i += 1) {
+            element = element.replace(allScriptTag[i], '');
+            jsCodeInsideScriptTag = allScriptTag[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
+            if (trim(jsCodeInsideScriptTag) !== '') {
+              evlScript.push(trim(jsCodeInsideScriptTag));
+            }
+
+            const srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
+            if (srcAttribute) {
+              const linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
+              scripts.push(linkSrc);
+            }
+          }
         }
-      }, 500);
-      util.admLoadJs(urlCore, 'admicro_core_nld', () => {
-        if (idw) {
-          idw.innerHTML = '';
-          const data = vm.current.html;
-          // isRender = true;
-          admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
-          // if (idw.innerHTML === '') {
-          //   console.log('abcd');
-          //   idw.innerHTML = vm.current.html;
-          // }
+        return { scripts, evlScript };
+      };
+      const getFileScript = (el, ...url) => {
+        const a = document.createElement('script');
+        a.type = 'text/javascript';
+        a.async = true;
+        a.src = url;
+        if (url.length >= 2) {
+          const arrLength = url[1];
+          a.onload = function () {
+            const arr = arrLength;
+            const strUrl = arr[0];
+            arr.shift();
+            if (arr.length >= 1) {
+              getFileScript(el, strUrl, arr);
+            } else {
+              getFileScript(el, strUrl);
+            }
+          };
         }
-        clearInterval(loadAsync);
-      });
-      // const loadAsync2 = setInterval(() => {
-      //   if (isRender) {
-      //     if (idw && idw.innerHTML === '') {
-      //       console.log('testxx');
+        if (el === '') {
+          const c = document.getElementsByTagName('script')[0];
+          console.log(c);
+          c.parentNode.insertBefore(a, c);
+        } else {
+          el.appendChild(a);
+        }
+      };
+      // const urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
+      // const loadAsync = setInterval(() => {
+      //   if (window.isLoadLib !== undefined && window.isLoadLib) {
+      //     const idw = document.getElementById(`${vm.current.id}`);
+      //     if (idw) {
+      //       idw.innerHTML = '';
       //       const data = vm.current.html;
-      //       idw.innerHTML = data;
+      //       admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
       //     }
-      //     clearInterval(loadAsync2);
+      //     clearInterval(loadAsync);
       //   }
       // }, 500);
+      // util.admLoadJs(urlCore, 'admicro_core_nld', () => {
+      //   const idw = document.getElementById(`${vm.current.id}`);
+      //   if (idw) {
+      //     idw.innerHTML = '';
+      //     const data = vm.current.html;
+      //     admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
+      //   }
+      //   clearInterval(loadAsync);
+      // });
+
+      const HtmlData = vm.current.html;
+      const loadAsync = setInterval(() => {
+        const idw = document.getElementById(`${vm.current.id}`);
+        if (idw) {
+          idw.innerHTML = '';
+          const dataBanner = explode(HtmlData);
+
+          for (let i = 0; i < dataBanner.scripts.length; i += 1) {
+            console.log('abc', dataBanner.scripts[i]);
+            getFileScript(idw, dataBanner.scripts[i]);
+          }
+        }
+        clearInterval(loadAsync);
+      }, 500);
     },
     // renderBannerImg() {
     //   console.log('renderBannerImg');

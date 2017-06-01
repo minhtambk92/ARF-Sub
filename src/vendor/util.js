@@ -599,53 +599,49 @@ const util = {
     return temp;
   },
 
+  /* eslint-disable */
   admExecJs(html, id) {
-    let element = html;
-    const evlScript = [];
-    const script = [];
-
+    let element = html,
+      evlScript = [],
+      script = [];
     this.trim = function (str) {
-      let strTemp = str;
-      strTemp = str.replace(/^\s+/, '');
-      for (let i = str.length - 1; i >= 0; i -= 1) {
+      str = str.replace(/^\s+/, '');
+      for (let i = str.length - 1; i >= 0; i--) {
         if (/\S/.test(str.charAt(i))) {
-          strTemp = str.substring(0, i + 1);
+          str = str.substring(0, i + 1);
           break;
         }
       }
-      return strTemp;
+      return str;
     };
-
     this.explode = function () {
     // boc tach script
-      const b = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
+      let b = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi),
+        e = [];
       if (b) {
         let d = '';
-        for (let i = 0, len = b.length; i < len; i += 1) {
+        for (let i = 0, len = b.length; i < len; i++) {
           element = element.replace(b[i], '');
           d = b[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
-          if (this.trim(d) !== '') {
+          if (this.trim(d) != '') {
             evlScript.push(this.trim(d));
           }
 
-          const t = b[i].match(/src="([^]*)"/gi);
+          const t = b[i].match(/src="([^\"]*)\"/gi);
           if (t) {
-            script.push(t[0].replace(/src="([^]*)"/gi, '$1'));
+            script.push(t[0].replace(/src="([^\"]*)\"/gi, '$1'));
           }
         }
       }
     };
-
-    const callScript = this.getFileScript;
-    this.getFileScript = (url) => {
+    this.getFileScript = function (...url) {
       const a = document.createElement('script');
       a.type = 'text/javascript';
       a.async = true;
       a.src = url;
       const c = document.getElementsByTagName('script')[0];
-      const args = arguments; // eslint-disable-line
-      if (args.length >= 2) {
-        const arrLength = args[1];
+      if (url.length >= 2) {
+        const arrLength = url[1];
         a.onload = function () {
           const arr = arrLength;
           const strUrl = arr[0];
@@ -659,13 +655,13 @@ const util = {
       }
       c.parentNode.insertBefore(a, c);
     };
-
+    var callScript = this.getFileScript;
     this.explode();
 
     const id1 = document.getElementById(id);
     if (arguments.length >= 3) {
       if (id1) {
-        const strDiv = element.match(/id=[^]+/i);
+        const strDiv = element.match(/id=\"[^\"]+\"/i);
         if (strDiv) {
           const strId = strDiv[0].replace(/id="|"/gi, '');
           if (strId) {
@@ -690,7 +686,6 @@ const util = {
       if (script.length > 1) {
         const arr = script;
         const strUrl = script[0];
-        console.log(arr, strUrl);
         arr.shift();
         this.getFileScript(strUrl, arr);
       } else {
@@ -698,11 +693,12 @@ const util = {
       }
     }
     if (evlScript.length > 0) {
-      for (let i = 0, len = evlScript.length; i < len; i += 1) {
-        eval(evlScript[i]); // eslint-disable-line
+      for (let i = 0, len = evlScript.length; i < len; i++) {
+        eval(evlScript[i]);
       }
     }
   },
+  /* eslint-enable */
 
   getCurrentBrowser() {
     let tem;
