@@ -9761,7 +9761,8 @@ var Entity = function Entity(entity) {
   this.html = entity.html;
   this.script = entity.script;
   this.image = entity.image;
-  this.css = entity.outputCss;
+  this.css = entity.css;
+  this.outputCss = entity.outputCss;
   this.cpm = entity.cpm;
 };
 
@@ -11500,11 +11501,11 @@ var Placement = _vue2.default.component('placement', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-placement'
-        // style={{
-        // width: `${vm.current.width}px`,
-        // height: `${vm.current.height}px`,
-        // }}
+        'class': 'arf-placement',
+        style: {
+          width: vm.current.width + 'px',
+          height: vm.current.height + 'px'
+        }
       },
       [h(
         _components.Banner,
@@ -11983,8 +11984,7 @@ var dom = {
      * Attach entity's styles to header
      */
     attachStyles: function attachStyles() {
-      console.log('attachStyle', this.current.css);
-      if (!this.current.css) return;
+      if (!this.current.outputCss) return;
 
       var head = document.head || document.getElementsByTagName('head')[0];
       var style = document.createElement('style');
@@ -11993,10 +11993,11 @@ var dom = {
       style.type = 'text/css';
 
       if (style.styleSheet) {
-        style.styleSheet.cssText = this.current.css;
+        style.styleSheet.cssText = this.current.outputCss;
       } else {
-        style.appendChild(document.createTextNode(this.current.css));
+        style.appendChild(document.createTextNode(this.current.outputCss));
       }
+      console.log('attach', this.current.outputCss);
       head.appendChild(style);
     },
 
@@ -12133,6 +12134,22 @@ var Zone = function (_Entity) {
         return placesWithKeyword;
       };
       var allShare = this.allShares;
+      var getCss = function getCss(share) {
+        for (var i = 0; i < allShare.length; i += 1) {
+          var isFit = allShare[i].placements.length === share.length;
+          console.log('isFit1', isFit);
+          if (isFit) {
+            for (var j = 0; j < allShare[i].placements.length; j += 1) {
+              var place = allShare[i].placements[j];
+              isFit = isFit && place.width === share[j].width && place.height === share[j].height;
+              console.log('isFit' + (j + 2), isFit);
+            }
+          }
+          console.log('isFit', isFit);
+          return isFit ? allShare[i].css : '.arf-placement {\n  margin: auto;\n}\n';
+        }
+        return '.arf-placement {\n  margin: auto;\n}\n';
+      };
       var arrayRelativeKeyword = [];
       var allPlace = [];
       this.allShares.reduce(function (temp, share) {
@@ -12513,7 +12530,9 @@ var Zone = function (_Entity) {
           shareTemplate.weight = 100 / shares.length;
           for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
             shareTemplate.id = 'DS-' + _i2;
-            shareTemplate.outputCss = '#DS-' + _i2 + ' .arf-placement {\n  margin: auto;\n}\n';
+            var css = getCss(shares[_i2]);
+            console.log('css', css);
+            shareTemplate.outputCss = '#share-DS-' + _i2 + ' ' + css;
             shareTemplate.placements = shares[_i2];
             var shareData = new _Share2.default(shareTemplate);
             shareDatas.push(shareData);
@@ -12591,7 +12610,9 @@ var Zone = function (_Entity) {
           shareTemplate.weight = 100 / shares.length;
           for (var _i3 = 0; _i3 < shares.length; _i3 += 1) {
             shareTemplate.id = 'DS-' + _i3;
-            shareTemplate.outputCss = '#DS-' + _i3 + ' .arf-placement {\n  margin: auto;\n}\n';
+            var css = getCss(shares[_i3]);
+            console.log('css', css);
+            shareTemplate.outputCss = '#share-DS-' + _i3 + ' ' + css;
             shareTemplate.placements = shares[_i3];
             var shareData = new _Share2.default(shareTemplate);
             shareDatas.push(shareData);

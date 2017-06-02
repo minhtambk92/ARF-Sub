@@ -75,7 +75,7 @@
               "id": "4017d61e-9c0f-4284-8399-623d2a2fcade",
               "name": "Share 1",
               "css": ".arf-placement{ margin: auto; }",
-              "outputCss": "#share-4017d61e-9c0f-4284-8399-623d2a2fcade .arf-placement {\n  margin: auto;\n}\n",
+              "outputCss": "#share-4017d61e-9c0f-4284-8399-623d2a2fcade .arf-placement {\n  margin: auto;float:left;\n}\n",
               "width": 980,
               "height": 90,
               "classes": "",

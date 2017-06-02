@@ -13,7 +13,8 @@ class Entity {
     this.html = entity.html;
     this.script = entity.script;
     this.image = entity.image;
-    this.css = entity.outputCss;
+    this.css = entity.css;
+    this.outputCss = entity.outputCss;
     this.cpm = entity.cpm;
   }
 

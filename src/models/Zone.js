@@ -152,6 +152,23 @@ class Zone extends Entity {
       return placesWithKeyword;
     };
     const allShare = this.allShares;
+    const getCss = (share) => {
+      for (let i = 0; i < allShare.length; i += 1) {
+        let isFit = allShare[i].placements.length === share.length;
+        console.log('isFit1', isFit);
+        if (isFit) {
+          for (let j = 0; j < allShare[i].placements.length; j += 1) {
+            const place = allShare[i].placements[j];
+            isFit = isFit && place.width === share[j].width &&
+              place.height === share[j].height;
+            console.log(`isFit${j + 2}`, isFit);
+          }
+        }
+        console.log('isFit', isFit);
+        return isFit ? allShare[i].css : '.arf-placement {\n  margin: auto;\n}\n';
+      }
+      return '.arf-placement {\n  margin: auto;\n}\n';
+    };
     let arrayRelativeKeyword = [];
     let allPlace = [];
     this.allShares.reduce((temp, share) => {
@@ -520,7 +537,9 @@ class Zone extends Entity {
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
           shareTemplate.id = `DS-${i}`;
-          shareTemplate.outputCss = `#DS-${i} .arf-placement {\n  margin: auto;\n}\n`;
+          const css = getCss(shares[i]);
+          console.log('css', css);
+          shareTemplate.outputCss = `#share-DS-${i} ${css}`;
           shareTemplate.placements = shares[i];
           const shareData = new Share(shareTemplate);
           shareDatas.push(shareData);
@@ -598,7 +617,9 @@ class Zone extends Entity {
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
           shareTemplate.id = `DS-${i}`;
-          shareTemplate.outputCss = `#DS-${i} .arf-placement {\n  margin: auto;\n}\n`;
+          const css = getCss(shares[i]);
+          console.log('css', css);
+          shareTemplate.outputCss = `#share-DS-${i} ${css}`;
           shareTemplate.placements = shares[i];
           const shareData = new Share(shareTemplate);
           shareDatas.push(shareData);

@@ -17,8 +17,7 @@ const dom = {
      * Attach entity's styles to header
      */
     attachStyles() {
-      console.log('attachStyle', this.current.css);
-      if (!this.current.css) return;
+      if (!this.current.outputCss) return;
 
       const head = document.head || document.getElementsByTagName('head')[0];
       const style = document.createElement('style');
@@ -27,10 +26,11 @@ const dom = {
       style.type = 'text/css';
 
       if (style.styleSheet) {
-        style.styleSheet.cssText = this.current.css;
+        style.styleSheet.cssText = this.current.outputCss;
       } else {
-        style.appendChild(document.createTextNode(this.current.css));
+        style.appendChild(document.createTextNode(this.current.outputCss));
       }
+      console.log('attach', this.current.outputCss);
       head.appendChild(style);
     },
 
