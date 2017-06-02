@@ -536,10 +536,10 @@ class Zone extends Entity {
         }
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
-          shareTemplate.id = `DS-${i}`;
+          shareTemplate.id = `DS-${this.id}-${i}`;
           const css = getCss(shares[i]);
           console.log('css', css);
-          shareTemplate.outputCss = `#share-DS-${i} ${css}`;
+          shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
           shareTemplate.placements = shares[i];
           const shareData = new Share(shareTemplate);
           shareDatas.push(shareData);
@@ -616,10 +616,10 @@ class Zone extends Entity {
         }
         shareTemplate.weight = 100 / shares.length;
         for (let i = 0; i < shares.length; i += 1) {
-          shareTemplate.id = `DS-${i}`;
+          shareTemplate.id = `DS-${this.id}-${i}`;
           const css = getCss(shares[i]);
           console.log('css', css);
-          shareTemplate.outputCss = `#share-DS-${i} ${css}`;
+          shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
           shareTemplate.placements = shares[i];
           const shareData = new Share(shareTemplate);
           shareDatas.push(shareData);

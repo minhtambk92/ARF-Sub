@@ -12529,10 +12529,10 @@ var Zone = function (_Entity) {
           }
           shareTemplate.weight = 100 / shares.length;
           for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
-            shareTemplate.id = 'DS-' + _i2;
+            shareTemplate.id = 'DS-' + _this2.id + '-' + _i2;
             var css = getCss(shares[_i2]);
             console.log('css', css);
-            shareTemplate.outputCss = '#share-DS-' + _i2 + ' ' + css;
+            shareTemplate.outputCss = '#share-DS-' + _this2.id + '-' + _i2 + ' ' + css;
             shareTemplate.placements = shares[_i2];
             var shareData = new _Share2.default(shareTemplate);
             shareDatas.push(shareData);
@@ -12609,10 +12609,10 @@ var Zone = function (_Entity) {
           }
           shareTemplate.weight = 100 / shares.length;
           for (var _i3 = 0; _i3 < shares.length; _i3 += 1) {
-            shareTemplate.id = 'DS-' + _i3;
+            shareTemplate.id = 'DS-' + _this2.id + '-' + _i3;
             var css = getCss(shares[_i3]);
             console.log('css', css);
-            shareTemplate.outputCss = '#share-DS-' + _i3 + ' ' + css;
+            shareTemplate.outputCss = '#share-DS-' + _this2.id + '-' + _i3 + ' ' + css;
             shareTemplate.placements = shares[_i3];
             var shareData = new _Share2.default(shareTemplate);
             shareDatas.push(shareData);
