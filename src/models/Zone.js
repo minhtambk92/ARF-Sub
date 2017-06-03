@@ -31,7 +31,7 @@ class Zone extends Entity {
   }
 
   get zoneType() {
-    if ((this.height >= 257) && (this.width < 600 && this.width > 160)) {
+    if ((this.height >= 257) && (this.width <= 600 && this.width >= 160)) {
       return 'right';
     }
     return 'top';
@@ -155,13 +155,11 @@ class Zone extends Entity {
     const getCss = (share) => {
       for (let i = 0; i < allShare.length; i += 1) {
         let isFit = allShare[i].placements.length === share.length;
-        console.log('isFit1', isFit);
         if (isFit) {
           for (let j = 0; j < allShare[i].placements.length; j += 1) {
             const place = allShare[i].placements[j];
             isFit = isFit && place.width === share[j].width &&
               place.height === share[j].height;
-            console.log(`isFit${j + 2}`, isFit);
           }
         }
         console.log('isFit', isFit);
@@ -223,6 +221,17 @@ class Zone extends Entity {
       }
       return Math.round(height / minPlace);
     };
+    const getShareRatio = () => {
+      const listRatio = [];
+      allShare.reduce((acc, share) => { //eslint-disable-line
+        const ratio = [];
+        share.placements.reduce((acc2, place) => ratio.push(getNumberOfParts(this.zoneType === 'right' ? place.height : place.width, true)), 0);
+        listRatio.push(ratio);
+      }, 0);
+      return listRatio;
+    };
+    const listRatio = getShareRatio();
+    console.log('listRatio', listRatio);
     const numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
     console.log('minPlace', minPlace);
     // const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
@@ -462,87 +471,97 @@ class Zone extends Entity {
           // console.log('i', i);
           // divide share base on free area and number of part.
           const shareRatios = util.ComputeShare(numberOfParts, i);
-          // console.log('shareRatios', shareRatios);
-          // Browse each shareRatio on above and create a share for it.
-          shareRatios.reduce((temp, shareRatio) => {
-            // console.log('shareRatio', shareRatio);
-            // this variable to store places in a share which are chosen bellow
-            let share = [];
-            placeMonopolies.reduce((x, y) =>
-              shareRatio.splice(y.index, 0, this.zoneType === 'right' ? getNumberOfParts(y.data.height, true) : getNumberOfParts(y.data.width, true)), 0);
-            let isRelative = false;
-            // Browse each placeRatio in shareRatio, then find a placement fit it.
-            shareRatio.reduce((temp2, placeRatio, index) => {
-              // console.log('placeRatio', placeRatio);
-              if (placeMonopolies.map(item => item.index).indexOf(index) !== -1) {
+          console.log('shareRatios', shareRatios);
+          const checkShare = () => listRatio.reduce((acc, item, index) => {
+            if (index === 0) {
+              return util.checkTowArrayEqual(item, shareRatios[0]);
+            }
+            return acc || util.checkTowArrayEqual(item, shareRatios[0]);
+          }, 0);
+          console.log('checkShare', checkShare());
+          if (checkShare()) {
+            // Browse each shareRatio on above and create a share for it.
+            shareRatios.reduce((temp, shareRatio) => {
+              // console.log('shareRatio', shareRatio);
+              // this variable to store places in a share which are chosen bellow
+              let share = [];
+              placeMonopolies.reduce((x, y) =>
+                shareRatio.splice(y.index, 0, this.zoneType === 'right' ? getNumberOfParts(y.data.height, true) : getNumberOfParts(y.data.width, true)), 0);
+              let isRelative = false;
+              // Browse each placeRatio in shareRatio, then find a placement fit it.
+              shareRatio.reduce((temp2, placeRatio, index) => {
+                // console.log('placeRatio', placeRatio);
+                if (placeMonopolies.map(item => item.index).indexOf(index) !== -1) {
+                  return 0;
+                }
+                // find all placement fit with area place
+                let places = allPlacement.filter(place =>
+                  (
+                    // getNumberOfParts(place.data.height, true) < numberOfParts &&
+                  getNumberOfParts(this.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio &&
+                  // place.data.PlacementArea === placeRatio &&
+                  placeMonopolies.indexOf(place) === -1 &&
+                  place.data.revenueType !== 'pr' &&
+                  // placeChosen.indexOf(place) === -1 &&
+                  place.index === index &&
+                  place.data.revenueType === shareConstruct[index].type));
+                // filter place with relative keyword
+                let placesWithKeyword = [];
+                if (arrayRelativeKeyword.length > 0) {
+                  placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+                  if (placesWithKeyword.length > 0) {
+                    isRelative = true;
+                    places = placesWithKeyword;
+                  }
+                }
+                // if don't have any places fit in area => return empty share
+                if (places.length === 0) {
+                  share = [];
+                  return 0;
+                } else { // eslint-disable-line no-else-return
+                  // choose random a placement which are collected on above
+                  // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
+                  // const place = places[randomIndex];
+                  const place = activePlacement(places, shareConstruct[index]);
+                  // console.log('random', places.length, randomIndex);
+                  share.push(place.data);
+                }
                 return 0;
-              }
-              // find all placement fit with area place
-              let places = allPlacement.filter(place =>
-                (
-                // getNumberOfParts(place.data.height, true) < numberOfParts &&
-                getNumberOfParts(this.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio &&
-                // place.data.PlacementArea === placeRatio &&
-                placeMonopolies.indexOf(place) === -1 &&
-                place.data.revenueType !== 'pr' &&
-                // placeChosen.indexOf(place) === -1 &&
-                place.index === index &&
-                place.data.revenueType === shareConstruct[index].type));
-              // filter place with relative keyword
-              let placesWithKeyword = [];
-              if (arrayRelativeKeyword.length > 0) {
-                placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
-                if (placesWithKeyword.length > 0) {
-                  isRelative = true;
-                  places = placesWithKeyword;
+              }, 0);
+              // if share available => insert monopoly places
+              if (share.length !== 0) {
+                // push (all places have type === placementType) into share.
+                placeMonopolies.reduce((x, y) => share.splice(y.index, 0, y.data), 0);
+                const SumArea = share.reduce((acc, item) =>
+                acc + getNumberOfParts(this.zoneType === 'right' ? item.height : item.width, true), 0);
+                const Free = getNumberOfParts(this.zoneType === 'right' ? this.height : this.width) - SumArea;
+                if (Free === 0 && relativeKeyword !== '' && isRelative) {
+                  console.log('ShareTest', share);
+                  shares.push(share);
+                  isRelative = false;
+                  share = [];
+                }
+                if (Free === 0) {
+                  shares.push(share);
+                  isRelative = false;
+                  share = [];
                 }
               }
-              // if don't have any places fit in area => return empty share
-              if (places.length === 0) {
-                share = [];
-                return 0;
-              } else { // eslint-disable-line no-else-return
-                // choose random a placement which are collected on above
-                // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
-                // const place = places[randomIndex];
-                const place = activePlacement(places, shareConstruct[index]);
-                // console.log('random', places.length, randomIndex);
-                share.push(place.data);
-              }
-              return 0;
+              return '';
             }, 0);
-            // if share available => insert monopoly places
-            if (share.length !== 0) {
-              // push (all places have type === placementType) into share.
-              placeMonopolies.reduce((x, y) => share.splice(y.index, 0, y.data), 0);
-              const SumArea = share.reduce((acc, item) =>
-              acc + getNumberOfParts(this.zoneType === 'right' ? item.height : item.width, true), 0);
-              const Free = getNumberOfParts(this.zoneType === 'right' ? this.height : this.width) - SumArea;
-              console.log('Freeasd', Free);
-              if (Free === 0 && relativeKeyword !== '' && isRelative) {
-                console.log('ShareTest', share);
-                shares.push(share);
-                isRelative = false;
-                share = [];
-              }
-              if (Free === 0) {
-                shares.push(share);
-                isRelative = false;
-                share = [];
-              }
-            }
-            return '';
-          }, 0);
+          }
         }
-        shareTemplate.weight = 100 / shares.length;
-        for (let i = 0; i < shares.length; i += 1) {
-          shareTemplate.id = `DS-${this.id}-${i}`;
-          const css = getCss(shares[i]);
-          console.log('css', css);
-          shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
-          shareTemplate.placements = shares[i];
-          const shareData = new Share(shareTemplate);
-          shareDatas.push(shareData);
+        if (shares.length > 0) {
+          shareTemplate.weight = 100 / shares.length;
+          for (let i = 0; i < shares.length; i += 1) {
+            shareTemplate.id = `DS-${this.id}-${i}`;
+            const css = getCss(shares[i]);
+            console.log('css', css);
+            shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
+            shareTemplate.placements = shares[i];
+            const shareData = new Share(shareTemplate);
+            shareDatas.push(shareData);
+          }
         }
       };
       const createShareByPlaceCpm = () => {
@@ -552,77 +571,88 @@ class Zone extends Entity {
           // divide share base on free area and number of part.
           const shareRatios = util.ComputeShare(numberOfParts, i);
           console.log('shareRatios', shareRatios);
-          // Browse each shareRatio on above and create a share for it.
-          shareRatios.reduce((temp, shareRatio) => {
-            // this variable to store places in a share which are chosen bellow
-            let share = [];
-            let isRelative = false;
-            // Browse each placeRatio in shareRatio, then find a placement fit it.
-            shareRatio.reduce((temp2, placeRatio, index) => {
-              // find all placement fit with area place
-              let places = allPlacement.filter(place =>
-                (
-                getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
-                place.data.revenueType !== 'pr' &&
-                place.index === index));
+          const checkShare = () => listRatio.reduce((acc, item, index) => {
+            if (index === 0) {
+              return util.checkTowArrayEqual(item, shareRatios[0]);
+            }
+            return acc || util.checkTowArrayEqual(item, shareRatios[0]);
+          }, 0);
+          console.log('checkShare', checkShare());
+          if (checkShare()) {
+            // Browse each shareRatio on above and create a share for it.
+            shareRatios.reduce((temp, shareRatio) => {
+              // this variable to store places in a share which are chosen bellow
+              let share = [];
+              let isRelative = false;
+              // Browse each placeRatio in shareRatio, then find a placement fit it.
+              shareRatio.reduce((temp2, placeRatio, index) => {
+                // find all placement fit with area place
+                let places = allPlacement.filter(place =>
+                  (
+                  getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
+                  place.data.revenueType !== 'pr' &&
+                  place.index === index));
 
-              console.log('placeTest', getNumberOfParts((this.zoneType === 'right' ? allPlacement[0].data.height : allPlacement[0].data.width), true));
-              // filter place with relative keyword
-              let placesWithKeyword = [];
-              if (arrayRelativeKeyword.length > 0) {
-                placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
-                if (placesWithKeyword.length > 0) {
-                  isRelative = true;
-                  places = placesWithKeyword;
+                console.log('placeTest', getNumberOfParts((this.zoneType === 'right' ? allPlacement[0].data.height : allPlacement[0].data.width), true));
+                // filter place with relative keyword
+                let placesWithKeyword = [];
+                if (arrayRelativeKeyword.length > 0) {
+                  placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+                  if (placesWithKeyword.length > 0) {
+                    isRelative = true;
+                    places = placesWithKeyword;
+                  }
+                }
+
+                // if don't have any places fit in area => return empty share
+                if (places.length === 0) {
+                  share = [];
+                  return 0;
+                } else { // eslint-disable-line no-else-return
+                  // choose random a placement which are collected on above
+                  const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
+                  const place = places[randomIndex];
+
+                  share.push(place.data);
+                }
+                console.log('shareTest', share);
+                return 0;
+              }, 0);
+
+              // if share available => insert monopoly places
+              if (share.length !== 0) {
+                // push (all places have type === placementType) into share.
+                const SumArea = share.reduce((acc, item) =>
+                acc + getNumberOfParts(this.zoneType === 'right' ? item.height : item.width, true), 0);
+                const Free = getNumberOfParts(this.zoneType === 'right' ? this.height : this.width) - SumArea;
+                console.log('freeTest', Free);
+                if (Free === 0 && relativeKeyword !== '' && isRelative) {
+                  shares.push(share);
+                  isRelative = false;
+                  share = [];
+                }
+                if (Free === 0) {
+                  shares.push(share);
+                  isRelative = false;
+                  share = [];
                 }
               }
 
-              // if don't have any places fit in area => return empty share
-              if (places.length === 0) {
-                share = [];
-                return 0;
-              } else { // eslint-disable-line no-else-return
-                // choose random a placement which are collected on above
-                const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
-                const place = places[randomIndex];
-
-                share.push(place.data);
-              }
-              console.log('shareTest', share);
-              return 0;
+              return '';
             }, 0);
-
-            // if share available => insert monopoly places
-            if (share.length !== 0) {
-              // push (all places have type === placementType) into share.
-              const SumArea = share.reduce((acc, item) =>
-              acc + getNumberOfParts(this.zoneType === 'right' ? item.height : item.width, true), 0);
-              const Free = getNumberOfParts(this.zoneType === 'right' ? this.height : this.width) - SumArea;
-              console.log('freeTest', Free);
-              if (Free === 0 && relativeKeyword !== '' && isRelative) {
-                shares.push(share);
-                isRelative = false;
-                share = [];
-              }
-              if (Free === 0) {
-                shares.push(share);
-                isRelative = false;
-                share = [];
-              }
-            }
-
-            return '';
-          }, 0);
+          }
         }
-        shareTemplate.weight = 100 / shares.length;
-        for (let i = 0; i < shares.length; i += 1) {
-          shareTemplate.id = `DS-${this.id}-${i}`;
-          const css = getCss(shares[i]);
-          console.log('css', css);
-          shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
-          shareTemplate.placements = shares[i];
-          const shareData = new Share(shareTemplate);
-          shareDatas.push(shareData);
+        if (shares.length > 0) {
+          shareTemplate.weight = 100 / shares.length;
+          for (let i = 0; i < shares.length; i += 1) {
+            shareTemplate.id = `DS-${this.id}-${i}`;
+            const css = getCss(shares[i]);
+            console.log('css', css);
+            shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
+            shareTemplate.placements = shares[i];
+            const shareData = new Share(shareTemplate);
+            shareDatas.push(shareData);
+          }
         }
         console.log('cpmmm');
       };

@@ -723,6 +723,13 @@ const util = {
     const currentBrowser = M.join(' ').substring(0, (M.join(' ').indexOf(' '))).toLowerCase();
     return currentBrowser;
   },
+
+  checkTowArrayEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    return arr1.sort().join() === arr2.sort().join();
+  },
 };
 
 export default util;

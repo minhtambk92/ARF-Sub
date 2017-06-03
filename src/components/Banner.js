@@ -103,7 +103,7 @@ const Banner = Vue.component('banner', {
               util.resizeIFrameToFitContent(iframe);
               clearInterval(fixIframe);
             }
-          }, 200);
+          }, 500);
 
           // Prevent AppleWebKit iframe.onload loop
           vm.$data.isRendered = true;
