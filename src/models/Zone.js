@@ -548,16 +548,16 @@ class Zone extends Entity {
                   console.log('ShareTest', share);
                   shares.push(share);
                   isRelative = false;
-                  share.places = [];
-                  share.id = '';
-                  share.css = '';
+                  // share.places = [];
+                  // share.id = '';
+                  // share.css = '';
                 }
                 if (Free === 0) {
                   shares.push(share);
                   isRelative = false;
-                  share.places = [];
-                  share.id = '';
-                  share.css = '';
+                  // share.places = [];
+                  // share.id = '';
+                  // share.css = '';
                 }
               }
               return '';
@@ -568,7 +568,7 @@ class Zone extends Entity {
           shareTemplate.weight = 100 / shares.length;
           for (let i = 0; i < shares.length; i += 1) {
             // shareTemplate.id = `DS-${this.id}-${i}`;
-            shareTemplate.id = shares[i].id;
+            shareTemplate.id = shares[i].id.replace('share-', '');
             const css = getCss(shares[i].places);
             console.log('css', css);
             // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
