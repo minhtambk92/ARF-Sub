@@ -11101,9 +11101,17 @@ var Banner = _vue2.default.component('banner', {
             iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
           } else {
             var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
+            var marginBanner = '<script> var htmlDoc = new XMLSerializer().serializeToString(document);' + 'var bannerID = htmlDoc.match(/ads_+[zone]+\d+_+[slot]+\d+/g)[0];' + // eslint-disable-line
+            'var bannerContainer = document.getElementById(bannerID);' + 'bannerContainer.style.marginLeft = 0;</script>';
+            // const scriptCode = util.explodeScriptTag(bannerData).scripts;
+            // console.log(scriptCode);
+            // if (scriptCode.length > 0) {
+            // eslint-disable-next-line
+            //   const bannerIDInsideIframe = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0];
+            // }
             // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
             console.log(bannerData);
-            iframe.contentWindow.document.write(bannerData);
+            iframe.contentWindow.document.write(bannerData + marginBanner);
             // iframe.contentWindow.document.write(bannerDataWithMacro);
           }
           iframe.contentWindow.document.close();
@@ -12599,7 +12607,12 @@ var Zone = function (_Entity) {
                 shareRatio.reduce(function (temp2, placeRatio, index) {
                   // find all placement fit with area place
                   var places = allPlacement.filter(function (place) {
-                    return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && placeChosen.indexOf(place) === -1 && place.index === index;
+                    return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && (place.data.positionOnShare !== 0 ? placeChosen.indexOf(place) === -1 : placeChosen.map(function (item) {
+                      return item.data;
+                    }).reduce(function (acc, item, index2) {
+                      if (index2 === 0) return item.id !== place.data.id;
+                      return acc && item.id !== place.data.id;
+                    }, 0)) && place.index === index;
                   });
 
                   // filter place with relative keyword
@@ -12623,13 +12636,14 @@ var Zone = function (_Entity) {
                     // choose random a placement which are collected on above
                     var randomIndex = parseInt(Math.floor(Math.random() * places.length), 10);
                     var place = places[randomIndex];
+                    console.log('duplicate', placeChosen.indexOf(place), place);
                     placeChosen.push(place);
                     share.places.push(place.data);
                     console.log('shareTest', share);
                   }
                   return 0;
                 }, 0);
-
+                console.log('placeChosen', placeChosen);
                 // if share available => insert monopoly places
                 if (share.length !== 0) {
                   // push (all places have type === placementType) into share.
@@ -14108,6 +14122,75 @@ var util = {
     });
     return placesWithKeyword;
   },
+  explodeScriptTag: function explodeScriptTag(html) {
+    var element = html;
+    var evlScript = [];
+    var scripts = [];
+    var trim = function trim(str) {
+      var strTemp = str;
+      strTemp = strTemp.replace(/^\s+/, '');
+      for (var i = strTemp.length - 1; i >= 0; i -= 1) {
+        if (/\S/.test(strTemp.charAt(i))) {
+          strTemp = strTemp.substring(0, i + 1);
+          break;
+        }
+      }
+      return strTemp;
+    };
+    // boc tach script
+    var allScriptTag = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
+
+    if (allScriptTag) {
+      var jsCodeInsideScriptTag = '';
+      for (var i = 0, len = allScriptTag.length; i < len; i += 1) {
+        element = element.replace(allScriptTag[i], '');
+        jsCodeInsideScriptTag = allScriptTag[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
+        if (trim(jsCodeInsideScriptTag) !== '') {
+          evlScript.push(trim(jsCodeInsideScriptTag));
+        }
+
+        if (evlScript === '') {
+          var srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
+          if (srcAttribute) {
+            var linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
+            scripts.push(linkSrc);
+          }
+        }
+      }
+    }
+    return { scripts: scripts, evlScript: evlScript };
+  },
+  getFileScript: function getFileScript(el) {
+    var a = document.createElement('script');
+    a.type = 'text/javascript';
+    a.async = true;
+
+    for (var _len2 = arguments.length, url = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      url[_key2 - 1] = arguments[_key2];
+    }
+
+    a.src = url;
+    if (url.length >= 2) {
+      var arrLength = url[1];
+      a.onload = function () {
+        var arr = arrLength;
+        var strUrl = arr[0];
+        arr.shift();
+        if (arr.length >= 1) {
+          this.getFileScript(el, strUrl, arr);
+        } else {
+          this.getFileScript(el, strUrl);
+        }
+      };
+    }
+    if (el === '') {
+      var c = document.getElementsByTagName('script')[0];
+      console.log(c);
+      c.parentNode.insertBefore(a, c);
+    } else {
+      el.appendChild(a);
+    }
+  },
   admLoadJs: function admLoadJs(urlLibrary, libName, callBack) {
     // eslint-disable-line
     var thisLib = document.getElementById('' + libName);
@@ -14175,8 +14258,8 @@ var util = {
       a.type = 'text/javascript';
       a.async = true;
 
-      for (var _len2 = arguments.length, url = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        url[_key2] = arguments[_key2];
+      for (var _len3 = arguments.length, url = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        url[_key3] = arguments[_key3];
       }
 
       a.src = url;

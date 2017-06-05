@@ -574,6 +574,72 @@ const util = {
     return placesWithKeyword;
   },
 
+  explodeScriptTag(html) {
+    let element = html;
+    const evlScript = [];
+    const scripts = [];
+    const trim = (str) => {
+      let strTemp = str;
+      strTemp = strTemp.replace(/^\s+/, '');
+      for (let i = strTemp.length - 1; i >= 0; i -= 1) {
+        if (/\S/.test(strTemp.charAt(i))) {
+          strTemp = strTemp.substring(0, i + 1);
+          break;
+        }
+      }
+      return strTemp;
+    };
+    // boc tach script
+    const allScriptTag = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
+
+    if (allScriptTag) {
+      let jsCodeInsideScriptTag = '';
+      for (let i = 0, len = allScriptTag.length; i < len; i += 1) {
+        element = element.replace(allScriptTag[i], '');
+        jsCodeInsideScriptTag = allScriptTag[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
+        if (trim(jsCodeInsideScriptTag) !== '') {
+          evlScript.push(trim(jsCodeInsideScriptTag));
+        }
+
+        if (evlScript === '') {
+          const srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
+          if (srcAttribute) {
+            const linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
+            scripts.push(linkSrc);
+          }
+        }
+      }
+    }
+    return { scripts, evlScript };
+  },
+
+  getFileScript(el, ...url) {
+    const a = document.createElement('script');
+    a.type = 'text/javascript';
+    a.async = true;
+    a.src = url;
+    if (url.length >= 2) {
+      const arrLength = url[1];
+      a.onload = function () {
+        const arr = arrLength;
+        const strUrl = arr[0];
+        arr.shift();
+        if (arr.length >= 1) {
+          this.getFileScript(el, strUrl, arr);
+        } else {
+          this.getFileScript(el, strUrl);
+        }
+      };
+    }
+    if (el === '') {
+      const c = document.getElementsByTagName('script')[0];
+      console.log(c);
+      c.parentNode.insertBefore(a, c);
+    } else {
+      el.appendChild(a);
+    }
+  },
+
   admLoadJs(urlLibrary, libName, callBack) { // eslint-disable-line
     const thisLib = document.getElementById(`${libName}`);
     if (thisLib == null) {

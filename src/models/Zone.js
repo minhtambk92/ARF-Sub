@@ -602,12 +602,15 @@ class Zone extends Entity {
                 // Browse each placeRatio in shareRatio, then find a placement fit it.
               shareRatio.reduce((temp2, placeRatio, index) => {
                   // find all placement fit with area place
-                let places = allPlacement.filter(place =>
-                    (
-                    getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
-                    place.data.revenueType !== 'pr' &&
-                    placeChosen.indexOf(place) === -1 &&
-                    place.index === index));
+                let places = allPlacement.filter(place => (
+                  getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
+                  place.data.revenueType !== 'pr' &&
+                  ((place.data.positionOnShare !== 0) ? placeChosen.indexOf(place) === -1 :
+                    placeChosen.map(item => item.data).reduce((acc, item, index2) => {
+                      if (index2 === 0) return item.id !== place.data.id;
+                      return acc && item.id !== place.data.id;
+                    }, 0)) &&
+                  place.index === index));
 
                   // filter place with relative keyword
                 let placesWithKeyword = [];
@@ -629,13 +632,14 @@ class Zone extends Entity {
                     // choose random a placement which are collected on above
                   const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
                   const place = places[randomIndex];
+                  console.log('duplicate', placeChosen.indexOf(place), place);
                   placeChosen.push(place);
                   share.places.push(place.data);
                   console.log('shareTest', share);
                 }
                 return 0;
               }, 0);
-
+              console.log('placeChosen', placeChosen);
                 // if share available => insert monopoly places
               if (share.length !== 0) {
                   // push (all places have type === placementType) into share.

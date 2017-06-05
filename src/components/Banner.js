@@ -85,9 +85,19 @@ const Banner = Vue.component('banner', {
             iframe.contentWindow.document.write(`<img src="${vm.current.imageUrl}">`);
           } else {
             const bannerData = macro.replaceMacro(vm.current.html, true);
+            const marginBanner = '<script> var htmlDoc = new XMLSerializer().serializeToString(document);' +
+              'var bannerID = htmlDoc.match(/ads_+[zone]+\d+_+[slot]+\d+/g)[0];' + // eslint-disable-line
+              'var bannerContainer = document.getElementById(bannerID);' +
+              'bannerContainer.style.marginLeft = 0;</script>';
+            // const scriptCode = util.explodeScriptTag(bannerData).scripts;
+            // console.log(scriptCode);
+            // if (scriptCode.length > 0) {
+            // eslint-disable-next-line
+            //   const bannerIDInsideIframe = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0];
+            // }
             // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
             console.log(bannerData);
-            iframe.contentWindow.document.write(bannerData);
+            iframe.contentWindow.document.write(bannerData + marginBanner);
             // iframe.contentWindow.document.write(bannerDataWithMacro);
           }
           iframe.contentWindow.document.close();
