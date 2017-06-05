@@ -11,7 +11,7 @@ class Placement extends Entity {
   constructor(placement) {
     super(placement);
 
-    this.id = `placement-${placement.id}`;
+    this.id = placement.id.indexOf('placement-') === -1 ? `placement-${placement.id}` : placement.id;
     this.banners = placement.banners;
     this.revenueType = placement.revenueType;
     this.cpdPercent = placement.cpdPercent;

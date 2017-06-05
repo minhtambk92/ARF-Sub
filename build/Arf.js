@@ -10479,7 +10479,7 @@ var Placement = function (_Entity) {
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (Placement.__proto__ || (0, _getPrototypeOf2.default)(Placement)).call(this, placement));
 
-    _this.id = 'placement-' + placement.id;
+    _this.id = placement.id.indexOf('placement-') === -1 ? 'placement-' + placement.id : placement.id;
     _this.banners = placement.banners;
     _this.revenueType = placement.revenueType;
     _this.cpdPercent = placement.cpdPercent;
@@ -12448,6 +12448,18 @@ var Zone = function (_Entity) {
         };
         var shares = [];
         var shareDatas = [];
+        var checkShare = function checkShare(shareRatio) {
+          return listRatio.reduce(function (acc, item, index, arr) {
+            if (index === 0) {
+              return _vendor.util.checkTwoArrayEqual(item.ratio, shareRatio);
+            }
+            var res = acc || _vendor.util.checkTwoArrayEqual(item.ratio, shareRatio);
+            if (index === arr.length - 1 && res === true) {
+              return { check: res, id: item.id, css: item.css };
+            }
+            return { check: res, id: item.id, css: item.css };
+          }, 0);
+        };
         var createShareByPlaceMonopolies = function createShareByPlaceMonopolies(placeMonopolies) {
           // Create Share : S(zone) - S(p) = S(free)
           var SumPrArea = placeMonopolies.reduce(function (temp, item) {
@@ -12456,30 +12468,19 @@ var Zone = function (_Entity) {
           var FreeArea = _this2.zoneType === 'right' ? _this2.height - SumPrArea : _this2.width - SumPrArea;
           // console.log('FreeArea', FreeArea);
           var numberOfParts = getNumberOfParts(FreeArea);
-
-          var _loop = function _loop(i) {
+          for (var i = 1; i <= numberOfParts; i += 1) {
             // console.log('i', i);
             // divide share base on free area and number of part.
             var shareRatios = _vendor.util.ComputeShare(numberOfParts, i);
             console.log('shareRatios', shareRatios);
-            var checkShare = function checkShare() {
-              return listRatio.reduce(function (acc, item, index, arr) {
-                if (index === 0) {
-                  return _vendor.util.checkTwoArrayEqual(item.ratio, shareRatios[0]);
-                }
-                var res = acc || _vendor.util.checkTwoArrayEqual(item.ratio, shareRatios[0]);
-                if (index === arr.length - 1 && res === true) {
-                  return { check: res, id: item.id, css: item.css };
-                }
-                return { check: res, id: item.id, css: item.css };
-              }, 0);
-            };
-            console.log('checkShare', checkShare());
-            var checkS = checkShare();
-            if (checkS.check) {
-              // Browse each shareRatio on above and create a share for it.
-              shareRatios.reduce(function (temp, shareRatio) {
-                // console.log('shareRatio', shareRatio);
+            // console.log('checkShare', checkShare());
+            // const checkS = checkShare();
+            // if (checkS.check) {
+            // Browse each shareRatio on above and create a share for it.
+            shareRatios.reduce(function (temp, shareRatio) {
+              // console.log('shareRatio', shareRatio);
+              var checkS = checkShare(shareRatio);
+              if (checkS.check) {
                 // this variable to store places in a share which are chosen bellow
                 var share = { places: [], id: '', css: '' };
                 share.id = checkS.id;
@@ -12496,15 +12497,14 @@ var Zone = function (_Entity) {
                   }).indexOf(index) !== -1) {
                     return 0;
                   }
+                  var placeChosen = [];
                   // find all placement fit with area place
                   var places = allPlacement.filter(function (place) {
                     return (
                       // getNumberOfParts(place.data.height, true) < numberOfParts &&
                       getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio &&
                       // place.data.PlacementArea === placeRatio &&
-                      placeMonopolies.indexOf(place) === -1 && place.data.revenueType !== 'pr' &&
-                      // placeChosen.indexOf(place) === -1 &&
-                      place.index === index && place.data.revenueType === shareConstruct[index].type
+                      placeMonopolies.indexOf(place) === -1 && place.data.revenueType !== 'pr' && placeChosen.indexOf(place) === -1 && place.index === index && place.data.revenueType === shareConstruct[index].type
                     );
                   });
                   // filter place with relative keyword
@@ -12529,6 +12529,7 @@ var Zone = function (_Entity) {
                     // const place = places[randomIndex];
                     var place = activePlacement(places, shareConstruct[index]);
                     // console.log('random', places.length, randomIndex);
+                    placeChosen.push(place);
                     share.places.push(place.data);
                   }
                   return 0;
@@ -12547,36 +12548,33 @@ var Zone = function (_Entity) {
                     console.log('ShareTest', share);
                     shares.push(share);
                     isRelative = false;
-                    share.places = [];
-                    share.id = '';
-                    share.css = '';
+                    // share.places = [];
+                    // share.id = '';
+                    // share.css = '';
                   }
                   if (Free === 0) {
                     shares.push(share);
                     isRelative = false;
-                    share.places = [];
-                    share.id = '';
-                    share.css = '';
+                    // share.places = [];
+                    // share.id = '';
+                    // share.css = '';
                   }
                 }
                 return '';
-              }, 0);
-            }
-          };
-
-          for (var i = 1; i <= numberOfParts; i += 1) {
-            _loop(i);
+              }
+              return; // eslint-disable-line
+            }, 0);
           }
           if (shares.length > 0) {
             shareTemplate.weight = 100 / shares.length;
-            for (var i = 0; i < shares.length; i += 1) {
+            for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
               // shareTemplate.id = `DS-${this.id}-${i}`;
-              shareTemplate.id = shares[i].id;
-              var css = getCss(shares[i].places);
+              shareTemplate.id = shares[_i2].id.replace('share-', '');
+              var css = getCss(shares[_i2].places);
               console.log('css', css);
               // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
-              shareTemplate.outputCss = shares[i].css;
-              shareTemplate.placements = shares[i].places;
+              shareTemplate.outputCss = shares[_i2].css;
+              shareTemplate.placements = shares[_i2].places;
               var shareData = new _Share2.default(shareTemplate);
               shareDatas.push(shareData);
             }
@@ -12585,36 +12583,23 @@ var Zone = function (_Entity) {
         var createShareByPlaceCpm = function createShareByPlaceCpm() {
           var numberOfParts = getNumberOfParts(_this2.zoneType === 'right' ? _this2.height : _this2.width);
           console.log('numberOfParts', numberOfParts);
-
-          var _loop2 = function _loop2(i) {
+          for (var i = 1; i <= numberOfParts; i += 1) {
             // divide share base on free area and number of part.
             var shareRatios = _vendor.util.ComputeShare(numberOfParts, i);
             console.log('shareRatios', shareRatios);
-            var checkShare = function checkShare() {
-              return listRatio.reduce(function (acc, item, index, arr) {
-                if (index === 0) {
-                  return _vendor.util.checkTwoArrayEqual(item.ratio, shareRatios[0]);
-                }
-                var res = acc || _vendor.util.checkTwoArrayEqual(item.ratio, shareRatios[0]);
-                if (index === arr.length - 1 && res === true) {
-                  return { check: res, id: item.id, css: item.css };
-                }
-                return { check: res, id: '', css: '' };
-              }, 0);
-            };
-            var checkS = checkShare();
-            console.log('checkShare', checkShare());
-            if (checkS.check) {
-              // Browse each shareRatio on above and create a share for it.
-              shareRatios.reduce(function (temp, shareRatio) {
+            // Browse each shareRatio on above and create a share for it.
+            shareRatios.reduce(function (temp, shareRatio) {
+              var checkS = checkShare(shareRatio);
+              if (checkS.check) {
                 // this variable to store places in a share which are chosen bellow
                 var share = { places: [], id: checkS.id, css: checkS.css };
+                var placeChosen = [];
                 var isRelative = false;
                 // Browse each placeRatio in shareRatio, then find a placement fit it.
                 shareRatio.reduce(function (temp2, placeRatio, index) {
                   // find all placement fit with area place
                   var places = allPlacement.filter(function (place) {
-                    return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && place.index === index;
+                    return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && placeChosen.indexOf(place) === -1 && place.index === index;
                   });
 
                   // filter place with relative keyword
@@ -12638,6 +12623,7 @@ var Zone = function (_Entity) {
                     // choose random a placement which are collected on above
                     var randomIndex = parseInt(Math.floor(Math.random() * places.length), 10);
                     var place = places[randomIndex];
+                    placeChosen.push(place);
                     share.places.push(place.data);
                     console.log('shareTest', share);
                   }
@@ -12668,23 +12654,20 @@ var Zone = function (_Entity) {
                   }
                 }
                 return '';
-              }, 0);
-            }
-          };
-
-          for (var i = 1; i <= numberOfParts; i += 1) {
-            _loop2(i);
+              }
+              return; //eslint-disable-line
+            }, 0);
           }
           if (shares.length > 0) {
             shareTemplate.weight = 100 / shares.length;
-            for (var i = 0; i < shares.length; i += 1) {
+            for (var _i3 = 0; _i3 < shares.length; _i3 += 1) {
               // shareTemplate.id = `DS-${this.id}-${i}`;
-              shareTemplate.id = shares[i].id.replace('share-', '');
+              shareTemplate.id = shares[_i3].id.replace('share-', '');
               // const css = getCss(shares[i]);
               // console.log('css', css);
               // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
-              shareTemplate.outputCss = shares[i].css;
-              shareTemplate.placements = shares[i].places;
+              shareTemplate.outputCss = shares[_i3].css;
+              shareTemplate.placements = shares[_i3].places;
               var shareData = new _Share2.default(shareTemplate);
               shareDatas.push(shareData);
             }
@@ -12764,8 +12747,8 @@ var Zone = function (_Entity) {
                 }));
               }
             } else {
-              for (var _i2 = 0; _i2 < monopolyPlacesWithShare.length; _i2 += 1) {
-                combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i2], 1).filter(function (item) {
+              for (var _i4 = 0; _i4 < monopolyPlacesWithShare.length; _i4 += 1) {
+                combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i4], 1).filter(function (item) {
                   return item.reduce(function (acc, item2) {
                     return acc + item2.data.PlacementArea < _this2.ZoneArea;
                   }, 0);
@@ -12799,7 +12782,7 @@ var Zone = function (_Entity) {
       var shareConstruct = [];
       // if cpdShare take all share percent in a place order -> filter
 
-      var _loop3 = function _loop3(i) {
+      var _loop = function _loop(i) {
         var isPr = allPlace.filter(function (place) {
           return place.index === i && place.data.revenueType === 'pr';
         }).length > 0;
@@ -12817,7 +12800,7 @@ var Zone = function (_Entity) {
       };
 
       for (var i = 0; i < numberOfPlaceInShare; i += 1) {
-        _loop3(i);
+        _loop(i);
       }
 
       var cookie = _vendor.adsStorage.getStorage('_cpt');
@@ -12859,7 +12842,7 @@ var Zone = function (_Entity) {
       }
       var buildShareConstruct = [];
 
-      var _loop4 = function _loop4(i) {
+      var _loop2 = function _loop2(i) {
         if (shareConstruct[i][0].weight === 100) {
           buildShareConstruct.push(shareConstruct[i][0]);
         } else {
@@ -12895,7 +12878,7 @@ var Zone = function (_Entity) {
       };
 
       for (var i = 0; i < numberOfPlaceInShare; i += 1) {
-        _loop4(i);
+        _loop2(i);
       }
       console.log('buildShareConstruct', buildShareConstruct);
       var pr = computeShareWithPlacementType2(allPlace, 'pr', buildShareConstruct);
@@ -12909,7 +12892,7 @@ var Zone = function (_Entity) {
       // const testCPD = computeShareWithPlacementType(allPlace, 'cpd', buildShareConstruct);
       // console.log('testCPD', computeShareWithPlacementType);
       if (cpdShare.length > 0) {
-        var _loop5 = function _loop5(i) {
+        var _loop3 = function _loop3(i) {
           if (100 - shareConstruct[i][0].weight <= 0) {
             cpdShare = cpdShare.filter(function (share) {
               return share.placements[i].revenueType === 'cpd';
@@ -12918,7 +12901,7 @@ var Zone = function (_Entity) {
         };
 
         for (var i = 0; i < numberOfPlaceInShare; i += 1) {
-          _loop5(i);
+          _loop3(i);
         }
         console.log('cpdShare', cpdShare);
         return cpdShare;
