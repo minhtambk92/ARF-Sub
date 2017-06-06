@@ -579,8 +579,9 @@ class Zone extends Entity {
             // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
             shareTemplate.outputCss = shares[i].css;
             shareTemplate.placements = shares[i].places;
-            const shareHeight = shares[i].places.reduce((acc, item) => acc + (this.zoneType === 'right' ? item.height : item.width), 0);
-            shareTemplate.height = shareHeight;
+            // const shareHeight = shares[i].places.reduce((acc, item) =>
+            // acc + (this.zoneType === 'right' ? item.height : item.width), 0);
+            // shareTemplate.height = shareHeight;
             const shareData = new Share(shareTemplate);
             shareDatas.push(shareData);
           }
