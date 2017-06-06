@@ -11103,18 +11103,23 @@ var Banner = _vue2.default.component('banner', {
             var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
             var scriptCode = _vendor.util.explodeScriptTag(bannerData).scripts;
             console.log('scriptCode', scriptCode, bannerData);
-            var marginBanner = '';
-            if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
-              // eslint-disable-next-line
-              var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
-              var bannerContainer = 'ads_zone' + bannerCode;
-              marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'setTimeout(function() {\n                 var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
-              'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + '}}, 200);</script>';
-              console.log('bannerIDInsideIframe', bannerContainer);
-            }
+            // let marginBanner = '';
+            // if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
+            // eslint-disable-next-line
+            //   const bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
+            //   const bannerContainer = `ads_zone${bannerCode}`;
+            //   marginBanner = `<script> var bannerParentID = "${bannerContainer}";` +
+            //     `setTimeout(function() {
+            // eslint-disable-next-line
+            //      var bannerParent = document.getElementById(bannerParentID);` + // eslint-disable-line
+            //     'if (bannerParent) {' +
+            //     '   bannerParent.childNodes[1].style.marginLeft = 0;' +
+            //     '}}, 200);</script>';
+            //   console.log('bannerIDInsideIframe', bannerContainer);
+            // }
             // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
             console.log(bannerData);
-            iframe.contentWindow.document.write(bannerData + marginBanner);
+            iframe.contentWindow.document.write(bannerData);
             // iframe.contentWindow.document.write(bannerDataWithMacro);
           }
           iframe.contentWindow.document.close();
