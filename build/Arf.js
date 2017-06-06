@@ -11125,10 +11125,10 @@ var Banner = _vue2.default.component('banner', {
           }
 
           // resize iframe fit with content
-          var fixIframe = setInterval(function () {
+          setTimeout(function () {
             if (document.getElementById('iframe-' + vm.current.id)) {
               _vendor.util.resizeIFrameToFitContent(iframe);
-              clearInterval(fixIframe);
+              // clearInterval(fixIframe);
             }
           }, 500);
 

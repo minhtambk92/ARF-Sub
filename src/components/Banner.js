@@ -114,10 +114,10 @@ const Banner = Vue.component('banner', {
           }
 
           // resize iframe fit with content
-          const fixIframe = setInterval(() => {
+          setTimeout(() => {
             if (document.getElementById(`iframe-${vm.current.id}`)) {
               util.resizeIFrameToFitContent(iframe);
-              clearInterval(fixIframe);
+              // clearInterval(fixIframe);
             }
           }, 500);
 
