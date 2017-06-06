@@ -114,12 +114,25 @@ const Banner = Vue.component('banner', {
           }
 
           // resize iframe fit with content
-          setTimeout(() => {
-            if (document.getElementById(`iframe-${vm.current.id}`)) {
-              util.resizeIFrameToFitContent(iframe);
-              // clearInterval(fixIframe);
+          const fixIframe = setInterval(() => {
+            if (document.readyState === 'complete') {
+             // Already loaded!
+              if (document.getElementById(`iframe-${vm.current.id}`)) {
+                util.resizeIFrameToFitContent(iframe);
+              }
+              clearInterval(fixIframe);
+            } else {
+             // Add onload or DOMContentLoaded event listeners here: for example,
+              window.addEventListener('onload', () => {
+                if (document.getElementById(`iframe-${vm.current.id}`)) {
+                  util.resizeIFrameToFitContent(iframe);
+                }
+                clearInterval(fixIframe);
+              }, false);
+             // or
+             // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
             }
-          }, 500);
+          }, 100);
 
           // Prevent AppleWebKit iframe.onload loop
           vm.$data.isRendered = true;

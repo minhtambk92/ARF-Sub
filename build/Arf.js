@@ -11125,12 +11125,25 @@ var Banner = _vue2.default.component('banner', {
           }
 
           // resize iframe fit with content
-          setTimeout(function () {
-            if (document.getElementById('iframe-' + vm.current.id)) {
-              _vendor.util.resizeIFrameToFitContent(iframe);
-              // clearInterval(fixIframe);
+          var fixIframe = setInterval(function () {
+            if (document.readyState === 'complete') {
+              // Already loaded!
+              if (document.getElementById('iframe-' + vm.current.id)) {
+                _vendor.util.resizeIFrameToFitContent(iframe);
+              }
+              clearInterval(fixIframe);
+            } else {
+              // Add onload or DOMContentLoaded event listeners here: for example,
+              window.addEventListener('onload', function () {
+                if (document.getElementById('iframe-' + vm.current.id)) {
+                  _vendor.util.resizeIFrameToFitContent(iframe);
+                }
+                clearInterval(fixIframe);
+              }, false);
+              // or
+              // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
             }
-          }, 500);
+          }, 100);
 
           // Prevent AppleWebKit iframe.onload loop
           vm.$data.isRendered = true;
