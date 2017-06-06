@@ -85,10 +85,10 @@ const Banner = Vue.component('banner', {
             iframe.contentWindow.document.write(`<img src="${vm.current.imageUrl}">`);
           } else {
             const bannerData = macro.replaceMacro(vm.current.html, true);
-            const marginBanner = '<script> var htmlDoc = new XMLSerializer().serializeToString(document);' +
+            const marginBanner = '<script> window.addEventListener("DOMContentLoaded", function () { var htmlDoc = new XMLSerializer().serializeToString(document);' +
               'var bannerID = htmlDoc.match(/ads_+[zone]+\d+_+[slot]+\d+/g)[0];' + // eslint-disable-line
               'var bannerContainer = document.getElementById(bannerID);' +
-              'bannerContainer.style.marginLeft = 0;</script>';
+              'bannerContainer.style.marginLeft = 0;  });</script>';
             // const scriptCode = util.explodeScriptTag(bannerData).scripts;
             // console.log(scriptCode);
             // if (scriptCode.length > 0) {

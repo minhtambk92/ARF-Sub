@@ -11101,8 +11101,8 @@ var Banner = _vue2.default.component('banner', {
             iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
           } else {
             var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
-            var marginBanner = '<script> var htmlDoc = new XMLSerializer().serializeToString(document);' + 'var bannerID = htmlDoc.match(/ads_+[zone]+\d+_+[slot]+\d+/g)[0];' + // eslint-disable-line
-            'var bannerContainer = document.getElementById(bannerID);' + 'bannerContainer.style.marginLeft = 0;</script>';
+            var marginBanner = '<script> window.addEventListener("DOMContentLoaded", function () { var htmlDoc = new XMLSerializer().serializeToString(document);' + 'var bannerID = htmlDoc.match(/ads_+[zone]+\d+_+[slot]+\d+/g)[0];' + // eslint-disable-line
+            'var bannerContainer = document.getElementById(bannerID);' + 'bannerContainer.style.marginLeft = 0;  });</script>';
             // const scriptCode = util.explodeScriptTag(bannerData).scripts;
             // console.log(scriptCode);
             // if (scriptCode.length > 0) {
@@ -11735,12 +11735,11 @@ var Zone = _vue2.default.component('zone', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-zone'
-        // style={{
-        //   // width: `${vm.current.width}px`,
-        //   // height: 'auto',
-        //   margin: 'auto',
-        // }}
+        'class': 'arf-zone',
+        style: {
+          width: vm.current.width + 'px',
+          height: 'auto'
+        }
       },
       [h(
         _components.Share,
@@ -12583,6 +12582,10 @@ var Zone = function (_Entity) {
               // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
               shareTemplate.outputCss = shares[_i2].css;
               shareTemplate.placements = shares[_i2].places;
+              var shareHeight = shares[_i2].places.reduce(function (acc, item) {
+                return acc + (_this2.zoneType === 'right' ? item.height : item.width);
+              }, 0);
+              shareTemplate.height = shareHeight;
               var shareData = new _Share2.default(shareTemplate);
               shareDatas.push(shareData);
             }
