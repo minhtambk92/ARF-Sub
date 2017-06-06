@@ -93,7 +93,8 @@ const Banner = Vue.component('banner', {
               const bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
               const bannerContainer = `ads_zone${bannerCode}`;
               marginBanner = `<script> var bannerParentID = "${bannerContainer}";` +
-                `var removeMargin = setInterval(function() { var bannerParent = document.getElementById(bannerParentID);` + // eslint-disable-line
+                `var removeMargin = setInterval(function() {
+                 var bannerParent = document.getElementById(bannerParentID);` + // eslint-disable-line
                 'if (bannerParent) {' +
                 '   bannerParent.childNodes[1].style.marginLeft = 0;' +
                 'clearInterval(removeMargin);' +
