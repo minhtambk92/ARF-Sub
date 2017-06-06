@@ -11101,14 +11101,17 @@ var Banner = _vue2.default.component('banner', {
             iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
           } else {
             var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
-            var marginBanner = '<script> window.addEventListener("DOMContentLoaded", function () { var htmlDoc = new XMLSerializer().serializeToString(document);' + 'var bannerID = htmlDoc.match(/ads_+[zone]+\d+_+[slot]+\d+/g)[0];' + // eslint-disable-line
-            'var bannerContainer = document.getElementById(bannerID);' + 'bannerContainer.style.marginLeft = 0;  });</script>';
-            // const scriptCode = util.explodeScriptTag(bannerData).scripts;
-            // console.log(scriptCode);
-            // if (scriptCode.length > 0) {
-            // eslint-disable-next-line
-            //   const bannerIDInsideIframe = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0];
-            // }
+            var scriptCode = _vendor.util.explodeScriptTag(bannerData).scripts;
+            console.log('scriptCode', scriptCode, bannerData);
+            var marginBanner = '';
+            if (scriptCode.length > 0) {
+              // eslint-disable-next-line
+              var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
+              var bannerContainer = 'ads_zone' + bannerCode;
+              marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'var removeMargin = setInterval(function() { var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
+              'if (bannerParent) {' + 'console.log("hahaha");' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + 'clearInterval(removeMargin);' + '}}, 100);</script>';
+              console.log('bannerIDInsideIframe', bannerContainer);
+            }
             // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
             console.log(bannerData);
             iframe.contentWindow.document.write(bannerData + marginBanner);
@@ -14152,12 +14155,10 @@ var util = {
           evlScript.push(trim(jsCodeInsideScriptTag));
         }
 
-        if (evlScript === '') {
-          var srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
-          if (srcAttribute) {
-            var linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
-            scripts.push(linkSrc);
-          }
+        var srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
+        if (srcAttribute) {
+          var linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
+          scripts.push(linkSrc);
         }
       }
     }

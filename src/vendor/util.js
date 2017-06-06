@@ -601,12 +601,10 @@ const util = {
           evlScript.push(trim(jsCodeInsideScriptTag));
         }
 
-        if (evlScript === '') {
-          const srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
-          if (srcAttribute) {
-            const linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
-            scripts.push(linkSrc);
-          }
+        const srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
+        if (srcAttribute) {
+          const linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
+          scripts.push(linkSrc);
         }
       }
     }
