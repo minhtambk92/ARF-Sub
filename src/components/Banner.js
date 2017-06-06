@@ -88,14 +88,13 @@ const Banner = Vue.component('banner', {
             const scriptCode = util.explodeScriptTag(bannerData).scripts;
             console.log('scriptCode', scriptCode, bannerData);
             let marginBanner = '';
-            if (scriptCode.length > 0) {
+            if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
             // eslint-disable-next-line
               const bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
               const bannerContainer = `ads_zone${bannerCode}`;
               marginBanner = `<script> var bannerParentID = "${bannerContainer}";` +
                 `var removeMargin = setInterval(function() { var bannerParent = document.getElementById(bannerParentID);` + // eslint-disable-line
                 'if (bannerParent) {' +
-                  'console.log("hahaha");' +
                 '   bannerParent.childNodes[1].style.marginLeft = 0;' +
                 'clearInterval(removeMargin);' +
                 '}}, 100);</script>';

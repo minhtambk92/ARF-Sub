@@ -11104,12 +11104,12 @@ var Banner = _vue2.default.component('banner', {
             var scriptCode = _vendor.util.explodeScriptTag(bannerData).scripts;
             console.log('scriptCode', scriptCode, bannerData);
             var marginBanner = '';
-            if (scriptCode.length > 0) {
+            if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
               // eslint-disable-next-line
               var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
               var bannerContainer = 'ads_zone' + bannerCode;
               marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'var removeMargin = setInterval(function() { var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
-              'if (bannerParent) {' + 'console.log("hahaha");' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + 'clearInterval(removeMargin);' + '}}, 100);</script>';
+              'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + 'clearInterval(removeMargin);' + '}}, 100);</script>';
               console.log('bannerIDInsideIframe', bannerContainer);
             }
             // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
@@ -12585,10 +12585,9 @@ var Zone = function (_Entity) {
               // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
               shareTemplate.outputCss = shares[_i2].css;
               shareTemplate.placements = shares[_i2].places;
-              var shareHeight = shares[_i2].places.reduce(function (acc, item) {
-                return acc + (_this2.zoneType === 'right' ? item.height : item.width);
-              }, 0);
-              shareTemplate.height = shareHeight;
+              // const shareHeight = shares[i].places.reduce((acc, item) =>
+              // acc + (this.zoneType === 'right' ? item.height : item.width), 0);
+              // shareTemplate.height = shareHeight;
               var shareData = new _Share2.default(shareTemplate);
               shareDatas.push(shareData);
             }
