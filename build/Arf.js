@@ -11108,8 +11108,8 @@ var Banner = _vue2.default.component('banner', {
               // eslint-disable-next-line
               var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
               var bannerContainer = 'ads_zone' + bannerCode;
-              marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'var removeMargin = setInterval(function() { var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
-              'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + 'clearInterval(removeMargin);' + '}}, 100);</script>';
+              marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'setTimeout(function() {\n                 var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
+              'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + '}}, 200);</script>';
               console.log('bannerIDInsideIframe', bannerContainer);
             }
             // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
@@ -11514,8 +11514,7 @@ var Placement = _vue2.default.component('placement', {
         },
         'class': 'arf-placement',
         style: {
-          width: vm.current.width + 'px',
-          height: vm.current.height + 'px'
+          width: vm.current.width + 'px'
         }
       },
       [h(
