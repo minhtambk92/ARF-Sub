@@ -81,7 +81,7 @@ const Zone = Vue.component('zone', {
         style={{
           width: `${vm.current.width}px`,
           height: 'auto',
-          // margin: 'auto',
+          margin: 'auto',
         }}
       >
         <Share model={vm.activeShareModel} />
