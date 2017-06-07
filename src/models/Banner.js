@@ -98,7 +98,7 @@ class Banner extends Entity {
                 a(`${globalVariableName} = ''`); // eslint-disable-line
               }
               // eslint-disable-next-line
-              // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),comparison, value[j]);
+              console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),comparison, value[j]);
               stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
               if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
                   a(`${globalVariableName} = globalVariableTemp`); // eslint-disable-line
@@ -123,9 +123,9 @@ class Banner extends Entity {
                 }
                 // endregion : get link detail
 
-                // console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
+                console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
               }
-              // console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
+              console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
               switch (comparison) {
                 case '==': {
                   stringCheck += value[j] === thisChannel[0];

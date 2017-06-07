@@ -89,7 +89,7 @@ const Placement = Vue.component('placement', {
         class="arf-placement"
         style={{
           width: `${vm.current.width}px`,
-          height: `${vm.current.height}px`,
+          // height: `${vm.current.height}px`,
         }}
       >
         <Banner model={vm.activeBannerModel} />
