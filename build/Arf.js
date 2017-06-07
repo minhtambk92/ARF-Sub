@@ -12547,16 +12547,16 @@ var Zone = function (_Entity) {
                     console.log('ShareTest', share);
                     shares.push(share);
                     isRelative = false;
-                    share.places = [];
-                    share.id = '';
-                    share.css = '';
+                    // share.places = [];
+                    // share.id = '';
+                    // share.css = '';
                   }
                   if (Free === 0) {
                     shares.push(share);
                     isRelative = false;
-                    share.places = [];
-                    share.id = '';
-                    share.css = '';
+                    // share.places = [];
+                    // share.id = '';
+                    // share.css = '';
                   }
                 }
                 return '';
@@ -12571,7 +12571,7 @@ var Zone = function (_Entity) {
             shareTemplate.weight = 100 / shares.length;
             for (var i = 0; i < shares.length; i += 1) {
               // shareTemplate.id = `DS-${this.id}-${i}`;
-              shareTemplate.id = shares[i].id;
+              shareTemplate.id = shares[i].id.replace('share-', '');
               var css = getCss(shares[i].places);
               console.log('css', css);
               // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
