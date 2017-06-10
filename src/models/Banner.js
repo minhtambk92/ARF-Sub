@@ -69,14 +69,15 @@ class Banner extends Entity {
       let strChk = '';
 
       for (let i = 0; i < optionsLength; i += 1) {
+        console.log('checkChannel', options);
         const optionChannelType = options[i].optionChannelType;
         const value = options[i].value.toString().split(',');
         const comparison = options[i].comparison;
         const logical = options[i].logical === 'and' ? '&&' : '||';
         const globalVariableName = options[i].globalVariables;
-        console.log('globalVariableName', globalVariableName);
+        console.log('globalVariableName', globalVariableName, i);
         // eslint-disable-next-line
-        let globalVariable = a(`typeof (${globalVariableName}) !== 'undefined' && ${globalVariableName} !== ''`) ? a(globalVariableName) : undefined;
+        let globalVariable = (globalVariableName !== '' && a(`typeof (${globalVariableName}) !== 'undefined'`)) ? a(globalVariableName) : undefined;
         console.log('globalVariable', globalVariable);
         const globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : '';
         console.log('globalVariableTemp', globalVariableTemp);
@@ -87,14 +88,15 @@ class Banner extends Entity {
         type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
         type = optionChannelType.isVariable ? 'isVariable' : type;
 
-        console.log('valueCheck', value);
+        // console.log('valueCheck', value);
         if (optionChannelType.optionChannelValues.length > 0) {
           additionalDetail = optionChannelType.optionChannelValues.filter(item =>
             value.reduce((acc, valueItem) => acc || (item.value === valueItem
             && item.optionChannelValueProperties.length > 0), 0));
         }
-        // console.log('value', value);
+        console.log('value', value);
         for (let j = 0; j < value.length; j += 1) {
+          console.log('step1');
           if (j > 0) stringCheck += '||';
           switch (type) {
             case 'isInputLink' || 'isVariable': {
@@ -102,7 +104,7 @@ class Banner extends Entity {
                 a(`${globalVariableName} = ''`); // eslint-disable-line
               }
               // eslint-disable-next-line
-              console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'),comparison, value[j]);
+              console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'), comparison, value[j]);
               stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
               if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
                   a(`${globalVariableName} = globalVariableTemp`); // eslint-disable-line
@@ -151,12 +153,15 @@ class Banner extends Entity {
               break;
             }
           }
+          console.log('step2', type);
         }
+        console.log('step3', stringCheck);
         const CheckValue = a(stringCheck);
         if (i > 0) strChk += logical;
         strChk += CheckValue;
+        console.log('step4', strChk, i);
       }
-      console.log('checkChannel', strChk);
+      console.log('step5', strChk);
       return a(strChk);
     }
     return true;

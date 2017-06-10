@@ -10225,14 +10225,15 @@ var Banner = function (_Entity) {
         var strChk = '';
 
         var _loop = function _loop(i) {
+          console.log('checkChannel', options);
           var optionChannelType = options[i].optionChannelType;
           var value = options[i].value.toString().split(',');
           var comparison = options[i].comparison;
           var logical = options[i].logical === 'and' ? '&&' : '||';
           var globalVariableName = options[i].globalVariables;
-          console.log('globalVariableName', globalVariableName);
+          console.log('globalVariableName', globalVariableName, i);
           // eslint-disable-next-line
-          var globalVariable = a('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
+          var globalVariable = globalVariableName !== '' && a('typeof (' + globalVariableName + ') !== \'undefined\'') ? a(globalVariableName) : undefined;
           console.log('globalVariable', globalVariable);
           var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : '';
           console.log('globalVariableTemp', globalVariableTemp);
@@ -10243,7 +10244,7 @@ var Banner = function (_Entity) {
           type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
           type = optionChannelType.isVariable ? 'isVariable' : type;
 
-          console.log('valueCheck', value);
+          // console.log('valueCheck', value);
           if (optionChannelType.optionChannelValues.length > 0) {
             additionalDetail = optionChannelType.optionChannelValues.filter(function (item) {
               return value.reduce(function (acc, valueItem) {
@@ -10251,8 +10252,9 @@ var Banner = function (_Entity) {
               }, 0);
             });
           }
-          // console.log('value', value);
+          console.log('value', value);
           for (var j = 0; j < value.length; j += 1) {
+            console.log('step1');
             if (j > 0) stringCheck += '||';
             switch (type) {
               case 'isInputLink' || 'isVariable':
@@ -10319,16 +10321,19 @@ var Banner = function (_Entity) {
                   break;
                 }
             }
+            console.log('step2', type);
           }
+          console.log('step3', stringCheck);
           var CheckValue = a(stringCheck);
           if (i > 0) strChk += logical;
           strChk += CheckValue;
+          console.log('step4', strChk, i);
         };
 
         for (var i = 0; i < optionsLength; i += 1) {
           _loop(i);
         }
-        console.log('checkChannel', strChk);
+        console.log('step5', strChk);
         return a(strChk);
       }
       return true;
