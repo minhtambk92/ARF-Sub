@@ -10232,9 +10232,9 @@ var Banner = function (_Entity) {
           var globalVariableName = options[i].globalVariables;
           console.log('globalVariableName', globalVariableName);
           // eslint-disable-next-line
-          var globalVariable = eval('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
+          var globalVariable = a('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
           console.log('globalVariable', globalVariable);
-          var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : ''; // eslint-disable-line
+          var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : '';
           console.log('globalVariableTemp', globalVariableTemp);
           var currentAdditionalDetail = '';
           var type = optionChannelType.isInputLink ? 'isInputLink' : '';
@@ -10243,7 +10243,7 @@ var Banner = function (_Entity) {
           type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
           type = optionChannelType.isVariable ? 'isVariable' : type;
 
-          // console.log('valueCheck', value);
+          console.log('valueCheck', value);
           if (optionChannelType.optionChannelValues.length > 0) {
             additionalDetail = optionChannelType.optionChannelValues.filter(function (item) {
               return value.reduce(function (acc, valueItem) {

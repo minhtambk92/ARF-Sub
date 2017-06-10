@@ -76,9 +76,9 @@ class Banner extends Entity {
         const globalVariableName = options[i].globalVariables;
         console.log('globalVariableName', globalVariableName);
         // eslint-disable-next-line
-        let globalVariable = eval(`typeof (${globalVariableName}) !== 'undefined' && ${globalVariableName} !== ''`) ? a(globalVariableName) : undefined;
+        let globalVariable = a(`typeof (${globalVariableName}) !== 'undefined' && ${globalVariableName} !== ''`) ? a(globalVariableName) : undefined;
         console.log('globalVariable', globalVariable);
-        let globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : ''; // eslint-disable-line
+        const globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : '';
         console.log('globalVariableTemp', globalVariableTemp);
         let currentAdditionalDetail = '';
         let type = optionChannelType.isInputLink ? 'isInputLink' : '';
@@ -87,7 +87,7 @@ class Banner extends Entity {
         type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
         type = optionChannelType.isVariable ? 'isVariable' : type;
 
-        // console.log('valueCheck', value);
+        console.log('valueCheck', value);
         if (optionChannelType.optionChannelValues.length > 0) {
           additionalDetail = optionChannelType.optionChannelValues.filter(item =>
             value.reduce((acc, valueItem) => acc || (item.value === valueItem
