@@ -10230,10 +10230,12 @@ var Banner = function (_Entity) {
           var comparison = options[i].comparison;
           var logical = options[i].logical === 'and' ? '&&' : '||';
           var globalVariableName = options[i].globalVariables;
+          console.log('globalVariableName', globalVariableName);
           // eslint-disable-next-line
           var globalVariable = eval('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
           console.log('globalVariable', globalVariable);
           var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : ''; // eslint-disable-line
+          console.log('globalVariableTemp', globalVariableTemp);
           var currentAdditionalDetail = '';
           var type = optionChannelType.isInputLink ? 'isInputLink' : '';
           var stringCheck = '';

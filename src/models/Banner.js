@@ -74,10 +74,12 @@ class Banner extends Entity {
         const comparison = options[i].comparison;
         const logical = options[i].logical === 'and' ? '&&' : '||';
         const globalVariableName = options[i].globalVariables;
+        console.log('globalVariableName', globalVariableName);
         // eslint-disable-next-line
-        const globalVariable = eval(`typeof (${globalVariableName}) !== 'undefined' && ${globalVariableName} !== ''`) ? a(globalVariableName) : undefined;
+        let globalVariable = eval(`typeof (${globalVariableName}) !== 'undefined' && ${globalVariableName} !== ''`) ? a(globalVariableName) : undefined;
         console.log('globalVariable', globalVariable);
         let globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : ''; // eslint-disable-line
+        console.log('globalVariableTemp', globalVariableTemp);
         let currentAdditionalDetail = '';
         let type = optionChannelType.isInputLink ? 'isInputLink' : '';
         let stringCheck = '';
