@@ -10233,8 +10233,10 @@ var Banner = function (_Entity) {
           console.log('globalVariableName', globalVariableName);
           // eslint-disable-next-line
           var globalVariable = eval('typeof (' + globalVariableName + ') !== \'undefined\' && ' + globalVariableName + ' !== \'\'') ? a(globalVariableName) : undefined;
+          globalVariable = decodeURIComponent(globalVariable);
           console.log('globalVariable', globalVariable);
           var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : ''; // eslint-disable-line
+          globalVariableTemp = decodeURIComponent(globalVariableTemp);
           console.log('globalVariableTemp', globalVariableTemp);
           var currentAdditionalDetail = '';
           var type = optionChannelType.isInputLink ? 'isInputLink' : '';
