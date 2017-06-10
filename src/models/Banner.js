@@ -77,10 +77,8 @@ class Banner extends Entity {
         console.log('globalVariableName', globalVariableName);
         // eslint-disable-next-line
         let globalVariable = eval(`typeof (${globalVariableName}) !== 'undefined' && ${globalVariableName} !== ''`) ? a(globalVariableName) : undefined;
-        globalVariable = decodeURIComponent(globalVariable);
         console.log('globalVariable', globalVariable);
         let globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : ''; // eslint-disable-line
-        globalVariableTemp = decodeURIComponent(globalVariableTemp);
         console.log('globalVariableTemp', globalVariableTemp);
         let currentAdditionalDetail = '';
         let type = optionChannelType.isInputLink ? 'isInputLink' : '';
