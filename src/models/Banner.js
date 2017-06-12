@@ -25,16 +25,18 @@ class Banner extends Entity {
     this.isIFrame = banner.isIFrame;
     this.imageUrl = banner.imageUrl;
   }
+
   // Banner Checking Process
   isRenderable() {
     const isBannerAvailable = this.id !== 'banner-undefined';
     const isFitChannel = this.checkChannel;
-    const isFitLocation = this.checkLocation;
-    const a = this.checkFrequency;
-    const res = isBannerAvailable && isFitChannel && isFitLocation && a;
-    console.log(`${this.id}: fre:${a}, channel: ${isFitChannel}, location: ${isFitLocation}, isBannerAvailable: ${isBannerAvailable}`);
+    // const isFitLocation = this.checkLocation;
+    const isFitFrequency = this.checkFrequency;
+    const res = isBannerAvailable && isFitChannel && isFitFrequency;
+    console.log(`${this.id}: fre:${isFitFrequency}, channel: ${isFitChannel}, isBannerAvailable: ${isBannerAvailable}`);
     return res;
   }
+
   // check term old data (not use)
   get checkTerm() {
     if (this.terms) {
@@ -59,6 +61,7 @@ class Banner extends Entity {
 
     return true;
   }
+
   // check channel with new data (using)
   get checkChannel() {
     if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
@@ -69,7 +72,6 @@ class Banner extends Entity {
       let strChk = '';
 
       for (let i = 0; i < optionsLength; i += 1) {
-        console.log('checkChannel', options);
         const optionChannelType = options[i].optionChannelType;
         const value = options[i].value.toString().split(',');
         const comparison = options[i].comparison;
@@ -87,7 +89,7 @@ class Banner extends Entity {
         let additionalDetail = []; // get optionChannelValueProperties
         type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
         type = optionChannelType.isVariable ? 'isVariable' : type;
-
+        console.log('type', type);
         // console.log('valueCheck', value);
         if (optionChannelType.optionChannelValues.length > 0) {
           additionalDetail = optionChannelType.optionChannelValues.filter(item =>
@@ -96,35 +98,33 @@ class Banner extends Entity {
         }
         console.log('value', value);
         for (let j = 0; j < value.length; j += 1) {
-          console.log('step1');
           if (j > 0) stringCheck += '||';
           switch (type) {
-            case 'isInputLink' || 'isVariable': {
-              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
+            case 'isVariable': case 'isInputLink': {
+              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
                 a(`${globalVariableName} = ''`); // eslint-disable-line
               }
-              // eslint-disable-next-line
               console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'), comparison, value[j]);
               stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
-              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
-                  a(`${globalVariableName} = globalVariableTemp`); // eslint-disable-line
+              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+                a(`${globalVariableName} = globalVariableTemp`); // eslint-disable-line
               }
               break;
             }
             case 'isSelectOption': {
-              const Pageurl = term.getPath2Check('Site:Pageurl', globalVariableName);
-              const thisChannel = util.getThisChannel(Pageurl);
+              const pageUrl = term.getPath2Check('Site:Pageurl', globalVariableName);
+              const thisChannel = util.getThisChannel(pageUrl);
               thisChannel.shift();
 
               // do smt with additionalDetail
               if (additionalDetail.length > 0) {
                 // region : get link detail
-                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
+                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
                   a(`${globalVariableName} = ''`);
                 }
-                currentAdditionalDetail = util.getThisChannel(Pageurl).pop();
+                currentAdditionalDetail = util.getThisChannel(pageUrl).pop();
                 currentAdditionalDetail.shift();
-                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line
+                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
                   a(`${globalVariableName} = globalVariableTemp`);
                 }
                 // endregion : get link detail
@@ -153,19 +153,17 @@ class Banner extends Entity {
               break;
             }
           }
-          console.log('step2', type);
         }
-        console.log('step3', stringCheck);
         const CheckValue = a(stringCheck);
         if (i > 0) strChk += logical;
         strChk += CheckValue;
-        console.log('step4', strChk, i);
       }
-      console.log('step5', strChk);
+      console.log('strChk', strChk);
       return a(strChk);
     }
     return true;
   }
+
   // get CheckLocation() {
   //   let location = this.location;
   //   location = (typeof (location) === 'undefined' ||
@@ -201,6 +199,7 @@ class Banner extends Entity {
     }
     return true;
   }
+
   // get location from channel's options
   get getLocation() {
     if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
@@ -220,6 +219,7 @@ class Banner extends Entity {
     }
     return 0;
   }
+
   // old data(not use)
   get checkBrowser() {
     let browser = this.browser;
@@ -274,6 +274,7 @@ class Banner extends Entity {
       const bannerID = this.id;
       const a = adsStorage.subCookie(cookie, `${bannerID}:`, 0).toString();
       const currentCount = parseInt(a.slice(a.indexOf(':') + 1), 10);
+      console.log(`${this.id}: ${currentCount}`);
       return currentCount;
     }
     return '';

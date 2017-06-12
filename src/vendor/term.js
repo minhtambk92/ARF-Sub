@@ -5,9 +5,9 @@
 const term = {
   // get the path (admChannel or pageUrl) to check
   getPath2Check(type, variableName) {
-    const globalVariable = eval(`typeof (${variableName}) !== 'undefined' && ${variableName} !== ''`) ? eval(variableName) : undefined; // eslint-disable-line no-eval
-    if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') { // eslint-disable-line no-undef,camelcase
-      return decodeURIComponent(`${globalVariable}`); // eslint-disable-line no-undef,camelcase
+    const globalVariable = (variableName !== '' && eval(`typeof (${variableName}) !== 'undefined'`)) ? eval(variableName) : undefined; // eslint-disable-line no-eval
+    if (variableName !== '' && typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+      return decodeURIComponent(`${globalVariable}`);
     }
     const url = document.URL;
     const ref = document.referrer;
