@@ -235,129 +235,107 @@ const Banner = Vue.component('banner', {
       });
     },
     renderBannerNoIframe() {
-      // const vm = this;
-      // const explode = (html) => {
-      //   let element = html;
-      //   const evlScript = [];
-      //   const scripts = [];
-      //   const trim = (str) => {
-      //     let strTemp = str;
-      //     strTemp = strTemp.replace(/^\s+/, '');
-      //     for (let i = strTemp.length - 1; i >= 0; i -= 1) {
-      //       if (/\S/.test(strTemp.charAt(i))) {
-      //         strTemp = strTemp.substring(0, i + 1);
-      //         break;
-      //       }
-      //     }
-      //     return strTemp;
-      //   };
-      //   // boc tach script
-      //   const allScriptTag = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
-      //
-      //   if (allScriptTag) {
-      //     let jsCodeInsideScriptTag = '';
-      //     for (let i = 0, len = allScriptTag.length; i < len; i += 1) {
-      //       element = element.replace(allScriptTag[i], '');
-      //       jsCodeInsideScriptTag = allScriptTag[i].replace
-      // (/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
-      //       if (trim(jsCodeInsideScriptTag) !== '') {
-      //         evlScript.push(trim(jsCodeInsideScriptTag));
-      //       }
-      //
-      //       const srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
-      //       if (srcAttribute) {
-      //         const linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
-      //         scripts.push(linkSrc);
-      //       }
-      //     }
-      //   }
-      //   return { scripts, evlScript };
-      // };
-      // const getFileScript = (el, ...url) => {
-      //   const a = document.createElement('script');
-      //   a.type = 'text/javascript';
-      //   a.async = true;
-      //   a.src = url;
-      //   if (url.length >= 2) {
-      //     const arrLength = url[1];
-      //     a.onload = function () {
-      //       const arr = arrLength;
-      //       const strUrl = arr[0];
-      //       arr.shift();
-      //       if (arr.length >= 1) {
-      //         getFileScript(el, strUrl, arr);
-      //       } else {
-      //         getFileScript(el, strUrl);
-      //       }
-      //     };
-      //   }
-      //   if (el === '') {
-      //     const c = document.getElementsByTagName('script')[0];
-      //     console.log(c);
-      //     c.parentNode.insertBefore(a, c);
-      //   } else {
-      //     el.appendChild(a);
-      //   }
-      // };
-      // // const urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
-      // // const loadAsync = setInterval(() => {
-      // //   if (window.isLoadLib !== undefined && window.isLoadLib) {
-      // //     const idw = document.getElementById(`${vm.current.id}`);
-      // //     if (idw) {
-      // //       idw.innerHTML = '';
-      // //       const data = vm.current.html;
-      // //       admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
-      // //     }
-      // //     clearInterval(loadAsync);
-      // //   }
-      // // }, 500);
-      // // util.admLoadJs(urlCore, 'admicro_core_nld', () => {
-      // //   const idw = document.getElementById(`${vm.current.id}`);
-      // //   if (idw) {
-      // //     idw.innerHTML = '';
-      // //     const data = vm.current.html;
-      // //     admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
-      // //   }
-      // //   clearInterval(loadAsync);
-      // // });
-      //
-      // const HtmlData = vm.current.html;
+      const vm = this;
+      const explode = (html) => {
+        let element = html;
+        const evlScript = [];
+        const scripts = [];
+        const trim = (str) => {
+          let strTemp = str;
+          strTemp = strTemp.replace(/^\s+/, '');
+          for (let i = strTemp.length - 1; i >= 0; i -= 1) {
+            if (/\S/.test(strTemp.charAt(i))) {
+              strTemp = strTemp.substring(0, i + 1);
+              break;
+            }
+          }
+          return strTemp;
+        };
+        // boc tach script
+        const allScriptTag = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
+
+        if (allScriptTag) {
+          let jsCodeInsideScriptTag = '';
+          for (let i = 0, len = allScriptTag.length; i < len; i += 1) {
+            element = element.replace(allScriptTag[i], '');
+            jsCodeInsideScriptTag = allScriptTag[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
+            if (trim(jsCodeInsideScriptTag) !== '') {
+              evlScript.push(trim(jsCodeInsideScriptTag));
+            }
+
+            const srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
+            if (srcAttribute) {
+              const linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
+              scripts.push(linkSrc);
+            }
+          }
+        }
+        return { scripts, evlScript };
+      };
+      const getFileScript = (el, ...url) => {
+        const a = document.createElement('script');
+        a.type = 'text/javascript';
+        a.async = true;
+        a.src = url;
+        if (url.length >= 2) {
+          const arrLength = url[1];
+          a.onload = function () {
+            const arr = arrLength;
+            const strUrl = arr[0];
+            arr.shift();
+            if (arr.length >= 1) {
+              getFileScript(el, strUrl, arr);
+            } else {
+              getFileScript(el, strUrl);
+            }
+          };
+        }
+        if (el === '') {
+          const c = document.getElementsByTagName('script')[0];
+          console.log(c);
+          c.parentNode.insertBefore(a, c);
+        } else {
+          el.appendChild(a);
+        }
+      };
+      // const urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
       // const loadAsync = setInterval(() => {
+      //   if (window.isLoadLib !== undefined && window.isLoadLib) {
+      //     const idw = document.getElementById(`${vm.current.id}`);
+      //     if (idw) {
+      //       idw.innerHTML = '';
+      //       const data = vm.current.html;
+      //       admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
+      //     }
+      //     clearInterval(loadAsync);
+      //   }
+      // }, 500);
+      // util.admLoadJs(urlCore, 'admicro_core_nld', () => {
       //   const idw = document.getElementById(`${vm.current.id}`);
       //   if (idw) {
       //     idw.innerHTML = '';
-      //     const dataBanner = explode(HtmlData);
-      //
-      //     for (let i = 0; i < dataBanner.scripts.length; i += 1) {
-      //       console.log('abc', dataBanner.scripts[i]);
-      //       getFileScript(idw, dataBanner.scripts[i]);
-      //     }
+      //     const data = vm.current.html;
+      //     admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
       //   }
       //   clearInterval(loadAsync);
-      // }, 500);
-      const vm = this;
-      const urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
+      // });
+
+      const HtmlData = vm.current.html;
       const loadAsync = setInterval(() => {
-        if (window.isLoadLib !== undefined && window.isLoadLib) {
-          const idw = document.getElementById(`${vm.current.id}`);
-          if (idw) {
-            idw.innerHTML = '';
-            const data = vm.current.html;
-            admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
-          }
-          clearInterval(loadAsync);
-        }
-      }, 500);
-      util.admLoadJs(urlCore, 'admicro_core_nld', () => {
         const idw = document.getElementById(`${vm.current.id}`);
         if (idw) {
           idw.innerHTML = '';
-          const data = vm.current.html;
-          console.log('testxx', data, vm.current.id);
-          admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
+          const dataBanner = explode(HtmlData);
+          if (dataBanner.scripts.length > 0) {
+            for (let i = 0; i < dataBanner.scripts.length; i += 1) {
+              getFileScript(idw, dataBanner.scripts[i]);
+            }
+          } else {
+            idw.innerHTML = HtmlData;
+          }
         }
         clearInterval(loadAsync);
-      });
+      }, 500);
     },
     // renderBannerImg() {
     //   console.log('renderBannerImg');
