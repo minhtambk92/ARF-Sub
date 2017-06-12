@@ -11334,7 +11334,6 @@ var Banner = _vue2.default.component('banner', {
       //   }
       //   clearInterval(loadAsync);
       // });
-
       var HtmlData = vm.current.html;
       var loadAsync = setInterval(function () {
         var idw = document.getElementById('' + vm.current.id);
@@ -11343,6 +11342,7 @@ var Banner = _vue2.default.component('banner', {
           var dataBanner = explode(HtmlData);
           if (dataBanner.scripts.length > 0) {
             for (var i = 0; i < dataBanner.scripts.length; i += 1) {
+              idw.innerHTML = HtmlData;
               getFileScript(idw, dataBanner.scripts[i]);
             }
           } else {

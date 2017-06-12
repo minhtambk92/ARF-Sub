@@ -319,7 +319,6 @@ const Banner = Vue.component('banner', {
       //   }
       //   clearInterval(loadAsync);
       // });
-
       const HtmlData = vm.current.html;
       const loadAsync = setInterval(() => {
         const idw = document.getElementById(`${vm.current.id}`);
@@ -328,6 +327,7 @@ const Banner = Vue.component('banner', {
           const dataBanner = explode(HtmlData);
           if (dataBanner.scripts.length > 0) {
             for (let i = 0; i < dataBanner.scripts.length; i += 1) {
+              idw.innerHTML = HtmlData;
               getFileScript(idw, dataBanner.scripts[i]);
             }
           } else {
