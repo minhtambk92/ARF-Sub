@@ -574,7 +574,7 @@ const util = {
     return placesWithKeyword;
   },
 
-  explodeScriptTag(html) {
+  getScriptTag(html) {
     let element = html;
     const evlScript = [];
     const scripts = [];
@@ -611,30 +611,66 @@ const util = {
     return { scripts, evlScript };
   },
 
-  getFileScript(el, ...url) {
-    const a = document.createElement('script');
-    a.type = 'text/javascript';
-    a.async = true;
-    a.src = url;
+  installScript(el, ...url) {
+    const newScriptTag = document.createElement('script');
+    newScriptTag.type = 'text/javascript';
+    newScriptTag.async = true;
+    newScriptTag.src = url;
     if (url.length >= 2) {
       const arrLength = url[1];
-      a.onload = function () {
+      newScriptTag.onload = function () {
         const arr = arrLength;
         const strUrl = arr[0];
         arr.shift();
         if (arr.length >= 1) {
-          this.getFileScript(el, strUrl, arr);
+          this.installScript(el, strUrl, arr);
         } else {
-          this.getFileScript(el, strUrl);
+          this.installScript(el, strUrl);
         }
       };
     }
     if (el === '') {
-      const c = document.getElementsByTagName('script')[0];
-      console.log(c);
-      c.parentNode.insertBefore(a, c);
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
     } else {
-      el.appendChild(a);
+      el.appendChild(newScriptTag);
+    }
+  },
+
+  executeJS(html, id) {
+    const scriptTag = this.getScriptTag(html);
+    const elementContainer = document.getElementById(id);
+    if (arguments.length >= 3) {
+      if (elementContainer) {
+        const stringDiv = html.match(/id="[^"]+"/i);
+        if (stringDiv) {
+          const divID = stringDiv[0].replace(/id="|"/gi, '');
+          if (divID) {
+            elementContainer.innerHTML = html;
+            const divElement = document.getElementById(divID);
+            if (divElement) {
+              divElement.setAttribute('rel', id);
+              const parentNode = elementContainer.parentNode;
+              parentNode.replaceChild(divElement, elementContainer);
+            }
+          }
+        }
+      }
+    } else if (elementContainer) {
+      elementContainer.innerHTML = html;
+      window.setTimeout(() => {
+        elementContainer.style.display = '';
+      }, 1000);
+    }
+    if (elementContainer && scriptTag.scripts.length > 0) {
+      for (let i = 0; i < scriptTag.scripts.length; i += 1) {
+        this.installScript(elementContainer, scriptTag.scripts[i]);
+      }
+    }
+    if (scriptTag.evlScript.length > 0) {
+      for (let i = 0, length = scriptTag.evlScript.length; i < length; i += 1) {
+        eval(scriptTag.evlScript[i]); // eslint-disable-line
+      }
     }
   },
 

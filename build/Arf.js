@@ -11107,7 +11107,7 @@ var Banner = _vue2.default.component('banner', {
             iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
           } else {
             var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
-            var scriptCode = _vendor.util.explodeScriptTag(bannerData).scripts;
+            var scriptCode = _vendor.util.getScriptTag(bannerData).scripts;
             console.log('scriptCode', scriptCode, bannerData);
             var marginBanner = '';
             if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
@@ -11139,7 +11139,7 @@ var Banner = _vue2.default.component('banner', {
               }
               clearInterval(fixIframe);
             } else {
-              // Add onload or DOMContentLoaded event listeners here: for example,
+              // Add onload or DOMContentLoaded event listeners here
               window.addEventListener('onload', function () {
                 if (document.getElementById('iframe-' + vm.current.id)) {
                   _vendor.util.resizeIFrameToFitContent(iframe);
@@ -11247,109 +11247,13 @@ var Banner = _vue2.default.component('banner', {
     },
     renderBannerNoIframe: function renderBannerNoIframe() {
       var vm = this;
-      var explode = function explode(html) {
-        var element = html;
-        var evlScript = [];
-        var scripts = [];
-        var trim = function trim(str) {
-          var strTemp = str;
-          strTemp = strTemp.replace(/^\s+/, '');
-          for (var i = strTemp.length - 1; i >= 0; i -= 1) {
-            if (/\S/.test(strTemp.charAt(i))) {
-              strTemp = strTemp.substring(0, i + 1);
-              break;
-            }
-          }
-          return strTemp;
-        };
-        // boc tach script
-        var allScriptTag = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi);
-
-        if (allScriptTag) {
-          var jsCodeInsideScriptTag = '';
-          for (var i = 0, len = allScriptTag.length; i < len; i += 1) {
-            element = element.replace(allScriptTag[i], '');
-            jsCodeInsideScriptTag = allScriptTag[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
-            if (trim(jsCodeInsideScriptTag) !== '') {
-              evlScript.push(trim(jsCodeInsideScriptTag));
-            }
-
-            var srcAttribute = allScriptTag[i].match(/src="([^"]*)"/gi);
-            if (srcAttribute) {
-              var linkSrc = srcAttribute[0].replace(/src="([^"]*)"/gi, '$1');
-              scripts.push(linkSrc);
-            }
-          }
-        }
-        return { scripts: scripts, evlScript: evlScript };
-      };
-      var getFileScript = function getFileScript(el) {
-        for (var _len = arguments.length, url = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          url[_key - 1] = arguments[_key];
-        }
-
-        var a = document.createElement('script');
-        a.type = 'text/javascript';
-        a.async = true;
-        a.src = url;
-        if (url.length >= 2) {
-          var arrLength = url[1];
-          a.onload = function () {
-            var arr = arrLength;
-            var strUrl = arr[0];
-            arr.shift();
-            if (arr.length >= 1) {
-              getFileScript(el, strUrl, arr);
-            } else {
-              getFileScript(el, strUrl);
-            }
-          };
-        }
-        if (el === '') {
-          var c = document.getElementsByTagName('script')[0];
-          console.log(c);
-          c.parentNode.insertBefore(a, c);
-        } else {
-          el.appendChild(a);
-        }
-      };
-      // const urlCore = 'http://admicro1.vcmedia.vn/core/admicro_core_nld.js';
-      // const loadAsync = setInterval(() => {
-      //   if (window.isLoadLib !== undefined && window.isLoadLib) {
-      //     const idw = document.getElementById(`${vm.current.id}`);
-      //     if (idw) {
-      //       idw.innerHTML = '';
-      //       const data = vm.current.html;
-      //       admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
-      //     }
-      //     clearInterval(loadAsync);
-      //   }
-      // }, 500);
-      // util.admLoadJs(urlCore, 'admicro_core_nld', () => {
-      //   const idw = document.getElementById(`${vm.current.id}`);
-      //   if (idw) {
-      //     idw.innerHTML = '';
-      //     const data = vm.current.html;
-      //     admExecJs(data, `${vm.current.id}`);  // eslint-disable-line no-undef
-      //   }
-      //   clearInterval(loadAsync);
-      // });
-      var HtmlData = vm.current.html;
+      var htmlData = vm.current.html;
       var loadAsync = setInterval(function () {
         var idw = document.getElementById('' + vm.current.id);
         if (idw) {
-          idw.innerHTML = '';
-          var dataBanner = explode(HtmlData);
-          if (dataBanner.scripts.length > 0) {
-            for (var i = 0; i < dataBanner.scripts.length; i += 1) {
-              idw.innerHTML = HtmlData;
-              getFileScript(idw, dataBanner.scripts[i]);
-            }
-          } else {
-            idw.innerHTML = HtmlData;
-          }
+          _vendor.util.executeJS(htmlData, vm.current.id);
+          clearInterval(loadAsync);
         }
-        clearInterval(loadAsync);
       }, 500);
     }
   },
@@ -11400,7 +11304,7 @@ var Banner = _vue2.default.component('banner', {
       [h(
         'div',
         { ref: 'banner' },
-        ['banner content']
+        []
       )]
     );
   }
@@ -14147,7 +14051,7 @@ var util = {
     });
     return placesWithKeyword;
   },
-  explodeScriptTag: function explodeScriptTag(html) {
+  getScriptTag: function getScriptTag(html) {
     var element = html;
     var evlScript = [];
     var scripts = [];
@@ -14183,35 +14087,70 @@ var util = {
     }
     return { scripts: scripts, evlScript: evlScript };
   },
-  getFileScript: function getFileScript(el) {
-    var a = document.createElement('script');
-    a.type = 'text/javascript';
-    a.async = true;
+  installScript: function installScript(el) {
+    var newScriptTag = document.createElement('script');
+    newScriptTag.type = 'text/javascript';
+    newScriptTag.async = true;
 
     for (var _len2 = arguments.length, url = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
       url[_key2 - 1] = arguments[_key2];
     }
 
-    a.src = url;
+    newScriptTag.src = url;
     if (url.length >= 2) {
       var arrLength = url[1];
-      a.onload = function () {
+      newScriptTag.onload = function () {
         var arr = arrLength;
         var strUrl = arr[0];
         arr.shift();
         if (arr.length >= 1) {
-          this.getFileScript(el, strUrl, arr);
+          this.installScript(el, strUrl, arr);
         } else {
-          this.getFileScript(el, strUrl);
+          this.installScript(el, strUrl);
         }
       };
     }
     if (el === '') {
-      var c = document.getElementsByTagName('script')[0];
-      console.log(c);
-      c.parentNode.insertBefore(a, c);
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(newScriptTag, firstScriptTag);
     } else {
-      el.appendChild(a);
+      el.appendChild(newScriptTag);
+    }
+  },
+  executeJS: function executeJS(html, id) {
+    var scriptTag = this.getScriptTag(html);
+    var elementContainer = document.getElementById(id);
+    if (arguments.length >= 3) {
+      if (elementContainer) {
+        var stringDiv = html.match(/id="[^"]+"/i);
+        if (stringDiv) {
+          var divID = stringDiv[0].replace(/id="|"/gi, '');
+          if (divID) {
+            elementContainer.innerHTML = html;
+            var divElement = document.getElementById(divID);
+            if (divElement) {
+              divElement.setAttribute('rel', id);
+              var parentNode = elementContainer.parentNode;
+              parentNode.replaceChild(divElement, elementContainer);
+            }
+          }
+        }
+      }
+    } else if (elementContainer) {
+      elementContainer.innerHTML = html;
+      window.setTimeout(function () {
+        elementContainer.style.display = '';
+      }, 1000);
+    }
+    if (elementContainer && scriptTag.scripts.length > 0) {
+      for (var i = 0; i < scriptTag.scripts.length; i += 1) {
+        this.installScript(elementContainer, scriptTag.scripts[i]);
+      }
+    }
+    if (scriptTag.evlScript.length > 0) {
+      for (var _i = 0, length = scriptTag.evlScript.length; _i < length; _i += 1) {
+        eval(scriptTag.evlScript[_i]); // eslint-disable-line
+      }
     }
   },
   admLoadJs: function admLoadJs(urlLibrary, libName, callBack) {
