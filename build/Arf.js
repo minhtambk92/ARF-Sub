@@ -10494,7 +10494,7 @@ var Placement = function (_Entity) {
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (Placement.__proto__ || (0, _getPrototypeOf2.default)(Placement)).call(this, placement));
 
-    _this.id = placement.id.indexOf('placement-') === -1 ? 'placement-' + placement.id : placement.id;
+    _this.id = typeof placement.id === 'string' ? placement.id.indexOf('placement-') === -1 ? 'placement-' + placement.id : placement.id : 'placement-' + placement.id; // eslint-disable-line
     _this.banners = placement.banners;
     _this.revenueType = placement.revenueType;
     _this.cpdPercent = placement.cpdPercent;
@@ -10696,10 +10696,18 @@ var Share = function (_Entity) {
      * @returns {Placement}
      */
     value: function activePlacement() {
-      var randomNumber = Math.random() * 100;
+      var _this2 = this;
 
-      return this.allPlacements.reduce(function (range, placement) {
-        var nextRange = range + placement.weight;
+      var randomNumber = Math.random() * 100;
+      var ratio = this.allPlacements.reduce(function (tmp, place) {
+        if (place.weight === undefined) {
+          share.weight = 100 / _this2.allPlacements.length; // eslint-disable-line
+        }
+        return place.weight + tmp;
+      }, 0) / 100;
+
+      var res = this.allPlacements.reduce(function (range, placement) {
+        var nextRange = range + placement.weight / ratio;
 
         if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
           return range;
@@ -10711,6 +10719,10 @@ var Share = function (_Entity) {
 
         return nextRange;
       }, 0);
+
+      console.log('abcc', res, this.allPlacements);
+
+      return res;
     }
 
     /**
@@ -10760,6 +10772,7 @@ var Share = function (_Entity) {
         console.log('sort', allPlace);
         return allPlace;
       }
+      console.log('xxxx', allPlace);
       return allPlace;
     }
   }]);
@@ -12411,7 +12424,7 @@ var Zone = function (_Entity) {
             // Browse each shareRatio on above and create a share for it.
             shareRatios.reduce(function (temp, shareRatio) {
               var checkS = checkShare(shareRatio);
-              console.log('checkS', checkS);
+              // console.log('checkS', checkS);
               if (1) {
                 // this variable to store places in a share which are chosen bellow
                 var share = { places: [], id: checkS.id, css: checkS.css };

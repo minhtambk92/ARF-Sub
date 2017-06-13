@@ -485,7 +485,7 @@ class Zone extends Entity {
             // Browse each shareRatio on above and create a share for it.
           shareRatios.reduce((temp, shareRatio) => {
             const checkS = checkShare(shareRatio);
-            console.log('checkS', checkS);
+            // console.log('checkS', checkS);
             if (1) {
               // this variable to store places in a share which are chosen bellow
               const share = { places: [], id: checkS.id, css: checkS.css };

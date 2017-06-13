@@ -39,6 +39,7 @@ class Share extends Entity {
       console.log('sort', allPlace);
       return allPlace;
     }
+    console.log('xxxx', allPlace);
     return allPlace;
   }
 
@@ -48,9 +49,15 @@ class Share extends Entity {
    */
   activePlacement() {
     const randomNumber = Math.random() * 100;
+    const ratio = this.allPlacements.reduce((tmp, place) => {
+      if (place.weight === undefined) {
+          share.weight = 100 / this.allPlacements.length; // eslint-disable-line
+      }
+      return (place.weight + tmp);
+    }, 0) / 100;
 
-    return this.allPlacements.reduce((range, placement) => {
-      const nextRange = range + placement.weight;
+    const res = this.allPlacements.reduce((range, placement) => {
+      const nextRange = range + (placement.weight / ratio);
 
       if (typeof range === 'object') {
         return range;
@@ -62,6 +69,10 @@ class Share extends Entity {
 
       return nextRange;
     }, 0);
+
+    console.log('abcc', res, this.allPlacements);
+
+    return res;
   }
 
   /**
