@@ -507,7 +507,10 @@ class Zone extends Entity {
                   // place.data.PlacementArea === placeRatio &&
                   placeMonopolies.indexOf(place) === -1 &&
                   place.data.revenueType !== 'pr' &&
-                  placeChosen.indexOf(place) === -1 &&
+                  (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
+                    if (index2 === 0) return item.data.id !== place.data.id;
+                    return acc && item.data.id !== place.data.id;
+                  }, 0) : true) &&
                   place.index === index &&
                   place.data.revenueType === shareConstruct[index].type));
                 // filter place with relative keyword

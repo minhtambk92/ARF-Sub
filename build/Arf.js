@@ -10275,7 +10275,6 @@ var Banner = function (_Entity) {
                     console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl'), comparison, value[j]);
                     stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
                     if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
-                      console.log('xxxx', globalVariableTemp);
                       a(globalVariableName + ' = \'' + globalVariableTemp + '\''); // eslint-disable-line
                     }
                   }
@@ -12435,7 +12434,11 @@ var Zone = function (_Entity) {
                       // getNumberOfParts(place.data.height, true) < numberOfParts &&
                       getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio &&
                       // place.data.PlacementArea === placeRatio &&
-                      placeMonopolies.indexOf(place) === -1 && place.data.revenueType !== 'pr' && placeChosen.indexOf(place) === -1 && place.index === index && place.data.revenueType === shareConstruct[index].type
+                      placeMonopolies.indexOf(place) === -1 && place.data.revenueType !== 'pr' && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                        // eslint-disable-line
+                        if (index2 === 0) return item.data.id !== place.data.id;
+                        return acc && item.data.id !== place.data.id;
+                      }, 0) : true) && place.index === index && place.data.revenueType === shareConstruct[index].type
                     );
                   });
                   // filter place with relative keyword
