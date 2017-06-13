@@ -828,7 +828,7 @@ const util = {
     if (arr1.length !== arr2.length) {
       return false;
     }
-    return arr1.sort().join() === arr2.sort().join();
+    return JSON.stringify(arr1) === JSON.stringify(arr2);
   },
 };
 

@@ -112,7 +112,7 @@
               id: 'a683efec-4601-4a5c-be9a-9da0ee835037',
               name: 'Banner-980x90-home-1',
               html: '<div id="" style="position:relative;width:980px; height:90px;">\n<img src="//adi.admicro.vn/adt/banners/nam2015/148/cmsadsbeta/980x90.jpg" />\n<div style="color:#fff;font:bold 38px/90px arial,tahoma; text-shadow: 3px 3px #f00; text-align:center; display:block; position:absolute; top:0; left:0;width:100%; height:90px; " >Box 980x90</div>\n</div>',
-              width: 0,
+              width: 980,
               height: 0,
               keyword: '',
               weight: 1,

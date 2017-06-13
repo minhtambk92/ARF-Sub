@@ -101,13 +101,15 @@ class Banner extends Entity {
           if (j > 0) stringCheck += '||';
           switch (type) {
             case 'isVariable': case 'isInputLink': {
-              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
-                a(`${globalVariableName} = ''`); // eslint-disable-line
-              }
-              console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'), comparison, value[j]);
-              stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
-              if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
-                a(`${globalVariableName} = globalVariableTemp`); // eslint-disable-line
+              if ((globalVariableName !== '' && eval(`typeof (${globalVariableName}) !== 'undefined'`))) { // eslint-disable-line no-eval
+                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+                  a(`${globalVariableName} = ''`); // eslint-disable-line
+                }
+                console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'), comparison, value[j]);
+                stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
+                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+                  a(`${globalVariableName} = '${globalVariableTemp}'`); // eslint-disable-line
+                }
               }
               break;
             }

@@ -462,9 +462,10 @@ class Zone extends Entity {
       const shareDatas = [];
       const checkShare = shareRatio => listRatio.reduce((acc, item, index, arr) => {
         if (index === 0) {
-          return util.checkTwoArrayEqual(item.ratio, shareRatio);
+          const res = util.checkTwoArrayEqual(item.ratio, shareRatio);
+          return { check: res, id: item.id, css: item.css };
         }
-        const res = acc || util.checkTwoArrayEqual(item.ratio, shareRatio);
+        const res = acc.check || util.checkTwoArrayEqual(item.ratio, shareRatio);
         if (index === (arr.length - 1) && res === true) {
           return { check: res, id: item.id, css: item.css };
         }
@@ -478,22 +479,16 @@ class Zone extends Entity {
         // console.log('FreeArea', FreeArea);
         const numberOfParts = getNumberOfParts(FreeArea);
         for (let i = 1; i <= numberOfParts; i += 1) {
-          // console.log('i', i);
           // divide share base on free area and number of part.
           const shareRatios = util.ComputeShare(numberOfParts, i);
           console.log('shareRatios', shareRatios);
-          // console.log('checkShare', checkShare());
-          // const checkS = checkShare();
-          // if (checkS.check) {
             // Browse each shareRatio on above and create a share for it.
           shareRatios.reduce((temp, shareRatio) => {
-              // console.log('shareRatio', shareRatio);
             const checkS = checkShare(shareRatio);
-            if (checkS.check) {
+            console.log('checkS', checkS);
+            if (1) {
               // this variable to store places in a share which are chosen bellow
-              const share = { places: [], id: '', css: '' };
-              share.id = checkS.id;
-              share.css = checkS.css;
+              const share = { places: [], id: checkS.id, css: checkS.css };
               placeMonopolies.reduce((x, y) =>
                 shareRatio.splice(y.index, 0, this.zoneType === 'right' ? getNumberOfParts(y.data.height, true) : getNumberOfParts(y.data.width, true)), 0);
               let isRelative = false;
@@ -531,9 +526,6 @@ class Zone extends Entity {
                   share.css = '';
                   return 0;
                 } else { // eslint-disable-line no-else-return
-                  // choose random a placement which are collected on above
-                  // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
-                  // const place = places[randomIndex];
                   const place = activePlacement(places, shareConstruct[index]);
                   // console.log('random', places.length, randomIndex);
                   placeChosen.push(place);
@@ -606,14 +598,13 @@ class Zone extends Entity {
               shareRatio.reduce((temp2, placeRatio, index) => {
                   // find all placement fit with area place
                 let places = allPlacement.filter(place => (
-                  getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
-                  place.data.revenueType !== 'pr' &&
-                  ((place.data.positionOnShare !== 0) ? placeChosen.indexOf(place) === -1 :
-                    placeChosen.map(item => item.data).reduce((acc, item, index2) => {
-                      if (index2 === 0) return item.id !== place.data.id;
-                      return acc && item.id !== place.data.id;
-                    }, 0)) &&
-                  place.index === index));
+                getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
+                place.data.revenueType !== 'pr' &&
+                (placeChosen.length > 0 ? placeChosen.map(item => item.data).reduce((acc, item, index2) => { // eslint-disable-line
+                  if (index2 === 0) return item.id !== place.data.id;
+                  return acc && item.id !== place.data.id;
+                }, 0) : true) &&
+                place.index === index));
 
                   // filter place with relative keyword
                 let placesWithKeyword = [];
@@ -890,11 +881,11 @@ class Zone extends Entity {
       console.log('cpdShare', cpdShare);
       return cpdShare;
     }
-    const cpmShare = computeShareWithPlacementType2(allPlace, 'cpm', buildShareConstruct);
-    console.log('cpmShare', cpmShare);
-    if (cpmShare.length > 0) {
-      return cpmShare;
-    }
+    // const cpmShare = computeShareWithPlacementType2(allPlace, 'cpm', buildShareConstruct);
+    // console.log('cpmShare', cpmShare);
+    // if (cpmShare.length > 0) {
+    //   return cpmShare;
+    // }
     return allShare;
   }
 

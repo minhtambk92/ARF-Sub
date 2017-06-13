@@ -86,7 +86,6 @@ const Banner = Vue.component('banner', {
           } else {
             const bannerData = macro.replaceMacro(vm.current.html, true);
             const scriptCode = util.getScriptTag(bannerData).scripts;
-            console.log('scriptCode', scriptCode, bannerData);
             let marginBanner = '';
             if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
              // eslint-disable-next-line
@@ -99,10 +98,8 @@ const Banner = Vue.component('banner', {
                 'if (bannerParent) {' +
                 '   bannerParent.childNodes[1].style.marginLeft = 0;' +
                 '}}, 200);</script>';
-              console.log('bannerIDInsideIframe', bannerContainer);
             }
             // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
-            console.log(bannerData);
             iframe.contentWindow.document.write(bannerData + marginBanner);
             // iframe.contentWindow.document.write(bannerDataWithMacro);
           }
