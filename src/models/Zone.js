@@ -603,9 +603,9 @@ class Zone extends Entity {
                 let places = allPlacement.filter(place => (
                 getNumberOfParts((this.zoneType === 'right' ? place.data.height : place.data.width), true) === placeRatio &&
                 place.data.revenueType !== 'pr' &&
-                (placeChosen.length > 0 ? placeChosen.map(item => item.data).reduce((acc, item, index2) => { // eslint-disable-line
-                  if (index2 === 0) return item.id !== place.data.id;
-                  return acc && item.id !== place.data.id;
+                (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
+                  if (index2 === 0) return item.data.id !== place.data.id;
+                  return acc && item.data.id !== place.data.id;
                 }, 0) : true) &&
                 place.index === index));
 

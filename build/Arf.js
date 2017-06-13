@@ -12533,12 +12533,10 @@ var Zone = function (_Entity) {
                 shareRatio.reduce(function (temp2, placeRatio, index) {
                   // find all placement fit with area place
                   var places = allPlacement.filter(function (place) {
-                    return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && (placeChosen.length > 0 ? placeChosen.map(function (item) {
-                      return item.data;
-                    }).reduce(function (acc, item, index2) {
+                    return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
                       // eslint-disable-line
-                      if (index2 === 0) return item.id !== place.data.id;
-                      return acc && item.id !== place.data.id;
+                      if (index2 === 0) return item.data.id !== place.data.id;
+                      return acc && item.data.id !== place.data.id;
                     }, 0) : true) && place.index === index;
                   });
 
