@@ -9,6 +9,8 @@ import { Placement as PlacementModel } from '../models';
 import { Banner } from '../components';
 import { dom } from '../mixins';
 
+// const VisSense = require('vissense');
+
 const Placement = Vue.component('placement', {
 
   props: {
@@ -25,12 +27,38 @@ const Placement = Vue.component('placement', {
     window.arfPlacements[this.current.id] = this;
   },
 
-  // mounted() {
+  mounted() {
     // this.$on('bannerHeight', (bannerHeight) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
-  // },
+
+    //
+    // setTimeout(() => {
+    //   const placement = document.getElementById(this.current.id);
+    //   if (placement) {
+    //     // const throttle = VisSense.Utils.throttle;
+    //     VisSense.VisMon.Builder(VisSense(placement)).on('update', (monitor) => {
+    //       }).on('start', (monitor) => { // eslint-disable-line
+    //         console.log('start');
+    //       }).on('visible', (monitor) => { // eslint-disable-line
+    //         console.log('visible');
+    //       }).on('fullyvisible', (monitor) => { // eslint-disable-line
+    //         console.log('fullyvisible');
+    //       }).on('hidden', (monitor) => { // eslint-disable-line
+    //         console.log('hidden');
+    //       }).on('visibilitychange', (monitor) => { // eslint-disable-line
+    //         console.log('visibilitychange');
+    //       })
+    //       .on('percentagechange', VisSense.Utils.throttle((monitor, newValue, oldValue) => {
+    //         console.log(`percentagechange ${oldValue} -> ${newValue}`);
+    //       }, 150))
+    //       .build()
+    //       .start();
+    //     // clearInterval(testView);
+    //   }
+    // }, 100);
+  },
 
   computed: {
     current() {
@@ -83,6 +111,20 @@ const Placement = Vue.component('placement', {
         </div>
       );
     }
+    if (vm.activeBannerModel !== false) {
+      return (
+        <div
+          id={vm.current.id}
+          class="arf-placement"
+          style={{
+            width: `${vm.current.width}px`,
+            // height: `${vm.current.height}px`,
+          }}
+        >
+          <Banner model={vm.activeBannerModel} />
+        </div>
+      );
+    }
     return (
       <div
         id={vm.current.id}
@@ -91,9 +133,7 @@ const Placement = Vue.component('placement', {
           width: `${vm.current.width}px`,
           // height: `${vm.current.height}px`,
         }}
-      >
-        <Banner model={vm.activeBannerModel} />
-      </div>
+      />
     );
   },
 

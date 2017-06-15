@@ -13,19 +13,39 @@ class Share extends Entity {
 
     this.id = `share-${share.id}`;
     this.placements = share.placements;
+    this.sharePlacements = share.sharePlacements;
+    this.ratio = share.ratio;
   }
 
   get shareArea() {
     return util.convertArea(this.height, this.width);
   }
 
+  get allPlacements() {
+    const allPlace = this.placements.map(placement => new Placement(placement));
+    const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
+      if (index === 0) {
+        return item.positionOnShare !== undefined && item.positionOnShare !== 0;
+      }
+      return acc && (item.positionOnShare !== undefined && item.positionOnShare !== 0);
+    }, 0);
+    console.log('isUsePlacePosition', isUsePlacePosition);
+    if (isUsePlacePosition) {
+      allPlace.sort((a, b) => a.positionOnShare - b.positionOnShare);
+      console.log('sort', allPlace);
+      return allPlace;
+    }
+    return allPlace;
+  }
   /**
    * Get all placements from this share
    * @returns [Placement]
    */
-  get allPlacements() {
-    const allPlace = this.placements.map(placement => new Placement(placement));
-
+  get allsharePlacements() {
+    // const allPlace = this.placements.map(placement => new Placement(placement));
+    const allPlace = this.sharePlacements.filter(sharePlacement =>
+    sharePlacement.placement !== null);
+    allPlace.reduce((acc, item) => {item.placement = new Placement(item.placement)}, 0); // eslint-disable-line
     const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
       if (index === 0) {
         return item.positionOnShare !== undefined && item.positionOnShare !== 0;
@@ -39,7 +59,6 @@ class Share extends Entity {
       console.log('sort', allPlace);
       return allPlace;
     }
-    console.log('xxxx', allPlace);
     return allPlace;
   }
 
@@ -50,14 +69,14 @@ class Share extends Entity {
   activePlacement() {
     const randomNumber = Math.random() * 100;
     const ratio = this.allPlacements.reduce((tmp, place) => {
-      if (place.weight === undefined) {
-          share.weight = 100 / this.allPlacements.length; // eslint-disable-line
+      if (place.placement.weight === undefined) {
+        place.placement.weight = 100 / this.allPlacements.length; // eslint-disable-line
       }
-      return (place.weight + tmp);
+      return (place.placement.weight + tmp);
     }, 0) / 100;
 
     const res = this.allPlacements.reduce((range, placement) => {
-      const nextRange = range + (placement.weight / ratio);
+      const nextRange = range + (placement.placement.weight / ratio);
 
       if (typeof range === 'object') {
         return range;

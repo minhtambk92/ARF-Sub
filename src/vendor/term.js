@@ -30,8 +30,8 @@ const term = {
     return http.toLowerCase();
   },
   // check logic
-  checkPathLogic(data, type, logic) {
-    const path2check = this.getPath2Check(type);
+  checkPathLogic(data, type, variableName, logic) {
+    const path2check = this.getPath2Check(type, variableName);
     switch (logic) {
       case '==':
         return (path2check === data);

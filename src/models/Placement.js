@@ -36,15 +36,13 @@ class Placement extends Entity {
 
   filterBanner() {
     let result = this.allBanners.filter(x => x.isRenderable());
+    console.log('numberOfBannerInPlacement', result);
     const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));
     if (arrayKeyword.length > 0) {
       const filterBannerWithKeyword = result.filter(banner => banner.keyword.split(',').map(item => item.replace(' ', '')).filter(item => arrayKeyword.indexOf(item) !== -1).length > 0);
       if (filterBannerWithKeyword.length > 0) {
         result = filterBannerWithKeyword;
       }
-    }
-    if (result.length === 0) {
-      return this.allBanners;
     }
     return result;
   }
@@ -86,7 +84,7 @@ class Placement extends Entity {
     }
 
     // default banner here
-    return util.getDefaultBanner(this.width, this.height);
+    return false;
   }
 
   get AdsType() {

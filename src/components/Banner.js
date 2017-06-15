@@ -233,14 +233,18 @@ const Banner = Vue.component('banner', {
     },
     renderBannerNoIframe() {
       const vm = this;
-      const htmlData = vm.current.html;
-      const loadAsync = setInterval(() => {
-        const idw = document.getElementById(`${vm.current.id}`);
-        if (idw) {
-          util.executeJS(htmlData, vm.current.id);
-          clearInterval(loadAsync);
-        }
-      }, 500);
+      try {
+        const htmlData = vm.current.html;
+        const loadAsync = setInterval(() => {
+          const idw = document.getElementById(`${vm.current.id}`);
+          if (idw) {
+            util.executeJS(htmlData, vm.current.id);
+            clearInterval(loadAsync);
+          }
+        }, 500);
+      } catch (error) {
+        throw new Error(error);
+      }
     },
     // renderBannerImg() {
     //   console.log('renderBannerImg');

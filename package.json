@@ -66,5 +66,8 @@
   "bugs": {
     "url": "https://github.com/manhhailua/arf/issues"
   },
-  "homepage": "https://github.com/manhhailua/arf"
+  "homepage": "https://github.com/manhhailua/arf",
+  "dependencies": {
+    "vissense": "^0.10.0"
+  }
 }

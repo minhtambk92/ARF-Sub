@@ -32,8 +32,8 @@ class Banner extends Entity {
     const isFitChannel = this.checkChannel;
     // const isFitLocation = this.checkLocation;
     const isFitFrequency = this.checkFrequency;
-    const res = isBannerAvailable && isFitChannel && isFitFrequency;
-    console.log(`${this.id}: fre:${isFitFrequency}, channel: ${isFitChannel}, isBannerAvailable: ${isBannerAvailable}`);
+    const res = (isBannerAvailable && isFitChannel) && isFitFrequency;
+    console.log(`${this.id}: fre:${isFitFrequency}, channel: ${isFitChannel}, isBannerAvailable: ${isBannerAvailable}, res: ${res}`);
     return res;
   }
 
@@ -80,6 +80,7 @@ class Banner extends Entity {
         console.log('globalVariableName', globalVariableName, i);
         // eslint-disable-next-line
         let globalVariable = (globalVariableName !== '' && a(`typeof (${globalVariableName}) !== 'undefined'`)) ? a(globalVariableName) : undefined;
+        globalVariable = encodeURIComponent(globalVariable);
         console.log('globalVariable', globalVariable);
         const globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : '';
         console.log('globalVariableTemp', globalVariableTemp);
@@ -100,17 +101,18 @@ class Banner extends Entity {
         for (let j = 0; j < value.length; j += 1) {
           if (j > 0) stringCheck += '||';
           switch (type) {
-            case 'isVariable': case 'isInputLink': {
+            case 'isVariable': {
               if ((globalVariableName !== '' && eval(`typeof (${globalVariableName}) !== 'undefined'`))) { // eslint-disable-line no-eval
                 if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
-                  a(`${globalVariableName} = ''`); // eslint-disable-line
-                }
-                console.log('checkChannel', type, term.getPath2Check('Site:Pageurl'), comparison, value[j]);
-                stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', comparison);
-                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
-                  a(`${globalVariableName} = '${globalVariableTemp}'`); // eslint-disable-line
+                  stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
+                  console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
                 }
               }
+              break;
+            }
+            case 'isInputLink': {
+              stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+              console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
               break;
             }
             case 'isSelectOption': {
@@ -160,7 +162,7 @@ class Banner extends Entity {
         if (i > 0) strChk += logical;
         strChk += CheckValue;
       }
-      console.log('strChk', strChk);
+      console.log('strChk', strChk, a(strChk));
       return a(strChk);
     }
     return true;
