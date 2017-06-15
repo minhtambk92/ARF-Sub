@@ -253,7 +253,7 @@ class Zone extends Entity {
         // share.sharePlacements.reduce((acc2, sharePlacement) =>
         // ratio.push(getNumberOfParts(this.zoneType === 'right' ?
         // sharePlacement.placement.height : sharePlacement.placement.width, true)), 0);
-        listRatio.push({ ratio: share.ratio.split(',').map(x => parseInt(x, 10)), id: share.id, css: share.outputCss });
+        listRatio.push({ ratio: share.format.split(',').map(x => parseInt(x, 10)), id: share.id, css: share.outputCss });
       }, 0);
       return listRatio;
     };

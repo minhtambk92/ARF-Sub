@@ -14,7 +14,7 @@ class Share extends Entity {
     this.id = `share-${share.id}`;
     this.placements = share.placements;
     this.sharePlacements = share.sharePlacements;
-    this.ratio = share.ratio;
+    this.format = share.format;
   }
 
   get shareArea() {

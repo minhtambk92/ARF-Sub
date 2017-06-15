@@ -10691,7 +10691,7 @@ var Share = function (_Entity) {
     _this.id = 'share-' + share.id;
     _this.placements = share.placements;
     _this.sharePlacements = share.sharePlacements;
-    _this.ratio = share.ratio;
+    _this.format = share.format;
     return _this;
   }
 
@@ -12393,7 +12393,7 @@ var Zone = function (_Entity) {
           // share.sharePlacements.reduce((acc2, sharePlacement) =>
           // ratio.push(getNumberOfParts(this.zoneType === 'right' ?
           // sharePlacement.placement.height : sharePlacement.placement.width, true)), 0);
-          listRatio.push({ ratio: share.ratio.split(',').map(function (x) {
+          listRatio.push({ ratio: share.format.split(',').map(function (x) {
               return parseInt(x, 10);
             }), id: share.id, css: share.outputCss });
         }, 0);
@@ -13102,11 +13102,11 @@ var Zone = function (_Entity) {
         console.log('cpdShare', cpdShare);
         return cpdShare;
       }
-      // const cpmShare = computeShareWithPlacementType2(allPlace, 'cpm', buildShareConstruct);
-      // console.log('cpmShare', cpmShare);
-      // if (cpmShare.length > 0) {
-      //   return cpmShare;
-      // }
+      var cpmShare = computeShareWithPlacementType2(allPlace, 'cpm', buildShareConstruct);
+      console.log('cpmShare', cpmShare);
+      if (cpmShare.length > 0) {
+        return cpmShare;
+      }
       // return allShare;
       return [];
     }
