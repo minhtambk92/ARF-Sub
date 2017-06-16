@@ -106,6 +106,8 @@ class Banner extends Entity {
                 if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
                   stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
                   console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+                } else {
+                  stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
                 }
               }
               break;

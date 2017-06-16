@@ -77,6 +77,20 @@ const Placement = Vue.component('placement', {
     this.$parent.$emit('render', this.current.id, this.current.revenueType);
     const dev = location.search.indexOf('checkPlace=dev') !== -1;
     if (dev) {
+      if (vm.activeBannerModel !== false) {
+        return (
+          <div
+            id={vm.current.id}
+            class="arf-placement"
+            style={{
+              width: `${vm.current.width}px`,
+              // height: `${vm.current.height}px`,
+            }}
+          >
+            <Banner model={vm.activeBannerModel} />
+          </div>
+        );
+      }
       return (
         <div
           id={vm.current.id}
