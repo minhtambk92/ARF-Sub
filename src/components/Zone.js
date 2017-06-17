@@ -73,7 +73,21 @@ const Zone = Vue.component('zone', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-
+    if (vm.activeShareModel) {
+      return (
+        <div
+          id={vm.current.id}
+          class="arf-zone"
+          style={{
+            width: `${vm.current.width}px`,
+            height: 'auto',
+            margin: 'auto',
+          }}
+        >
+          <Share model={vm.activeShareModel} />
+        </div>
+      );
+    }
     return (
       <div
         id={vm.current.id}
@@ -83,9 +97,7 @@ const Zone = Vue.component('zone', {
           height: 'auto',
           margin: 'auto',
         }}
-      >
-        <Share model={vm.activeShareModel} />
-      </div>
+      />
     );
   },
 

@@ -8,8 +8,7 @@ import Vue from 'vue';
 import { Placement as PlacementModel } from '../models';
 import { Banner } from '../components';
 import { dom } from '../mixins';
-
-// const VisSense = require('vissense');
+// import { VisSense } from '../vendor';
 
 const Placement = Vue.component('placement', {
 
@@ -33,31 +32,29 @@ const Placement = Vue.component('placement', {
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
 
-    //
-    // setTimeout(() => {
-    //   const placement = document.getElementById(this.current.id);
-    //   if (placement) {
-    //     // const throttle = VisSense.Utils.throttle;
-    //     VisSense.VisMon.Builder(VisSense(placement)).on('update', (monitor) => {
-    //       }).on('start', (monitor) => { // eslint-disable-line
-    //         console.log('start');
-    //       }).on('visible', (monitor) => { // eslint-disable-line
-    //         console.log('visible');
-    //       }).on('fullyvisible', (monitor) => { // eslint-disable-line
-    //         console.log('fullyvisible');
-    //       }).on('hidden', (monitor) => { // eslint-disable-line
-    //         console.log('hidden');
-    //       }).on('visibilitychange', (monitor) => { // eslint-disable-line
-    //         console.log('visibilitychange');
-    //       })
-    //       .on('percentagechange', VisSense.Utils.throttle((monitor, newValue, oldValue) => {
-    //         console.log(`percentagechange ${oldValue} -> ${newValue}`);
-    //       }, 150))
-    //       .build()
-    //       .start();
-    //     // clearInterval(testView);
-    //   }
-    // }, 100);
+    const placement = document.getElementById(this.current.id);
+    if (placement) {
+      const ts = VisSense(placement);
+        // const throttle = VisSense.Utils.throttle;
+        VisSense.VisMon.Builder(ts).on('update', (monitor) => { // eslint-disable-line
+          }).on('start', (monitor) => { // eslint-disable-line
+            console.log('start');
+          }).on('visible', (monitor) => { // eslint-disable-line
+            console.log('visible');
+          }).on('fullyvisible', (monitor) => { // eslint-disable-line
+            console.log('fullyvisible');
+          }).on('hidden', (monitor) => { // eslint-disable-line
+            console.log('hidden');
+          }).on('visibilitychange', (monitor) => { // eslint-disable-line
+            console.log('visibilitychange');
+          })
+          .on('percentagechange', VisSense.Utils.throttle((monitor, newValue, oldValue) => {
+            console.log(`percentagechange ${oldValue} -> ${newValue}`);
+          }, 50))
+          .build()
+          .start();
+        // clearInterval(testView);
+    }
   },
 
   computed: {

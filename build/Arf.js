@@ -80,7 +80,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 61);
+/******/ 	return __webpack_require__(__webpack_require__.s = 65);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -92,6 +92,22 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var store      = __webpack_require__(38)('wks')
+  , uid        = __webpack_require__(28)
+  , Symbol     = __webpack_require__(2).Symbol
+  , USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function(name){
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports) {
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -100,7 +116,28 @@ var global = module.exports = typeof window != 'undefined' && window.Math == Mat
 if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 
 /***/ }),
-/* 2 */
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject       = __webpack_require__(11)
+  , IE8_DOM_DEFINE = __webpack_require__(50)
+  , toPrimitive    = __webpack_require__(40)
+  , dP             = Object.defineProperty;
+
+exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9350,10 +9387,10 @@ Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(114)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(125)))
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9362,92 +9399,48 @@ module.exports = Vue$3;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.macro = exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
+exports.VisSense = exports.macro = exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
 
-var _adsStorage = __webpack_require__(66);
+var _adsStorage = __webpack_require__(71);
 
 var _adsStorage2 = _interopRequireDefault(_adsStorage);
 
-var _term = __webpack_require__(69);
+var _term = __webpack_require__(74);
 
 var _term2 = _interopRequireDefault(_term);
 
-var _screen = __webpack_require__(68);
+var _screen = __webpack_require__(73);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _util = __webpack_require__(70);
+var _util = __webpack_require__(75);
 
 var _util2 = _interopRequireDefault(_util);
 
-var _macro = __webpack_require__(67);
+var _macro = __webpack_require__(72);
 
 var _macro2 = _interopRequireDefault(_macro);
 
+var _VisSense = __webpack_require__(70);
+
+var _VisSense2 = _interopRequireDefault(_VisSense);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Created by tlm on 06/03/2017.
+ */
 
 exports.adsStorage = _adsStorage2.default;
 exports.term = _term2.default;
 exports.screen = _screen2.default;
 exports.util = _util2.default;
-exports.macro = _macro2.default; /**
-                                  * Created by tlm on 06/03/2017.
-                                  */
-
-exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default, macro: _macro2.default };
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// Thank's IE8 for his funny defineProperty
-module.exports = !__webpack_require__(15)(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
-});
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function(it, key){
-  return hasOwnProperty.call(it, key);
-};
+exports.macro = _macro2.default;
+exports.VisSense = _VisSense2.default;
+exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default, macro: _macro2.default, VisSense: _VisSense2.default };
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var anObject       = __webpack_require__(14)
-  , IE8_DOM_DEFINE = __webpack_require__(48)
-  , toPrimitive    = __webpack_require__(38)
-  , dP             = Object.defineProperty;
-
-exports.f = __webpack_require__(4) ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
-  return O;
-};
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(90)
-  , defined = __webpack_require__(27);
-module.exports = function(it){
-  return IObject(defined(it));
-};
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9455,11 +9448,11 @@ module.exports = function(it){
 
 exports.__esModule = true;
 
-var _iterator = __webpack_require__(76);
+var _iterator = __webpack_require__(80);
 
 var _iterator2 = _interopRequireDefault(_iterator);
 
-var _symbol = __webpack_require__(75);
+var _symbol = __webpack_require__(79);
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
@@ -9474,13 +9467,22 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 };
 
 /***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global    = __webpack_require__(1)
+// Thank's IE8 for his funny defineProperty
+module.exports = !__webpack_require__(15)(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global    = __webpack_require__(2)
   , core      = __webpack_require__(0)
-  , ctx       = __webpack_require__(46)
-  , hide      = __webpack_require__(10)
+  , ctx       = __webpack_require__(30)
+  , hide      = __webpack_require__(12)
   , PROTOTYPE = 'prototype';
 
 var $export = function(type, name, source){
@@ -9540,12 +9542,42 @@ $export.R = 128; // real proto method for `library`
 module.exports = $export;
 
 /***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+
+/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP         = __webpack_require__(6)
-  , createDesc = __webpack_require__(25);
-module.exports = __webpack_require__(4) ? function(object, key, value){
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = __webpack_require__(98)
+  , defined = __webpack_require__(31);
+module.exports = function(it){
+  return IObject(defined(it));
+};
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(16);
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP         = __webpack_require__(3)
+  , createDesc = __webpack_require__(19);
+module.exports = __webpack_require__(7) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
 } : function(object, key, value){
   object[key] = value;
@@ -9553,23 +9585,7 @@ module.exports = __webpack_require__(4) ? function(object, key, value){
 };
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var store      = __webpack_require__(35)('wks')
-  , uid        = __webpack_require__(26)
-  , Symbol     = __webpack_require__(1).Symbol
-  , USE_SYMBOL = typeof Symbol == 'function';
-
-var $exports = module.exports = function(name){
-  return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
-};
-
-$exports.store = store;
-
-/***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9580,19 +9596,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Banner = exports.Placement = exports.Share = exports.Zone = undefined;
 
-var _Zone2 = __webpack_require__(65);
+var _Zone2 = __webpack_require__(69);
 
 var _Zone3 = _interopRequireDefault(_Zone2);
 
-var _Share2 = __webpack_require__(44);
+var _Share2 = __webpack_require__(46);
 
 var _Share3 = _interopRequireDefault(_Share2);
 
-var _Placement2 = __webpack_require__(43);
+var _Placement2 = __webpack_require__(45);
 
 var _Placement3 = _interopRequireDefault(_Placement2);
 
-var _Banner2 = __webpack_require__(42);
+var _Banner2 = __webpack_require__(44);
 
 var _Banner3 = _interopRequireDefault(_Banner2);
 
@@ -9607,7 +9623,7 @@ exports.Placement = _Placement3.default;
 exports.Banner = _Banner3.default;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9619,16 +9635,6 @@ exports.default = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
-};
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(16);
-module.exports = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
-  return it;
 };
 
 /***/ }),
@@ -9653,18 +9659,37 @@ module.exports = function(it){
 
 /***/ }),
 /* 17 */
+/***/ (function(module, exports) {
+
+module.exports = {};
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys       = __webpack_require__(54)
-  , enumBugKeys = __webpack_require__(28);
+var $keys       = __webpack_require__(56)
+  , enumBugKeys = __webpack_require__(32);
 
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
 
 /***/ }),
-/* 18 */
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9675,19 +9700,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Zone = exports.Share = exports.Placement = exports.Banner = undefined;
 
-var _Banner2 = __webpack_require__(57);
+var _Banner2 = __webpack_require__(61);
 
 var _Banner3 = _interopRequireDefault(_Banner2);
 
-var _Placement2 = __webpack_require__(58);
+var _Placement2 = __webpack_require__(62);
 
 var _Placement3 = _interopRequireDefault(_Placement2);
 
-var _Share2 = __webpack_require__(59);
+var _Share2 = __webpack_require__(63);
 
 var _Share3 = _interopRequireDefault(_Share2);
 
-var _Zone2 = __webpack_require__(60);
+var _Zone2 = __webpack_require__(64);
 
 var _Zone3 = _interopRequireDefault(_Zone2);
 
@@ -9702,7 +9727,7 @@ exports.Share = _Share3.default;
 exports.Zone = _Zone3.default;
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9713,15 +9738,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.trackView = exports.adsData = exports.dom = undefined;
 
-var _dom2 = __webpack_require__(63);
+var _dom2 = __webpack_require__(67);
 
 var _dom3 = _interopRequireDefault(_dom2);
 
-var _adsData2 = __webpack_require__(62);
+var _adsData2 = __webpack_require__(66);
 
 var _adsData3 = _interopRequireDefault(_adsData2);
 
-var _trackView2 = __webpack_require__(64);
+var _trackView2 = __webpack_require__(68);
 
 var _trackView3 = _interopRequireDefault(_trackView2);
 
@@ -9735,7 +9760,7 @@ exports.adsData = _adsData3.default;
 exports.trackView = _trackView3.default;
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9745,7 +9770,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _classCallCheck2 = __webpack_require__(13);
+var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -9774,13 +9799,13 @@ var Entity = function Entity(entity) {
 exports.default = Entity;
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(80), __esModule: true };
+module.exports = { "default": __webpack_require__(86), __esModule: true };
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9788,7 +9813,7 @@ module.exports = { "default": __webpack_require__(80), __esModule: true };
 
 exports.__esModule = true;
 
-var _defineProperty = __webpack_require__(72);
+var _defineProperty = __webpack_require__(77);
 
 var _defineProperty2 = _interopRequireDefault(_defineProperty);
 
@@ -9813,7 +9838,7 @@ exports.default = function () {
 }();
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9821,15 +9846,15 @@ exports.default = function () {
 
 exports.__esModule = true;
 
-var _setPrototypeOf = __webpack_require__(74);
+var _setPrototypeOf = __webpack_require__(78);
 
 var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 
-var _create = __webpack_require__(71);
+var _create = __webpack_require__(47);
 
 var _create2 = _interopRequireDefault(_create);
 
-var _typeof2 = __webpack_require__(8);
+var _typeof2 = __webpack_require__(6);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -9852,7 +9877,7 @@ exports.default = function (subClass, superClass) {
 };
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9860,7 +9885,7 @@ exports.default = function (subClass, superClass) {
 
 exports.__esModule = true;
 
-var _typeof2 = __webpack_require__(8);
+var _typeof2 = __webpack_require__(6);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -9875,20 +9900,17 @@ exports.default = function (self, call) {
 };
 
 /***/ }),
-/* 25 */
-/***/ (function(module, exports) {
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = function(bitmap, value){
-  return {
-    enumerable  : !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable    : !(bitmap & 4),
-    value       : value
-  };
+// 7.1.13 ToObject(argument)
+var defined = __webpack_require__(31);
+module.exports = function(it){
+  return Object(defined(it));
 };
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports) {
 
 var id = 0
@@ -9898,7 +9920,42 @@ module.exports = function(key){
 };
 
 /***/ }),
-/* 27 */
+/* 29 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = function(it){
+  return toString.call(it).slice(8, -1);
+};
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// optional / simple context binding
+var aFunction = __webpack_require__(91);
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports) {
 
 // 7.2.1 RequireObjectCoercible(argument)
@@ -9908,7 +9965,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports) {
 
 // IE 8- don't enum bug keys
@@ -9917,39 +9974,33 @@ module.exports = (
 ).split(',');
 
 /***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-module.exports = {};
-
-/***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = true;
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject    = __webpack_require__(14)
-  , dPs         = __webpack_require__(96)
-  , enumBugKeys = __webpack_require__(28)
-  , IE_PROTO    = __webpack_require__(34)('IE_PROTO')
+var anObject    = __webpack_require__(11)
+  , dPs         = __webpack_require__(107)
+  , enumBugKeys = __webpack_require__(32)
+  , IE_PROTO    = __webpack_require__(37)('IE_PROTO')
   , Empty       = function(){ /* empty */ }
   , PROTOTYPE   = 'prototype';
 
 // Create object with fake `null` prototype: use iframe Object with cleared prototype
 var createDict = function(){
   // Thrash, waste and sodomy: IE GC bug
-  var iframe = __webpack_require__(47)('iframe')
+  var iframe = __webpack_require__(49)('iframe')
     , i      = enumBugKeys.length
     , lt     = '<'
     , gt     = '>'
     , iframeDocument;
   iframe.style.display = 'none';
-  __webpack_require__(89).appendChild(iframe);
+  __webpack_require__(97).appendChild(iframe);
   iframe.src = 'javascript:'; // eslint-disable-line no-script-url
   // createDict = iframe.contentWindow.Object;
   // html.removeChild(iframe);
@@ -9976,38 +10027,38 @@ module.exports = Object.create || function create(O, Properties){
 
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports) {
 
 exports.f = {}.propertyIsEnumerable;
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var def = __webpack_require__(6).f
-  , has = __webpack_require__(5)
-  , TAG = __webpack_require__(11)('toStringTag');
+var def = __webpack_require__(3).f
+  , has = __webpack_require__(9)
+  , TAG = __webpack_require__(1)('toStringTag');
 
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var shared = __webpack_require__(35)('keys')
-  , uid    = __webpack_require__(26);
+var shared = __webpack_require__(38)('keys')
+  , uid    = __webpack_require__(28);
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(1)
+var global = __webpack_require__(2)
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
@@ -10015,7 +10066,7 @@ module.exports = function(key){
 };
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports) {
 
 // 7.1.4 ToInteger
@@ -10026,17 +10077,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 7.1.13 ToObject(argument)
-var defined = __webpack_require__(27);
-module.exports = function(it){
-  return Object(defined(it));
-};
-
-/***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
@@ -10053,33 +10094,33 @@ module.exports = function(it, S){
 };
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global         = __webpack_require__(1)
+var global         = __webpack_require__(2)
   , core           = __webpack_require__(0)
-  , LIBRARY        = __webpack_require__(30)
-  , wksExt         = __webpack_require__(40)
-  , defineProperty = __webpack_require__(6).f;
+  , LIBRARY        = __webpack_require__(33)
+  , wksExt         = __webpack_require__(42)
+  , defineProperty = __webpack_require__(3).f;
 module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
 };
 
 /***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.f = __webpack_require__(11);
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(77), __esModule: true };
-
-/***/ }),
 /* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports.f = __webpack_require__(1);
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(83), __esModule: true };
+
+/***/ }),
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10089,31 +10130,31 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getPrototypeOf = __webpack_require__(21);
+var _getPrototypeOf = __webpack_require__(23);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(13);
+var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(22);
+var _createClass2 = __webpack_require__(24);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(24);
+var _possibleConstructorReturn2 = __webpack_require__(26);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(23);
+var _inherits2 = __webpack_require__(25);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(20);
+var _Entity2 = __webpack_require__(22);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _vendor = __webpack_require__(3);
+var _vendor = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10450,7 +10491,7 @@ var Banner = function (_Entity) {
 exports.default = Banner;
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10460,39 +10501,39 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof2 = __webpack_require__(8);
+var _typeof2 = __webpack_require__(6);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _getPrototypeOf = __webpack_require__(21);
+var _getPrototypeOf = __webpack_require__(23);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(13);
+var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(22);
+var _createClass2 = __webpack_require__(24);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(24);
+var _possibleConstructorReturn2 = __webpack_require__(26);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(23);
+var _inherits2 = __webpack_require__(25);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(20);
+var _Entity2 = __webpack_require__(22);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _Banner = __webpack_require__(42);
+var _Banner = __webpack_require__(44);
 
 var _Banner2 = _interopRequireDefault(_Banner);
 
-var _vendor = __webpack_require__(3);
+var _vendor = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10636,7 +10677,7 @@ var Placement = function (_Entity) {
 exports.default = Placement;
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10646,39 +10687,39 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof2 = __webpack_require__(8);
+var _typeof2 = __webpack_require__(6);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _getPrototypeOf = __webpack_require__(21);
+var _getPrototypeOf = __webpack_require__(23);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(13);
+var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(22);
+var _createClass2 = __webpack_require__(24);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(24);
+var _possibleConstructorReturn2 = __webpack_require__(26);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(23);
+var _inherits2 = __webpack_require__(25);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(20);
+var _Entity2 = __webpack_require__(22);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _Placement = __webpack_require__(43);
+var _Placement = __webpack_require__(45);
 
 var _Placement2 = _interopRequireDefault(_Placement);
 
-var _vendor = __webpack_require__(3);
+var _vendor = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10817,46 +10858,23 @@ var Share = function (_Entity) {
 exports.default = Share;
 
 /***/ }),
-/* 45 */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = function(it){
-  return toString.call(it).slice(8, -1);
-};
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// optional / simple context binding
-var aFunction = __webpack_require__(85);
-module.exports = function(fn, that, length){
-  aFunction(fn);
-  if(that === undefined)return fn;
-  switch(length){
-    case 1: return function(a){
-      return fn.call(that, a);
-    };
-    case 2: return function(a, b){
-      return fn.call(that, a, b);
-    };
-    case 3: return function(a, b, c){
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function(/* ...args */){
-    return fn.apply(that, arguments);
-  };
-};
-
-/***/ }),
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = { "default": __webpack_require__(84), __esModule: true };
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(87), __esModule: true };
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var isObject = __webpack_require__(16)
-  , document = __webpack_require__(1).document
+  , document = __webpack_require__(2).document
   // in old IE typeof document.createElement is 'object'
   , is = isObject(document) && isObject(document.createElement);
 module.exports = function(it){
@@ -10864,29 +10882,29 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = !__webpack_require__(4) && !__webpack_require__(15)(function(){
-  return Object.defineProperty(__webpack_require__(47)('div'), 'a', {get: function(){ return 7; }}).a != 7;
+module.exports = !__webpack_require__(7) && !__webpack_require__(15)(function(){
+  return Object.defineProperty(__webpack_require__(49)('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var LIBRARY        = __webpack_require__(30)
-  , $export        = __webpack_require__(9)
-  , redefine       = __webpack_require__(56)
-  , hide           = __webpack_require__(10)
-  , has            = __webpack_require__(5)
-  , Iterators      = __webpack_require__(29)
-  , $iterCreate    = __webpack_require__(92)
-  , setToStringTag = __webpack_require__(33)
-  , getPrototypeOf = __webpack_require__(53)
-  , ITERATOR       = __webpack_require__(11)('iterator')
+var LIBRARY        = __webpack_require__(33)
+  , $export        = __webpack_require__(8)
+  , redefine       = __webpack_require__(58)
+  , hide           = __webpack_require__(12)
+  , has            = __webpack_require__(9)
+  , Iterators      = __webpack_require__(17)
+  , $iterCreate    = __webpack_require__(102)
+  , setToStringTag = __webpack_require__(36)
+  , getPrototypeOf = __webpack_require__(55)
+  , ITERATOR       = __webpack_require__(1)('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
   , FF_ITERATOR    = '@@iterator'
   , KEYS           = 'keys'
@@ -10948,18 +10966,18 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 };
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var pIE            = __webpack_require__(32)
-  , createDesc     = __webpack_require__(25)
-  , toIObject      = __webpack_require__(7)
-  , toPrimitive    = __webpack_require__(38)
-  , has            = __webpack_require__(5)
-  , IE8_DOM_DEFINE = __webpack_require__(48)
+var pIE            = __webpack_require__(35)
+  , createDesc     = __webpack_require__(19)
+  , toIObject      = __webpack_require__(10)
+  , toPrimitive    = __webpack_require__(40)
+  , has            = __webpack_require__(9)
+  , IE8_DOM_DEFINE = __webpack_require__(50)
   , gOPD           = Object.getOwnPropertyDescriptor;
 
-exports.f = __webpack_require__(4) ? gOPD : function getOwnPropertyDescriptor(O, P){
+exports.f = __webpack_require__(7) ? gOPD : function getOwnPropertyDescriptor(O, P){
   O = toIObject(O);
   P = toPrimitive(P, true);
   if(IE8_DOM_DEFINE)try {
@@ -10969,31 +10987,31 @@ exports.f = __webpack_require__(4) ? gOPD : function getOwnPropertyDescriptor(O,
 };
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys      = __webpack_require__(54)
-  , hiddenKeys = __webpack_require__(28).concat('length', 'prototype');
+var $keys      = __webpack_require__(56)
+  , hiddenKeys = __webpack_require__(32).concat('length', 'prototype');
 
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
 };
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports) {
 
 exports.f = Object.getOwnPropertySymbols;
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has         = __webpack_require__(5)
-  , toObject    = __webpack_require__(37)
-  , IE_PROTO    = __webpack_require__(34)('IE_PROTO')
+var has         = __webpack_require__(9)
+  , toObject    = __webpack_require__(27)
+  , IE_PROTO    = __webpack_require__(37)('IE_PROTO')
   , ObjectProto = Object.prototype;
 
 module.exports = Object.getPrototypeOf || function(O){
@@ -11005,13 +11023,13 @@ module.exports = Object.getPrototypeOf || function(O){
 };
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var has          = __webpack_require__(5)
-  , toIObject    = __webpack_require__(7)
-  , arrayIndexOf = __webpack_require__(87)(false)
-  , IE_PROTO     = __webpack_require__(34)('IE_PROTO');
+var has          = __webpack_require__(9)
+  , toIObject    = __webpack_require__(10)
+  , arrayIndexOf = __webpack_require__(93)(false)
+  , IE_PROTO     = __webpack_require__(37)('IE_PROTO');
 
 module.exports = function(object, names){
   var O      = toIObject(object)
@@ -11027,11 +11045,11 @@ module.exports = function(object, names){
 };
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // most Object methods by ES6 should accept primitives
-var $export = __webpack_require__(9)
+var $export = __webpack_require__(8)
   , core    = __webpack_require__(0)
   , fails   = __webpack_require__(15);
 module.exports = function(KEY, exec){
@@ -11042,13 +11060,47 @@ module.exports = function(KEY, exec){
 };
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(10);
+module.exports = __webpack_require__(12);
 
 /***/ }),
-/* 57 */
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.15 ToLength
+var toInteger = __webpack_require__(39)
+  , min       = Math.min;
+module.exports = function(it){
+  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $at  = __webpack_require__(110)(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+__webpack_require__(51)(String, 'String', function(iterated){
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function(){
+  var O     = this._t
+    , index = this._i
+    , point;
+  if(index >= O.length)return {value: undefined, done: true};
+  point = $at(O, index);
+  this._i += point.length;
+  return {value: point, done: false};
+});
+
+/***/ }),
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11058,15 +11110,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(4);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _models = __webpack_require__(12);
+var _models = __webpack_require__(13);
 
-var _mixins = __webpack_require__(19);
+var _mixins = __webpack_require__(21);
 
-var _vendor = __webpack_require__(3);
+var _vendor = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11363,7 +11415,7 @@ var Banner = _vue2.default.component('banner', {
 exports.default = Banner;
 
 /***/ }),
-/* 58 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11373,19 +11425,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(4);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _models = __webpack_require__(12);
+var _models = __webpack_require__(13);
 
-var _components = __webpack_require__(18);
+var _components = __webpack_require__(20);
 
-var _mixins = __webpack_require__(19);
+var _mixins = __webpack_require__(21);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// const VisSense = require('vissense');
+// import { VisSense } from '../vendor';
 
 /**
  * Created by Manhhailua on 11/24/16.
@@ -11414,31 +11466,31 @@ var Placement = _vue2.default.component('placement', {
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
 
-    //
-    // setTimeout(() => {
-    //   const placement = document.getElementById(this.current.id);
-    //   if (placement) {
-    //     // const throttle = VisSense.Utils.throttle;
-    //     VisSense.VisMon.Builder(VisSense(placement)).on('update', (monitor) => {
-    //       }).on('start', (monitor) => { // eslint-disable-line
-    //         console.log('start');
-    //       }).on('visible', (monitor) => { // eslint-disable-line
-    //         console.log('visible');
-    //       }).on('fullyvisible', (monitor) => { // eslint-disable-line
-    //         console.log('fullyvisible');
-    //       }).on('hidden', (monitor) => { // eslint-disable-line
-    //         console.log('hidden');
-    //       }).on('visibilitychange', (monitor) => { // eslint-disable-line
-    //         console.log('visibilitychange');
-    //       })
-    //       .on('percentagechange', VisSense.Utils.throttle((monitor, newValue, oldValue) => {
-    //         console.log(`percentagechange ${oldValue} -> ${newValue}`);
-    //       }, 150))
-    //       .build()
-    //       .start();
-    //     // clearInterval(testView);
-    //   }
-    // }, 100);
+    var placement = document.getElementById(this.current.id);
+    if (placement) {
+      var ts = VisSense(placement);
+      // const throttle = VisSense.Utils.throttle;
+      VisSense.VisMon.Builder(ts).on('update', function (monitor) {// eslint-disable-line
+      }).on('start', function (monitor) {
+        // eslint-disable-line
+        console.log('start');
+      }).on('visible', function (monitor) {
+        // eslint-disable-line
+        console.log('visible');
+      }).on('fullyvisible', function (monitor) {
+        // eslint-disable-line
+        console.log('fullyvisible');
+      }).on('hidden', function (monitor) {
+        // eslint-disable-line
+        console.log('hidden');
+      }).on('visibilitychange', function (monitor) {
+        // eslint-disable-line
+        console.log('visibilitychange');
+      }).on('percentagechange', VisSense.Utils.throttle(function (monitor, newValue, oldValue) {
+        console.log('percentagechange ' + oldValue + ' -> ' + newValue);
+      }, 50)).build().start();
+      // clearInterval(testView);
+    }
   },
 
 
@@ -11569,7 +11621,7 @@ var Placement = _vue2.default.component('placement', {
 exports.default = Placement;
 
 /***/ }),
-/* 59 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11579,15 +11631,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(4);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _models = __webpack_require__(12);
+var _models = __webpack_require__(13);
 
-var _components = __webpack_require__(18);
+var _components = __webpack_require__(20);
 
-var _mixins = __webpack_require__(19);
+var _mixins = __webpack_require__(21);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11679,7 +11731,7 @@ var Share = _vue2.default.component('share', {
 exports.default = Share;
 
 /***/ }),
-/* 60 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11689,17 +11741,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(4);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _models = __webpack_require__(12);
+var _models = __webpack_require__(13);
 
-var _components = __webpack_require__(18);
+var _components = __webpack_require__(20);
 
-var _mixins = __webpack_require__(19);
+var _mixins = __webpack_require__(21);
 
-var _vendor = __webpack_require__(3);
+var _vendor = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11768,7 +11820,29 @@ var Zone = _vue2.default.component('zone', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
-
+    if (vm.activeShareModel) {
+      return h(
+        'div',
+        {
+          attrs: {
+            id: vm.current.id
+          },
+          'class': 'arf-zone',
+          style: {
+            width: vm.current.width + 'px',
+            height: 'auto',
+            margin: 'auto'
+          }
+        },
+        [h(
+          _components.Share,
+          {
+            attrs: { model: vm.activeShareModel }
+          },
+          []
+        )]
+      );
+    }
     return h(
       'div',
       {
@@ -11782,13 +11856,7 @@ var Zone = _vue2.default.component('zone', {
           margin: 'auto'
         }
       },
-      [h(
-        _components.Share,
-        {
-          attrs: { model: vm.activeShareModel }
-        },
-        []
-      )]
+      []
     );
   }
 }); /**
@@ -11800,7 +11868,7 @@ var Zone = _vue2.default.component('zone', {
 exports.default = Zone;
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11811,15 +11879,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Banner = exports.Placement = exports.Share = exports.Zone = undefined;
 
-var _stringify = __webpack_require__(41);
+var _stringify = __webpack_require__(43);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(4);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _components = __webpack_require__(18);
+var _components = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11897,7 +11965,7 @@ exports.Banner = _components.Banner;
 exports.default = { Zone: _components.Zone, Share: _components.Share, Placement: _components.Placement, Banner: _components.Banner };
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11907,11 +11975,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(4);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vendor = __webpack_require__(3);
+var _vendor = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12004,7 +12072,7 @@ var adsData = _vue2.default.mixin({
 exports.default = adsData;
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12072,7 +12140,7 @@ var dom = {
 exports.default = dom;
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12082,7 +12150,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vue = __webpack_require__(2);
+var _vue = __webpack_require__(4);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -12099,7 +12167,7 @@ var trackView = _vue2.default.mixin({
 exports.default = trackView;
 
 /***/ }),
-/* 65 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12109,39 +12177,39 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof2 = __webpack_require__(8);
+var _typeof2 = __webpack_require__(6);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _getPrototypeOf = __webpack_require__(21);
+var _getPrototypeOf = __webpack_require__(23);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(13);
+var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(22);
+var _createClass2 = __webpack_require__(24);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(24);
+var _possibleConstructorReturn2 = __webpack_require__(26);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(23);
+var _inherits2 = __webpack_require__(25);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(20);
+var _Entity2 = __webpack_require__(22);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _Share = __webpack_require__(44);
+var _Share = __webpack_require__(46);
 
 var _Share2 = _interopRequireDefault(_Share);
 
-var _vendor = __webpack_require__(3);
+var _vendor = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12371,801 +12439,797 @@ var Zone = function (_Entity) {
         }, 0);
       });
       console.log('allPlaceZone', allPlace);
-      arrayRelativeKeyword = relativeKeyword.split(',').map(function (item) {
-        return item.replace(' ', '');
-      });
-      console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);
-      // console.log('all Place', allPlace);
-      // get place min area
-      var getMinPlace = function getMinPlace(allPlaces) {
-        if (_this2.zoneType === 'right') {
-          var _min = allPlaces[0].data.height;
-          for (var i = 0, leng = allPlaces.length; i < leng; i += 1) {
-            if (allPlaces[i].data.height < _min) {
-              _min = allPlaces[i].data.height;
+      if (allPlace.length > 0) {
+        arrayRelativeKeyword = relativeKeyword.split(',').map(function (item) {
+          return item.replace(' ', '');
+        });
+        console.log('arrayRelativeKeyword', relativeKeyword, arrayRelativeKeyword);
+        // console.log('all Place', allPlace);
+        // get place min area
+        var getMinPlace = function getMinPlace(allPlaces) {
+          if (_this2.zoneType === 'right') {
+            var _min = allPlaces[0].data.height;
+            for (var i = 0, leng = allPlaces.length; i < leng; i += 1) {
+              if (allPlaces[i].data.height < _min) {
+                _min = allPlaces[i].data.height;
+              }
+            }
+            return _min;
+          }
+          var min = allPlaces[0].data.width;
+          for (var _i = 0, _leng = allPlaces.length; _i < _leng; _i += 1) {
+            if (allPlaces[_i].data.width < min) {
+              min = allPlaces[_i].data.width;
             }
           }
-          return _min;
-        }
-        var min = allPlaces[0].data.width;
-        for (var _i = 0, _leng = allPlaces.length; _i < _leng; _i += 1) {
-          if (allPlaces[_i].data.width < min) {
-            min = allPlaces[_i].data.width;
+          return min;
+        };
+        var minPlace = getMinPlace(allPlace);
+        var getNumberOfParts = function getNumberOfParts(height, isRoundUp) {
+          if (_this2.zoneType === 'right') {
+            if (height % minPlace > 0 && isRoundUp) {
+              return Math.round(height / minPlace) + 1;
+            }
+            return Math.round(height / minPlace);
           }
-        }
-        return min;
-      };
-      var minPlace = getMinPlace(allPlace);
-      var getNumberOfParts = function getNumberOfParts(height, isRoundUp) {
-        if (_this2.zoneType === 'right') {
-          if (height % minPlace > 0 && isRoundUp) {
+          if (height / minPlace % 1 > 0.1 && isRoundUp) {
             return Math.round(height / minPlace) + 1;
           }
           return Math.round(height / minPlace);
-        }
-        if (height / minPlace % 1 > 0.1 && isRoundUp) {
-          return Math.round(height / minPlace) + 1;
-        }
-        return Math.round(height / minPlace);
-      };
-      var getShareRatio = function getShareRatio() {
-        var listRatio = [];
-        currentShare.reduce(function (acc, share) {
-          //eslint-disable-line
-          // const ratio = [];
-          // share.sharePlacements.reduce((acc2, sharePlacement) =>
-          // ratio.push(getNumberOfParts(this.zoneType === 'right' ?
-          // sharePlacement.placement.height : sharePlacement.placement.width, true)), 0);
-          try {
-            var ratio = share.type === 'multiple' ? share.format.split(',').map(function (x) {
-              return parseInt(x, 10);
-            }) : [1];
-            listRatio.push({ ratio: ratio, id: share.id, css: share.outputCss });
-          } catch (error) {
-            throw new Error(error);
-          }
-        }, 0);
-        return listRatio;
-      };
-      var listRatio = getShareRatio();
-      console.log('listRatio', listRatio);
-      var numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
-      console.log('minPlace', minPlace);
-      // const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
-      //   const shareTemplate = {
-      //     id: 'DS',
-      //     name: 'Dynamic Share',
-      //     html: '<div class="hello"></div>',
-      //     css: '.arf-placement{display:inline-block;margin-left:50px;}',
-      //     outputCss: '',
-      //     width: this.width,
-      //     height: this.height,
-      //     classes: '',
-      //     weight: 0,
-      //     type: 'multiple',
-      //     description: `Share ${this.width}x${this.height}`,
-      //     zoneId: this.id,
-      //     placements: [],
-      //   };
-      //   const shares = [];
-      //   const shareDatas = [];
-      //
-      //   // get all places have type === placementType
-      // eslint-disable-next-line
-      //   const monopolyPlaces = allPlacement.filter(y => y.data.AdsType.revenueType === placementType);
-      //   console.log('monopolyPlaces', monopolyPlaces);
-      //   const createShareByPlaceMonopolies = (placeMonopolies) => {
-      //     // Create Share : S(zone) - S(p) = S(free)
-      //     const SumPrArea = placeMonopolies.reduce((temp, item) =>
-      //     temp + item.data.PlacementArea, 0);
-      //     const FreeArea = this.ZoneArea - SumPrArea;
-      //     // console.log('FreeArea', FreeArea);
-      //
-      //     for (let i = 1; i <= FreeArea; i += 1) {
-      //       // console.log('i', i);
-      //       // divide share base on free area and number of part.
-      //       const shareRatios = util.ComputeShare(FreeArea, i);
-      //       console.log('shareRatios', shareRatios);
-      //       // Browse each shareRatio on above and create a share for it.
-      //       shareRatios.reduce((temp, shareRatio) => {
-      //         console.log('shareRatio', shareRatio);
-      //         // this variable to store places in a share which are chosen bellow
-      //         let share = [];
-      //         placeMonopolies.reduce((x, y) =>
-      //           shareRatio.splice(y.index, 0, y.data.PlacementArea), 0);
-      //         let isRelative = false;
-      //         // Browse each placeRatio in shareRatio, then find a placement fit it.
-      //         shareRatio.reduce((temp2, placeRatio, index) => {
-      //           console.log('placeRatio', placeRatio);
-      //           if (placeMonopolies.map(item => item.index).indexOf(index) !== -1) {
-      //             return 0;
-      //           }
-      //           // find all placement fit with area place
-      //           let places = allPlacement.filter(place =>
-      //             (place.data.PlacementArea === placeRatio &&
-      //             placeMonopolies.indexOf(place) === -1 &&
-      //             place.data.revenueType !== 'pr' &&
-      //             // placeChosen.indexOf(place) === -1 &&
-      //             place.index === index &&
-      //             place.data.revenueType === shareConstruct[index].type));
-      //
-      //           // filter place with relative keyword
-      //           let placesWithKeyword = [];
-      //           if (arrayRelativeKeyword.length > 0) {
-      //             placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
-      //             if (placesWithKeyword.length > 0) {
-      //               isRelative = true;
-      //               places = placesWithKeyword;
-      //             }
-      //           }
-      //
-      //           // if don't have any places fit in area => return empty share
-      //           if (places.length === 0) {
-      //             share = [];
-      //             return 0;
-      //           } else { // eslint-disable-line no-else-return
-      //             // choose random a placement which are collected on above
-      //             // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
-      //             // const place = places[randomIndex];
-      //
-      //             const place = activePlacement(places, shareConstruct[index]);
-      //             console.log('activePlacement', place);
-      //             share.push(place.data);
-      //           }
-      //           return 0;
-      //         }, 0);
-      //
-      //         // if share available => insert monopoly places
-      //         if (share.length !== 0) {
-      //           // push (all places have type === placementType) into share.
-      //           placeMonopolies.reduce((x, y) => share.splice(y.index, 0, y.data), 0);
-      //           const SumArea = share.reduce((acc, item) =>
-      //           acc + item.PlacementArea, 0);
-      //           const Free = this.ZoneArea - SumArea;
-      //           console.log('Freeasd', Free);
-      //           if (Free === 0 && relativeKeyword !== '' && isRelative) {
-      //             console.log('ShareTest', share);
-      //             shares.push(share);
-      //             isRelative = false;
-      //             share = [];
-      //           }
-      //           if (Free === 0) {
-      //             shares.push(share);
-      //             isRelative = false;
-      //             share = [];
-      //           }
-      //         }
-      //         return '';
-      //       }, 0);
-      //     }
-      //     console.log('shares', shares);
-      //     shareTemplate.weight = 100 / shares.length;
-      //     for (let i = 0; i < shares.length; i += 1) {
-      //       shareTemplate.id = `DS-${i}`;
-      //       shareTemplate.placements = shares[i];
-      //       const shareData = new Share(shareTemplate);
-      //       shareDatas.push(shareData);
-      //     }
-      //   };
-      //   if (monopolyPlaces.length > 0) {
-      //     if (placementType === 'pr') {
-      //       createShareByPlaceMonopolies(monopolyPlaces);
-      //
-      //       console.log('shareDatas', shareDatas);
-      //       return shareDatas;
-      //     }
-      //     // collect placements which share the place order with monopoly places ('cpd').
-      //     let shareWith = [];
-      //     monopolyPlaces.reduce((acc, monopolyPlace) => allPlace.reduce((acc2, place) => {
-      //       if (place.index === monopolyPlace.index &&
-      //         place.data.revenueType !== monopolyPlace.data.revenueType) {
-      //         shareWith.push(place);
-      //       }
-      //       return 0;
-      //     }, 0), 0);
-      //     // filter keyword
-      //     let shareWithKeyword = [];
-      //     if (arrayRelativeKeyword.length > 0) {
-      //       shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
-      //       if (shareWithKeyword.length > 0) {
-      //         shareWith = shareWithKeyword;
-      //       }
-      //     }
-      //
-      //     // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
-      //     const createMonopolyPlacesWithShare = (array, lib) => {
-      //       const res = [];
-      //       array.reduce((acc1, ArrayItem, index1, array1) => {
-      //         const replace = (library, index2, arrTemp) => {
-      //           const arrayTemp = arrTemp.map(item => item);
-      //           library.reduce((acc2, item) => {
-      //             if (item.index === array1[index2].index) {
-      //               arrayTemp.splice(index2, 1, item);
-      //               res.push(arrayTemp);
-      //               if (index2 < (arrTemp.length - 1)) {
-      //                 replace(library, index2 + 1, arrayTemp);
-      //               }
-      //             }
-      //             return 0;
-      //           }, 0);
-      //         };
-      //         replace(lib, index1, array1);
-      //         return 0;
-      //       }, 0);
-      //       res.push(array);
-      //       return res;
-      //     };
-      //     let combinationMonopolyPlaces = [];
-      //     // const numberOfCombination = monopolyPlaces.length;
-      //     const monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith);
-      //     // console.log('monopolyPlaces', monopolyPlaces);
-      //     console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
-      //     // variable "conputeAll" to compute all cases combination.
-      //     const computeAll = true;
-      //     if (computeAll) {
-      //       // can use function combinations (1-n combination n)
-      //       // instead of k_combination (k Combination n) for compute all cases.
-      //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
-      //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
-      //           util.combinations(monopolyPlacesWithShare[i]).filter(item =>
-      //             item.reduce((acc, item2) =>
-      //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
-      //       }
-      //     } else {
-      //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
-      //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
-      //           util.kCombinations(monopolyPlacesWithShare[i], 1).filter(item =>
-      //             item.reduce((acc, item2) =>
-      //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
-      //       }
-      //     }
-      // eslint-disable-next-line
-      //     const numberOfMonopoly = shareConstruct.reduce((acc, item) => (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
-      //     console.log('numberOfMonopoly', numberOfMonopoly);
-      //     console.log('combinationMonopolyPlaces', combinationMonopolyPlaces);
-      //     // filter place have revenueType same with share constructor
-      //     combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item =>
-      //     (item.length >= numberOfMonopoly) && item.reduce((acc, item2, index) => {
-      //       if (index === 0) {
-      //         return item2.data.revenueType === shareConstruct[item2.index].type;
-      //       }
-      //       return acc && item2.data.revenueType === shareConstruct[item2.index].type;
-      //     }, 0));
-      //     console.log('combination', combinationMonopolyPlaces);
-      //     combinationMonopolyPlaces.reduce((acc, item) => createShareByPlaceMonopolies(item), 0);
-      //
-      //     console.log('shareDatas', shareDatas);
-      //     return shareDatas;
-      //   }
-      //   return [];
-      // };
-      var computeShareWithPlacementType2 = function computeShareWithPlacementType2(allPlacement, placementType, shareConstruct) {
-        var shareTemplate = {
-          id: 'DS',
-          name: 'Dynamic Share',
-          html: '<div class="hello"></div>',
-          css: '.arf-placement{display:inline-block;margin-left:50px;}',
-          outputCss: '',
-          width: _this2.width,
-          height: _this2.height,
-          classes: '',
-          weight: 0,
-          type: 'multiple',
-          description: 'Share ' + _this2.width + 'x' + _this2.height,
-          zoneId: _this2.id,
-          sharePlacements: []
         };
-        var shares = [];
-        var shareDatas = [];
-        var checkShare = function checkShare(shareRatio) {
-          return listRatio.reduce(function (acc, item, index) {
-            if (index === 0) {
-              var _res = _vendor.util.checkTwoArrayEqual(item.ratio, shareRatio);
-              // return { check: res, id: item.id, css: item.css };
-              return _res;
+        var getShareRatio = function getShareRatio() {
+          var listRatio = [];
+          currentShare.reduce(function (acc, share) {
+            //eslint-disable-line
+            try {
+              var ratio = share.type === 'multiple' ? share.format.split(',').map(function (x) {
+                return parseInt(x, 10);
+              }) : [1];
+              listRatio.push({ ratio: ratio, id: share.id, css: share.outputCss });
+            } catch (error) {
+              throw new Error(error);
             }
-            var res = acc || _vendor.util.checkTwoArrayEqual(item.ratio, shareRatio);
-            return res;
           }, 0);
+          return listRatio;
         };
-        var createShareByPlaceMonopolies = function createShareByPlaceMonopolies(placeMonopolies) {
-          // Create Share : S(zone) - S(p) = S(free)
-          var SumPrArea = placeMonopolies.reduce(function (temp, item) {
-            return _this2.zoneType === 'right' ? temp + item.data.height : temp + item.data.width;
-          }, 0);
-          console.log('SumArea', SumPrArea, _this2.width);
-          var FreeArea = _this2.zoneType === 'right' ? _this2.height - SumPrArea : _this2.width - SumPrArea;
-          FreeArea = FreeArea < 0 || FreeArea ? 0 : FreeArea;
-          console.log('FreeArea', FreeArea);
-          // const numberOfParts = getNumberOfParts(FreeArea);
-          var numberOfParts = getNumberOfParts(_this2.zoneType === 'right' ? _this2.height : _this2.width);
-          console.log('numberOfParts', numberOfParts);
-          // listRatio[0].ratio.reduce((acc, item) => acc + item, 0)
-          for (var i = 1; i <= numberOfParts; i += 1) {
-            // divide share base on free area and number of part.
-            var shareRatios = _vendor.util.ComputeShare(numberOfParts, i);
-            console.log('shareRatios', shareRatios);
-            // Browse each shareRatio on above and create a share for it.
-            shareRatios.reduce(function (temp, shareRatio) {
-              var checkS = checkShare(shareRatio);
-              console.log('checkS', checkS);
-              if (checkS) {
-                // this variable to store places in a share which are chosen bellow
-                var share = { places: [], id: currentShare[0].id, css: getCss(currentShare[0]) };
-                // placeMonopolies.reduce((x, y) =>
-                // shareRatio.splice(y.index, 0, this.zoneType === 'right' ?
-                // getNumberOfParts(y.data.height, true) : getNumberOfParts(y.data.width, true)), 0);
-                var isRelative = false;
-                // Browse each placeRatio in shareRatio, then find a placement fit it.
-                shareRatio.reduce(function (temp2, placeRatio, index) {
-                  var placeChosen = [];
-                  if (placeMonopolies.map(function (item) {
-                    return item.index;
-                  }).indexOf(index) !== -1) {
-                    var listMonopolies = placeMonopolies.filter(function (x) {
-                      return x.index === index;
-                    });
-                    // push (all places have type === placementType) into share.
-                    // listMonopolies.reduce((x, y) => share.places.splice(y.index, 0, y.data), 0);
-                    var place = activePlacement(listMonopolies, shareConstruct[index]);
-                    console.log('placeMonopoliesInS', listMonopolies, place);
-                    placeChosen.push(place);
-                    share.places.push(place.data);
-                    return 0;
-                  }
-                  // find all placement fit with area place
-                  var places = allPlacement.filter(function (place) {
-                    return place.index === index;
-                  });
-                  console.log('passed', places);
-                  if (places.length > 1) {
-                    places = allPlacement.filter(function (place) {
-                      return (
-                        // getNumberOfParts(place.data.height, true) < numberOfParts &&
-                        getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio &&
-                        // place.data.PlacementArea === placeRatio &&
-                        placeMonopolies.indexOf(place) === -1 && place.data.revenueType !== 'pr' && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
-                          // eslint-disable-line
-                          if (index2 === 0) return item.data.id !== place.data.id;
-                          return acc && item.data.id !== place.data.id;
-                        }, 0) : true) && place.index === index && place.data.revenueType === shareConstruct[index].type
-                      );
-                    });
-                  }
-                  // filter place with relative keyword
-                  var placesWithKeyword = [];
-                  if (arrayRelativeKeyword.length > 0) {
-                    placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
-                    if (placesWithKeyword.length > 0) {
-                      isRelative = true;
-                      places = placesWithKeyword;
+        var listRatio = getShareRatio();
+        console.log('listRatio', listRatio);
+        var numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
+        console.log('minPlace', minPlace);
+        /* eslint-disable */
+        // const computeShareWithPlacementType = (allPlacement, placementType, shareConstruct) => {
+        //   const shareTemplate = {
+        //     id: 'DS',
+        //     name: 'Dynamic Share',
+        //     html: '<div class="hello"></div>',
+        //     css: '.arf-placement{display:inline-block;margin-left:50px;}',
+        //     outputCss: '',
+        //     width: this.width,
+        //     height: this.height,
+        //     classes: '',
+        //     weight: 0,
+        //     type: 'multiple',
+        //     description: `Share ${this.width}x${this.height}`,
+        //     zoneId: this.id,
+        //     placements: [],
+        //   };
+        //   const shares = [];
+        //   const shareDatas = [];
+        //
+        //   // get all places have type === placementType
+        // eslint-disable-next-line
+        //   const monopolyPlaces = allPlacement.filter(y => y.data.AdsType.revenueType === placementType);
+        //   console.log('monopolyPlaces', monopolyPlaces);
+        //   const createShareByPlaceMonopolies = (placeMonopolies) => {
+        //     // Create Share : S(zone) - S(p) = S(free)
+        //     const SumPrArea = placeMonopolies.reduce((temp, item) =>
+        //     temp + item.data.PlacementArea, 0);
+        //     const FreeArea = this.ZoneArea - SumPrArea;
+        //     // console.log('FreeArea', FreeArea);
+        //
+        //     for (let i = 1; i <= FreeArea; i += 1) {
+        //       // console.log('i', i);
+        //       // divide share base on free area and number of part.
+        //       const shareRatios = util.ComputeShare(FreeArea, i);
+        //       console.log('shareRatios', shareRatios);
+        //       // Browse each shareRatio on above and create a share for it.
+        //       shareRatios.reduce((temp, shareRatio) => {
+        //         console.log('shareRatio', shareRatio);
+        //         // this variable to store places in a share which are chosen bellow
+        //         let share = [];
+        //         placeMonopolies.reduce((x, y) =>
+        //           shareRatio.splice(y.index, 0, y.data.PlacementArea), 0);
+        //         let isRelative = false;
+        //         // Browse each placeRatio in shareRatio, then find a placement fit it.
+        //         shareRatio.reduce((temp2, placeRatio, index) => {
+        //           console.log('placeRatio', placeRatio);
+        //           if (placeMonopolies.map(item => item.index).indexOf(index) !== -1) {
+        //             return 0;
+        //           }
+        //           // find all placement fit with area place
+        //           let places = allPlacement.filter(place =>
+        //             (place.data.PlacementArea === placeRatio &&
+        //             placeMonopolies.indexOf(place) === -1 &&
+        //             place.data.revenueType !== 'pr' &&
+        //             // placeChosen.indexOf(place) === -1 &&
+        //             place.index === index &&
+        //             place.data.revenueType === shareConstruct[index].type));
+        //
+        //           // filter place with relative keyword
+        //           let placesWithKeyword = [];
+        //           if (arrayRelativeKeyword.length > 0) {
+        //             placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+        //             if (placesWithKeyword.length > 0) {
+        //               isRelative = true;
+        //               places = placesWithKeyword;
+        //             }
+        //           }
+        //
+        //           // if don't have any places fit in area => return empty share
+        //           if (places.length === 0) {
+        //             share = [];
+        //             return 0;
+        //           } else { // eslint-disable-line no-else-return
+        //             // choose random a placement which are collected on above
+        //             // const randomIndex = parseInt(Math.floor(Math.random() * (places.length)), 10);
+        //             // const place = places[randomIndex];
+        //
+        //             const place = activePlacement(places, shareConstruct[index]);
+        //             console.log('activePlacement', place);
+        //             share.push(place.data);
+        //           }
+        //           return 0;
+        //         }, 0);
+        //
+        //         // if share available => insert monopoly places
+        //         if (share.length !== 0) {
+        //           // push (all places have type === placementType) into share.
+        //           placeMonopolies.reduce((x, y) => share.splice(y.index, 0, y.data), 0);
+        //           const SumArea = share.reduce((acc, item) =>
+        //           acc + item.PlacementArea, 0);
+        //           const Free = this.ZoneArea - SumArea;
+        //           console.log('Freeasd', Free);
+        //           if (Free === 0 && relativeKeyword !== '' && isRelative) {
+        //             console.log('ShareTest', share);
+        //             shares.push(share);
+        //             isRelative = false;
+        //             share = [];
+        //           }
+        //           if (Free === 0) {
+        //             shares.push(share);
+        //             isRelative = false;
+        //             share = [];
+        //           }
+        //         }
+        //         return '';
+        //       }, 0);
+        //     }
+        //     console.log('shares', shares);
+        //     shareTemplate.weight = 100 / shares.length;
+        //     for (let i = 0; i < shares.length; i += 1) {
+        //       shareTemplate.id = `DS-${i}`;
+        //       shareTemplate.placements = shares[i];
+        //       const shareData = new Share(shareTemplate);
+        //       shareDatas.push(shareData);
+        //     }
+        //   };
+        //   if (monopolyPlaces.length > 0) {
+        //     if (placementType === 'pr') {
+        //       createShareByPlaceMonopolies(monopolyPlaces);
+        //
+        //       console.log('shareDatas', shareDatas);
+        //       return shareDatas;
+        //     }
+        //     // collect placements which share the place order with monopoly places ('cpd').
+        //     let shareWith = [];
+        //     monopolyPlaces.reduce((acc, monopolyPlace) => allPlace.reduce((acc2, place) => {
+        //       if (place.index === monopolyPlace.index &&
+        //         place.data.revenueType !== monopolyPlace.data.revenueType) {
+        //         shareWith.push(place);
+        //       }
+        //       return 0;
+        //     }, 0), 0);
+        //     // filter keyword
+        //     let shareWithKeyword = [];
+        //     if (arrayRelativeKeyword.length > 0) {
+        //       shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
+        //       if (shareWithKeyword.length > 0) {
+        //         shareWith = shareWithKeyword;
+        //       }
+        //     }
+        //
+        //     // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
+        //     const createMonopolyPlacesWithShare = (array, lib) => {
+        //       const res = [];
+        //       array.reduce((acc1, ArrayItem, index1, array1) => {
+        //         const replace = (library, index2, arrTemp) => {
+        //           const arrayTemp = arrTemp.map(item => item);
+        //           library.reduce((acc2, item) => {
+        //             if (item.index === array1[index2].index) {
+        //               arrayTemp.splice(index2, 1, item);
+        //               res.push(arrayTemp);
+        //               if (index2 < (arrTemp.length - 1)) {
+        //                 replace(library, index2 + 1, arrayTemp);
+        //               }
+        //             }
+        //             return 0;
+        //           }, 0);
+        //         };
+        //         replace(lib, index1, array1);
+        //         return 0;
+        //       }, 0);
+        //       res.push(array);
+        //       return res;
+        //     };
+        //     let combinationMonopolyPlaces = [];
+        //     // const numberOfCombination = monopolyPlaces.length;
+        //     const monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith);
+        //     // console.log('monopolyPlaces', monopolyPlaces);
+        //     console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
+        //     // variable "conputeAll" to compute all cases combination.
+        //     const computeAll = true;
+        //     if (computeAll) {
+        //       // can use function combinations (1-n combination n)
+        //       // instead of k_combination (k Combination n) for compute all cases.
+        //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
+        //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
+        //           util.combinations(monopolyPlacesWithShare[i]).filter(item =>
+        //             item.reduce((acc, item2) =>
+        //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
+        //       }
+        //     } else {
+        //       for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
+        //         combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
+        //           util.kCombinations(monopolyPlacesWithShare[i], 1).filter(item =>
+        //             item.reduce((acc, item2) =>
+        //               ((acc + item2.data.PlacementArea) < this.ZoneArea), 0)));
+        //       }
+        //     }
+        // eslint-disable-next-line
+        //     const numberOfMonopoly = shareConstruct.reduce((acc, item) => (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
+        //     console.log('numberOfMonopoly', numberOfMonopoly);
+        //     console.log('combinationMonopolyPlaces', combinationMonopolyPlaces);
+        //     // filter place have revenueType same with share constructor
+        //     combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item =>
+        //     (item.length >= numberOfMonopoly) && item.reduce((acc, item2, index) => {
+        //       if (index === 0) {
+        //         return item2.data.revenueType === shareConstruct[item2.index].type;
+        //       }
+        //       return acc && item2.data.revenueType === shareConstruct[item2.index].type;
+        //     }, 0));
+        //     console.log('combination', combinationMonopolyPlaces);
+        //     combinationMonopolyPlaces.reduce((acc, item) => createShareByPlaceMonopolies(item), 0);
+        //
+        //     console.log('shareDatas', shareDatas);
+        //     return shareDatas;
+        //   }
+        //   return [];
+        // };
+        /* eslint-enable */
+        var computeShareWithPlacementType2 = function computeShareWithPlacementType2(allPlacement, placementType, shareConstruct) {
+          var shareTemplate = {
+            id: 'DS',
+            name: 'Dynamic Share',
+            html: '<div class="hello"></div>',
+            css: '.arf-placement{display:inline-block;margin-left:50px;}',
+            outputCss: '',
+            width: _this2.width,
+            height: _this2.height,
+            classes: '',
+            weight: 0,
+            type: 'multiple',
+            description: 'Share ' + _this2.width + 'x' + _this2.height,
+            zoneId: _this2.id,
+            sharePlacements: []
+          };
+          var shares = [];
+          var shareDatas = [];
+          var checkShare = function checkShare(shareRatio) {
+            return listRatio.reduce(function (acc, item, index) {
+              if (index === 0) {
+                var _res = _vendor.util.checkTwoArrayEqual(item.ratio, shareRatio);
+                // return { check: res, id: item.id, css: item.css };
+                return _res;
+              }
+              var res = acc || _vendor.util.checkTwoArrayEqual(item.ratio, shareRatio);
+              return res;
+            }, 0);
+          };
+          var createShareByPlaceMonopolies = function createShareByPlaceMonopolies(placeMonopolies) {
+            // Create Share : S(zone) - S(p) = S(free)
+            var SumPrArea = placeMonopolies.reduce(function (temp, item) {
+              return _this2.zoneType === 'right' ? temp + item.data.height : temp + item.data.width;
+            }, 0);
+            console.log('SumArea', SumPrArea, _this2.width);
+            var FreeArea = _this2.zoneType === 'right' ? _this2.height - SumPrArea : _this2.width - SumPrArea;
+            FreeArea = FreeArea < 0 || FreeArea ? 0 : FreeArea;
+            console.log('FreeArea', FreeArea);
+            // const numberOfParts = getNumberOfParts(FreeArea);
+            var numberOfParts = getNumberOfParts(_this2.zoneType === 'right' ? _this2.height : _this2.width);
+            console.log('numberOfParts', numberOfParts);
+            // listRatio[0].ratio.reduce((acc, item) => acc + item, 0)
+            for (var i = 1; i <= numberOfParts; i += 1) {
+              // divide share base on free area and number of part.
+              var shareRatios = _vendor.util.ComputeShare(numberOfParts, i);
+              console.log('shareRatios', shareRatios);
+              // Browse each shareRatio on above and create a share for it.
+              shareRatios.reduce(function (temp, shareRatio) {
+                var checkS = checkShare(shareRatio);
+                console.log('checkS', checkS);
+                if (checkS) {
+                  // this variable to store places in a share which are chosen bellow
+                  var share = { places: [], id: currentShare[0].id, css: getCss(currentShare[0]) };
+                  // placeMonopolies.reduce((x, y) =>
+                  // shareRatio.splice(y.index, 0, this.zoneType === 'right' ?
+                  // getNumberOfParts(y.data.height, true) :
+                  // getNumberOfParts(y.data.width, true)), 0);
+                  var isRelative = false;
+                  // Browse each placeRatio in shareRatio, then find a placement fit it.
+                  shareRatio.reduce(function (temp2, placeRatio, index) {
+                    var placeChosen = [];
+                    if (placeMonopolies.map(function (item) {
+                      return item.index;
+                    }).indexOf(index) !== -1) {
+                      var listMonopolies = placeMonopolies.filter(function (x) {
+                        return x.index === index;
+                      });
+                      // push (all places have type === placementType) into share.
+                      // listMonopolies.reduce((x, y) => share.places.splice(y.index, 0, y.data), 0);
+                      var place = activePlacement(listMonopolies, shareConstruct[index]);
+                      console.log('placeMonopoliesInS', listMonopolies, place);
+                      placeChosen.push(place);
+                      share.places.push(place.data);
+                      return 0;
                     }
-                  }
-                  // if don't have any places fit in area => return empty share
-                  if (places.length === 0) {
-                    share.places = [];
-                    share.id = '';
-                    share.css = '';
-                    return 0;
-                  } else {
-                    // eslint-disable-line no-else-return
-                    var _place = void 0;
-                    if (places.length === 1) {
-                      _place = places[0];
+                    // find all placement fit with area place
+                    var places = allPlacement.filter(function (place) {
+                      return place.index === index;
+                    });
+                    console.log('passed', places);
+                    if (places.length > 1) {
+                      places = allPlacement.filter(function (place) {
+                        return (
+                          // getNumberOfParts(place.data.height, true) < numberOfParts &&
+                          getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio &&
+                          // place.data.PlacementArea === placeRatio &&
+                          placeMonopolies.indexOf(place) === -1 && place.data.revenueType !== 'pr' && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                            // eslint-disable-line
+                            if (index2 === 0) return item.data.id !== place.data.id;
+                            return acc && item.data.id !== place.data.id;
+                          }, 0) : true) && place.index === index && place.data.revenueType === shareConstruct[index].type
+                        );
+                      });
+                    }
+                    // filter place with relative keyword
+                    var placesWithKeyword = [];
+                    if (arrayRelativeKeyword.length > 0) {
+                      placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+                      if (placesWithKeyword.length > 0) {
+                        isRelative = true;
+                        places = placesWithKeyword;
+                      }
+                    }
+                    // if don't have any places fit in area => return empty share
+                    if (places.length === 0) {
+                      share.places = [];
+                      share.id = '';
+                      share.css = '';
+                      return 0;
                     } else {
-                      _place = activePlacement(places, shareConstruct[index]);
+                      // eslint-disable-line no-else-return
+                      var _place = void 0;
+                      if (places.length === 1) {
+                        _place = places[0];
+                      } else {
+                        _place = activePlacement(places, shareConstruct[index]);
+                      }
+                      // console.log('random', places.length, randomIndex);
+                      placeChosen.push(_place);
+                      share.places.push(_place.data);
                     }
-                    // console.log('random', places.length, randomIndex);
-                    placeChosen.push(_place);
-                    share.places.push(_place.data);
-                  }
-                  return 0;
-                }, 0);
-                // if share available => insert monopoly places
-                // if (share.places.length !== 0) {
-                var SumArea = share.places.reduce(function (acc, item) {
-                  return acc + (_this2.zoneType === 'right' ? item.height : item.width);
-                }, 0);
-                var Free = (_this2.zoneType === 'right' ? _this2.height : _this2.width) - SumArea;
-                isRelative = true;
-                console.log('testFreeCpd', Free, SumArea);
-                if (relativeKeyword !== '' && isRelative) {
-                  console.log('ShareTest', share);
-                  shares.push(share);
-                  isRelative = false;
-                  // share.places = [];
-                  // share.id = '';
-                  // share.css = '';
-                }
-                if (1) {
-                  console.log('ShareTest', share);
-                  shares.push(share);
-                  isRelative = false;
-                  // share.places = [];
-                  // share.id = '';
-                  // share.css = '';
-                }
-                // }
-                return '';
-              }
-              return; // eslint-disable-line
-            }, 0);
-          }
-          if (numberOfParts === 0) {
-            // this variable to store places in a share which are chosen bellow
-            // const share = { places: [], id: currentShare[0].id, css: getCss(currentShare[0]) };
-            // placeMonopolies.reduce((x, y) => share.places.splice(y.index, 0, y.data), 0);
-            // shares.push(share);
-          }
-          if (shares.length > 0) {
-            shareTemplate.weight = 100 / shares.length;
-            for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
-              // shareTemplate.id = `DS-${this.id}-${i}`;
-              shareTemplate.id = shares[_i2].id.replace('share-', '');
-              // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
-              shareTemplate.outputCss = shares[_i2].css;
-              shareTemplate.placements = shares[_i2].places;
-              // const shareHeight = shares[i].places.reduce((acc, item) =>
-              // acc + (this.zoneType === 'right' ? item.height : item.width), 0);
-              // shareTemplate.height = shareHeight;
-              var shareData = new _Share2.default(shareTemplate);
-              shareDatas.push(shareData);
-            }
-          }
-          console.log('cpdd');
-        };
-        var createShareByPlaceCpm = function createShareByPlaceCpm() {
-          var numberOfParts = getNumberOfParts(_this2.zoneType === 'right' ? _this2.height : _this2.width);
-          console.log('numberOfParts', numberOfParts);
-          for (var i = 1; i <= numberOfParts; i += 1) {
-            // divide share base on free area and number of part.
-            var shareRatios = _vendor.util.ComputeShare(numberOfParts, i);
-            console.log('shareRatios', shareRatios);
-            // Browse each shareRatio on above and create a share for it.
-            shareRatios.reduce(function (temp, shareRatio) {
-              // const checkS = checkShare(shareRatio);
-              // turn off check share state.(turn on -> repalce ('1', 'checkS.check'))
-              if (1) {
-                // this variable to store places in a share which are chosen bellow
-                var share = { places: [], id: currentShare[0].id, css: currentShare[0].css };
-                var placeChosen = [];
-                var isRelative = false;
-                // Browse each placeRatio in shareRatio, then find a placement fit it.
-                shareRatio.reduce(function (temp2, placeRatio, index) {
-                  // find all placement fit with area place
-                  var places = allPlacement.filter(function (place) {
-                    return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
-                      // eslint-disable-line
-                      if (index2 === 0) return item.data.id !== place.data.id;
-                      return acc && item.data.id !== place.data.id;
-                    }, 0) : true) && place.index === index;
-                  });
-
-                  // filter place with relative keyword
-                  var placesWithKeyword = [];
-                  if (arrayRelativeKeyword.length > 0) {
-                    placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
-                    if (placesWithKeyword.length > 0) {
-                      isRelative = true;
-                      places = placesWithKeyword;
-                    }
-                  }
-
-                  // if don't have any places fit in area => return empty share
-                  if (places.length === 0) {
-                    share.places = [];
-                    share.id = '';
-                    share.css = '';
                     return 0;
-                  } else {
-                    // eslint-disable-line no-else-return
-                    // choose random a placement which are collected on above
-                    var randomIndex = parseInt(Math.floor(Math.random() * places.length), 10);
-                    var place = places[randomIndex];
-                    console.log('duplicate', placeChosen.indexOf(place), place);
-                    placeChosen.push(place);
-                    share.places.push(place.data);
-                    console.log('shareTestCPM', share);
+                  }, 0);
+                  // if share available => insert monopoly places
+                  // if (share.places.length !== 0) {
+                  var SumArea = share.places.reduce(function (acc, item) {
+                    return acc + (_this2.zoneType === 'right' ? item.height : item.width);
+                  }, 0);
+                  var Free = (_this2.zoneType === 'right' ? _this2.height : _this2.width) - SumArea;
+                  isRelative = true;
+                  console.log('testFreeCpd', Free, SumArea);
+                  if (relativeKeyword !== '' && isRelative) {
+                    console.log('ShareTest', share);
+                    shares.push(share);
+                    isRelative = false;
+                    // share.places = [];
+                    // share.id = '';
+                    // share.css = '';
                   }
+                  if (1) {
+                    console.log('ShareTest', share);
+                    shares.push(share);
+                    isRelative = false;
+                    // share.places = [];
+                    // share.id = '';
+                    // share.css = '';
+                  }
+                  // }
+                  return '';
+                }
+                return; // eslint-disable-line
+              }, 0);
+            }
+            if (numberOfParts === 0) {
+              // this variable to store places in a share which are chosen bellow
+              // const share = { places: [], id: currentShare[0].id, css: getCss(currentShare[0]) };
+              // placeMonopolies.reduce((x, y) => share.places.splice(y.index, 0, y.data), 0);
+              // shares.push(share);
+            }
+            if (shares.length > 0) {
+              shareTemplate.weight = 100 / shares.length;
+              for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
+                // shareTemplate.id = `DS-${this.id}-${i}`;
+                shareTemplate.id = shares[_i2].id.replace('share-', '');
+                // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
+                shareTemplate.outputCss = shares[_i2].css;
+                shareTemplate.placements = shares[_i2].places;
+                // const shareHeight = shares[i].places.reduce((acc, item) =>
+                // acc + (this.zoneType === 'right' ? item.height : item.width), 0);
+                // shareTemplate.height = shareHeight;
+                var shareData = new _Share2.default(shareTemplate);
+                shareDatas.push(shareData);
+              }
+            }
+            console.log('cpdd');
+          };
+          var createShareByPlaceCpm = function createShareByPlaceCpm() {
+            var numberOfParts = getNumberOfParts(_this2.zoneType === 'right' ? _this2.height : _this2.width);
+            console.log('numberOfParts', numberOfParts);
+            for (var i = 1; i <= numberOfParts; i += 1) {
+              // divide share base on free area and number of part.
+              var shareRatios = _vendor.util.ComputeShare(numberOfParts, i);
+              console.log('shareRatios', shareRatios);
+              // Browse each shareRatio on above and create a share for it.
+              shareRatios.reduce(function (temp, shareRatio) {
+                // const checkS = checkShare(shareRatio);
+                // turn off check share state.(turn on -> repalce ('1', 'checkS.check'))
+                if (1) {
+                  // this variable to store places in a share which are chosen bellow
+                  var share = { places: [], id: currentShare[0].id, css: currentShare[0].css };
+                  var placeChosen = [];
+                  var isRelative = false;
+                  // Browse each placeRatio in shareRatio, then find a placement fit it.
+                  shareRatio.reduce(function (temp2, placeRatio, index) {
+                    // find all placement fit with area place
+                    var places = allPlacement.filter(function (place) {
+                      return getNumberOfParts(_this2.zoneType === 'right' ? place.data.height : place.data.width, true) === placeRatio && place.data.revenueType !== 'pr' && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                        // eslint-disable-line
+                        if (index2 === 0) return item.data.id !== place.data.id;
+                        return acc && item.data.id !== place.data.id;
+                      }, 0) : true) && place.index === index;
+                    });
+
+                    // filter place with relative keyword
+                    var placesWithKeyword = [];
+                    if (arrayRelativeKeyword.length > 0) {
+                      placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+                      if (placesWithKeyword.length > 0) {
+                        isRelative = true;
+                        places = placesWithKeyword;
+                      }
+                    }
+
+                    // if don't have any places fit in area => return empty share
+                    if (places.length === 0) {
+                      share.places = [];
+                      share.id = '';
+                      share.css = '';
+                      return 0;
+                    } else {
+                      // eslint-disable-line no-else-return
+                      // choose random a placement which are collected on above
+                      var randomIndex = parseInt(Math.floor(Math.random() * places.length), 10);
+                      var place = places[randomIndex];
+                      console.log('duplicate', placeChosen.indexOf(place), place);
+                      placeChosen.push(place);
+                      share.places.push(place.data);
+                      console.log('shareTestCPM', share);
+                    }
+                    return 0;
+                  }, 0);
+                  console.log('placeChosen', placeChosen);
+                  // if share available => insert monopoly places
+                  if (share.length !== 0) {
+                    // push (all places have type === placementType) into share.
+                    var SumArea = share.places.reduce(function (acc, item) {
+                      return acc + getNumberOfParts(_this2.zoneType === 'right' ? item.height : item.width, true);
+                    }, 0);
+                    var Free = getNumberOfParts(_this2.zoneType === 'right' ? _this2.height : _this2.width) - SumArea;
+                    console.log('freeTest', Free);
+                    if (Free === 0 && relativeKeyword !== '' && isRelative) {
+                      shares.push(share);
+                      isRelative = false;
+                      // share.places = [];
+                      // share.id = '';
+                      // share.css = '';
+                    }
+                    if (Free === 0) {
+                      shares.push(share);
+                      isRelative = false;
+                      // share.places = [];
+                      // share.id = '';
+                      // share.css = '';
+                    }
+                  }
+                  return '';
+                }
+                return; //eslint-disable-line
+              }, 0);
+            }
+            if (shares.length > 0) {
+              shareTemplate.weight = 100 / shares.length;
+              for (var _i3 = 0; _i3 < shares.length; _i3 += 1) {
+                // shareTemplate.id = `DS-${this.id}-${i}`;
+                shareTemplate.id = shares[_i3].id.replace('share-', '');
+                // const css = getCss(shares[i]);
+                // console.log('css', css);
+                // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
+                shareTemplate.outputCss = shares[_i3].css;
+                shareTemplate.placements = shares[_i3].places;
+                var shareData = new _Share2.default(shareTemplate);
+                shareDatas.push(shareData);
+              }
+            }
+            console.log('cpmmm');
+          };
+
+          if (placementType !== 'cpm') {
+            // get all places have type === placementType
+            var monopolyPlaces = allPlacement.filter(function (y) {
+              return y.data.AdsType.revenueType === placementType;
+            });
+            console.log('monopolyPlaces2', monopolyPlaces);
+            if (monopolyPlaces.length > 0) {
+              if (placementType === 'pr') {
+                createShareByPlaceMonopolies(monopolyPlaces);
+                return shareDatas;
+              }
+              // collect placements which share the place order with monopoly places ('cpd').
+              var shareWith = [];
+              monopolyPlaces.reduce(function (acc, monopolyPlace) {
+                return allPlace.reduce(function (acc2, place) {
+                  // eslint-disable-line
+                  if (place.index === monopolyPlace.index && place.data.revenueType !== monopolyPlace.data.revenueType) {
+                    if (shareWith.indexOf(place) === -1) {
+                      shareWith.push(place);
+                    }
+                  }
+                }, 0);
+              }, 0);
+              console.log('shareWith', shareWith);
+              // filter keyword
+              var shareWithKeyword = [];
+              if (arrayRelativeKeyword.length > 0) {
+                shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
+                if (shareWithKeyword.length > 0) {
+                  shareWith = shareWithKeyword;
+                }
+              }
+              // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
+              var createMonopolyPlacesWithShare = function createMonopolyPlacesWithShare(array, lib) {
+                var res = [];
+                var replace = function replace(library, index2, arrTemp) {
+                  var arrayTemp = arrTemp.map(function (item) {
+                    return item;
+                  });
+                  library.reduce(function (acc2, item) {
+                    if (item.index === array[index2].index) {
+                      arrayTemp.splice(index2, 1, item);
+                      res.push(arrayTemp);
+                      if (index2 < arrTemp.length - 1) {
+                        replace(library, index2 + 1, arrayTemp);
+                      }
+                    }
+                    return 0;
+                  }, 0);
+                };
+                array.reduce(function (acc1, ArrayItem, index1, array1) {
+                  replace(lib, index1, array1);
                   return 0;
                 }, 0);
-                console.log('placeChosen', placeChosen);
-                // if share available => insert monopoly places
-                if (share.length !== 0) {
-                  // push (all places have type === placementType) into share.
-                  var SumArea = share.places.reduce(function (acc, item) {
-                    return acc + getNumberOfParts(_this2.zoneType === 'right' ? item.height : item.width, true);
-                  }, 0);
-                  var Free = getNumberOfParts(_this2.zoneType === 'right' ? _this2.height : _this2.width) - SumArea;
-                  console.log('freeTest', Free);
-                  if (Free === 0 && relativeKeyword !== '' && isRelative) {
-                    shares.push(share);
-                    isRelative = false;
-                    // share.places = [];
-                    // share.id = '';
-                    // share.css = '';
+                res.push(array);
+                return res;
+              };
+              var combinationMonopolyPlaces = [];
+              // const numberOfCombination = monopolyPlaces.length;
+              var monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
+              // console.log('monopolyPlaces', monopolyPlaces);
+              console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
+              // variable "conputeAll" to compute all cases combination.
+              var computeAll = true;
+              if (computeAll) {
+                // can use function combinations (1-n combination n)
+                // instead of k_combination (k Combination n) for compute all cases.
+                for (var i = 0; i < monopolyPlacesWithShare.length; i += 1) {
+                  combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.combinations(monopolyPlacesWithShare[i]));
+                }
+              } else {
+                var numberOfK = -1;
+                monopolyPlaces.reduce(function (acc, item, index) {
+                  // eslint-disable-line
+                  if (index === 0) {
+                    numberOfK += 1;
+                    return item.index;
                   }
-                  if (Free === 0) {
-                    shares.push(share);
-                    isRelative = false;
-                    // share.places = [];
-                    // share.id = '';
-                    // share.css = '';
+                  if (acc !== item.index) {
+                    numberOfK += 1;
+                    return item.index;
+                  }
+                }, 0);
+                console.log('numberOfK', numberOfK);
+                for (var _i4 = 0; _i4 < monopolyPlacesWithShare.length; _i4 += 1) {
+                  for (var j = 1; j <= numberOfK; j += 1) {
+                    combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i4], j));
                   }
                 }
-                return '';
               }
-              return; //eslint-disable-line
-            }, 0);
-          }
-          if (shares.length > 0) {
-            shareTemplate.weight = 100 / shares.length;
-            for (var _i3 = 0; _i3 < shares.length; _i3 += 1) {
-              // shareTemplate.id = `DS-${this.id}-${i}`;
-              shareTemplate.id = shares[_i3].id.replace('share-', '');
-              // const css = getCss(shares[i]);
-              // console.log('css', css);
-              // shareTemplate.outputCss = `#share-DS-${this.id}-${i} ${css}`;
-              shareTemplate.outputCss = shares[_i3].css;
-              shareTemplate.placements = shares[_i3].places;
-              var shareData = new _Share2.default(shareTemplate);
-              shareDatas.push(shareData);
-            }
-          }
-          console.log('cpmmm');
-        };
+              var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
+                return item.type === 'cpd' ? acc + 1 : acc + 0;
+              }, 0);
+              combinationMonopolyPlaces = combinationMonopolyPlaces.filter(function (item) {
+                return item.length >= numberOfMonopoly && item.reduce(function (acc, item2, index) {
+                  if (index === 0) {
+                    return item2.data.revenueType === shareConstruct[item2.index].type;
+                  }
+                  return acc && item2.data.revenueType === shareConstruct[item2.index].type;
+                }, 0);
+              });
+              console.log('combination1', combinationMonopolyPlaces);
+              // eslint-disable-next-line
+              // combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item => item.reduce((acc, item2) => acc + (this.zoneType === 'right' ? item2.data.height : item2.data.width), 0) <= (this.zoneType === 'right' ? this.height : this.width));
+              // console.log('combination2', combinationMonopolyPlaces);
+              combinationMonopolyPlaces.reduce(function (acc, item) {
+                return createShareByPlaceMonopolies(item);
+              }, 0);
 
-        if (placementType !== 'cpm') {
-          // get all places have type === placementType
-          var monopolyPlaces = allPlacement.filter(function (y) {
-            return y.data.AdsType.revenueType === placementType;
-          });
-          console.log('monopolyPlaces2', monopolyPlaces);
-          if (monopolyPlaces.length > 0) {
-            if (placementType === 'pr') {
-              createShareByPlaceMonopolies(monopolyPlaces);
               return shareDatas;
             }
-            // collect placements which share the place order with monopoly places ('cpd').
-            var shareWith = [];
-            monopolyPlaces.reduce(function (acc, monopolyPlace) {
-              return allPlace.reduce(function (acc2, place) {
-                // eslint-disable-line
-                if (place.index === monopolyPlace.index && place.data.revenueType !== monopolyPlace.data.revenueType) {
-                  if (shareWith.indexOf(place) === -1) {
-                    shareWith.push(place);
-                  }
-                }
-              }, 0);
-            }, 0);
-            console.log('shareWith', shareWith);
-            // filter keyword
-            var shareWithKeyword = [];
-            if (arrayRelativeKeyword.length > 0) {
-              shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
-              if (shareWithKeyword.length > 0) {
-                shareWith = shareWithKeyword;
-              }
-            }
-            // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
-            var createMonopolyPlacesWithShare = function createMonopolyPlacesWithShare(array, lib) {
-              var res = [];
-              var replace = function replace(library, index2, arrTemp) {
-                var arrayTemp = arrTemp.map(function (item) {
-                  return item;
-                });
-                library.reduce(function (acc2, item) {
-                  if (item.index === array[index2].index) {
-                    arrayTemp.splice(index2, 1, item);
-                    res.push(arrayTemp);
-                    if (index2 < arrTemp.length - 1) {
-                      replace(library, index2 + 1, arrayTemp);
-                    }
-                  }
-                  return 0;
-                }, 0);
-              };
-              array.reduce(function (acc1, ArrayItem, index1, array1) {
-                replace(lib, index1, array1);
-                return 0;
-              }, 0);
-              res.push(array);
-              return res;
-            };
-            var combinationMonopolyPlaces = [];
-            // const numberOfCombination = monopolyPlaces.length;
-            var monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith);
-            // console.log('monopolyPlaces', monopolyPlaces);
-            console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
-            // variable "conputeAll" to compute all cases combination.
-            var computeAll = true;
-            if (computeAll) {
-              // can use function combinations (1-n combination n)
-              // instead of k_combination (k Combination n) for compute all cases.
-              for (var i = 0; i < monopolyPlacesWithShare.length; i += 1) {
-                combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.combinations(monopolyPlacesWithShare[i]));
-              }
-            } else {
-              var numberOfK = -1;
-              monopolyPlaces.reduce(function (acc, item, index) {
-                // eslint-disable-line
-                if (index === 0) {
-                  numberOfK += 1;
-                  return item.index;
-                }
-                if (acc !== item.index) {
-                  numberOfK += 1;
-                  return item.index;
-                }
-              }, 0);
-              console.log('numberOfK', numberOfK);
-              for (var _i4 = 0; _i4 < monopolyPlacesWithShare.length; _i4 += 1) {
-                for (var j = 1; j <= numberOfK; j += 1) {
-                  combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i4], j));
-                }
-              }
-            }
-            var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
-              return item.type === 'cpd' ? acc + 1 : acc + 0;
-            }, 0);
-            combinationMonopolyPlaces = combinationMonopolyPlaces.filter(function (item) {
-              return item.length >= numberOfMonopoly && item.reduce(function (acc, item2, index) {
-                if (index === 0) {
-                  return item2.data.revenueType === shareConstruct[item2.index].type;
-                }
-                return acc && item2.data.revenueType === shareConstruct[item2.index].type;
-              }, 0);
-            });
-            console.log('combination1', combinationMonopolyPlaces);
-            // eslint-disable-next-line
-            // combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item => item.reduce((acc, item2) => acc + (this.zoneType === 'right' ? item2.data.height : item2.data.width), 0) <= (this.zoneType === 'right' ? this.height : this.width));
-            // console.log('combination2', combinationMonopolyPlaces);
-            combinationMonopolyPlaces.reduce(function (acc, item) {
-              return createShareByPlaceMonopolies(item);
-            }, 0);
-
-            return shareDatas;
+          } else {
+            console.log('shareData', placementType, shareDatas, _this2.zoneType);
+            createShareByPlaceCpm();
           }
-        } else {
-          console.log('shareData', placementType, shareDatas, _this2.zoneType);
-          createShareByPlaceCpm();
-        }
-        return shareDatas;
-      };
-      var shareConstruct = [];
-      // if cpdShare take all share percent in a place order -> filter
+          return shareDatas;
+        };
+        var shareConstruct = [];
+        // if cpdShare take all share percent in a place order -> filter
 
-      var _loop = function _loop(i) {
-        var isPr = allPlace.filter(function (place) {
-          return place.index === i && place.data.revenueType === 'pr';
-        }).length > 0;
-        var totalCPDSharePercent = allPlace.filter(function (place) {
-          return place.index === i && place.data.revenueType === 'cpd';
-        }).reduce(function (acc, place) {
-          return acc + place.data.cpdPercent * place.data.PlacementArea;
-        }, 0);
-        if (isPr) {
-          shareConstruct.push([{ type: 'pr', weight: 100 }, { type: 'cpd', weight: 0 }, { type: 'cpm', weight: 0 }]);
-        } else {
-          shareConstruct.push([{ type: 'pr', weight: 0 }, { type: 'cpd', weight: totalCPDSharePercent }, { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
-          console.log('totalCPDSharePercent', totalCPDSharePercent, i);
-        }
-      };
-
-      for (var i = 0; i < numberOfPlaceInShare; i += 1) {
-        _loop(i);
-      }
-
-      var cookie = _vendor.adsStorage.getStorage('_cpt');
-      var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
-      zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
-      var ShareRendered = zoneCookie.split('|');
-      var activeRevenue = function activeRevenue(allRevenueType) {
-        var randomNumber = Math.random() * 100;
-        var ratio = allRevenueType.reduce(function (acc, revenueType) {
-          return revenueType.weight + acc;
-        }, 0) / 100;
-        var result = allRevenueType.reduce(function (acc, revenueType) {
-          var nextRange = acc + revenueType.weight / ratio;
-
-          if ((typeof acc === 'undefined' ? 'undefined' : (0, _typeof3.default)(acc)) === 'object') {
-            return acc;
-          }
-
-          if (randomNumber >= acc && randomNumber < nextRange) {
-            return revenueType;
-          }
-
-          return nextRange;
-        }, 0);
-        return result;
-      };
-      // build construct of current share.
-      var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
-      // console.log('lastThreeShare', lastThreeShare);
-      var numberOfChannel = _vendor.util.uniqueItem(lastThreeShare.map(function (item) {
-        return item.split(')(')[0];
-      })).length;
-      console.log('domain', numberOfChannel);
-      if (numberOfChannel > 1) {
-        lastThreeShare = [];
-        var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
-        cookie = ('' + cookie).replace(zoneCookie, '');
-        _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
-      }
-      var buildShareConstruct = [];
-
-      var _loop2 = function _loop2(i) {
-        if (shareConstruct[i][0].weight === 100) {
-          buildShareConstruct.push(shareConstruct[i][0]);
-        } else {
-          var lastPlaceType = [];
-          lastThreeShare.reduce(function (acc, share) {
-            var shareTemp = share.split('][');
-            shareTemp.reduce(function (acc2, item, index) {
-              if (index === i) {
-                lastPlaceType.push(item.split(')(')[2]);
-              }
-              return 0;
-            }, 0);
-            return 0;
+        var _loop = function _loop(i) {
+          var isPr = allPlace.filter(function (place) {
+            return place.index === i && place.data.revenueType === 'pr';
+          }).length > 0;
+          var totalCPDSharePercent = allPlace.filter(function (place) {
+            return place.index === i && place.data.revenueType === 'cpd';
+          }).reduce(function (acc, place) {
+            return acc + place.data.cpdPercent * place.data.PlacementArea;
           }, 0);
-          console.log('lastPlaceType', lastPlaceType, i);
-
-          var cpdPercent = shareConstruct[i][1].weight;
-          var cpdAppear = lastPlaceType.reduce(function (acc, place) {
-            return place.type === 'cpd' ? acc + 1 : acc + 0;
-          }, 0);
-          if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
-            if (cpdAppear === 1 && lastPlaceType.length > 1) {
-              shareConstruct[i].splice(1, 1);
-            }
-          } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
-            if (cpdAppear === 2 && lastPlaceType.length > 2) {
-              shareConstruct[i].splice(1, 1);
-            }
-          }
-          var activeType = activeRevenue(shareConstruct[i]);
-          buildShareConstruct.push(activeType);
-        }
-      };
-
-      for (var i = 0; i < numberOfPlaceInShare; i += 1) {
-        _loop2(i);
-      }
-      console.log('buildShareConstruct', buildShareConstruct);
-      var pr = computeShareWithPlacementType2(allPlace, 'pr', buildShareConstruct);
-      // const testPR = computeShareWithPlacementType2(allPlace, 'pr', buildShareConstruct);
-      // console.log('testPR', testPR);
-      if (pr.length > 0) {
-        console.log('prShare', pr);
-        return pr;
-      }
-      console.log('cpdShare');
-      var cpdShare = computeShareWithPlacementType2(allPlace, 'cpd', buildShareConstruct);
-      // const testCPD = computeShareWithPlacementType(allPlace, 'cpd', buildShareConstruct);
-      // console.log('testCPD', computeShareWithPlacementType);
-      if (cpdShare.length > 0) {
-        var _loop3 = function _loop3(i) {
-          if (100 - shareConstruct[i][0].weight <= 0) {
-            cpdShare = cpdShare.filter(function (share) {
-              return share.placements[i].revenueType === 'cpd';
-            });
+          if (isPr) {
+            shareConstruct.push([{ type: 'pr', weight: 100 }, { type: 'cpd', weight: 0 }, { type: 'cpm', weight: 0 }]);
+          } else {
+            shareConstruct.push([{ type: 'pr', weight: 0 }, { type: 'cpd', weight: totalCPDSharePercent }, { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
+            console.log('totalCPDSharePercent', totalCPDSharePercent, i);
           }
         };
 
         for (var i = 0; i < numberOfPlaceInShare; i += 1) {
-          _loop3(i);
+          _loop(i);
         }
-        console.log('cpdShare', cpdShare);
-        return cpdShare;
+
+        var cookie = _vendor.adsStorage.getStorage('_cpt');
+        var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
+        zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
+        var ShareRendered = zoneCookie.split('|');
+        var activeRevenue = function activeRevenue(allRevenueType) {
+          var randomNumber = Math.random() * 100;
+          var ratio = allRevenueType.reduce(function (acc, revenueType) {
+            return revenueType.weight + acc;
+          }, 0) / 100;
+          var result = allRevenueType.reduce(function (acc, revenueType) {
+            var nextRange = acc + revenueType.weight / ratio;
+
+            if ((typeof acc === 'undefined' ? 'undefined' : (0, _typeof3.default)(acc)) === 'object') {
+              return acc;
+            }
+
+            if (randomNumber >= acc && randomNumber < nextRange) {
+              return revenueType;
+            }
+
+            return nextRange;
+          }, 0);
+          return result;
+        };
+        // build construct of current share.
+        var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
+        // console.log('lastThreeShare', lastThreeShare);
+        var numberOfChannel = _vendor.util.uniqueItem(lastThreeShare.map(function (item) {
+          return item.split(')(')[0];
+        })).length;
+        console.log('domain', numberOfChannel);
+        if (numberOfChannel > 1) {
+          lastThreeShare = [];
+          var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
+          cookie = ('' + cookie).replace(zoneCookie, '');
+          _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
+        }
+        var buildShareConstruct = [];
+
+        var _loop2 = function _loop2(i) {
+          if (shareConstruct[i][0].weight === 100) {
+            buildShareConstruct.push(shareConstruct[i][0]);
+          } else {
+            var lastPlaceType = [];
+            lastThreeShare.reduce(function (acc, share) {
+              var shareTemp = share.split('][');
+              shareTemp.reduce(function (acc2, item, index) {
+                if (index === i) {
+                  lastPlaceType.push(item.split(')(')[2]);
+                }
+                return 0;
+              }, 0);
+              return 0;
+            }, 0);
+            console.log('lastPlaceType', lastPlaceType, i);
+
+            var cpdPercent = shareConstruct[i][1].weight;
+            var cpdAppear = lastPlaceType.reduce(function (acc, place) {
+              return place.type === 'cpd' ? acc + 1 : acc + 0;
+            }, 0);
+            if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
+              if (cpdAppear === 1 && lastPlaceType.length > 1) {
+                shareConstruct[i].splice(1, 1);
+              }
+            } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
+              if (cpdAppear === 2 && lastPlaceType.length > 2) {
+                shareConstruct[i].splice(1, 1);
+              }
+            }
+            var activeType = activeRevenue(shareConstruct[i]);
+            buildShareConstruct.push(activeType);
+          }
+        };
+
+        for (var i = 0; i < numberOfPlaceInShare; i += 1) {
+          _loop2(i);
+        }
+        console.log('buildShareConstruct', buildShareConstruct);
+        var pr = computeShareWithPlacementType2(allPlace, 'pr', buildShareConstruct);
+        if (pr.length > 0) {
+          console.log('prShare', pr);
+          return pr;
+        }
+        console.log('cpdShare');
+        var cpdShare = computeShareWithPlacementType2(allPlace, 'cpd', buildShareConstruct);
+        if (cpdShare.length > 0) {
+          var _loop3 = function _loop3(i) {
+            if (100 - shareConstruct[i][0].weight <= 0) {
+              cpdShare = cpdShare.filter(function (share) {
+                return share.placements[i].revenueType === 'cpd';
+              });
+            }
+          };
+
+          for (var i = 0; i < numberOfPlaceInShare; i += 1) {
+            _loop3(i);
+          }
+          console.log('cpdShare', cpdShare);
+          return cpdShare;
+        }
+        var cpmShare = computeShareWithPlacementType2(allPlace, 'cpm', buildShareConstruct);
+        console.log('cpmShare', cpmShare);
+        if (cpmShare.length > 0) {
+          return cpmShare;
+        }
       }
-      var cpmShare = computeShareWithPlacementType2(allPlace, 'cpm', buildShareConstruct);
-      console.log('cpmShare', cpmShare);
-      if (cpmShare.length > 0) {
-        return cpmShare;
-      }
-      // return allShare;
       return [];
     }
 
@@ -13178,77 +13242,80 @@ var Zone = function (_Entity) {
     key: 'activeShare',
     value: function activeShare(relativeKeyword) {
       var allShare = this.filterShareDynamic(relativeKeyword);
-      var randomNumber = Math.random() * 100;
-      var ratio = allShare.reduce(function (tmp, share) {
-        if (share.weight === undefined) {
-          share.weight = 100 / allShare.length; // eslint-disable-line
+      if (allShare.length > 0) {
+        var randomNumber = Math.random() * 100;
+        var ratio = allShare.reduce(function (tmp, share) {
+          if (share.weight === undefined) {
+            share.weight = 100 / allShare.length; // eslint-disable-line
+          }
+          return share.weight + tmp;
+        }, 0) / 100;
+
+        var res = allShare.reduce(function (range, share) {
+          var nextRange = range + share.weight / ratio;
+
+          if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
+            return range;
+          }
+
+          if (randomNumber >= range && randomNumber < nextRange) {
+            return share;
+          }
+
+          return nextRange;
+        }, 0);
+        // if share lack of place, it'll fill default place into share.
+        // res = util.fixShare(res);
+        // clear cookie _cpt
+        var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
+        var cookie = _vendor.adsStorage.getStorage('_cpt');
+        var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
+        zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
+        var ShareRendered = zoneCookie.split('|');
+        var numberOfChannel = _vendor.util.uniqueItem(ShareRendered.slice(Math.max(ShareRendered.length - 3, 1)).map(function (item) {
+          return item.split(')(')[0];
+        })).length;
+        if (numberOfChannel > 1 || ShareRendered.length > 50) {
+          cookie = ('' + cookie).replace(zoneCookie, '');
+          _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
         }
-        return share.weight + tmp;
-      }, 0) / 100;
-
-      var res = allShare.reduce(function (range, share) {
-        var nextRange = range + share.weight / ratio;
-
-        if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
-          return range;
-        }
-
-        if (randomNumber >= range && randomNumber < nextRange) {
-          return share;
-        }
-
-        return nextRange;
-      }, 0);
-      // if share lack of place, it'll fill default place into share.
-      // res = util.fixShare(res);
-      // clear cookie _cpt
-      var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
-      var cookie = _vendor.adsStorage.getStorage('_cpt');
-      var zoneCookie = _vendor.adsStorage.subCookie(cookie, this.id + ':', 0);
-      zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
-      var ShareRendered = zoneCookie.split('|');
-      var numberOfChannel = _vendor.util.uniqueItem(ShareRendered.slice(Math.max(ShareRendered.length - 3, 1)).map(function (item) {
-        return item.split(')(')[0];
-      })).length;
-      if (numberOfChannel > 1 || ShareRendered.length > 50) {
-        cookie = ('' + cookie).replace(zoneCookie, '');
-        _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
+        console.log('current share:', res);
+        console.log('current Weight', res.weight / ratio);
+        // const isFixHeight = res.placements.reduce((acc, place, index1) => {
+        //   if (index1 === 0) {
+        //     place.allBanners.reduce((acc2, banner, index2) => {
+        //       if (index2 === 0) {
+        //         return ((banner.bannerType.isInputData !== undefined &&
+        //         banner.bannerType.isInputData) ||
+        //         (!(banner.bannerType.isInputData !== undefined &&
+        //         banner.bannerType.isInputData) &&
+        //         banner.isIFrame));
+        //       }
+        //       return acc2 && ((banner.bannerType.isInputData !== undefined &&
+        //         banner.bannerType.isInputData) ||
+        //         (!(banner.bannerType.isInputData !== undefined &&
+        //         banner.bannerType.isInputData) &&
+        //         banner.isIFrame));
+        //     }, 0);
+        //   }
+        //   return acc && place.allBanners.reduce((acc2, banner, index2) => {
+        //     if (index2 === 0) {
+        //       return ((banner.bannerType.isInputData !== undefined &&
+        //       banner.bannerType.isInputData) ||
+        //         (!(banner.bannerType.isInputData !== undefined &&
+        //         banner.bannerType.isInputData) &&
+        //         banner.isIFrame));
+        //     }
+        //     return acc2 && ((banner.bannerType.isInputData !== undefined &&
+        //       banner.bannerType.isInputData) ||
+        //       (!(banner.bannerType.isInputData !== undefined &&
+        //       banner.bannerType.isInputData) &&
+        //       banner.isIFrame));
+        //   }, 0);
+        // }, 0);
+        return res;
       }
-      console.log('current share:', res);
-      console.log('current Weight', res.weight / ratio);
-      // const isFixHeight = res.placements.reduce((acc, place, index1) => {
-      //   if (index1 === 0) {
-      //     place.allBanners.reduce((acc2, banner, index2) => {
-      //       if (index2 === 0) {
-      //         return ((banner.bannerType.isInputData !== undefined &&
-      //         banner.bannerType.isInputData) ||
-      //         (!(banner.bannerType.isInputData !== undefined &&
-      //         banner.bannerType.isInputData) &&
-      //         banner.isIFrame));
-      //       }
-      //       return acc2 && ((banner.bannerType.isInputData !== undefined &&
-      //         banner.bannerType.isInputData) ||
-      //         (!(banner.bannerType.isInputData !== undefined &&
-      //         banner.bannerType.isInputData) &&
-      //         banner.isIFrame));
-      //     }, 0);
-      //   }
-      //   return acc && place.allBanners.reduce((acc2, banner, index2) => {
-      //     if (index2 === 0) {
-      //       return ((banner.bannerType.isInputData !== undefined &&
-      //       banner.bannerType.isInputData) ||
-      //         (!(banner.bannerType.isInputData !== undefined &&
-      //         banner.bannerType.isInputData) &&
-      //         banner.isIFrame));
-      //     }
-      //     return acc2 && ((banner.bannerType.isInputData !== undefined &&
-      //       banner.bannerType.isInputData) ||
-      //       (!(banner.bannerType.isInputData !== undefined &&
-      //       banner.bannerType.isInputData) &&
-      //       banner.isIFrame));
-      //   }, 0);
-      // }, 0);
-      return res;
+      return false;
     }
 
     /**
@@ -13284,7 +13351,513 @@ var Zone = function (_Entity) {
 exports.default = Zone;
 
 /***/ }),
-/* 66 */
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _create = __webpack_require__(47);
+
+var _create2 = _interopRequireDefault(_create);
+
+var _typeof2 = __webpack_require__(6);
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _keys = __webpack_require__(48);
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _toConsumableArray2 = __webpack_require__(81);
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Created by tamleminh on 16/06/2017.
+ */
+/*! { "name": "vissense", "version": "0.10.0", "homepage": "https://vissense.github.io/vissense","copyright": "(c) 2016 tbk" } */
+/* eslint-disable */
+!function (root, name, factory) {
+  var _oldValue = root[name],
+      _newValue = factory(root, root.document);
+  root[name] = _newValue, root[name].noConflict = function () {
+    return root[name] = _oldValue, _newValue;
+  };
+}(window, 'VisSense', function () {
+  var window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window;
+  var document = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window.document;
+  var undefined = arguments[2];
+
+  function async(callback, delay) {
+    return function () {
+      var args = arguments;
+      return defer(function () {
+        callback.apply(undefined, (0, _toConsumableArray3.default)(args));
+      }, delay || 0);
+    };
+  }
+  function debounce(callback, delay) {
+    var cancel = noop;
+    return function () {
+      var self = this,
+          args = arguments;
+      cancel(), cancel = defer(function () {
+        callback.apply(self, args);
+      }, delay);
+    };
+  }
+  function defaults(dest, source) {
+    var sourceIsObject = isObject(source),
+        destIsObject = isObject(dest);
+    return sourceIsObject || destIsObject ? sourceIsObject && destIsObject ? (forEach((0, _keys2.default)(source), function (property) {
+      dest[property] === undefined && (dest[property] = source[property]);
+    }), dest) : sourceIsObject ? source : dest : source;
+  }
+  function defer(callback, delay) {
+    var timer = setTimeout(function () {
+      callback();
+    }, delay || 0);
+    return function () {
+      clearTimeout(timer);
+    };
+  }
+  function fireIf(when, callback) {
+    return function () {
+      return (isFunction(when) ? when() : when) ? callback() : undefined;
+    };
+  }
+  function extend(dest, source, callback) {
+    for (var index = -1, props = (0, _keys2.default)(source), length = props.length, ask = isFunction(callback); ++index < length;) {
+      var key = props[index];
+      dest[key] = ask ? callback(dest[key], source[key], key, dest, source) : source[key];
+    }
+    return dest;
+  }
+  function forEach(array, callback, thisArg) {
+    for (var i = 0, n = array.length; n > i; i++) {
+      var result = callback.call(thisArg, array[i], i, array);
+      if (result !== undefined) return result;
+    }
+  }
+  function identity(value) {
+    return value;
+  }
+  function isDefined(value) {
+    return value !== undefined;
+  }
+  function isArray(value) {
+    return value && (typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value)) === 'object' && typeof value.length === 'number' && Object.prototype.toString.call(value) === '[object Array]' || !1;
+  }
+  function isElement(value) {
+    return value && value.nodeType === 1 || !1;
+  }
+  function isFunction(value) {
+    return typeof value === 'function' || !1;
+  }
+  function isObject(value) {
+    var type = typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value);
+    return type === 'function' || value && type === 'object' || !1;
+  }
+  function noop() {}
+  function now() {
+    return new Date().getTime();
+  }
+  function once(callback) {
+    var cache = void 0,
+        called = !1;
+    return function () {
+      return called || (cache = callback.apply(undefined, arguments), called = !0), cache;
+    };
+  }
+  function throttle(callback, wait, thisArg) {
+    var cancel = noop,
+        last = !1;
+    return function () {
+      var time = now(),
+          args = arguments,
+          func = function func() {
+        last = time, callback.apply(thisArg, args);
+      };
+      last && last + wait > time ? (cancel(), cancel = defer(func, wait)) : (last = time, defer(func, 0));
+    };
+  }
+  function viewport(referenceWindow) {
+    var win = referenceWindow || window;
+    return {
+      height: win.innerHeight,
+      width: win.innerWidth
+    };
+  }
+  function computedStyle(element, referenceWindow) {
+    return (referenceWindow || window).getComputedStyle(element, null);
+  }
+  function styleProperty(style, property) {
+    return style.getPropertyValue(property);
+  }
+  function isDisplayed(element, style) {
+    style || (style = computedStyle(element));
+    var display = styleProperty(style, 'display');
+    if (display === 'none') return !1;
+    var parent = element.parentNode;
+    return isElement(parent) ? isDisplayed(parent) : !0;
+  }
+  function isVisibleByStyling(element, referenceWindow) {
+    if (element === (referenceWindow || window).document) return !0;
+    if (!element || !element.parentNode) return !1;
+    var style = computedStyle(element, referenceWindow),
+        visibility = styleProperty(style, 'visibility');
+    return visibility === 'hidden' || visibility === 'collapse' ? !1 : isDisplayed(element, style);
+  }
+  function isInViewport(rect, viewport) {
+    return !rect || rect.width <= 0 || rect.height <= 0 ? !1 : rect.bottom > 0 && rect.right > 0 && rect.top < viewport.height && rect.left < viewport.width;
+  }
+  function percentage(element, referenceWindow) {
+    var rect = element.getBoundingClientRect(),
+        view = viewport(referenceWindow);
+    if (!isInViewport(rect, view) || !isVisibleByStyling(element)) return 0;
+    var vh = 0,
+        vw = 0;
+    return rect.top >= 0 ? vh = Math.min(rect.height, view.height - rect.top) : rect.bottom > 0 && (vh = Math.min(view.height, rect.bottom)), rect.left >= 0 ? vw = Math.min(rect.width, view.width - rect.left) : rect.right > 0 && (vw = Math.min(view.width, rect.right)), vh * vw / (rect.height * rect.width);
+  }
+  function isPageVisible(referenceWindow) {
+    return !createVisibilityApi(referenceWindow || window).isHidden();
+  }
+  function VisSense(element, config) {
+    if (!(this instanceof VisSense)) return new VisSense(element, config);
+    if (!isElement(element)) throw new Error('not an element node');
+    this._element = element, this._config = defaults(config, {
+      fullyvisible: 1,
+      hidden: 0,
+      referenceWindow: window,
+      percentageHook: percentage,
+      precision: 3,
+      visibilityHooks: []
+    });
+    var roundFactor = this._config.precision <= 0 ? 1 : Math.pow(10, this._config.precision || 3);
+    this._round = function (val) {
+      return Math.round(val * roundFactor) / roundFactor;
+    };
+    var visibilityApi = createVisibilityApi(this._config.referenceWindow);
+    this._config.visibilityHooks.push(function () {
+      return !visibilityApi.isHidden();
+    });
+  }
+  function nextState(visobj, currentState) {
+    var newState = visobj.state(),
+        percentage = newState.percentage;
+    return currentState && percentage === currentState.percentage && currentState.percentage === currentState.previous.percentage ? currentState : newState.hidden ? VisSense.VisState.hidden(percentage, currentState) : newState.fullyvisible ? VisSense.VisState.fullyvisible(percentage, currentState) : VisSense.VisState.visible(percentage, currentState);
+  }
+  function VisMon(visobj, config) {
+    var _config = defaults(config, {
+      strategy: [new VisMon.Strategy.PollingStrategy(), new VisMon.Strategy.EventStrategy()],
+      async: !1
+    });
+    this._visobj = visobj, this._state = {}, this._started = !1;
+    var anyTopicName = '*#' + now();
+    this._pubsub = new PubSub({
+      async: _config.async,
+      anyTopicName: anyTopicName
+    }), this._events = [anyTopicName, 'start', 'stop', 'update', 'hidden', 'visible', 'fullyvisible', 'percentagechange', 'visibilitychange'], this._strategy = new VisMon.Strategy.CompositeStrategy(_config.strategy), this._strategy.init(this), this._pubsub.on('update', function (monitor) {
+      var newValue = monitor._state.percentage,
+          oldValue = monitor._state.previous.percentage;
+      newValue !== oldValue && monitor._pubsub.publish('percentagechange', [monitor, newValue, oldValue]);
+    }), this._pubsub.on('update', function (monitor) {
+      monitor._state.code !== monitor._state.previous.code && monitor._pubsub.publish('visibilitychange', [monitor]);
+    }), this._pubsub.on('visibilitychange', function (monitor) {
+      monitor._state.visible && !monitor._state.previous.visible && monitor._pubsub.publish('visible', [monitor]);
+    }), this._pubsub.on('visibilitychange', function (monitor) {
+      monitor._state.fullyvisible && monitor._pubsub.publish('fullyvisible', [monitor]);
+    }), this._pubsub.on('visibilitychange', function (monitor) {
+      monitor._state.hidden && monitor._pubsub.publish('hidden', [monitor]);
+    }), forEach(this._events, function (event) {
+      isFunction(_config[event]) && this.on(event, _config[event]);
+    }, this);
+  }
+  var createVisibilityApi = function createVisibilityApi(referenceWindow) {
+    return function (document, undefined) {
+      var entry = function entry(propertyName, eventName) {
+        return {
+          property: propertyName,
+          event: eventName
+        };
+      },
+          event = 'visibilitychange',
+          dict = [entry('webkitHidden', 'webkit' + event), entry('msHidden', 'ms' + event), entry('mozHidden', 'moz' + event), entry('hidden', event)],
+          api = forEach(dict, function (entry) {
+        return document[entry.property] !== undefined ? {
+          isHidden: function isHidden() {
+            return !!document[entry.property] || !1;
+          },
+          onVisibilityChange: function onVisibilityChange(callback) {
+            return document.addEventListener(entry.event, callback, !1), function () {
+              document.removeEventListener(entry.event, callback, !1);
+            };
+          }
+        } : void 0;
+      });
+      return api || {
+        isHidden: function isHidden() {
+          return !1;
+        },
+        onVisibilityChange: function onVisibilityChange() {
+          return noop;
+        }
+      };
+    }((referenceWindow || window).document);
+  },
+      PubSub = function (undefined) {
+    function PubSub(config) {
+      this._cache = {}, this._onAnyCache = [], this._config = defaults(config, {
+        async: !1,
+        anyTopicName: '*'
+      });
+    }
+    var syncFireListeners = function syncFireListeners(consumers, args) {
+      forEach(consumers, function (consumer) {
+        consumer(args);
+      });
+    };
+    return PubSub.prototype.on = function (topic, callback) {
+      if (!isFunction(callback)) return noop;
+      var applyCallback = function applyCallback(args) {
+        return callback.apply(undefined, (0, _toConsumableArray3.default)(args || []));
+      };
+      var listener = !this._config.async ? applyCallback : async(applyCallback);
+      var unregister = function unregister(listener, array, topic) {
+        // eslint-disable-line
+        return function () {
+          var index = array.indexOf(listener);
+          return index > -1 ? (array.splice(index, 1), !0) : !1;
+        };
+      };
+      return topic === this._config.anyTopicName ? (this._onAnyCache.push(listener), unregister(listener, this._onAnyCache, '*')) : (this._cache[topic] || (this._cache[topic] = []), this._cache[topic].push(listener), unregister(listener, this._cache[topic], topic));
+    }, PubSub.prototype.publish = function (topic, args) {
+      var listeners = (this._cache[topic] || []).concat(topic === this._config.anyTopicName ? [] : this._onAnyCache);
+      var enableAsync = !!this._config.async;
+      var syncOrAsyncPublish = null;
+      if (enableAsync) {
+        syncOrAsyncPublish = async(syncFireListeners);
+      } else {
+        syncOrAsyncPublish = function syncOrAsyncPublish(listeners, args) {
+          syncFireListeners(listeners, args);
+          return noop;
+        };
+      }
+
+      console.debug('publishing topic', enableAsync ? '(async)' : '(sync)', topic, 'to', listeners.length, 'listeners');
+
+      return syncOrAsyncPublish(listeners, args || []);
+    }, PubSub;
+  }();
+  VisSense.prototype.state = function () {
+    var hiddenByHook = forEach(this._config.visibilityHooks, function (hook) {
+      return hook(this._element) ? void 0 : VisSense.VisState.hidden(0);
+    }, this);
+    return hiddenByHook || function (visobj, element, config) {
+      var perc = visobj._round(config.percentageHook(element, config.referenceWindow));
+      return perc <= config.hidden ? VisSense.VisState.hidden(perc) : perc >= config.fullyvisible ? VisSense.VisState.fullyvisible(perc) : VisSense.VisState.visible(perc);
+    }(this, this._element, this._config);
+  }, VisSense.prototype.percentage = function () {
+    return this.state().percentage;
+  }, VisSense.prototype.element = function () {
+    return this._element;
+  }, VisSense.prototype.referenceWindow = function () {
+    return this._config.referenceWindow;
+  }, VisSense.prototype.isFullyVisible = function () {
+    return this.state().fullyvisible;
+  }, VisSense.prototype.isVisible = function () {
+    return this.state().visible;
+  }, VisSense.prototype.isHidden = function () {
+    return this.state().hidden;
+  }, VisSense.fn = VisSense.prototype, VisSense.of = function (element, config) {
+    return new VisSense(element, config);
+  };
+  var STATES = {
+    HIDDEN: [0, 'hidden'],
+    VISIBLE: [1, 'visible'],
+    FULLY_VISIBLE: [2, 'fullyvisible']
+  };
+  return VisSense.VisState = function () {
+    function newVisState(state, percentage, previous) {
+      return previous && delete previous.previous, {
+        code: state[0],
+        state: state[1],
+        percentage: percentage,
+        previous: previous || {},
+        fullyvisible: state[0] === STATES.FULLY_VISIBLE[0],
+        visible: state[0] === STATES.VISIBLE[0] || state[0] === STATES.FULLY_VISIBLE[0],
+        hidden: state[0] === STATES.HIDDEN[0]
+      };
+    }
+    return {
+      hidden: function hidden(percentage, previous) {
+        return newVisState(STATES.HIDDEN, percentage, previous);
+      },
+      visible: function visible(percentage, previous) {
+        return newVisState(STATES.VISIBLE, percentage, previous);
+      },
+      fullyvisible: function fullyvisible(percentage, previous) {
+        return newVisState(STATES.FULLY_VISIBLE, percentage, previous);
+      }
+    };
+  }(), VisMon.prototype.visobj = function () {
+    return this._visobj;
+  }, VisMon.prototype.publish = function (eventName, args) {
+    var isInternalEvent = this._events.indexOf(eventName) >= 0;
+    if (isInternalEvent) throw new Error('Cannot publish internal event "' + eventName + '" from external scope.');
+    return this._pubsub.publish(eventName, args);
+  }, VisMon.prototype.state = function () {
+    return this._state;
+  }, VisMon.prototype.start = function (config) {
+    if (this._started) return this;
+    var _config = defaults(config, {
+      async: !1
+    });
+    return this._cancelAsyncStart && this._cancelAsyncStart(), _config.async ? this.startAsync() : (this._started = !0, this.update(), this._pubsub.publish('start', [this]), this._strategy.start(this), this);
+  }, VisMon.prototype.startAsync = function (config) {
+    this._cancelAsyncStart && this._cancelAsyncStart();
+    var me = this,
+        cancelAsyncStart = defer(function () {
+      me.start(extend(defaults(config, {}), {
+        async: !1
+      }));
+    });
+    return this._cancelAsyncStart = function () {
+      cancelAsyncStart(), me._cancelAsyncStart = null;
+    }, this;
+  }, VisMon.prototype.stop = function () {
+    this._cancelAsyncStart && this._cancelAsyncStart(), this._started && (this._strategy.stop(this), this._pubsub.publish('stop', [this])), this._started = !1;
+  }, VisMon.prototype.update = function () {
+    this._started && (this._state = nextState(this._visobj, this._state), this._pubsub.publish('update', [this]));
+  }, VisMon.prototype.on = function (topic, callback) {
+    return this._pubsub.on(topic, callback);
+  }, VisMon.Builder = function () {
+    var combineStrategies = function combineStrategies(config, strategies) {
+      var combinedStrategies = null,
+          forceDisableStrategies = config.strategy === !1,
+          enableStrategies = !forceDisableStrategies && (config.strategy || strategies.length > 0);
+      if (enableStrategies) {
+        var configStrategyIsDefined = !!config.strategy,
+            configStrategyIsArray = isArray(config.strategy),
+            configStrategyAsArray = configStrategyIsDefined ? configStrategyIsArray ? config.strategy : [config.strategy] : [];
+        combinedStrategies = configStrategyAsArray.concat(strategies);
+      } else combinedStrategies = forceDisableStrategies ? [] : config.strategy;
+      return combinedStrategies;
+    };
+    return function (visobj) {
+      var config = {},
+          strategies = [],
+          events = [],
+          productBuilt = !1,
+          product = null;
+      return {
+        set: function set(name, value) {
+          return config[name] = value, this;
+        },
+        strategy: function strategy(_strategy) {
+          return strategies.push(_strategy), this;
+        },
+        on: function on(event, handler) {
+          return events.push([event, handler]), this;
+        },
+        build: function build(consumer) {
+          var manufacture = function manufacture() {
+            var combinedStrategies = combineStrategies(config, strategies);
+            config.strategy = combinedStrategies;
+            var monitor = visobj.monitor(config);
+            return forEach(events, function (event) {
+              monitor.on(event[0], event[1]);
+            }), productBuilt = !0, product = monitor;
+          },
+              monitor = productBuilt ? product : manufacture();
+          return isFunction(consumer) ? consumer(monitor) : monitor;
+        }
+      };
+    };
+  }(), VisMon.Strategy = function () {}, VisMon.Strategy.prototype.init = noop, VisMon.Strategy.prototype.start = noop, VisMon.Strategy.prototype.stop = noop, VisMon.Strategy.CompositeStrategy = function (strategies) {
+    this._strategies = isArray(strategies) ? strategies : [strategies];
+  }, VisMon.Strategy.CompositeStrategy.prototype = (0, _create2.default)(VisMon.Strategy.prototype), VisMon.Strategy.CompositeStrategy.prototype.init = function (monitor) {
+    forEach(this._strategies, function (strategy) {
+      isFunction(strategy.init) && strategy.init(monitor);
+    });
+  }, VisMon.Strategy.CompositeStrategy.prototype.start = function (monitor) {
+    forEach(this._strategies, function (strategy) {
+      isFunction(strategy.start) && strategy.start(monitor);
+    });
+  }, VisMon.Strategy.CompositeStrategy.prototype.stop = function (monitor) {
+    forEach(this._strategies, function (strategy) {
+      isFunction(strategy.stop) && strategy.stop(monitor);
+    });
+  }, VisMon.Strategy.PollingStrategy = function (config) {
+    this._config = defaults(config, {
+      interval: 1e3
+    }), this._started = !1;
+  }, VisMon.Strategy.PollingStrategy.prototype = (0, _create2.default)(VisMon.Strategy.prototype), VisMon.Strategy.PollingStrategy.prototype.start = function (monitor) {
+    return this._started || (this._clearInterval = function (interval) {
+      var intervalId = setInterval(function () {
+        monitor.update();
+      }, interval);
+      return function () {
+        clearInterval(intervalId);
+      };
+    }(this._config.interval), this._started = !0), this._started;
+  }, VisMon.Strategy.PollingStrategy.prototype.stop = function () {
+    return this._started ? (this._clearInterval(), this._started = !1, !0) : !1;
+  }, VisMon.Strategy.EventStrategy = function (config) {
+    this._config = defaults(config, {
+      throttle: 50
+    }), this._config.debounce > 0 && (this._config.throttle = +this._config.debounce), this._started = !1;
+  }, VisMon.Strategy.EventStrategy.prototype = (0, _create2.default)(VisMon.Strategy.prototype), VisMon.Strategy.EventStrategy.prototype.start = function (monitor) {
+    return this._started || (this._removeEventListeners = function (update) {
+      var referenceWindow = monitor.visobj().referenceWindow(),
+          visibilityApi = createVisibilityApi(referenceWindow),
+          removeOnVisibilityChangeEvent = visibilityApi.onVisibilityChange(update);
+      return referenceWindow.addEventListener('scroll', update, !1), referenceWindow.addEventListener('resize', update, !1), referenceWindow.addEventListener('touchmove', update, !1), function () {
+        referenceWindow.removeEventListener('touchmove', update, !1), referenceWindow.removeEventListener('resize', update, !1), referenceWindow.removeEventListener('scroll', update, !1), removeOnVisibilityChangeEvent();
+      };
+    }(throttle(function () {
+      monitor.update();
+    }, this._config.throttle)), this._started = !0), this._started;
+  }, VisMon.Strategy.EventStrategy.prototype.stop = function () {
+    return this._started ? (this._removeEventListeners(), this._started = !1, !0) : !1;
+  }, VisSense.VisMon = VisMon, VisSense.PubSub = PubSub, VisSense.fn.monitor = function (config) {
+    return new VisMon(this, config);
+  }, VisSense.Utils = {
+    async: async,
+    debounce: debounce,
+    defaults: defaults,
+    defer: defer,
+    extend: extend,
+    forEach: forEach,
+    fireIf: fireIf,
+    identity: identity,
+    isArray: isArray,
+    isDefined: isDefined,
+    isElement: isElement,
+    isFunction: isFunction,
+    isObject: isObject,
+    isPageVisible: isPageVisible,
+    isVisibleByStyling: isVisibleByStyling,
+    noop: noop,
+    now: now,
+    once: once,
+    throttle: throttle,
+    percentage: percentage,
+    VisibilityApi: createVisibilityApi(),
+    createVisibilityApi: createVisibilityApi,
+    _viewport: viewport,
+    _isInViewport: isInViewport,
+    _isDisplayed: isDisplayed,
+    _computedStyle: computedStyle,
+    _styleProperty: styleProperty
+  }, VisSense;
+});
+
+/***/ }),
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13294,7 +13867,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _keys = __webpack_require__(73);
+var _keys = __webpack_require__(48);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -13454,7 +14027,7 @@ var adsStorage = {
 exports.default = adsStorage;
 
 /***/ }),
-/* 67 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13498,7 +14071,7 @@ var macro = {
 exports.default = macro;
 
 /***/ }),
-/* 68 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13553,7 +14126,7 @@ var screen = {
 exports.default = screen;
 
 /***/ }),
-/* 69 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13653,7 +14226,7 @@ var term = {
 exports.default = term;
 
 /***/ }),
-/* 70 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13663,15 +14236,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(41);
+var _stringify = __webpack_require__(43);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _typeof2 = __webpack_require__(8);
+var _typeof2 = __webpack_require__(6);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _models = __webpack_require__(12);
+var _models = __webpack_require__(13);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14537,43 +15110,72 @@ var util = {
 exports.default = util;
 
 /***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(78), __esModule: true };
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(79), __esModule: true };
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(81), __esModule: true };
-
-/***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = { "default": __webpack_require__(82), __esModule: true };
 
 /***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(83), __esModule: true };
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(84), __esModule: true };
-
-/***/ }),
 /* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(85), __esModule: true };
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(88), __esModule: true };
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(89), __esModule: true };
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(90), __esModule: true };
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _from = __webpack_require__(76);
+
+var _from2 = _interopRequireDefault(_from);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  } else {
+    return (0, _from2.default)(arr);
+  }
+};
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(60);
+__webpack_require__(113);
+module.exports = __webpack_require__(0).Array.from;
+
+/***/ }),
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var core  = __webpack_require__(0)
@@ -14583,66 +15185,66 @@ module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
 };
 
 /***/ }),
-/* 78 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(103);
+__webpack_require__(115);
 var $Object = __webpack_require__(0).Object;
 module.exports = function create(P, D){
   return $Object.create(P, D);
 };
 
 /***/ }),
-/* 79 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(104);
+__webpack_require__(116);
 var $Object = __webpack_require__(0).Object;
 module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
 
 /***/ }),
-/* 80 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(105);
+__webpack_require__(117);
 module.exports = __webpack_require__(0).Object.getPrototypeOf;
 
 /***/ }),
-/* 81 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(106);
+__webpack_require__(118);
 module.exports = __webpack_require__(0).Object.keys;
 
 /***/ }),
-/* 82 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(107);
+__webpack_require__(119);
 module.exports = __webpack_require__(0).Object.setPrototypeOf;
 
 /***/ }),
-/* 83 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(110);
-__webpack_require__(108);
-__webpack_require__(111);
-__webpack_require__(112);
+__webpack_require__(121);
+__webpack_require__(120);
+__webpack_require__(122);
+__webpack_require__(123);
 module.exports = __webpack_require__(0).Symbol;
 
 /***/ }),
-/* 84 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(109);
-__webpack_require__(113);
-module.exports = __webpack_require__(40).f('iterator');
+__webpack_require__(60);
+__webpack_require__(124);
+module.exports = __webpack_require__(42).f('iterator');
 
 /***/ }),
-/* 85 */
+/* 91 */
 /***/ (function(module, exports) {
 
 module.exports = function(it){
@@ -14651,20 +15253,20 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 86 */
+/* 92 */
 /***/ (function(module, exports) {
 
 module.exports = function(){ /* empty */ };
 
 /***/ }),
-/* 87 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = __webpack_require__(7)
-  , toLength  = __webpack_require__(101)
-  , toIndex   = __webpack_require__(100);
+var toIObject = __webpack_require__(10)
+  , toLength  = __webpack_require__(59)
+  , toIndex   = __webpack_require__(111);
 module.exports = function(IS_INCLUDES){
   return function($this, el, fromIndex){
     var O      = toIObject($this)
@@ -14683,13 +15285,55 @@ module.exports = function(IS_INCLUDES){
 };
 
 /***/ }),
-/* 88 */
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// getting tag from 19.1.3.6 Object.prototype.toString()
+var cof = __webpack_require__(29)
+  , TAG = __webpack_require__(1)('toStringTag')
+  // ES3 wrong here
+  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function(it, key){
+  try {
+    return it[key];
+  } catch(e){ /* empty */ }
+};
+
+module.exports = function(it){
+  var O, T, B;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+    // builtinTag case
+    : ARG ? cof(O)
+    // ES3 arguments fallback
+    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+};
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $defineProperty = __webpack_require__(3)
+  , createDesc      = __webpack_require__(19);
+
+module.exports = function(object, index, value){
+  if(index in object)$defineProperty.f(object, index, createDesc(0, value));
+  else object[index] = value;
+};
+
+/***/ }),
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // all enumerable object keys, includes symbols
-var getKeys = __webpack_require__(17)
-  , gOPS    = __webpack_require__(52)
-  , pIE     = __webpack_require__(32);
+var getKeys = __webpack_require__(18)
+  , gOPS    = __webpack_require__(54)
+  , pIE     = __webpack_require__(35);
 module.exports = function(it){
   var result     = getKeys(it)
     , getSymbols = gOPS.f;
@@ -14703,44 +15347,74 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 89 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(1).document && document.documentElement;
+module.exports = __webpack_require__(2).document && document.documentElement;
 
 /***/ }),
-/* 90 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = __webpack_require__(45);
+var cof = __webpack_require__(29);
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
 
 /***/ }),
-/* 91 */
+/* 99 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// check on default Array iterator
+var Iterators  = __webpack_require__(17)
+  , ITERATOR   = __webpack_require__(1)('iterator')
+  , ArrayProto = Array.prototype;
+
+module.exports = function(it){
+  return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
+};
+
+/***/ }),
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.2.2 IsArray(argument)
-var cof = __webpack_require__(45);
+var cof = __webpack_require__(29);
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
 
 /***/ }),
-/* 92 */
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// call something on iterator step with safe closing on error
+var anObject = __webpack_require__(11);
+module.exports = function(iterator, fn, value, entries){
+  try {
+    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
+  // 7.4.6 IteratorClose(iterator, completion)
+  } catch(e){
+    var ret = iterator['return'];
+    if(ret !== undefined)anObject(ret.call(iterator));
+    throw e;
+  }
+};
+
+/***/ }),
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var create         = __webpack_require__(31)
-  , descriptor     = __webpack_require__(25)
-  , setToStringTag = __webpack_require__(33)
+var create         = __webpack_require__(34)
+  , descriptor     = __webpack_require__(19)
+  , setToStringTag = __webpack_require__(36)
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(10)(IteratorPrototype, __webpack_require__(11)('iterator'), function(){ return this; });
+__webpack_require__(12)(IteratorPrototype, __webpack_require__(1)('iterator'), function(){ return this; });
 
 module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
@@ -14748,7 +15422,33 @@ module.exports = function(Constructor, NAME, next){
 };
 
 /***/ }),
-/* 93 */
+/* 103 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var ITERATOR     = __webpack_require__(1)('iterator')
+  , SAFE_CLOSING = false;
+
+try {
+  var riter = [7][ITERATOR]();
+  riter['return'] = function(){ SAFE_CLOSING = true; };
+  Array.from(riter, function(){ throw 2; });
+} catch(e){ /* empty */ }
+
+module.exports = function(exec, skipClosing){
+  if(!skipClosing && !SAFE_CLOSING)return false;
+  var safe = false;
+  try {
+    var arr  = [7]
+      , iter = arr[ITERATOR]();
+    iter.next = function(){ return {done: safe = true}; };
+    arr[ITERATOR] = function(){ return iter; };
+    exec(arr);
+  } catch(e){ /* empty */ }
+  return safe;
+};
+
+/***/ }),
+/* 104 */
 /***/ (function(module, exports) {
 
 module.exports = function(done, value){
@@ -14756,11 +15456,11 @@ module.exports = function(done, value){
 };
 
 /***/ }),
-/* 94 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getKeys   = __webpack_require__(17)
-  , toIObject = __webpack_require__(7);
+var getKeys   = __webpack_require__(18)
+  , toIObject = __webpack_require__(10);
 module.exports = function(object, el){
   var O      = toIObject(object)
     , keys   = getKeys(O)
@@ -14771,13 +15471,13 @@ module.exports = function(object, el){
 };
 
 /***/ }),
-/* 95 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var META     = __webpack_require__(26)('meta')
+var META     = __webpack_require__(28)('meta')
   , isObject = __webpack_require__(16)
-  , has      = __webpack_require__(5)
-  , setDesc  = __webpack_require__(6).f
+  , has      = __webpack_require__(9)
+  , setDesc  = __webpack_require__(3).f
   , id       = 0;
 var isExtensible = Object.isExtensible || function(){
   return true;
@@ -14829,14 +15529,14 @@ var meta = module.exports = {
 };
 
 /***/ }),
-/* 96 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP       = __webpack_require__(6)
-  , anObject = __webpack_require__(14)
-  , getKeys  = __webpack_require__(17);
+var dP       = __webpack_require__(3)
+  , anObject = __webpack_require__(11)
+  , getKeys  = __webpack_require__(18);
 
-module.exports = __webpack_require__(4) ? Object.defineProperties : function defineProperties(O, Properties){
+module.exports = __webpack_require__(7) ? Object.defineProperties : function defineProperties(O, Properties){
   anObject(O);
   var keys   = getKeys(Properties)
     , length = keys.length
@@ -14847,12 +15547,12 @@ module.exports = __webpack_require__(4) ? Object.defineProperties : function def
 };
 
 /***/ }),
-/* 97 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject = __webpack_require__(7)
-  , gOPN      = __webpack_require__(51).f
+var toIObject = __webpack_require__(10)
+  , gOPN      = __webpack_require__(53).f
   , toString  = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
@@ -14872,13 +15572,13 @@ module.exports.f = function getOwnPropertyNames(it){
 
 
 /***/ }),
-/* 98 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var isObject = __webpack_require__(16)
-  , anObject = __webpack_require__(14);
+  , anObject = __webpack_require__(11);
 var check = function(O, proto){
   anObject(O);
   if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
@@ -14887,7 +15587,7 @@ module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
     function(test, buggy, set){
       try {
-        set = __webpack_require__(46)(Function.call, __webpack_require__(50).f(Object.prototype, '__proto__').set, 2);
+        set = __webpack_require__(30)(Function.call, __webpack_require__(52).f(Object.prototype, '__proto__').set, 2);
         set(test, []);
         buggy = !(test instanceof Array);
       } catch(e){ buggy = true; }
@@ -14902,11 +15602,11 @@ module.exports = {
 };
 
 /***/ }),
-/* 99 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(36)
-  , defined   = __webpack_require__(27);
+var toInteger = __webpack_require__(39)
+  , defined   = __webpack_require__(31);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function(TO_STRING){
@@ -14924,10 +15624,10 @@ module.exports = function(TO_STRING){
 };
 
 /***/ }),
-/* 100 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(36)
+var toInteger = __webpack_require__(39)
   , max       = Math.max
   , min       = Math.min;
 module.exports = function(index, length){
@@ -14936,32 +15636,78 @@ module.exports = function(index, length){
 };
 
 /***/ }),
-/* 101 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 7.1.15 ToLength
-var toInteger = __webpack_require__(36)
-  , min       = Math.min;
-module.exports = function(it){
-  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+var classof   = __webpack_require__(94)
+  , ITERATOR  = __webpack_require__(1)('iterator')
+  , Iterators = __webpack_require__(17);
+module.exports = __webpack_require__(0).getIteratorMethod = function(it){
+  if(it != undefined)return it[ITERATOR]
+    || it['@@iterator']
+    || Iterators[classof(it)];
 };
 
 /***/ }),
-/* 102 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(86)
-  , step             = __webpack_require__(93)
-  , Iterators        = __webpack_require__(29)
-  , toIObject        = __webpack_require__(7);
+var ctx            = __webpack_require__(30)
+  , $export        = __webpack_require__(8)
+  , toObject       = __webpack_require__(27)
+  , call           = __webpack_require__(101)
+  , isArrayIter    = __webpack_require__(99)
+  , toLength       = __webpack_require__(59)
+  , createProperty = __webpack_require__(95)
+  , getIterFn      = __webpack_require__(112);
+
+$export($export.S + $export.F * !__webpack_require__(103)(function(iter){ Array.from(iter); }), 'Array', {
+  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
+  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
+    var O       = toObject(arrayLike)
+      , C       = typeof this == 'function' ? this : Array
+      , aLen    = arguments.length
+      , mapfn   = aLen > 1 ? arguments[1] : undefined
+      , mapping = mapfn !== undefined
+      , index   = 0
+      , iterFn  = getIterFn(O)
+      , length, result, step, iterator;
+    if(mapping)mapfn = ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
+    // if object isn't iterable or it's array with default iterator - use simple case
+    if(iterFn != undefined && !(C == Array && isArrayIter(iterFn))){
+      for(iterator = iterFn.call(O), result = new C; !(step = iterator.next()).done; index++){
+        createProperty(result, index, mapping ? call(iterator, mapfn, [step.value, index], true) : step.value);
+      }
+    } else {
+      length = toLength(O.length);
+      for(result = new C(length); length > index; index++){
+        createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
+      }
+    }
+    result.length = index;
+    return result;
+  }
+});
+
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var addToUnscopables = __webpack_require__(92)
+  , step             = __webpack_require__(104)
+  , Iterators        = __webpack_require__(17)
+  , toIObject        = __webpack_require__(10);
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = __webpack_require__(49)(Array, 'Array', function(iterated, kind){
+module.exports = __webpack_require__(51)(Array, 'Array', function(iterated, kind){
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
@@ -14987,118 +15733,95 @@ addToUnscopables('values');
 addToUnscopables('entries');
 
 /***/ }),
-/* 103 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(9)
+var $export = __webpack_require__(8)
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', {create: __webpack_require__(31)});
+$export($export.S, 'Object', {create: __webpack_require__(34)});
 
 /***/ }),
-/* 104 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(9);
+var $export = __webpack_require__(8);
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !__webpack_require__(4), 'Object', {defineProperty: __webpack_require__(6).f});
+$export($export.S + $export.F * !__webpack_require__(7), 'Object', {defineProperty: __webpack_require__(3).f});
 
 /***/ }),
-/* 105 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 Object.getPrototypeOf(O)
-var toObject        = __webpack_require__(37)
-  , $getPrototypeOf = __webpack_require__(53);
+var toObject        = __webpack_require__(27)
+  , $getPrototypeOf = __webpack_require__(55);
 
-__webpack_require__(55)('getPrototypeOf', function(){
+__webpack_require__(57)('getPrototypeOf', function(){
   return function getPrototypeOf(it){
     return $getPrototypeOf(toObject(it));
   };
 });
 
 /***/ }),
-/* 106 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 Object.keys(O)
-var toObject = __webpack_require__(37)
-  , $keys    = __webpack_require__(17);
+var toObject = __webpack_require__(27)
+  , $keys    = __webpack_require__(18);
 
-__webpack_require__(55)('keys', function(){
+__webpack_require__(57)('keys', function(){
   return function keys(it){
     return $keys(toObject(it));
   };
 });
 
 /***/ }),
-/* 107 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
-var $export = __webpack_require__(9);
-$export($export.S, 'Object', {setPrototypeOf: __webpack_require__(98).set});
+var $export = __webpack_require__(8);
+$export($export.S, 'Object', {setPrototypeOf: __webpack_require__(109).set});
 
 /***/ }),
-/* 108 */
+/* 120 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 109 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $at  = __webpack_require__(99)(true);
-
-// 21.1.3.27 String.prototype[@@iterator]()
-__webpack_require__(49)(String, 'String', function(iterated){
-  this._t = String(iterated); // target
-  this._i = 0;                // next index
-// 21.1.5.2.1 %StringIteratorPrototype%.next()
-}, function(){
-  var O     = this._t
-    , index = this._i
-    , point;
-  if(index >= O.length)return {value: undefined, done: true};
-  point = $at(O, index);
-  this._i += point.length;
-  return {value: point, done: false};
-});
-
-/***/ }),
-/* 110 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // ECMAScript 6 symbols shim
-var global         = __webpack_require__(1)
-  , has            = __webpack_require__(5)
-  , DESCRIPTORS    = __webpack_require__(4)
-  , $export        = __webpack_require__(9)
-  , redefine       = __webpack_require__(56)
-  , META           = __webpack_require__(95).KEY
+var global         = __webpack_require__(2)
+  , has            = __webpack_require__(9)
+  , DESCRIPTORS    = __webpack_require__(7)
+  , $export        = __webpack_require__(8)
+  , redefine       = __webpack_require__(58)
+  , META           = __webpack_require__(106).KEY
   , $fails         = __webpack_require__(15)
-  , shared         = __webpack_require__(35)
-  , setToStringTag = __webpack_require__(33)
-  , uid            = __webpack_require__(26)
-  , wks            = __webpack_require__(11)
-  , wksExt         = __webpack_require__(40)
-  , wksDefine      = __webpack_require__(39)
-  , keyOf          = __webpack_require__(94)
-  , enumKeys       = __webpack_require__(88)
-  , isArray        = __webpack_require__(91)
-  , anObject       = __webpack_require__(14)
-  , toIObject      = __webpack_require__(7)
-  , toPrimitive    = __webpack_require__(38)
-  , createDesc     = __webpack_require__(25)
-  , _create        = __webpack_require__(31)
-  , gOPNExt        = __webpack_require__(97)
-  , $GOPD          = __webpack_require__(50)
-  , $DP            = __webpack_require__(6)
-  , $keys          = __webpack_require__(17)
+  , shared         = __webpack_require__(38)
+  , setToStringTag = __webpack_require__(36)
+  , uid            = __webpack_require__(28)
+  , wks            = __webpack_require__(1)
+  , wksExt         = __webpack_require__(42)
+  , wksDefine      = __webpack_require__(41)
+  , keyOf          = __webpack_require__(105)
+  , enumKeys       = __webpack_require__(96)
+  , isArray        = __webpack_require__(100)
+  , anObject       = __webpack_require__(11)
+  , toIObject      = __webpack_require__(10)
+  , toPrimitive    = __webpack_require__(40)
+  , createDesc     = __webpack_require__(19)
+  , _create        = __webpack_require__(34)
+  , gOPNExt        = __webpack_require__(108)
+  , $GOPD          = __webpack_require__(52)
+  , $DP            = __webpack_require__(3)
+  , $keys          = __webpack_require__(18)
   , gOPD           = $GOPD.f
   , dP             = $DP.f
   , gOPN           = gOPNExt.f
@@ -15221,11 +15944,11 @@ if(!USE_NATIVE){
 
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
-  __webpack_require__(51).f = gOPNExt.f = $getOwnPropertyNames;
-  __webpack_require__(32).f  = $propertyIsEnumerable;
-  __webpack_require__(52).f = $getOwnPropertySymbols;
+  __webpack_require__(53).f = gOPNExt.f = $getOwnPropertyNames;
+  __webpack_require__(35).f  = $propertyIsEnumerable;
+  __webpack_require__(54).f = $getOwnPropertySymbols;
 
-  if(DESCRIPTORS && !__webpack_require__(30)){
+  if(DESCRIPTORS && !__webpack_require__(33)){
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -15300,7 +16023,7 @@ $JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function(){
 });
 
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(10)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(12)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
 setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
@@ -15309,26 +16032,26 @@ setToStringTag(Math, 'Math', true);
 setToStringTag(global.JSON, 'JSON', true);
 
 /***/ }),
-/* 111 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(39)('asyncIterator');
+__webpack_require__(41)('asyncIterator');
 
 /***/ }),
-/* 112 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(39)('observable');
+__webpack_require__(41)('observable');
 
 /***/ }),
-/* 113 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(102);
-var global        = __webpack_require__(1)
-  , hide          = __webpack_require__(10)
-  , Iterators     = __webpack_require__(29)
-  , TO_STRING_TAG = __webpack_require__(11)('toStringTag');
+__webpack_require__(114);
+var global        = __webpack_require__(2)
+  , hide          = __webpack_require__(12)
+  , Iterators     = __webpack_require__(17)
+  , TO_STRING_TAG = __webpack_require__(1)('toStringTag');
 
 for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
   var NAME       = collections[i]
@@ -15339,7 +16062,7 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
 }
 
 /***/ }),
-/* 114 */
+/* 125 */
 /***/ (function(module, exports) {
 
 var g;
