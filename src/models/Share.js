@@ -15,6 +15,7 @@ class Share extends Entity {
     this.placements = share.placements;
     this.sharePlacements = share.sharePlacements;
     this.format = share.format;
+    this.zoneId = share.zoneId;
   }
 
   get shareArea() {
@@ -45,7 +46,12 @@ class Share extends Entity {
     // const allPlace = this.placements.map(placement => new Placement(placement));
     const allPlace = this.sharePlacements.filter(sharePlacement =>
     sharePlacement.placement !== null);
-    allPlace.reduce((acc, item) => {item.placement = new Placement(item.placement)}, 0); // eslint-disable-line
+    /* eslint-disable */
+    allPlace.reduce((acc, item) => {
+      item.placement.zoneId = this.zoneId;
+      item.placement = new Placement(item.placement);
+    }, 0);
+    /* eslint-enable */
     const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
       if (index === 0) {
         return item.positionOnShare !== undefined && item.positionOnShare !== 0;

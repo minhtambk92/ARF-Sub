@@ -20,6 +20,7 @@ class Placement extends Entity {
     this.cpm = placement.cpm;
     this.campaign = placement.campaign;
     this.positionOnShare = placement.positionOnShare;
+    this.zoneId = placement.zoneId;
   }
 
   get PlacementArea() {
@@ -68,7 +69,7 @@ class Placement extends Entity {
       const randomNumber = Math.random() * 100;
       const ratio = allBanner.reduce((tmp, banner) => (tmp + banner.weight), 0) / 100;
 
-      return allBanner.reduce((range, banner) => {
+      const result = allBanner.reduce((range, banner) => {
         const nextRange = range + (banner.weight / ratio);
 
         if (typeof range === 'object') {
@@ -81,6 +82,8 @@ class Placement extends Entity {
 
         return nextRange;
       }, 0);
+      result.zoneId = this.zoneId;
+      return result;
     }
 
     // default banner here

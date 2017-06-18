@@ -198,7 +198,7 @@
         isFunction(_config[event]) && this.on(event, _config[event]);
       }, this);
   }
-  var createVisibilityApi = function (referenceWindow) {
+  const createVisibilityApi = function (referenceWindow) {
       return (function (document, undefined) {
         let entry = function (propertyName, eventName) {
             return {
@@ -227,8 +227,8 @@
           },
         };
       }((referenceWindow || window).document));
-    },
-    PubSub = (function (undefined) {
+    };
+  const PubSub = (function (undefined) {
       function PubSub(config) {
         this._cache = {}, this._onAnyCache = [], this._config = defaults(config, {
           async: !1,

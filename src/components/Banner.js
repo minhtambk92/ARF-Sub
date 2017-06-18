@@ -59,6 +59,83 @@ const Banner = Vue.component('banner', {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
       window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
+    const banner = document.getElementById(this.current.id);
+    if (banner) {
+      const objMonitor = VisSense(banner);
+      const monitor = VisSense.VisMon.Builder(objMonitor);
+        // let isMonitor = false;
+        // let isUpdating = false;
+        /* eslint-disable */
+        // throttle -> update time
+        monitor
+          // .strategy(new VisSense.VisMon.Strategy.ConfigurablePollingStrategy({
+          //   hidden: 1000,
+          //   visible: 2000,
+          //   fullyvisible: 5000
+          // }))
+          .strategy(new VisSense.VisMon.Strategy.EventStrategy({ throttle: 200 }))
+          .strategy(new VisSense.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
+            percentageLimit: 0.3,
+            timeLimit: 1000,
+            interval: 100
+          }))
+          // .on('update', (monitor) => {
+          //   isUpdating = true;
+          //   const a = setTimeout(() => {
+          //     isUpdating = false;
+          //   }, 1000);
+          //   clearTimeout(a);
+          // })
+          // .on('start', (monitor) => {
+          //   console.log('start');
+          // })
+          // .on('visible', (monitor) => {
+          //   console.log('visible');
+          // })
+          // .on('fullyvisible', (monitor) => {
+          //   console.log('fullyvisible');
+          // })
+          // .on('hidden', (monitor) => {
+          //   console.log('hidden');
+          // })
+          // .on('visibilitychange', (monitor) => {
+          //   console.log('visibilitychange');
+          // })
+          // .on('percentagechange', (monitor, newValue, oldValue) => {
+          //   // console.log(`percentagechange ${oldValue} -> ${newValue}`);
+          //   // const percentChange = newValue === undefined ? 0 : newValue;
+          //   setTimeout(() => {
+          //     const temp = newValue;
+          //     const temp2 = oldValue;
+          //     if (!isMonitor && (temp === newValue && temp2 === oldValue)) {
+          //       isMonitor = true;
+          //       objMonitor.onPercentageTimeTestPassed(() => {
+          //         console.log('Banner display passed test for 30% visibility over 1 seconds.');
+          //         isMonitor = false;
+          //       }, {
+          //         percentageLimit: 0.3,
+          //         timeLimit: 1000,
+          //         interval: 200
+          //       });
+          //     }
+          //   }, 1000);
+          // })
+          .on('30%/1s', (monitor) => {
+            const linkLog = this.current.bannerLogging(2);
+            const img = new Image();
+            img.src = linkLog;
+            console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!', linkLog);
+          })
+          .build()
+          .start();
+        /* eslint-enable */
+      banner.addEventListener('click', () => {
+        const linkLog = this.current.bannerLogging(1);
+        const img = new Image();
+        img.src = linkLog;
+        console.log('clickBanner');
+      });
+    }
   },
 
   methods: {

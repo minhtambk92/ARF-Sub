@@ -79,7 +79,8 @@
           updatedAt: '2017-06-14T09:11:36.000Z',
           deletedAt: null,
           zoneId: 'f5f832bd-fe91-4191-b2de-e729daf345c9',
-          sharePlacements: [{
+          sharePlacements: [
+            {
             id: '0291b8e8-56bb-4981-9df8-eac6ffcc01b2',
             positionOnShare: 0,
             deletedAt: null,

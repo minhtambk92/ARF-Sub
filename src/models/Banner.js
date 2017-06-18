@@ -24,6 +24,9 @@ class Banner extends Entity {
     this.linkFormatBannerHtml = banner.linkFormatBannerHtml;
     this.isIFrame = banner.isIFrame;
     this.imageUrl = banner.imageUrl;
+    this.zoneId = banner.zoneId;
+    this.placementId = banner.placementId;
+    this.optionBanners = banner.optionBanners;
   }
 
   // Banner Checking Process
@@ -62,89 +65,100 @@ class Banner extends Entity {
     return true;
   }
 
-  // check channel with new data (using)
   get checkChannel() {
-    if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
-      const channel = this.channel;
-      const options = channel.options.filter(item => item.name !== 'Location' && item.name !== 'Browser');
-      const optionsLength = options.length;
-      const a = eval; // eslint-disable-line no-eval
-      let strChk = '';
+    if (this.optionBanners !== undefined && this.optionBanners !== null) {
+      const optionBanner = this.optionBanners;
+      const checkLength = optionBanner.length;
+      const checkChannel = (channelData) => {
+        if (channelData !== undefined && channelData !== null && channelData !== '') {
+          const channel = channelData;
+          const options = channel.options.filter(item => item.name !== 'Location' && item.name !== 'Browser');
+          const optionsLength = options.length;
+          const a = eval; // eslint-disable-line no-eval
+          let strChk = '';
 
-      for (let i = 0; i < optionsLength; i += 1) {
-        const optionChannelType = options[i].optionChannelType;
-        const value = options[i].value.toString().split(',');
-        const comparison = options[i].comparison;
-        const logical = options[i].logical === 'and' ? '&&' : '||';
-        const globalVariableName = options[i].globalVariables;
-        console.log('globalVariableName', globalVariableName, i);
-        // eslint-disable-next-line
-        let globalVariable = (globalVariableName !== '' && a(`typeof (${globalVariableName}) !== 'undefined'`)) ? a(globalVariableName) : undefined;
-        globalVariable = encodeURIComponent(globalVariable);
-        console.log('globalVariable', globalVariable);
-        const globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : '';
-        console.log('globalVariableTemp', globalVariableTemp);
-        let currentAdditionalDetail = '';
-        let type = optionChannelType.isInputLink ? 'isInputLink' : '';
-        let stringCheck = '';
-        let additionalDetail = []; // get optionChannelValueProperties
-        type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
-        type = optionChannelType.isVariable ? 'isVariable' : type;
-        console.log('type', type);
-        // console.log('valueCheck', value);
-        if (optionChannelType.optionChannelValues.length > 0) {
-          additionalDetail = optionChannelType.optionChannelValues.filter(item =>
-            value.reduce((acc, valueItem) => acc || (item.value === valueItem
-            && item.optionChannelValueProperties.length > 0), 0));
-        }
-        console.log('value', value);
-        for (let j = 0; j < value.length; j += 1) {
-          if (j > 0) stringCheck += '||';
-          switch (type) {
-            case 'isVariable': {
-              if ((globalVariableName !== '' && eval(`typeof (${globalVariableName}) !== 'undefined'`))) { // eslint-disable-line no-eval
-                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
-                  stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
-                  console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
-                } else {
-                  stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
-                }
-              }
-              break;
+          for (let i = 0; i < optionsLength; i += 1) {
+            const optionChannelType = options[i].optionChannelType;
+            const value = options[i].value.toString().split(',');
+            const comparison = options[i].comparison;
+            const logical = options[i].logical === 'and' ? '&&' : '||';
+            const globalVariableName = options[i].globalVariables;
+            console.log('globalVariableName', globalVariableName, i);
+            // eslint-disable-next-line
+            let globalVariable = (globalVariableName !== '' && a(`typeof (${globalVariableName}) !== 'undefined'`)) ? a(globalVariableName) : undefined;
+            globalVariable = encodeURIComponent(globalVariable);
+            console.log('globalVariable', globalVariable);
+            const globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : '';
+            console.log('globalVariableTemp', globalVariableTemp);
+            let currentAdditionalDetail = '';
+            let type = optionChannelType.isInputLink ? 'isInputLink' : '';
+            let stringCheck = '';
+            let additionalDetail = []; // get optionChannelValueProperties
+            type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
+            type = optionChannelType.isVariable ? 'isVariable' : type;
+            console.log('type', type);
+            // console.log('valueCheck', value);
+            if (optionChannelType.optionChannelValues.length > 0) {
+              additionalDetail = optionChannelType.optionChannelValues.filter(item =>
+                value.reduce((acc, valueItem) => acc || (item.value === valueItem
+                && item.optionChannelValueProperties.length > 0), 0));
             }
-            case 'isInputLink': {
-              stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
-              console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
-              break;
-            }
-            case 'isSelectOption': {
-              const pageUrl = term.getPath2Check('Site:Pageurl', globalVariableName);
-              const thisChannel = util.getThisChannel(pageUrl);
-              thisChannel.shift();
-
-              // do smt with additionalDetail
-              if (additionalDetail.length > 0) {
-                // region : get link detail
-                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
-                  a(`${globalVariableName} = ''`);
-                }
-                currentAdditionalDetail = util.getThisChannel(pageUrl).pop();
-                currentAdditionalDetail.shift();
-                if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
-                  a(`${globalVariableName} = globalVariableTemp`);
-                }
-                // endregion : get link detail
-
-                console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
-              }
-              console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
-              switch (comparison) {
-                case '==': {
-                  stringCheck += value[j] === thisChannel[0];
+            console.log('value', value);
+            for (let j = 0; j < value.length; j += 1) {
+              if (j > 0) stringCheck += '||';
+              switch (type) {
+                case 'isVariable': {
+                  if ((globalVariableName !== '' && eval(`typeof (${globalVariableName}) !== 'undefined'`))) { // eslint-disable-line no-eval
+                    if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+                      stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
+                      console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+                    }
+                  } else {
+                    stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+                    console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                  }
                   break;
                 }
-                case '!=': {
-                  stringCheck += value[j] !== thisChannel[0];
+                case 'isInputLink': {
+                  stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+                  console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                  break;
+                }
+                case 'isSelectOption': {
+                  const pageUrl = term.getPath2Check('Site:Pageurl', globalVariableName);
+                  const thisChannel = util.getThisChannel(pageUrl);
+                  thisChannel.shift();
+
+                  // do smt with additionalDetail
+                  if (additionalDetail.length > 0) {
+                    // region : get link detail
+                    if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+                      a(`${globalVariableName} = ''`);
+                    }
+                    currentAdditionalDetail = util.getThisChannel(pageUrl).pop();
+                    currentAdditionalDetail.shift();
+                    if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+                      a(`${globalVariableName} = globalVariableTemp`);
+                    }
+                    // endregion : get link detail
+
+                    console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
+                  }
+                  console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
+                  switch (comparison) {
+                    case '==': {
+                      stringCheck += value[j] === thisChannel[0];
+                      break;
+                    }
+                    case '!=': {
+                      stringCheck += value[j] !== thisChannel[0];
+                      break;
+                    }
+                    default: {
+                      stringCheck += false;
+                      break;
+                    }
+                  }
                   break;
                 }
                 default: {
@@ -152,20 +166,69 @@ class Banner extends Entity {
                   break;
                 }
               }
-              break;
             }
-            default: {
-              stringCheck += false;
-              break;
+            const CheckValue = a(stringCheck);
+            if (i > 0) strChk += logical;
+            strChk += CheckValue;
+          }
+          console.log('strChk', strChk, a(strChk));
+          return a(strChk);
+        }
+        return true;
+      };
+      let stringCheckTotal = '';
+      for (let i = 0; i < checkLength; i += 1) {
+        let stringCheck = '';
+        const logical = optionBanner[i].logical === 'and' ? '&&' : '||';
+        const type = optionBanner[i].type;
+        const comparison = optionBanner[i].comparison;
+        const value = optionBanner[i].value;
+        switch (type) {
+          case 'pageUrl' : {
+            stringCheck += term.checkPathLogic(value, 'Site:Pageurl', '', comparison);
+            break;
+          }
+          case 'channel' : {
+            const optionBannerChannels = optionBanner[i].optionBannerChannels;
+            let stringCheckChannelType = '';
+            for (let j = 0; j < optionBannerChannels.length; j += 1) {
+              const channel = optionBannerChannels[j].channel;
+              const result = checkChannel(channel);
+              // const comparisonChar = comparison === '==' ? '||' : '&&';
+              console.log('resultChannel', result, channel, comparison);
+              if (comparison === '==') {
+                stringCheckChannelType += (j > 0 ? '||' : '') + result;
+              } else {
+                stringCheckChannelType += (j > 0 ? '&&' : '') + result;
+              }
             }
+            console.log('stringCheckChannelType', stringCheckChannelType);
+            const resultCheckChannel = eval(stringCheckChannelType); // eslint-disable-line
+            stringCheck += resultCheckChannel;
+            break;
+          }
+          case 'referringPage' : {
+            stringCheck += term.checkPathLogic(value, 'Site:Pageurl', '', comparison);
+            break;
+          }
+          default: {
+            stringCheck += false;
+            break;
           }
         }
-        const CheckValue = a(stringCheck);
-        if (i > 0) strChk += logical;
-        strChk += CheckValue;
+        console.log('stringCheck', stringCheck, logical, i);
+        const checkValue = eval(stringCheck); // eslint-disable-line
+        if (i === 0 && logical === '||') {
+          if (checkValue) {
+            stringCheckTotal += checkValue;
+            break;
+          }
+        }
+        if (i > 0) stringCheckTotal += logical;
+        stringCheckTotal += checkValue;
       }
-      console.log('strChk', strChk, a(strChk));
-      return a(strChk);
+      console.log('stringCheckTotal', stringCheckTotal);
+      return eval(stringCheckTotal); // eslint-disable-line
     }
     return true;
   }
@@ -286,6 +349,18 @@ class Banner extends Entity {
     return '';
   }
 
+  bannerLogging(cov) {
+    // cov=0 OR cov=-1: view placment, banner.
+    // cov=1: click
+    // cov=2: true view
+    // cov=3: load box dạng extend khi dùng chức năng rotate.
+    const zoneID = this.zoneId;
+    const bannerId = this.id;
+    const placementId = this.placementId;
+    const domain = decodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
+    const linkLog = `http://localhost:3000/bannerLogging?dmn=${domain}&zid=${zoneID}&pli=${placementId}&items=${bannerId}&cov=${cov}`;
+    return linkLog;
+  }
 }
 
 export default Banner;

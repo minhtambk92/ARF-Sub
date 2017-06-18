@@ -8,6 +8,7 @@ import screen from './screen';
 import util from './util';
 import macro from './macro';
 import VisSense from './VisSense';
+import VisSensePlugin from './VisSensePlugin';
 
-export { adsStorage, term, screen, util, macro, VisSense };
-export default { adsStorage, term, screen, util, macro, VisSense };
+export { adsStorage, term, screen, util, macro, VisSense, VisSensePlugin };
+export default { adsStorage, term, screen, util, macro, VisSense, VisSensePlugin };

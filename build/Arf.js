@@ -94,7 +94,7 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var store      = __webpack_require__(38)('wks')
+var store      = __webpack_require__(39)('wks')
   , uid        = __webpack_require__(28)
   , Symbol     = __webpack_require__(2).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
@@ -121,7 +121,7 @@ if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 
 var anObject       = __webpack_require__(11)
   , IE8_DOM_DEFINE = __webpack_require__(50)
-  , toPrimitive    = __webpack_require__(40)
+  , toPrimitive    = __webpack_require__(41)
   , dP             = Object.defineProperty;
 
 exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes){
@@ -9387,7 +9387,7 @@ Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(125)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(126)))
 
 /***/ }),
 /* 5 */
@@ -9399,25 +9399,25 @@ module.exports = Vue$3;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.VisSense = exports.macro = exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
+exports.VisSensePlugin = exports.VisSense = exports.macro = exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
 
-var _adsStorage = __webpack_require__(71);
+var _adsStorage = __webpack_require__(72);
 
 var _adsStorage2 = _interopRequireDefault(_adsStorage);
 
-var _term = __webpack_require__(74);
+var _term = __webpack_require__(75);
 
 var _term2 = _interopRequireDefault(_term);
 
-var _screen = __webpack_require__(73);
+var _screen = __webpack_require__(74);
 
 var _screen2 = _interopRequireDefault(_screen);
 
-var _util = __webpack_require__(75);
+var _util = __webpack_require__(76);
 
 var _util2 = _interopRequireDefault(_util);
 
-var _macro = __webpack_require__(72);
+var _macro = __webpack_require__(73);
 
 var _macro2 = _interopRequireDefault(_macro);
 
@@ -9425,11 +9425,11 @@ var _VisSense = __webpack_require__(70);
 
 var _VisSense2 = _interopRequireDefault(_VisSense);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _VisSensePlugin = __webpack_require__(71);
 
-/**
- * Created by tlm on 06/03/2017.
- */
+var _VisSensePlugin2 = _interopRequireDefault(_VisSensePlugin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.adsStorage = _adsStorage2.default;
 exports.term = _term2.default;
@@ -9437,7 +9437,11 @@ exports.screen = _screen2.default;
 exports.util = _util2.default;
 exports.macro = _macro2.default;
 exports.VisSense = _VisSense2.default;
-exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default, macro: _macro2.default, VisSense: _VisSense2.default };
+exports.VisSensePlugin = _VisSensePlugin2.default; /**
+                                                    * Created by tlm on 06/03/2017.
+                                                    */
+
+exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default, macro: _macro2.default, VisSense: _VisSense2.default, VisSensePlugin: _VisSensePlugin2.default };
 
 /***/ }),
 /* 6 */
@@ -9448,11 +9452,11 @@ exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, scre
 
 exports.__esModule = true;
 
-var _iterator = __webpack_require__(80);
+var _iterator = __webpack_require__(81);
 
 var _iterator2 = _interopRequireDefault(_iterator);
 
-var _symbol = __webpack_require__(79);
+var _symbol = __webpack_require__(80);
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
@@ -9481,7 +9485,7 @@ module.exports = !__webpack_require__(15)(function(){
 
 var global    = __webpack_require__(2)
   , core      = __webpack_require__(0)
-  , ctx       = __webpack_require__(30)
+  , ctx       = __webpack_require__(31)
   , hide      = __webpack_require__(12)
   , PROTOTYPE = 'prototype';
 
@@ -9555,8 +9559,8 @@ module.exports = function(it, key){
 /***/ (function(module, exports, __webpack_require__) {
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(98)
-  , defined = __webpack_require__(31);
+var IObject = __webpack_require__(99)
+  , defined = __webpack_require__(32);
 module.exports = function(it){
   return IObject(defined(it));
 };
@@ -9600,15 +9604,15 @@ var _Zone2 = __webpack_require__(69);
 
 var _Zone3 = _interopRequireDefault(_Zone2);
 
-var _Share2 = __webpack_require__(46);
+var _Share2 = __webpack_require__(47);
 
 var _Share3 = _interopRequireDefault(_Share2);
 
-var _Placement2 = __webpack_require__(45);
+var _Placement2 = __webpack_require__(46);
 
 var _Placement3 = _interopRequireDefault(_Placement2);
 
-var _Banner2 = __webpack_require__(44);
+var _Banner2 = __webpack_require__(45);
 
 var _Banner3 = _interopRequireDefault(_Banner2);
 
@@ -9669,7 +9673,7 @@ module.exports = {};
 
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys       = __webpack_require__(56)
-  , enumBugKeys = __webpack_require__(32);
+  , enumBugKeys = __webpack_require__(33);
 
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
@@ -9802,7 +9806,7 @@ exports.default = Entity;
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(86), __esModule: true };
+module.exports = { "default": __webpack_require__(87), __esModule: true };
 
 /***/ }),
 /* 24 */
@@ -9813,7 +9817,7 @@ module.exports = { "default": __webpack_require__(86), __esModule: true };
 
 exports.__esModule = true;
 
-var _defineProperty = __webpack_require__(77);
+var _defineProperty = __webpack_require__(78);
 
 var _defineProperty2 = _interopRequireDefault(_defineProperty);
 
@@ -9846,11 +9850,11 @@ exports.default = function () {
 
 exports.__esModule = true;
 
-var _setPrototypeOf = __webpack_require__(78);
+var _setPrototypeOf = __webpack_require__(79);
 
 var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 
-var _create = __webpack_require__(47);
+var _create = __webpack_require__(29);
 
 var _create2 = _interopRequireDefault(_create);
 
@@ -9904,7 +9908,7 @@ exports.default = function (self, call) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
-var defined = __webpack_require__(31);
+var defined = __webpack_require__(32);
 module.exports = function(it){
   return Object(defined(it));
 };
@@ -9921,6 +9925,12 @@ module.exports = function(key){
 
 /***/ }),
 /* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(85), __esModule: true };
+
+/***/ }),
+/* 30 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -9930,11 +9940,11 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // optional / simple context binding
-var aFunction = __webpack_require__(91);
+var aFunction = __webpack_require__(92);
 module.exports = function(fn, that, length){
   aFunction(fn);
   if(that === undefined)return fn;
@@ -9955,7 +9965,7 @@ module.exports = function(fn, that, length){
 };
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 // 7.2.1 RequireObjectCoercible(argument)
@@ -9965,7 +9975,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 // IE 8- don't enum bug keys
@@ -9974,20 +9984,20 @@ module.exports = (
 ).split(',');
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = true;
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject    = __webpack_require__(11)
-  , dPs         = __webpack_require__(107)
-  , enumBugKeys = __webpack_require__(32)
-  , IE_PROTO    = __webpack_require__(37)('IE_PROTO')
+  , dPs         = __webpack_require__(108)
+  , enumBugKeys = __webpack_require__(33)
+  , IE_PROTO    = __webpack_require__(38)('IE_PROTO')
   , Empty       = function(){ /* empty */ }
   , PROTOTYPE   = 'prototype';
 
@@ -10000,7 +10010,7 @@ var createDict = function(){
     , gt     = '>'
     , iframeDocument;
   iframe.style.display = 'none';
-  __webpack_require__(97).appendChild(iframe);
+  __webpack_require__(98).appendChild(iframe);
   iframe.src = 'javascript:'; // eslint-disable-line no-script-url
   // createDict = iframe.contentWindow.Object;
   // html.removeChild(iframe);
@@ -10027,13 +10037,13 @@ module.exports = Object.create || function create(O, Properties){
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 exports.f = {}.propertyIsEnumerable;
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var def = __webpack_require__(3).f
@@ -10045,17 +10055,17 @@ module.exports = function(it, tag, stat){
 };
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var shared = __webpack_require__(38)('keys')
+var shared = __webpack_require__(39)('keys')
   , uid    = __webpack_require__(28);
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(2)
@@ -10066,7 +10076,7 @@ module.exports = function(key){
 };
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports) {
 
 // 7.1.4 ToInteger
@@ -10077,7 +10087,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
@@ -10094,13 +10104,13 @@ module.exports = function(it, S){
 };
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global         = __webpack_require__(2)
   , core           = __webpack_require__(0)
-  , LIBRARY        = __webpack_require__(33)
-  , wksExt         = __webpack_require__(42)
+  , LIBRARY        = __webpack_require__(34)
+  , wksExt         = __webpack_require__(43)
   , defineProperty = __webpack_require__(3).f;
 module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
@@ -10108,19 +10118,19 @@ module.exports = function(name){
 };
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports.f = __webpack_require__(1);
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(83), __esModule: true };
+module.exports = { "default": __webpack_require__(84), __esModule: true };
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10184,6 +10194,9 @@ var Banner = function (_Entity) {
     _this.linkFormatBannerHtml = banner.linkFormatBannerHtml;
     _this.isIFrame = banner.isIFrame;
     _this.imageUrl = banner.imageUrl;
+    _this.zoneId = banner.zoneId;
+    _this.placementId = banner.placementId;
+    _this.optionBanners = banner.optionBanners;
     return _this;
   }
 
@@ -10242,6 +10255,20 @@ var Banner = function (_Entity) {
       return '';
     }
   }, {
+    key: 'bannerLogging',
+    value: function bannerLogging(cov) {
+      // cov=0 OR cov=-1: view placment, banner.
+      // cov=1: click
+      // cov=2: true view
+      // cov=3: load box dạng extend khi dùng chức năng rotate.
+      var zoneID = this.zoneId;
+      var bannerId = this.id;
+      var placementId = this.placementId;
+      var domain = decodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
+      var linkLog = 'http://localhost:3000/bannerLogging?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
+      return linkLog;
+    }
+  }, {
     key: 'checkTerm',
     get: function get() {
       if (this.terms) {
@@ -10265,130 +10292,192 @@ var Banner = function (_Entity) {
 
       return true;
     }
-
-    // check channel with new data (using)
-
   }, {
     key: 'checkChannel',
     get: function get() {
-      if (this.channel !== undefined && this.channel !== null && this.channel !== '') {
-        var channel = this.channel;
-        var options = channel.options.filter(function (item) {
-          return item.name !== 'Location' && item.name !== 'Browser';
-        });
-        var optionsLength = options.length;
-        var a = eval; // eslint-disable-line no-eval
-        var strChk = '';
-
-        var _loop = function _loop(i) {
-          var optionChannelType = options[i].optionChannelType;
-          var value = options[i].value.toString().split(',');
-          var comparison = options[i].comparison;
-          var logical = options[i].logical === 'and' ? '&&' : '||';
-          var globalVariableName = options[i].globalVariables;
-          console.log('globalVariableName', globalVariableName, i);
-          // eslint-disable-next-line
-          var globalVariable = globalVariableName !== '' && a('typeof (' + globalVariableName + ') !== \'undefined\'') ? a(globalVariableName) : undefined;
-          globalVariable = encodeURIComponent(globalVariable);
-          console.log('globalVariable', globalVariable);
-          var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : '';
-          console.log('globalVariableTemp', globalVariableTemp);
-          var currentAdditionalDetail = '';
-          var type = optionChannelType.isInputLink ? 'isInputLink' : '';
-          var stringCheck = '';
-          var additionalDetail = []; // get optionChannelValueProperties
-          type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
-          type = optionChannelType.isVariable ? 'isVariable' : type;
-          console.log('type', type);
-          // console.log('valueCheck', value);
-          if (optionChannelType.optionChannelValues.length > 0) {
-            additionalDetail = optionChannelType.optionChannelValues.filter(function (item) {
-              return value.reduce(function (acc, valueItem) {
-                return acc || item.value === valueItem && item.optionChannelValueProperties.length > 0;
-              }, 0);
+      if (this.optionBanners !== undefined && this.optionBanners !== null) {
+        var optionBanner = this.optionBanners;
+        var checkLength = optionBanner.length;
+        var checkChannel = function checkChannel(channelData) {
+          if (channelData !== undefined && channelData !== null && channelData !== '') {
+            var channel = channelData;
+            var options = channel.options.filter(function (item) {
+              return item.name !== 'Location' && item.name !== 'Browser';
             });
-          }
-          console.log('value', value);
-          for (var j = 0; j < value.length; j += 1) {
-            if (j > 0) stringCheck += '||';
-            switch (type) {
-              case 'isVariable':
-                {
-                  if (globalVariableName !== '' && eval('typeof (' + globalVariableName + ') !== \'undefined\'')) {
-                    // eslint-disable-line no-eval
-                    if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
-                      stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
-                      console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
-                    } else {
+            var optionsLength = options.length;
+            var a = eval; // eslint-disable-line no-eval
+            var strChk = '';
+
+            var _loop = function _loop(i) {
+              var optionChannelType = options[i].optionChannelType;
+              var value = options[i].value.toString().split(',');
+              var comparison = options[i].comparison;
+              var logical = options[i].logical === 'and' ? '&&' : '||';
+              var globalVariableName = options[i].globalVariables;
+              console.log('globalVariableName', globalVariableName, i);
+              // eslint-disable-next-line
+              var globalVariable = globalVariableName !== '' && a('typeof (' + globalVariableName + ') !== \'undefined\'') ? a(globalVariableName) : undefined;
+              globalVariable = encodeURIComponent(globalVariable);
+              console.log('globalVariable', globalVariable);
+              var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : '';
+              console.log('globalVariableTemp', globalVariableTemp);
+              var currentAdditionalDetail = '';
+              var type = optionChannelType.isInputLink ? 'isInputLink' : '';
+              var stringCheck = '';
+              var additionalDetail = []; // get optionChannelValueProperties
+              type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
+              type = optionChannelType.isVariable ? 'isVariable' : type;
+              console.log('type', type);
+              // console.log('valueCheck', value);
+              if (optionChannelType.optionChannelValues.length > 0) {
+                additionalDetail = optionChannelType.optionChannelValues.filter(function (item) {
+                  return value.reduce(function (acc, valueItem) {
+                    return acc || item.value === valueItem && item.optionChannelValueProperties.length > 0;
+                  }, 0);
+                });
+              }
+              console.log('value', value);
+              for (var j = 0; j < value.length; j += 1) {
+                if (j > 0) stringCheck += '||';
+                switch (type) {
+                  case 'isVariable':
+                    {
+                      if (globalVariableName !== '' && eval('typeof (' + globalVariableName + ') !== \'undefined\'')) {
+                        // eslint-disable-line no-eval
+                        if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
+                          stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
+                          console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+                        }
+                      } else {
+                        stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+                        console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                      }
+                      break;
+                    }
+                  case 'isInputLink':
+                    {
                       stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+                      console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                      break;
                     }
-                  }
-                  break;
-                }
-              case 'isInputLink':
-                {
-                  stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
-                  console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
-                  break;
-                }
-              case 'isSelectOption':
-                {
-                  var pageUrl = _vendor.term.getPath2Check('Site:Pageurl', globalVariableName);
-                  var thisChannel = _vendor.util.getThisChannel(pageUrl);
-                  thisChannel.shift();
+                  case 'isSelectOption':
+                    {
+                      var pageUrl = _vendor.term.getPath2Check('Site:Pageurl', globalVariableName);
+                      var thisChannel = _vendor.util.getThisChannel(pageUrl);
+                      thisChannel.shift();
 
-                  // do smt with additionalDetail
-                  if (additionalDetail.length > 0) {
-                    // region : get link detail
-                    if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
-                      a(globalVariableName + ' = \'\'');
-                    }
-                    currentAdditionalDetail = _vendor.util.getThisChannel(pageUrl).pop();
-                    currentAdditionalDetail.shift();
-                    if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
-                      a(globalVariableName + ' = globalVariableTemp');
-                    }
-                    // endregion : get link detail
+                      // do smt with additionalDetail
+                      if (additionalDetail.length > 0) {
+                        // region : get link detail
+                        if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
+                          a(globalVariableName + ' = \'\'');
+                        }
+                        currentAdditionalDetail = _vendor.util.getThisChannel(pageUrl).pop();
+                        currentAdditionalDetail.shift();
+                        if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
+                          a(globalVariableName + ' = globalVariableTemp');
+                        }
+                        // endregion : get link detail
 
-                    console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
-                  }
-                  console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
-                  switch (comparison) {
-                    case '==':
-                      {
-                        stringCheck += value[j] === thisChannel[0];
-                        break;
+                        console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
                       }
-                    case '!=':
-                      {
-                        stringCheck += value[j] !== thisChannel[0];
-                        break;
+                      console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
+                      switch (comparison) {
+                        case '==':
+                          {
+                            stringCheck += value[j] === thisChannel[0];
+                            break;
+                          }
+                        case '!=':
+                          {
+                            stringCheck += value[j] !== thisChannel[0];
+                            break;
+                          }
+                        default:
+                          {
+                            stringCheck += false;
+                            break;
+                          }
                       }
-                    default:
-                      {
-                        stringCheck += false;
-                        break;
-                      }
-                  }
-                  break;
+                      break;
+                    }
+                  default:
+                    {
+                      stringCheck += false;
+                      break;
+                    }
                 }
-              default:
-                {
-                  stringCheck += false;
-                  break;
+              }
+              var CheckValue = a(stringCheck);
+              if (i > 0) strChk += logical;
+              strChk += CheckValue;
+            };
+
+            for (var i = 0; i < optionsLength; i += 1) {
+              _loop(i);
+            }
+            console.log('strChk', strChk, a(strChk));
+            return a(strChk);
+          }
+          return true;
+        };
+        var stringCheckTotal = '';
+        for (var i = 0; i < checkLength; i += 1) {
+          var _stringCheck = '';
+          var logical = optionBanner[i].logical === 'and' ? '&&' : '||';
+          var _type = optionBanner[i].type;
+          var _comparison = optionBanner[i].comparison;
+          var _value = optionBanner[i].value;
+          switch (_type) {
+            case 'pageUrl':
+              {
+                _stringCheck += _vendor.term.checkPathLogic(_value, 'Site:Pageurl', '', _comparison);
+                break;
+              }
+            case 'channel':
+              {
+                var optionBannerChannels = optionBanner[i].optionBannerChannels;
+                var stringCheckChannelType = '';
+                for (var j = 0; j < optionBannerChannels.length; j += 1) {
+                  var channel = optionBannerChannels[j].channel;
+                  var result = checkChannel(channel);
+                  // const comparisonChar = comparison === '==' ? '||' : '&&';
+                  console.log('resultChannel', result, channel, _comparison);
+                  if (_comparison === '==') {
+                    stringCheckChannelType += (j > 0 ? '||' : '') + result;
+                  } else {
+                    stringCheckChannelType += (j > 0 ? '&&' : '') + result;
+                  }
                 }
+                console.log('stringCheckChannelType', stringCheckChannelType);
+                var resultCheckChannel = eval(stringCheckChannelType); // eslint-disable-line
+                _stringCheck += resultCheckChannel;
+                break;
+              }
+            case 'referringPage':
+              {
+                _stringCheck += _vendor.term.checkPathLogic(_value, 'Site:Pageurl', '', _comparison);
+                break;
+              }
+            default:
+              {
+                _stringCheck += false;
+                break;
+              }
+          }
+          console.log('stringCheck', _stringCheck, logical, i);
+          var checkValue = eval(_stringCheck); // eslint-disable-line
+          if (i === 0 && logical === '||') {
+            if (checkValue) {
+              stringCheckTotal += checkValue;
+              break;
             }
           }
-          var CheckValue = a(stringCheck);
-          if (i > 0) strChk += logical;
-          strChk += CheckValue;
-        };
-
-        for (var i = 0; i < optionsLength; i += 1) {
-          _loop(i);
+          if (i > 0) stringCheckTotal += logical;
+          stringCheckTotal += checkValue;
         }
-        console.log('strChk', strChk, a(strChk));
-        return a(strChk);
+        console.log('stringCheckTotal', stringCheckTotal);
+        return eval(stringCheckTotal); // eslint-disable-line
       }
       return true;
     }
@@ -10491,7 +10580,7 @@ var Banner = function (_Entity) {
 exports.default = Banner;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10529,7 +10618,7 @@ var _Entity2 = __webpack_require__(22);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _Banner = __webpack_require__(44);
+var _Banner = __webpack_require__(45);
 
 var _Banner2 = _interopRequireDefault(_Banner);
 
@@ -10554,6 +10643,7 @@ var Placement = function (_Entity) {
     _this.cpm = placement.cpm;
     _this.campaign = placement.campaign;
     _this.positionOnShare = placement.positionOnShare;
+    _this.zoneId = placement.zoneId;
     return _this;
   }
 
@@ -10610,7 +10700,7 @@ var Placement = function (_Entity) {
           return tmp + banner.weight;
         }, 0) / 100;
 
-        return allBanner.reduce(function (range, banner) {
+        var result = allBanner.reduce(function (range, banner) {
           var nextRange = range + banner.weight / ratio;
 
           if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
@@ -10623,6 +10713,8 @@ var Placement = function (_Entity) {
 
           return nextRange;
         }, 0);
+        result.zoneId = this.zoneId;
+        return result;
       }
 
       // default banner here
@@ -10677,7 +10769,7 @@ var Placement = function (_Entity) {
 exports.default = Placement;
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10715,7 +10807,7 @@ var _Entity2 = __webpack_require__(22);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _Placement = __webpack_require__(45);
+var _Placement = __webpack_require__(46);
 
 var _Placement2 = _interopRequireDefault(_Placement);
 
@@ -10735,6 +10827,7 @@ var Share = function (_Entity) {
     _this.placements = share.placements;
     _this.sharePlacements = share.sharePlacements;
     _this.format = share.format;
+    _this.zoneId = share.zoneId;
     return _this;
   }
 
@@ -10825,13 +10918,18 @@ var Share = function (_Entity) {
   }, {
     key: 'allsharePlacements',
     get: function get() {
+      var _this3 = this;
+
       // const allPlace = this.placements.map(placement => new Placement(placement));
       var allPlace = this.sharePlacements.filter(function (sharePlacement) {
         return sharePlacement.placement !== null;
       });
+      /* eslint-disable */
       allPlace.reduce(function (acc, item) {
+        item.placement.zoneId = _this3.zoneId;
         item.placement = new _Placement2.default(item.placement);
-      }, 0); // eslint-disable-line
+      }, 0);
+      /* eslint-enable */
       var isUsePlacePosition = allPlace.reduce(function (acc, item, index) {
         if (index === 0) {
           return item.positionOnShare !== undefined && item.positionOnShare !== 0;
@@ -10858,16 +10956,10 @@ var Share = function (_Entity) {
 exports.default = Share;
 
 /***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(84), __esModule: true };
-
-/***/ }),
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(87), __esModule: true };
+module.exports = { "default": __webpack_require__(88), __esModule: true };
 
 /***/ }),
 /* 49 */
@@ -10895,14 +10987,14 @@ module.exports = !__webpack_require__(7) && !__webpack_require__(15)(function(){
 
 "use strict";
 
-var LIBRARY        = __webpack_require__(33)
+var LIBRARY        = __webpack_require__(34)
   , $export        = __webpack_require__(8)
   , redefine       = __webpack_require__(58)
   , hide           = __webpack_require__(12)
   , has            = __webpack_require__(9)
   , Iterators      = __webpack_require__(17)
-  , $iterCreate    = __webpack_require__(102)
-  , setToStringTag = __webpack_require__(36)
+  , $iterCreate    = __webpack_require__(103)
+  , setToStringTag = __webpack_require__(37)
   , getPrototypeOf = __webpack_require__(55)
   , ITERATOR       = __webpack_require__(1)('iterator')
   , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
@@ -10969,10 +11061,10 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 /* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var pIE            = __webpack_require__(35)
+var pIE            = __webpack_require__(36)
   , createDesc     = __webpack_require__(19)
   , toIObject      = __webpack_require__(10)
-  , toPrimitive    = __webpack_require__(40)
+  , toPrimitive    = __webpack_require__(41)
   , has            = __webpack_require__(9)
   , IE8_DOM_DEFINE = __webpack_require__(50)
   , gOPD           = Object.getOwnPropertyDescriptor;
@@ -10992,7 +11084,7 @@ exports.f = __webpack_require__(7) ? gOPD : function getOwnPropertyDescriptor(O,
 
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys      = __webpack_require__(56)
-  , hiddenKeys = __webpack_require__(32).concat('length', 'prototype');
+  , hiddenKeys = __webpack_require__(33).concat('length', 'prototype');
 
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
@@ -11011,7 +11103,7 @@ exports.f = Object.getOwnPropertySymbols;
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = __webpack_require__(9)
   , toObject    = __webpack_require__(27)
-  , IE_PROTO    = __webpack_require__(37)('IE_PROTO')
+  , IE_PROTO    = __webpack_require__(38)('IE_PROTO')
   , ObjectProto = Object.prototype;
 
 module.exports = Object.getPrototypeOf || function(O){
@@ -11028,8 +11120,8 @@ module.exports = Object.getPrototypeOf || function(O){
 
 var has          = __webpack_require__(9)
   , toIObject    = __webpack_require__(10)
-  , arrayIndexOf = __webpack_require__(93)(false)
-  , IE_PROTO     = __webpack_require__(37)('IE_PROTO');
+  , arrayIndexOf = __webpack_require__(94)(false)
+  , IE_PROTO     = __webpack_require__(38)('IE_PROTO');
 
 module.exports = function(object, names){
   var O      = toIObject(object)
@@ -11070,7 +11162,7 @@ module.exports = __webpack_require__(12);
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
-var toInteger = __webpack_require__(39)
+var toInteger = __webpack_require__(40)
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
@@ -11082,7 +11174,7 @@ module.exports = function(it){
 
 "use strict";
 
-var $at  = __webpack_require__(110)(true);
+var $at  = __webpack_require__(111)(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
 __webpack_require__(51)(String, 'String', function(iterated){
@@ -11168,6 +11260,8 @@ var Banner = _vue2.default.component('banner', {
     window.arfBanners[this.current.id] = this;
   },
   mounted: function mounted() {
+    var _this = this;
+
     if (this.current.isIFrame) {
       console.log('renderBannerHTML');
       this.renderToIFrame();
@@ -11180,6 +11274,80 @@ var Banner = _vue2.default.component('banner', {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
       window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
+    var banner = document.getElementById(this.current.id);
+    if (banner) {
+      var objMonitor = VisSense(banner);
+      var monitor = VisSense.VisMon.Builder(objMonitor);
+      // let isMonitor = false;
+      // let isUpdating = false;
+      /* eslint-disable */
+      // throttle -> update time
+      monitor
+      // .strategy(new VisSense.VisMon.Strategy.ConfigurablePollingStrategy({
+      //   hidden: 1000,
+      //   visible: 2000,
+      //   fullyvisible: 5000
+      // }))
+      .strategy(new VisSense.VisMon.Strategy.EventStrategy({ throttle: 200 })).strategy(new VisSense.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
+        percentageLimit: 0.3,
+        timeLimit: 1000,
+        interval: 100
+      }))
+      // .on('update', (monitor) => {
+      //   isUpdating = true;
+      //   const a = setTimeout(() => {
+      //     isUpdating = false;
+      //   }, 1000);
+      //   clearTimeout(a);
+      // })
+      // .on('start', (monitor) => {
+      //   console.log('start');
+      // })
+      // .on('visible', (monitor) => {
+      //   console.log('visible');
+      // })
+      // .on('fullyvisible', (monitor) => {
+      //   console.log('fullyvisible');
+      // })
+      // .on('hidden', (monitor) => {
+      //   console.log('hidden');
+      // })
+      // .on('visibilitychange', (monitor) => {
+      //   console.log('visibilitychange');
+      // })
+      // .on('percentagechange', (monitor, newValue, oldValue) => {
+      //   // console.log(`percentagechange ${oldValue} -> ${newValue}`);
+      //   // const percentChange = newValue === undefined ? 0 : newValue;
+      //   setTimeout(() => {
+      //     const temp = newValue;
+      //     const temp2 = oldValue;
+      //     if (!isMonitor && (temp === newValue && temp2 === oldValue)) {
+      //       isMonitor = true;
+      //       objMonitor.onPercentageTimeTestPassed(() => {
+      //         console.log('Banner display passed test for 30% visibility over 1 seconds.');
+      //         isMonitor = false;
+      //       }, {
+      //         percentageLimit: 0.3,
+      //         timeLimit: 1000,
+      //         interval: 200
+      //       });
+      //     }
+      //   }, 1000);
+      // })
+      .on('30%/1s', function (monitor) {
+        var linkLog = _this.current.bannerLogging(2);
+        var img = new Image();
+        img.src = linkLog;
+        console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!', linkLog);
+      }).build().start();
+      /* eslint-enable */
+      banner.addEventListener('click', function () {
+        var linkLog = _this.current.bannerLogging(1);
+        var img = new Image();
+        img.src = linkLog;
+        console.log('clickBanner');
+      });
+    }
   },
 
 
@@ -11188,7 +11356,7 @@ var Banner = _vue2.default.component('banner', {
      * Wrap ads by an iframe
      */
     renderToIFrame: function renderToIFrame() {
-      var _this = this;
+      var _this2 = this;
 
       var vm = this;
       var iframe = vm.iframe.el;
@@ -11204,7 +11372,7 @@ var Banner = _vue2.default.component('banner', {
           iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
           iframe.contentWindow.document.open();
-          if (_this.current.bannerType.isUpload !== undefined && _this.current.bannerType.isUpload === true) {
+          if (_this2.current.bannerType.isUpload !== undefined && _this2.current.bannerType.isUpload === true) {
             iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
           } else {
             var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
@@ -11465,32 +11633,6 @@ var Placement = _vue2.default.component('placement', {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
-
-    var placement = document.getElementById(this.current.id);
-    if (placement) {
-      var ts = VisSense(placement);
-      // const throttle = VisSense.Utils.throttle;
-      VisSense.VisMon.Builder(ts).on('update', function (monitor) {// eslint-disable-line
-      }).on('start', function (monitor) {
-        // eslint-disable-line
-        console.log('start');
-      }).on('visible', function (monitor) {
-        // eslint-disable-line
-        console.log('visible');
-      }).on('fullyvisible', function (monitor) {
-        // eslint-disable-line
-        console.log('fullyvisible');
-      }).on('hidden', function (monitor) {
-        // eslint-disable-line
-        console.log('hidden');
-      }).on('visibilitychange', function (monitor) {
-        // eslint-disable-line
-        console.log('visibilitychange');
-      }).on('percentagechange', VisSense.Utils.throttle(function (monitor, newValue, oldValue) {
-        console.log('percentagechange ' + oldValue + ' -> ' + newValue);
-      }, 50)).build().start();
-      // clearInterval(testView);
-    }
   },
 
 
@@ -11510,6 +11652,7 @@ var Placement = _vue2.default.component('placement', {
     // make a trigger to parent component(share) and send place;
     this.$parent.$emit('render', this.current.id, this.current.revenueType);
     var dev = location.search.indexOf('checkPlace=dev') !== -1;
+    console.log('thisBanner', vm.activeBannerModel.zoneId);
     if (dev) {
       if (vm.activeBannerModel !== false) {
         return h(
@@ -11520,7 +11663,8 @@ var Placement = _vue2.default.component('placement', {
             },
             'class': 'arf-placement',
             style: {
-              width: vm.current.width + 'px'
+              width: vm.current.width + 'px',
+              height: vm.current.height + 'px'
             }
           },
           [h(
@@ -11529,6 +11673,34 @@ var Placement = _vue2.default.component('placement', {
               attrs: { model: vm.activeBannerModel }
             },
             []
+          ), h(
+            'div',
+            {
+              style: {
+                zIndex: 9999,
+                margin: 'auto',
+                position: 'relative',
+                color: 'red',
+                paddingTop: '5px',
+                // backgroundColor: 'yellow',
+                // opacity: 0.5,
+                width: vm.current.width + 'px',
+                height: vm.current.height + 'px'
+              }
+            },
+            [h(
+              'p',
+              {
+                style: {
+                  backgroundColor: 'black',
+                  color: 'white',
+                  fontSize: '15pt',
+                  width: '35%',
+                  textAlign: 'center'
+                }
+              },
+              [vm.current.revenueType]
+            )]
           )]
         );
       }
@@ -11545,12 +11717,6 @@ var Placement = _vue2.default.component('placement', {
           }
         },
         [h(
-          _components.Banner,
-          {
-            attrs: { model: vm.activeBannerModel }
-          },
-          []
-        ), h(
           'div',
           {
             style: {
@@ -11576,7 +11742,7 @@ var Placement = _vue2.default.component('placement', {
                 textAlign: 'center'
               }
             },
-            [vm.current.revenueType, ' ', vm.current.positionOnShare]
+            [vm.current.revenueType]
           )]
         )]
       );
@@ -11879,7 +12045,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Banner = exports.Placement = exports.Share = exports.Zone = undefined;
 
-var _stringify = __webpack_require__(43);
+var _stringify = __webpack_require__(44);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -12205,7 +12371,7 @@ var _Entity2 = __webpack_require__(22);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _Share = __webpack_require__(46);
+var _Share = __webpack_require__(47);
 
 var _Share2 = _interopRequireDefault(_Share);
 
@@ -13357,7 +13523,7 @@ exports.default = Zone;
 "use strict";
 
 
-var _create = __webpack_require__(47);
+var _create = __webpack_require__(29);
 
 var _create2 = _interopRequireDefault(_create);
 
@@ -13369,7 +13535,7 @@ var _keys = __webpack_require__(48);
 
 var _keys2 = _interopRequireDefault(_keys);
 
-var _toConsumableArray2 = __webpack_require__(81);
+var _toConsumableArray2 = __webpack_require__(82);
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
@@ -13607,8 +13773,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         }
       };
     }((referenceWindow || window).document);
-  },
-      PubSub = function (undefined) {
+  };
+  var PubSub = function (undefined) {
     function PubSub(config) {
       this._cache = {}, this._onAnyCache = [], this._config = defaults(config, {
         async: !1,
@@ -13863,6 +14029,210 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
+var _create = __webpack_require__(29);
+
+var _create2 = _interopRequireDefault(_create);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Created by tamleminh on 17/06/2017.
+ */
+/* eslint-disable */
+// PercentageTimeMonitor
+!function (root, factory) {
+  factory(root, root.VisSense, root.VisSense.Utils);
+}(window, function (window, VisSense, VisSenseUtils, undefined) {
+  var createInnerMonitor = function createInnerMonitor(outerMonitor, callback, config) {
+    var timeElapsed = 0,
+        timeStarted = null,
+        timeLimit = config.timeLimit,
+        percentageLimit = config.percentageLimit,
+        interval = config.interval;
+    return VisSense.VisMon.Builder(outerMonitor.visobj()).strategy(new VisSense.VisMon.Strategy.PollingStrategy({
+      interval: interval
+    })).on('update', function (monitor) {
+      var percentage = monitor.state().percentage;
+      if (percentageLimit > percentage) timeStarted = null;else {
+        var now = VisSenseUtils.now();
+        timeStarted = timeStarted || now, timeElapsed = now - timeStarted;
+      }
+      timeElapsed >= timeLimit && (monitor.stop(), outerMonitor.stop(), callback(monitor));
+    }).on('stop', function () {
+      timeStarted = null;
+    }).build();
+  },
+      onPercentageTimeTestPassed = function onPercentageTimeTestPassed(visobj, callback, config) {
+    var _config = VisSenseUtils.defaults(config, {
+      percentageLimit: 1,
+      timeLimit: 1e3,
+      interval: 100,
+      strategy: undefined
+    }),
+        hiddenLimit = Math.max(_config.percentageLimit - 0.001, 0),
+        innerMonitor = null,
+        outerMonitor = VisSense.VisMon.Builder(new VisSense(visobj.element(), {
+      hidden: hiddenLimit,
+      referenceWindow: visobj.referenceWindow()
+    })).set('strategy', _config.strategy).on('visible', function (monitor) {
+      innerMonitor === null && (innerMonitor = createInnerMonitor(monitor, callback, _config)), innerMonitor.start();
+    }).on('hidden', function () {
+      innerMonitor !== null && innerMonitor.stop();
+    }).on('stop', function () {
+      innerMonitor !== null && innerMonitor.stop();
+    }).build();
+    return outerMonitor.start(), function () {
+      outerMonitor.stop(), innerMonitor = null;
+    };
+  };
+  VisSense.fn.onPercentageTimeTestPassed = function (callback, config) {
+    onPercentageTimeTestPassed(this, callback, config);
+  }, VisSense.fn.on50_1TestPassed = function (callback, options) {
+    var config = VisSenseUtils.extend(VisSenseUtils.defaults(options, {
+      interval: 100
+    }), {
+      percentageLimit: 0.5,
+      timeLimit: 1e3
+    });
+    onPercentageTimeTestPassed(this, callback, config);
+  }, VisSense.VisMon.Strategy.PercentageTimeTestEventStrategy = function (eventName, options) {
+    var registerPercentageTimeTestHook = function registerPercentageTimeTestHook(monitor, percentageTimeTestConfig) {
+      var cancelTest = VisSenseUtils.noop,
+          unregisterVisibleHook = monitor.on('visible', VisSenseUtils.once(function (monitor) {
+        cancelTest = onPercentageTimeTestPassed(monitor.visobj(), function (innerMonitor) {
+          var report = {
+            monitorState: innerMonitor.state(),
+            testConfig: percentageTimeTestConfig
+          };
+          monitor.update(), monitor.publish(eventName, [monitor, report]);
+        }, percentageTimeTestConfig), unregisterVisibleHook();
+      }));
+      return function () {
+        unregisterVisibleHook(), cancelTest();
+      };
+    },
+        cancel = VisSenseUtils.noop;
+    return {
+      init: function init(monitor) {
+        cancel = registerPercentageTimeTestHook(monitor, options);
+      },
+      stop: function stop() {
+        cancel();
+      }
+    };
+  };
+});
+
+/*! { "name": "vissense-configurable-polling-strategy", "version": "0.0.1", "copyright": "(c) 2015 tbk" } */
+(function (root, factory) {
+  var vissense = root.VisSense;
+  var utils = vissense.Utils;
+  var strategy = vissense.VisMon.Strategy;
+  factory(root, vissense, utils, strategy, root.Again);
+})(window, function (window, VisSense, VisSenseUtils, Strategy, Again, undefined) {
+  /**
+   * @license
+   * Available under MIT license <http://opensource.org/licenses/MIT>
+   */
+
+  /**
+   * @class
+   * @name ConfigurablePollingStrategy
+   * @extends VisSense.VisMon.Strategy
+   * @memberof VisSense.VisMon.Strategy
+   *
+   * @param {VisSense.VisMon.Strategy.ConfigurablePollingStrategy#ConfigurablePollingStrategyConfig} [config={}] The config object
+   *
+   * @classdesc A strategy that will periodically update the objects
+   * visibility state. Configurable!
+   *
+   * @example
+   *
+   * var visMon = VisSense(...).monitor({
+  *   strategy: new VisSense.VisMon.Strategy.ConfigurablePollingStrategy({
+  *     hidden: 5000
+  *     visible: 3000,
+  *     fullyvisible: 1000
+  *   }),
+  *   update: function() {
+  *     console.log('updated.');
+  *   }
+  * }).start();
+   *
+   */
+  Strategy.ConfigurablePollingStrategy = function (config) {
+    var _config = VisSenseUtils.defaults(config, {
+      fullyvisible: 1000,
+      visible: 1000,
+      hidden: 3000
+    });
+
+    this._startInternal = function (monitor) {
+      var againjs = Again.create();
+
+      var stopUpdate = monitor.on('visibilitychange', function (monitor) {
+        console.log('[ConfigurablePollingStrategy] update againjs timer with ' + monitor.state().state);
+        againjs.update(monitor.state().state);
+      });
+
+      var stopAgainJs = againjs.every(function () {
+        console.log('[ConfigurablePollingStrategy] update monitor by AgainJs ' + monitor.state().state);
+        monitor.update();
+      }, _config);
+
+      console.log('[ConfigurablePollingStrategy] starting againjs timer with "' + monitor.state().state + '"');
+      againjs.update(monitor.state().state);
+
+      return function () {
+        stopAgainJs();
+        stopUpdate();
+      };
+    };
+    this._stopInternal = null;
+
+    this._started = false;
+  };
+  Strategy.ConfigurablePollingStrategy.prototype = (0, _create2.default)(Strategy.prototype);
+  /**
+   * @method
+   * @name start
+   *
+   * @param {VisSense.VisMon} monitor
+   *
+   * @memberof VisSense.VisMon.Strategy.ConfigurablePollingStrategy#
+   */
+  Strategy.ConfigurablePollingStrategy.prototype.start = function (monitor) {
+    if (!this._started) {
+      this._stopInternal = this._startInternal(monitor);
+      this._started = true;
+    }
+    return this._started;
+  };
+  /**
+   * @method
+   * @name stop
+   *
+   * @param {VisSense.VisMon} monitor
+   *
+   * @memberof VisSense.VisMon.Strategy.ConfigurablePollingStrategy#
+   */
+  Strategy.ConfigurablePollingStrategy.prototype.stop = function () {
+    if (!this._started) {
+      return false;
+    }
+    this._stopInternal();
+    this._started = false;
+    return true;
+  };
+});
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -14027,7 +14397,7 @@ var adsStorage = {
 exports.default = adsStorage;
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14071,7 +14441,7 @@ var macro = {
 exports.default = macro;
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14126,7 +14496,7 @@ var screen = {
 exports.default = screen;
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14226,7 +14596,7 @@ var term = {
 exports.default = term;
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14236,7 +14606,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(43);
+var _stringify = __webpack_require__(44);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -15110,22 +15480,16 @@ var util = {
 exports.default = util;
 
 /***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(82), __esModule: true };
-
-/***/ }),
 /* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(85), __esModule: true };
+module.exports = { "default": __webpack_require__(83), __esModule: true };
 
 /***/ }),
 /* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(88), __esModule: true };
+module.exports = { "default": __webpack_require__(86), __esModule: true };
 
 /***/ }),
 /* 79 */
@@ -15143,12 +15507,18 @@ module.exports = { "default": __webpack_require__(90), __esModule: true };
 /* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = { "default": __webpack_require__(91), __esModule: true };
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
 exports.__esModule = true;
 
-var _from = __webpack_require__(76);
+var _from = __webpack_require__(77);
 
 var _from2 = _interopRequireDefault(_from);
 
@@ -15167,15 +15537,15 @@ exports.default = function (arr) {
 };
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(60);
-__webpack_require__(113);
+__webpack_require__(114);
 module.exports = __webpack_require__(0).Array.from;
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var core  = __webpack_require__(0)
@@ -15185,23 +15555,13 @@ module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
 };
 
 /***/ }),
-/* 84 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(115);
-var $Object = __webpack_require__(0).Object;
-module.exports = function create(P, D){
-  return $Object.create(P, D);
-};
-
-/***/ }),
 /* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(116);
 var $Object = __webpack_require__(0).Object;
-module.exports = function defineProperty(it, key, desc){
-  return $Object.defineProperty(it, key, desc);
+module.exports = function create(P, D){
+  return $Object.create(P, D);
 };
 
 /***/ }),
@@ -15209,42 +15569,52 @@ module.exports = function defineProperty(it, key, desc){
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(117);
-module.exports = __webpack_require__(0).Object.getPrototypeOf;
+var $Object = __webpack_require__(0).Object;
+module.exports = function defineProperty(it, key, desc){
+  return $Object.defineProperty(it, key, desc);
+};
 
 /***/ }),
 /* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(118);
-module.exports = __webpack_require__(0).Object.keys;
+module.exports = __webpack_require__(0).Object.getPrototypeOf;
 
 /***/ }),
 /* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(119);
-module.exports = __webpack_require__(0).Object.setPrototypeOf;
+module.exports = __webpack_require__(0).Object.keys;
 
 /***/ }),
 /* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(121);
 __webpack_require__(120);
-__webpack_require__(122);
-__webpack_require__(123);
-module.exports = __webpack_require__(0).Symbol;
+module.exports = __webpack_require__(0).Object.setPrototypeOf;
 
 /***/ }),
 /* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(60);
+__webpack_require__(122);
+__webpack_require__(121);
+__webpack_require__(123);
 __webpack_require__(124);
-module.exports = __webpack_require__(42).f('iterator');
+module.exports = __webpack_require__(0).Symbol;
 
 /***/ }),
 /* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(60);
+__webpack_require__(125);
+module.exports = __webpack_require__(43).f('iterator');
+
+/***/ }),
+/* 92 */
 /***/ (function(module, exports) {
 
 module.exports = function(it){
@@ -15253,20 +15623,20 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports) {
 
 module.exports = function(){ /* empty */ };
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = __webpack_require__(10)
   , toLength  = __webpack_require__(59)
-  , toIndex   = __webpack_require__(111);
+  , toIndex   = __webpack_require__(112);
 module.exports = function(IS_INCLUDES){
   return function($this, el, fromIndex){
     var O      = toIObject($this)
@@ -15285,11 +15655,11 @@ module.exports = function(IS_INCLUDES){
 };
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = __webpack_require__(29)
+var cof = __webpack_require__(30)
   , TAG = __webpack_require__(1)('toStringTag')
   // ES3 wrong here
   , ARG = cof(function(){ return arguments; }()) == 'Arguments';
@@ -15313,7 +15683,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15327,13 +15697,13 @@ module.exports = function(object, index, value){
 };
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // all enumerable object keys, includes symbols
 var getKeys = __webpack_require__(18)
   , gOPS    = __webpack_require__(54)
-  , pIE     = __webpack_require__(35);
+  , pIE     = __webpack_require__(36);
 module.exports = function(it){
   var result     = getKeys(it)
     , getSymbols = gOPS.f;
@@ -15347,23 +15717,23 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(2).document && document.documentElement;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = __webpack_require__(29);
+var cof = __webpack_require__(30);
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
@@ -15376,17 +15746,17 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.2.2 IsArray(argument)
-var cof = __webpack_require__(29);
+var cof = __webpack_require__(30);
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // call something on iterator step with safe closing on error
@@ -15403,14 +15773,14 @@ module.exports = function(iterator, fn, value, entries){
 };
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var create         = __webpack_require__(34)
+var create         = __webpack_require__(35)
   , descriptor     = __webpack_require__(19)
-  , setToStringTag = __webpack_require__(36)
+  , setToStringTag = __webpack_require__(37)
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
@@ -15422,7 +15792,7 @@ module.exports = function(Constructor, NAME, next){
 };
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ITERATOR     = __webpack_require__(1)('iterator')
@@ -15448,7 +15818,7 @@ module.exports = function(exec, skipClosing){
 };
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports) {
 
 module.exports = function(done, value){
@@ -15456,7 +15826,7 @@ module.exports = function(done, value){
 };
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getKeys   = __webpack_require__(18)
@@ -15471,7 +15841,7 @@ module.exports = function(object, el){
 };
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var META     = __webpack_require__(28)('meta')
@@ -15529,7 +15899,7 @@ var meta = module.exports = {
 };
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP       = __webpack_require__(3)
@@ -15547,7 +15917,7 @@ module.exports = __webpack_require__(7) ? Object.defineProperties : function def
 };
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
@@ -15572,7 +15942,7 @@ module.exports.f = function getOwnPropertyNames(it){
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Works with __proto__ only. Old v8 can't work with null proto objects.
@@ -15587,7 +15957,7 @@ module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
     function(test, buggy, set){
       try {
-        set = __webpack_require__(30)(Function.call, __webpack_require__(52).f(Object.prototype, '__proto__').set, 2);
+        set = __webpack_require__(31)(Function.call, __webpack_require__(52).f(Object.prototype, '__proto__').set, 2);
         set(test, []);
         buggy = !(test instanceof Array);
       } catch(e){ buggy = true; }
@@ -15602,11 +15972,11 @@ module.exports = {
 };
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(39)
-  , defined   = __webpack_require__(31);
+var toInteger = __webpack_require__(40)
+  , defined   = __webpack_require__(32);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function(TO_STRING){
@@ -15624,10 +15994,10 @@ module.exports = function(TO_STRING){
 };
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(39)
+var toInteger = __webpack_require__(40)
   , max       = Math.max
   , min       = Math.min;
 module.exports = function(index, length){
@@ -15636,10 +16006,10 @@ module.exports = function(index, length){
 };
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var classof   = __webpack_require__(94)
+var classof   = __webpack_require__(95)
   , ITERATOR  = __webpack_require__(1)('iterator')
   , Iterators = __webpack_require__(17);
 module.exports = __webpack_require__(0).getIteratorMethod = function(it){
@@ -15649,21 +16019,21 @@ module.exports = __webpack_require__(0).getIteratorMethod = function(it){
 };
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var ctx            = __webpack_require__(30)
+var ctx            = __webpack_require__(31)
   , $export        = __webpack_require__(8)
   , toObject       = __webpack_require__(27)
-  , call           = __webpack_require__(101)
-  , isArrayIter    = __webpack_require__(99)
+  , call           = __webpack_require__(102)
+  , isArrayIter    = __webpack_require__(100)
   , toLength       = __webpack_require__(59)
-  , createProperty = __webpack_require__(95)
-  , getIterFn      = __webpack_require__(112);
+  , createProperty = __webpack_require__(96)
+  , getIterFn      = __webpack_require__(113);
 
-$export($export.S + $export.F * !__webpack_require__(103)(function(iter){ Array.from(iter); }), 'Array', {
+$export($export.S + $export.F * !__webpack_require__(104)(function(iter){ Array.from(iter); }), 'Array', {
   // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
   from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
     var O       = toObject(arrayLike)
@@ -15693,13 +16063,13 @@ $export($export.S + $export.F * !__webpack_require__(103)(function(iter){ Array.
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(92)
-  , step             = __webpack_require__(104)
+var addToUnscopables = __webpack_require__(93)
+  , step             = __webpack_require__(105)
   , Iterators        = __webpack_require__(17)
   , toIObject        = __webpack_require__(10);
 
@@ -15733,15 +16103,15 @@ addToUnscopables('values');
 addToUnscopables('entries');
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(8)
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', {create: __webpack_require__(34)});
+$export($export.S, 'Object', {create: __webpack_require__(35)});
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(8);
@@ -15749,7 +16119,7 @@ var $export = __webpack_require__(8);
 $export($export.S + $export.F * !__webpack_require__(7), 'Object', {defineProperty: __webpack_require__(3).f});
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 Object.getPrototypeOf(O)
@@ -15763,7 +16133,7 @@ __webpack_require__(57)('getPrototypeOf', function(){
 });
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 Object.keys(O)
@@ -15777,21 +16147,21 @@ __webpack_require__(57)('keys', function(){
 });
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
 var $export = __webpack_require__(8);
-$export($export.S, 'Object', {setPrototypeOf: __webpack_require__(109).set});
+$export($export.S, 'Object', {setPrototypeOf: __webpack_require__(110).set});
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15802,23 +16172,23 @@ var global         = __webpack_require__(2)
   , DESCRIPTORS    = __webpack_require__(7)
   , $export        = __webpack_require__(8)
   , redefine       = __webpack_require__(58)
-  , META           = __webpack_require__(106).KEY
+  , META           = __webpack_require__(107).KEY
   , $fails         = __webpack_require__(15)
-  , shared         = __webpack_require__(38)
-  , setToStringTag = __webpack_require__(36)
+  , shared         = __webpack_require__(39)
+  , setToStringTag = __webpack_require__(37)
   , uid            = __webpack_require__(28)
   , wks            = __webpack_require__(1)
-  , wksExt         = __webpack_require__(42)
-  , wksDefine      = __webpack_require__(41)
-  , keyOf          = __webpack_require__(105)
-  , enumKeys       = __webpack_require__(96)
-  , isArray        = __webpack_require__(100)
+  , wksExt         = __webpack_require__(43)
+  , wksDefine      = __webpack_require__(42)
+  , keyOf          = __webpack_require__(106)
+  , enumKeys       = __webpack_require__(97)
+  , isArray        = __webpack_require__(101)
   , anObject       = __webpack_require__(11)
   , toIObject      = __webpack_require__(10)
-  , toPrimitive    = __webpack_require__(40)
+  , toPrimitive    = __webpack_require__(41)
   , createDesc     = __webpack_require__(19)
-  , _create        = __webpack_require__(34)
-  , gOPNExt        = __webpack_require__(108)
+  , _create        = __webpack_require__(35)
+  , gOPNExt        = __webpack_require__(109)
   , $GOPD          = __webpack_require__(52)
   , $DP            = __webpack_require__(3)
   , $keys          = __webpack_require__(18)
@@ -15945,10 +16315,10 @@ if(!USE_NATIVE){
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
   __webpack_require__(53).f = gOPNExt.f = $getOwnPropertyNames;
-  __webpack_require__(35).f  = $propertyIsEnumerable;
+  __webpack_require__(36).f  = $propertyIsEnumerable;
   __webpack_require__(54).f = $getOwnPropertySymbols;
 
-  if(DESCRIPTORS && !__webpack_require__(33)){
+  if(DESCRIPTORS && !__webpack_require__(34)){
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -16032,22 +16402,22 @@ setToStringTag(Math, 'Math', true);
 setToStringTag(global.JSON, 'JSON', true);
 
 /***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(41)('asyncIterator');
-
-/***/ }),
 /* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(41)('observable');
+__webpack_require__(42)('asyncIterator');
 
 /***/ }),
 /* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(114);
+__webpack_require__(42)('observable');
+
+/***/ }),
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(115);
 var global        = __webpack_require__(2)
   , hide          = __webpack_require__(12)
   , Iterators     = __webpack_require__(17)
@@ -16062,7 +16432,7 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
 }
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports) {
 
 var g;
