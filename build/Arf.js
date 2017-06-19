@@ -10264,7 +10264,7 @@ var Banner = function (_Entity) {
       var zoneID = this.zoneId;
       var bannerId = this.id;
       var placementId = this.placementId;
-      var domain = decodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
+      var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var linkLog = 'http://localhost:3000/bannerLogging?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
       return linkLog;
     }
@@ -10292,6 +10292,118 @@ var Banner = function (_Entity) {
 
       return true;
     }
+
+    /* eslint-disable */
+    // get checkChannel() {
+    //   const channelData = this.channel;
+    //   if (channelData !== undefined && channelData !== null && channelData !== '') {
+    //     const channel = channelData;
+    //     const options = channel.options.filter(item => item.name !== 'Location' && item.name !== 'Browser');
+    //     const optionsLength = options.length;
+    //     const a = eval; // eslint-disable-line no-eval
+    //     let strChk = '';
+    //
+    //     for (let i = 0; i < optionsLength; i += 1) {
+    //       const optionChannelType = options[i].optionChannelType;
+    //       const value = options[i].value.toString().split(',');
+    //       const comparison = options[i].comparison;
+    //       const logical = options[i].logical === 'and' ? '&&' : '||';
+    //       const globalVariableName = options[i].globalVariables;
+    //       console.log('globalVariableName', globalVariableName, i);
+    //     // eslint-disable-next-line
+    //     let globalVariable = (globalVariableName !== '' && a(`typeof (${globalVariableName}) !== 'undefined'`)) ? a(globalVariableName) : undefined;
+    //       globalVariable = encodeURIComponent(globalVariable);
+    //       console.log('globalVariable', globalVariable);
+    //       const globalVariableTemp = (typeof (globalVariable) !== 'undefined' && globalVariable !== '') ? globalVariable : '';
+    //       console.log('globalVariableTemp', globalVariableTemp);
+    //       let currentAdditionalDetail = '';
+    //       let type = optionChannelType.isInputLink ? 'isInputLink' : '';
+    //       let stringCheck = '';
+    //       let additionalDetail = []; // get optionChannelValueProperties
+    //       type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
+    //       type = optionChannelType.isVariable ? 'isVariable' : type;
+    //       console.log('type', type);
+    //     // console.log('valueCheck', value);
+    //       if (optionChannelType.optionChannelValues.length > 0) {
+    //         additionalDetail = optionChannelType.optionChannelValues.filter(item =>
+    //         value.reduce((acc, valueItem) => acc || (item.value === valueItem
+    //         && item.optionChannelValueProperties.length > 0), 0));
+    //       }
+    //       console.log('value', value);
+    //       for (let j = 0; j < value.length; j += 1) {
+    //         if (j > 0) stringCheck += '||';
+    //         switch (type) {
+    //           case 'isVariable': {
+    //             if ((globalVariableName !== '' && eval(`typeof (${globalVariableName}) !== 'undefined'`))) { // eslint-disable-line no-eval
+    //               if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+    //                 stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
+    //                 console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+    //               }
+    //             } else {
+    //               stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+    //               console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+    //             }
+    //             break;
+    //           }
+    //           case 'isInputLink': {
+    //             stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+    //             console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+    //             break;
+    //           }
+    //           case 'isSelectOption': {
+    //             const pageUrl = term.getPath2Check('Site:Pageurl', globalVariableName);
+    //             const thisChannel = util.getThisChannel(pageUrl);
+    //             thisChannel.shift();
+    //
+    //           // do smt with additionalDetail
+    //             if (additionalDetail.length > 0) {
+    //             // region : get link detail
+    //               if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+    //                 a(`${globalVariableName} = ''`);
+    //               }
+    //               currentAdditionalDetail = util.getThisChannel(pageUrl).pop();
+    //               currentAdditionalDetail.shift();
+    //               if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+    //                 a(`${globalVariableName} = globalVariableTemp`);
+    //               }
+    //             // endregion : get link detail
+    //
+    //               console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
+    //             }
+    //             console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
+    //             switch (comparison) {
+    //               case '==': {
+    //                 stringCheck += value[j] === thisChannel[0];
+    //                 break;
+    //               }
+    //               case '!=': {
+    //                 stringCheck += value[j] !== thisChannel[0];
+    //                 break;
+    //               }
+    //               default: {
+    //                 stringCheck += false;
+    //                 break;
+    //               }
+    //             }
+    //             break;
+    //           }
+    //           default: {
+    //             stringCheck += false;
+    //             break;
+    //           }
+    //         }
+    //       }
+    //       const CheckValue = a(stringCheck);
+    //       if (i > 0) strChk += logical;
+    //       strChk += CheckValue;
+    //     }
+    //     console.log('strChk', strChk, a(strChk));
+    //     return a(strChk);
+    //   }
+    //   return true;
+    // }
+    /* eslint-enable */
+
   }, {
     key: 'checkChannel',
     get: function get() {
@@ -11971,6 +12083,7 @@ var Zone = _vue2.default.component('zone', {
       cookie = ('' + cookie).replace(zoneCookie, zoneCookieUpdate);
       _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     });
+    this.current.zoneLogging();
   },
 
 
@@ -12507,28 +12620,54 @@ var Zone = function (_Entity) {
 
       var chooseShare = function chooseShare() {
         var allShare = _this2.allShares();
-        var randomNumber = Math.random() * 100;
-        var ratio = allShare.reduce(function (tmp, share) {
-          if (share.weight === undefined) {
-            share.weight = 100 / allShare.length; // eslint-disable-line
-          }
-          return share.weight + tmp;
-        }, 0) / 100;
+        allShare = allShare.filter(function (currentShare) {
+          var allPlace = [];
+          [currentShare].reduce(function (temp, share) {
+            return allPlace.push(share.allsharePlacements.map(function (item) {
+              return { data: item.placement,
+                index: item.positionOnShare !== 0 ? item.positionOnShare - 1 : 0 };
+            }));
+          }, 0);
+          allPlace = _vendor.util.flatten(allPlace);
+          // filter place fit with current channel
+          allPlace = allPlace.filter(function (place) {
+            return place.data.allBanners.reduce(function (acc, banner, index) {
+              if (index === 0) {
+                return banner.checkChannel;
+              }
+              return acc && banner.checkChannel;
+            }, 0);
+          });
+          if (allPlace.length > 0) return true;
+          return false;
+        });
+        if (allShare.length > 1) {
+          var randomNumber = Math.random() * 100;
+          var ratio = allShare.reduce(function (tmp, share) {
+            if (share.weight === undefined) {
+              share.weight = 100 / allShare.length; // eslint-disable-line
+            }
+            return share.weight + tmp;
+          }, 0) / 100;
 
-        var res = allShare.reduce(function (range, share) {
-          var nextRange = range + share.weight / ratio;
+          var res = allShare.reduce(function (range, share) {
+            var nextRange = range + share.weight / ratio;
 
-          if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
-            return range;
-          }
+            if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
+              return range;
+            }
 
-          if (randomNumber >= range && randomNumber < nextRange) {
-            return share;
-          }
+            if (randomNumber >= range && randomNumber < nextRange) {
+              return share;
+            }
 
-          return nextRange;
-        }, 0);
-        return res;
+            return nextRange;
+          }, 0);
+          return res;
+        } else if (allShare.length === 1) {
+          return allShare[0];
+        }
+        return [];
       };
       // choose placement base on weight.
       var activePlacement = function activePlacement(allPlaces, type) {
@@ -12568,18 +12707,6 @@ var Zone = function (_Entity) {
       // const allShare = this.allShares();
       // get css of share
       var getCss = function getCss(share) {
-        // for (let i = 0; i < allShare.length; i += 1) {
-        //   let isFit = allShare[i].placements.length === share.length;
-        //   if (isFit) {
-        //     for (let j = 0; j < allShare[i].placements.length; j += 1) {
-        //       const place = allShare[i].placements[j];
-        //       isFit = isFit && place.width === share[j].width &&
-        //         place.height === share[j].height;
-        //     }
-        //   }
-        //   console.log('isFit', isFit);
-        //   return isFit ? allShare[i].css : '.arf-placement {\n  margin: auto;\n}\n';
-        // }
         if (share.css !== undefined && share.css !== '') {
           return share.css;
         }
@@ -12588,6 +12715,7 @@ var Zone = function (_Entity) {
       var arrayRelativeKeyword = [];
       var allPlace = [];
       var currentShare = [chooseShare()];
+      if (currentShare.length === 0) return [];
       currentShare.reduce(function (temp, share) {
         return allPlace.push(share.allsharePlacements.map(function (item) {
           return { data: item.placement,
@@ -13320,7 +13448,6 @@ var Zone = function (_Entity) {
         var numberOfChannel = _vendor.util.uniqueItem(lastThreeShare.map(function (item) {
           return item.split(')(')[0];
         })).length;
-        console.log('domain', numberOfChannel);
         if (numberOfChannel > 1) {
           lastThreeShare = [];
           var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
@@ -13494,6 +13621,22 @@ var Zone = function (_Entity) {
     value: function activePlacements() {
       var activeShareModel = this.activeShare();
       return activeShareModel.activePlacements();
+    }
+
+    /**
+     * get link advb to send log
+     * Track @zone load
+     */
+
+  }, {
+    key: 'zoneLogging',
+    value: function zoneLogging() {
+      var zoneID = this.id;
+      var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
+      var domainLog = 'http://lg1.logging.admicro.vn';
+      var linkLog = domainLog + '/advb_cms?domain=' + domain + '&zid=' + zoneID;
+      var img = new Image();
+      img.src = linkLog;
     }
   }, {
     key: 'ZoneArea',

@@ -123,29 +123,50 @@ class Zone extends Entity {
 
   filterShareDynamic(relativeKeyword) {
     const chooseShare = () => {
-      const allShare = this.allShares();
-      const randomNumber = Math.random() * 100;
-      const ratio = allShare.reduce((tmp, share) => {
-        if (share.weight === undefined) {
-            share.weight = 100 / allShare.length; // eslint-disable-line
-        }
-        return (share.weight + tmp);
-      }, 0) / 100;
+      let allShare = this.allShares();
+      allShare = allShare.filter((currentShare) => {
+        let allPlace = [];
+        [currentShare].reduce((temp, share) => allPlace.push(share.allsharePlacements.map(item =>
+          ({ data: item.placement,
+            index: (item.positionOnShare !== 0 ? item.positionOnShare - 1 : 0) }))), 0);
+        allPlace = util.flatten(allPlace);
+        // filter place fit with current channel
+        allPlace = allPlace.filter(place => place.data.allBanners.reduce((acc, banner, index) => {
+          if (index === 0) {
+            return banner.checkChannel;
+          }
+          return acc && banner.checkChannel;
+        }, 0));
+        if (allPlace.length > 0) return true;
+        return false;
+      });
+      if (allShare.length > 1) {
+        const randomNumber = Math.random() * 100;
+        const ratio = allShare.reduce((tmp, share) => {
+          if (share.weight === undefined) {
+              share.weight = 100 / allShare.length; // eslint-disable-line
+          }
+          return (share.weight + tmp);
+        }, 0) / 100;
 
-      const res = allShare.reduce((range, share) => {
-        const nextRange = range + (share.weight / ratio);
+        const res = allShare.reduce((range, share) => {
+          const nextRange = range + (share.weight / ratio);
 
-        if (typeof range === 'object') {
-          return range;
-        }
+          if (typeof range === 'object') {
+            return range;
+          }
 
-        if (randomNumber >= range && randomNumber < nextRange) {
-          return share;
-        }
+          if (randomNumber >= range && randomNumber < nextRange) {
+            return share;
+          }
 
-        return nextRange;
-      }, 0);
-      return res;
+          return nextRange;
+        }, 0);
+        return res;
+      } else if (allShare.length === 1) {
+        return allShare[0];
+      }
+      return [];
     };
     // choose placement base on weight.
     const activePlacement = (allPlaces, type) => {
@@ -179,18 +200,6 @@ class Zone extends Entity {
     // const allShare = this.allShares();
     // get css of share
     const getCss = (share) => {
-      // for (let i = 0; i < allShare.length; i += 1) {
-      //   let isFit = allShare[i].placements.length === share.length;
-      //   if (isFit) {
-      //     for (let j = 0; j < allShare[i].placements.length; j += 1) {
-      //       const place = allShare[i].placements[j];
-      //       isFit = isFit && place.width === share[j].width &&
-      //         place.height === share[j].height;
-      //     }
-      //   }
-      //   console.log('isFit', isFit);
-      //   return isFit ? allShare[i].css : '.arf-placement {\n  margin: auto;\n}\n';
-      // }
       if (share.css !== undefined && share.css !== '') {
         return share.css;
       }
@@ -199,6 +208,7 @@ class Zone extends Entity {
     let arrayRelativeKeyword = [];
     let allPlace = [];
     const currentShare = [chooseShare()];
+    if (currentShare.length === 0) return [];
     currentShare.reduce((temp, share) => allPlace.push(share.allsharePlacements.map(item =>
           ({ data: item.placement,
             index: (item.positionOnShare !== 0 ? item.positionOnShare - 1 : 0) }))), 0);
@@ -895,7 +905,6 @@ class Zone extends Entity {
       let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
       // console.log('lastThreeShare', lastThreeShare);
       const numberOfChannel = util.uniqueItem(lastThreeShare.map(item => item.split(')(')[0])).length;
-      console.log('domain', numberOfChannel);
       if (numberOfChannel > 1) {
         lastThreeShare = [];
         const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
@@ -1049,6 +1058,19 @@ class Zone extends Entity {
   activePlacements() {
     const activeShareModel = this.activeShare();
     return activeShareModel.activePlacements();
+  }
+
+  /**
+   * get link advb to send log
+   * Track @zone load
+   */
+  zoneLogging() {
+    const zoneID = this.id;
+    const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
+    const domainLog = 'http://lg1.logging.admicro.vn';
+    const linkLog = `${domainLog}/advb_cms?domain=${domain}&zid=${zoneID}`;
+    const img = new Image();
+    img.src = linkLog;
   }
 }
 

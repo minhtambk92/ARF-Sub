@@ -59,6 +59,7 @@ const Zone = Vue.component('zone', {
       cookie = `${cookie}`.replace(zoneCookie, zoneCookieUpdate);
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     });
+    this.current.zoneLogging();
   },
 
   computed: {
