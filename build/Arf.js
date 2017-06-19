@@ -10415,119 +10415,164 @@ var Banner = function (_Entity) {
           if (channelData !== undefined && channelData !== null && channelData !== '') {
             var channel = channelData;
             var options = channel.options.filter(function (item) {
-              return item.name !== 'Location' && item.name !== 'Browser';
+              return item.name !== 'Location';
             });
             var optionsLength = options.length;
             var a = eval; // eslint-disable-line no-eval
             var strChk = '';
-
-            var _loop = function _loop(i) {
-              var optionChannelType = options[i].optionChannelType;
-              var value = options[i].value.toString().split(',');
-              var comparison = options[i].comparison;
-              var logical = options[i].logical === 'and' ? '&&' : '||';
-              var globalVariableName = options[i].globalVariables;
-              console.log('globalVariableName', globalVariableName, i);
-              // eslint-disable-next-line
-              var globalVariable = globalVariableName !== '' && a('typeof (' + globalVariableName + ') !== \'undefined\'') ? a(globalVariableName) : undefined;
-              globalVariable = encodeURIComponent(globalVariable);
-              console.log('globalVariable', globalVariable);
-              var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : '';
-              console.log('globalVariableTemp', globalVariableTemp);
-              var currentAdditionalDetail = '';
-              var type = optionChannelType.isInputLink ? 'isInputLink' : '';
-              var stringCheck = '';
-              var additionalDetail = []; // get optionChannelValueProperties
-              type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
-              type = optionChannelType.isVariable ? 'isVariable' : type;
-              console.log('type', type);
-              // console.log('valueCheck', value);
-              if (optionChannelType.optionChannelValues.length > 0) {
-                additionalDetail = optionChannelType.optionChannelValues.filter(function (item) {
-                  return value.reduce(function (acc, valueItem) {
-                    return acc || item.value === valueItem && item.optionChannelValueProperties.length > 0;
-                  }, 0);
-                });
-              }
-              console.log('value', value);
-              for (var j = 0; j < value.length; j += 1) {
-                if (j > 0) stringCheck += '||';
-                switch (type) {
-                  case 'isVariable':
-                    {
-                      if (globalVariableName !== '' && eval('typeof (' + globalVariableName + ') !== \'undefined\'')) {
-                        // eslint-disable-line no-eval
-                        if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
-                          stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
-                          console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+            if (optionsLength > 0) {
+              var _loop = function _loop(i) {
+                var optionChannelType = options[i].optionChannelType;
+                var value = options[i].value.toString().split(',');
+                var comparison = options[i].comparison;
+                var logical = options[i].logical === 'and' ? '&&' : '||';
+                var globalVariableName = options[i].globalVariables;
+                console.log('globalVariableName', globalVariableName, i);
+                // eslint-disable-next-line
+                var globalVariable = globalVariableName !== '' && a('typeof (' + globalVariableName + ') !== \'undefined\'') ? a(globalVariableName) : undefined;
+                globalVariable = encodeURIComponent(globalVariable);
+                console.log('globalVariable', globalVariable);
+                var globalVariableTemp = typeof globalVariable !== 'undefined' && globalVariable !== '' ? globalVariable : '';
+                console.log('globalVariableTemp', globalVariableTemp);
+                var currentAdditionalDetail = '';
+                var type = optionChannelType.isInputLink ? 'isInputLink' : '';
+                var stringCheck = '';
+                var additionalDetail = []; // get optionChannelValueProperties
+                type = optionChannelType.isSelectOption ? 'isSelectOption' : type;
+                type = optionChannelType.isVariable ? 'isVariable' : type;
+                console.log('type', type);
+                // console.log('valueCheck', value);
+                if (optionChannelType.optionChannelValues.length > 0) {
+                  additionalDetail = optionChannelType.optionChannelValues.filter(function (item) {
+                    return value.reduce(function (acc, valueItem) {
+                      return acc || item.value === valueItem && item.optionChannelValueProperties.length > 0;
+                    }, 0);
+                  });
+                }
+                console.log('value', value);
+                for (var j = 0; j < value.length; j += 1) {
+                  if (j > 0) stringCheck += '||';
+                  switch (type) {
+                    case 'isVariable':
+                      {
+                        if (globalVariableName !== '') {
+                          // eslint-disable-line no-eval
+                          if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
+                            stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
+                            console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+                          }
+                        } else {
+                          stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
+                          console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                          switch (comparison) {
+                            case '==':
+                              {
+                                stringCheck += false;
+                                break;
+                              }
+                            case '!=':
+                              {
+                                stringCheck += true;
+                                break;
+                              }
+                            default:
+                              {
+                                stringCheck += false;
+                                break;
+                              }
+                          }
                         }
-                      } else {
+                        break;
+                      }
+                    case 'isInputLink':
+                      {
                         stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
                         console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                        break;
                       }
-                      break;
-                    }
-                  case 'isInputLink':
-                    {
-                      stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
-                      console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
-                      break;
-                    }
-                  case 'isSelectOption':
-                    {
-                      var pageUrl = _vendor.term.getPath2Check('Site:Pageurl', globalVariableName);
-                      var thisChannel = _vendor.util.getThisChannel(pageUrl);
-                      thisChannel.shift();
+                    case 'isSelectOption':
+                      {
+                        console.log('checkBrowser0', options[i].name);
+                        if (options[i].name !== 'Browser' && options[i].name !== 'Location') {
+                          console.log('runnnn');
+                          var pageUrl = _vendor.term.getPath2Check('Site:Pageurl', globalVariableName);
+                          var thisChannel = _vendor.util.getThisChannel(pageUrl);
+                          thisChannel.shift();
 
-                      // do smt with additionalDetail
-                      if (additionalDetail.length > 0) {
-                        // region : get link detail
-                        if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
-                          a(globalVariableName + ' = \'\'');
-                        }
-                        currentAdditionalDetail = _vendor.util.getThisChannel(pageUrl).pop();
-                        currentAdditionalDetail.shift();
-                        if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
-                          a(globalVariableName + ' = globalVariableTemp');
-                        }
-                        // endregion : get link detail
+                          // do smt with additionalDetail
+                          if (additionalDetail.length > 0) {
+                            // region : get link detail
+                            if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
+                              a(globalVariableName + ' = \'\'');
+                            }
+                            currentAdditionalDetail = _vendor.util.getThisChannel(pageUrl).pop();
+                            currentAdditionalDetail.shift();
+                            if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
+                              a(globalVariableName + ' = globalVariableTemp');
+                            }
+                            // endregion : get link detail
 
-                        console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
+                            console.log('additionalDetail', additionalDetail, currentAdditionalDetail);
+                          }
+                          console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
+                          switch (comparison) {
+                            case '==':
+                              {
+                                stringCheck += value[j] === thisChannel[0];
+                                break;
+                              }
+                            case '!=':
+                              {
+                                stringCheck += value[j] !== thisChannel[0];
+                                break;
+                              }
+                            default:
+                              {
+                                stringCheck += false;
+                                break;
+                              }
+                          }
+                        } else if (options[i].name === 'Browser') {
+                          console.log('checkBrowser1');
+                          var checkBrowser = _vendor.util.checkBrowser(value[j]);
+                          switch (comparison) {
+                            case '==':
+                              {
+                                stringCheck += checkBrowser;
+                                break;
+                              }
+                            case '!=':
+                              {
+                                stringCheck += checkBrowser !== true;
+                                break;
+                              }
+                            default:
+                              {
+                                stringCheck += false;
+                                break;
+                              }
+                          }
+                          console.log('checkBrowser', stringCheck, comparison);
+                        }
+                        break;
                       }
-                      console.log('checkChannel', type, thisChannel[0], comparison, value[j]);
-                      switch (comparison) {
-                        case '==':
-                          {
-                            stringCheck += value[j] === thisChannel[0];
-                            break;
-                          }
-                        case '!=':
-                          {
-                            stringCheck += value[j] !== thisChannel[0];
-                            break;
-                          }
-                        default:
-                          {
-                            stringCheck += false;
-                            break;
-                          }
+                    default:
+                      {
+                        stringCheck += false;
+                        break;
                       }
-                      break;
-                    }
-                  default:
-                    {
-                      stringCheck += false;
-                      break;
-                    }
+                  }
                 }
-              }
-              var CheckValue = a(stringCheck);
-              if (i > 0) strChk += logical;
-              strChk += CheckValue;
-            };
+                var CheckValue = a(stringCheck);
+                if (i > 0) strChk += logical;
+                strChk += CheckValue;
+              };
 
-            for (var i = 0; i < optionsLength; i += 1) {
-              _loop(i);
+              for (var i = 0; i < optionsLength; i += 1) {
+                _loop(i);
+              }
+            } else {
+              strChk += 'true';
             }
             console.log('strChk', strChk, a(strChk));
             return a(strChk);
@@ -10659,17 +10704,6 @@ var Banner = function (_Entity) {
         };
       }
       return 0;
-    }
-
-    // old data(not use)
-
-  }, {
-    key: 'checkBrowser',
-    get: function get() {
-      var browser = this.browser;
-      browser = typeof browser === 'undefined' || browser === 'undefined' || browser == null || browser === '' ? 0 : browser;
-      browser = (',' + browser + ',').toLowerCase();
-      return browser !== ',,' && browser !== ',0,' ? ('' + browser).indexOf(_vendor.util.getCurrentBrowser) !== -1 : true;
     }
   }, {
     key: 'checkFrequency',
@@ -15607,6 +15641,12 @@ var util = {
     }
     var currentBrowser = M.join(' ').substring(0, M.join(' ').indexOf(' ')).toLowerCase();
     return currentBrowser;
+  },
+  checkBrowser: function checkBrowser(s) {
+    var browser = s;
+    browser = typeof browser === 'undefined' || browser === 'undefined' || browser == null || browser === '' ? 0 : browser;
+    browser = (',' + browser + ',').toLowerCase();
+    return browser !== ',,' && browser !== ',0,' ? ('' + browser).indexOf(this.getCurrentBrowser()) !== -1 : true;
   },
   checkTwoArrayEqual: function checkTwoArrayEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) {

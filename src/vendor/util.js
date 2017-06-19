@@ -824,6 +824,16 @@ const util = {
     return currentBrowser;
   },
 
+  checkBrowser(s) {
+    let browser = s;
+    browser = (typeof (browser) === 'undefined' ||
+    browser === 'undefined' ||
+    browser == null ||
+    browser === '') ? 0 : browser;
+    browser = `,${browser},`.toLowerCase();
+    return (browser !== ',,' && browser !== ',0,') ? (`${browser}`.indexOf(this.getCurrentBrowser()) !== -1) : true;
+  },
+
   checkTwoArrayEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) {
       return false;
