@@ -13369,9 +13369,11 @@ var Zone = function (_Entity) {
               // const numberOfCombination = monopolyPlaces.length;
               var monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
               // console.log('monopolyPlaces', monopolyPlaces);
-              console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
+              var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
+                return item.type === 'cpd' ? acc + 1 : acc + 0;
+              }, 0);
               // variable "conputeAll" to compute all cases combination.
-              var computeAll = true;
+              var computeAll = false;
               if (computeAll) {
                 // can use function combinations (1-n combination n)
                 // instead of k_combination (k Combination n) for compute all cases.
@@ -13379,28 +13381,27 @@ var Zone = function (_Entity) {
                   combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.combinations(monopolyPlacesWithShare[i]));
                 }
               } else {
-                var numberOfK = -1;
-                monopolyPlaces.reduce(function (acc, item, index) {
-                  // eslint-disable-line
-                  if (index === 0) {
-                    numberOfK += 1;
-                    return item.index;
-                  }
-                  if (acc !== item.index) {
-                    numberOfK += 1;
-                    return item.index;
-                  }
-                }, 0);
-                console.log('numberOfK', numberOfK);
+                // get number of index value in monopoly place (unique)
+                // const numberOfK = monopolyPlaces.map(x => x.index).filter((value, index, self) =>
+                // self.indexOf(value) === index).length;
+                // console.log('numberOfK', numberOfK);
+                // const randomK = Math.floor(Math.random() * numberOfK) + 1;
+                var K = shareConstruct.filter(function (x) {
+                  return x.type === 'cpd' || x.type === 'pr';
+                }).length;
+                monopolyPlacesWithShare = monopolyPlacesWithShare.filter(function (item) {
+                  return item.length >= numberOfMonopoly && item.reduce(function (acc, item2, index) {
+                    if (index === 0) {
+                      return item2.data.revenueType === shareConstruct[item2.index].type;
+                    }
+                    return acc && item2.data.revenueType === shareConstruct[item2.index].type;
+                  }, 0);
+                });
+                console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
                 for (var _i4 = 0; _i4 < monopolyPlacesWithShare.length; _i4 += 1) {
-                  for (var j = 1; j <= numberOfK; j += 1) {
-                    combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i4], j));
-                  }
+                  combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i4], K));
                 }
               }
-              var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
-                return item.type === 'cpd' ? acc + 1 : acc + 0;
-              }, 0);
               combinationMonopolyPlaces = combinationMonopolyPlaces.filter(function (item) {
                 return item.length >= numberOfMonopoly && item.reduce(function (acc, item2, index) {
                   if (index === 0) {
@@ -13665,7 +13666,7 @@ var Zone = function (_Entity) {
       var zoneID = this.id;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var domainLog = 'http://lg1.logging.admicro.vn';
-      var linkLog = domainLog + '/advb_cms?domain=' + domain + '&zid=' + zoneID;
+      var linkLog = domainLog + '/advb_cms?dmn=' + domain + '&zid=' + zoneID;
       var img = new Image();
       img.src = linkLog;
     }

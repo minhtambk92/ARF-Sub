@@ -802,11 +802,12 @@ class Zone extends Entity {
             };
             let combinationMonopolyPlaces = [];
             // const numberOfCombination = monopolyPlaces.length;
-            const monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
+            let monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
             // console.log('monopolyPlaces', monopolyPlaces);
-            console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
+            const numberOfMonopoly = shareConstruct.reduce((acc, item) =>
+              (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
             // variable "conputeAll" to compute all cases combination.
-            const computeAll = true;
+            const computeAll = false;
             if (computeAll) {
               // can use function combinations (1-n combination n)
               // instead of k_combination (k Combination n) for compute all cases.
@@ -815,27 +816,25 @@ class Zone extends Entity {
                   util.combinations(monopolyPlacesWithShare[i]));
               }
             } else {
-              let numberOfK = -1;
-              monopolyPlaces.reduce((acc, item, index) => { // eslint-disable-line
+              // get number of index value in monopoly place (unique)
+              // const numberOfK = monopolyPlaces.map(x => x.index).filter((value, index, self) =>
+              // self.indexOf(value) === index).length;
+              // console.log('numberOfK', numberOfK);
+              // const randomK = Math.floor(Math.random() * numberOfK) + 1;
+              const K = shareConstruct.filter(x => (x.type === 'cpd' || x.type === 'pr')).length;
+              monopolyPlacesWithShare = monopolyPlacesWithShare.filter(item =>
+              (item.length >= numberOfMonopoly) && item.reduce((acc, item2, index) => {
                 if (index === 0) {
-                  numberOfK += 1;
-                  return item.index;
+                  return item2.data.revenueType === shareConstruct[item2.index].type;
                 }
-                if (acc !== item.index) {
-                  numberOfK += 1;
-                  return item.index;
-                }
-              }, 0);
-              console.log('numberOfK', numberOfK);
+                return acc && item2.data.revenueType === shareConstruct[item2.index].type;
+              }, 0));
+              console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
               for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
-                for (let j = 1; j <= numberOfK; j += 1) {
-                  combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
-                    util.kCombinations(monopolyPlacesWithShare[i], j));
-                }
+                combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
+                    util.kCombinations(monopolyPlacesWithShare[i], K));
               }
             }
-            const numberOfMonopoly = shareConstruct.reduce((acc, item) =>
-              (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
             combinationMonopolyPlaces = combinationMonopolyPlaces.filter(item =>
             (item.length >= numberOfMonopoly) && item.reduce((acc, item2, index) => {
               if (index === 0) {
@@ -1068,7 +1067,7 @@ class Zone extends Entity {
     const zoneID = this.id;
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
     const domainLog = 'http://lg1.logging.admicro.vn';
-    const linkLog = `${domainLog}/advb_cms?domain=${domain}&zid=${zoneID}`;
+    const linkLog = `${domainLog}/advb_cms?dmn=${domain}&zid=${zoneID}`;
     const img = new Image();
     img.src = linkLog;
   }
