@@ -470,7 +470,8 @@ class Banner extends Entity {
     const placementId = this.placementId;
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
     const linkLog = `http://localhost:3000/bannerLogging?dmn=${domain}&zid=${zoneID}&pli=${placementId}&items=${bannerId}&cov=${cov}`;
-    return linkLog;
+    const img = new Image();
+    img.src = linkLog;
   }
 }
 

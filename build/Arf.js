@@ -10266,7 +10266,8 @@ var Banner = function (_Entity) {
       var placementId = this.placementId;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var linkLog = 'http://localhost:3000/bannerLogging?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
-      return linkLog;
+      var img = new Image();
+      img.src = linkLog;
     }
   }, {
     key: 'checkTerm',
@@ -11447,16 +11448,12 @@ var Banner = _vue2.default.component('banner', {
       //   }, 1000);
       // })
       .on('30%/1s', function (monitor) {
-        var linkLog = _this.current.bannerLogging(2);
-        var img = new Image();
-        img.src = linkLog;
-        console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!', linkLog);
+        _this.current.bannerLogging(2);
+        console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
       }).build().start();
       /* eslint-enable */
       banner.addEventListener('click', function () {
-        var linkLog = _this.current.bannerLogging(1);
-        var img = new Image();
-        img.src = linkLog;
+        _this.current.bannerLogging(1);
         console.log('clickBanner');
       });
     }

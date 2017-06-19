@@ -121,18 +121,14 @@ const Banner = Vue.component('banner', {
           //   }, 1000);
           // })
           .on('30%/1s', (monitor) => {
-            const linkLog = this.current.bannerLogging(2);
-            const img = new Image();
-            img.src = linkLog;
-            console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!', linkLog);
+            this.current.bannerLogging(2);
+            console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
           })
           .build()
           .start();
         /* eslint-enable */
       banner.addEventListener('click', () => {
-        const linkLog = this.current.bannerLogging(1);
-        const img = new Image();
-        img.src = linkLog;
+        this.current.bannerLogging(1);
         console.log('clickBanner');
       });
     }
