@@ -11915,10 +11915,11 @@ var Placement = _vue2.default.component('placement', {
         attrs: {
           id: vm.current.id
         },
-        'class': 'arf-placement',
-        style: {
-          width: vm.current.width + 'px'
-        }
+        'class': 'arf-placement'
+        // style={{
+        //   width: `${vm.current.width}px`,
+        //   // height: `${vm.current.height}px`,
+        // }}
       },
       []
     );
