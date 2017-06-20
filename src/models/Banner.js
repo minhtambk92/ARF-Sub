@@ -227,21 +227,22 @@ class Banner extends Entity {
                     } else {
                       stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
                       console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
-                      switch (comparison) {
-                        case '==': {
-                          stringCheck += false;
-                          break;
-                        }
-                        case '!=': {
-                          stringCheck += true;
-                          break;
-                        }
-                        default: {
-                          stringCheck += false;
-                          break;
-                        }
-                      }
+                      // switch (comparison) {
+                      //   case '==': {
+                      //     stringCheck += false;
+                      //     break;
+                      //   }
+                      //   case '!=': {
+                      //     stringCheck += true;
+                      //     break;
+                      //   }
+                      //   default: {
+                      //     stringCheck += false;
+                      //     break;
+                      //   }
+                      // }
                     }
+                    console.log('stringCheckVariable', stringCheck);
                     break;
                   }
                   case 'isInputLink': {

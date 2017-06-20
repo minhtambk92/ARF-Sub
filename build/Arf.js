@@ -10464,24 +10464,22 @@ var Banner = function (_Entity) {
                         } else {
                           stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
                           console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
-                          switch (comparison) {
-                            case '==':
-                              {
-                                stringCheck += false;
-                                break;
-                              }
-                            case '!=':
-                              {
-                                stringCheck += true;
-                                break;
-                              }
-                            default:
-                              {
-                                stringCheck += false;
-                                break;
-                              }
-                          }
+                          // switch (comparison) {
+                          //   case '==': {
+                          //     stringCheck += false;
+                          //     break;
+                          //   }
+                          //   case '!=': {
+                          //     stringCheck += true;
+                          //     break;
+                          //   }
+                          //   default: {
+                          //     stringCheck += false;
+                          //     break;
+                          //   }
+                          // }
                         }
+                        console.log('stringCheckVariable', stringCheck);
                         break;
                       }
                     case 'isInputLink':
@@ -13319,27 +13317,6 @@ var Zone = function (_Entity) {
                 createShareByPlaceMonopolies(monopolyPlaces);
                 return shareDatas;
               }
-              // collect placements which share the place order with monopoly places ('cpd').
-              var shareWith = [];
-              monopolyPlaces.reduce(function (acc, monopolyPlace) {
-                return allPlace.reduce(function (acc2, place) {
-                  // eslint-disable-line
-                  if (place.index === monopolyPlace.index && place.data.revenueType !== monopolyPlace.data.revenueType) {
-                    if (shareWith.indexOf(place) === -1) {
-                      shareWith.push(place);
-                    }
-                  }
-                }, 0);
-              }, 0);
-              console.log('shareWith', shareWith);
-              // filter keyword
-              var shareWithKeyword = [];
-              if (arrayRelativeKeyword.length > 0) {
-                shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
-                if (shareWithKeyword.length > 0) {
-                  shareWith = shareWithKeyword;
-                }
-              }
               // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
               var createMonopolyPlacesWithShare = function createMonopolyPlacesWithShare(array, lib) {
                 var res = [];
@@ -13367,7 +13344,32 @@ var Zone = function (_Entity) {
               };
               var combinationMonopolyPlaces = [];
               // const numberOfCombination = monopolyPlaces.length;
+              monopolyPlaces = monopolyPlaces.filter(function (item) {
+                return item.data.revenueType === shareConstruct[item.index].type;
+              });
+              // collect placements which share the place order with monopoly places ('cpd').
+              var shareWith = [];
+              monopolyPlaces.reduce(function (acc, monopolyPlace) {
+                return allPlace.reduce(function (acc2, place) {
+                  // eslint-disable-line
+                  if (place.index === monopolyPlace.index && place.data.revenueType !== monopolyPlace.data.revenueType) {
+                    if (shareWith.indexOf(place) === -1) {
+                      shareWith.push(place);
+                    }
+                  }
+                }, 0);
+              }, 0);
+              console.log('shareWith', shareWith);
+              // filter keyword
+              var shareWithKeyword = [];
+              if (arrayRelativeKeyword.length > 0) {
+                shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
+                if (shareWithKeyword.length > 0) {
+                  shareWith = shareWithKeyword;
+                }
+              }
               var monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
+              console.log('monopolyPlacesWithShare1', monopolyPlacesWithShare);
               // console.log('monopolyPlaces', monopolyPlaces);
               var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
                 return item.type === 'cpd' ? acc + 1 : acc + 0;
@@ -13397,7 +13399,7 @@ var Zone = function (_Entity) {
                     return acc && item2.data.revenueType === shareConstruct[item2.index].type;
                   }, 0);
                 });
-                console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
+                console.log('monopolyPlacesWithShare2', monopolyPlacesWithShare);
                 for (var _i4 = 0; _i4 < monopolyPlacesWithShare.length; _i4 += 1) {
                   combinationMonopolyPlaces = combinationMonopolyPlaces.concat(_vendor.util.kCombinations(monopolyPlacesWithShare[_i4], K));
                 }

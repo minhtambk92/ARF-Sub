@@ -750,32 +750,13 @@ class Zone extends Entity {
 
         if (placementType !== 'cpm') {
           // get all places have type === placementType
-          const monopolyPlaces = allPlacement.filter(y =>
+          let monopolyPlaces = allPlacement.filter(y =>
           y.data.AdsType.revenueType === placementType);
           console.log('monopolyPlaces2', monopolyPlaces);
           if (monopolyPlaces.length > 0) {
             if (placementType === 'pr') {
               createShareByPlaceMonopolies(monopolyPlaces);
               return shareDatas;
-            }
-            // collect placements which share the place order with monopoly places ('cpd').
-            let shareWith = [];
-            monopolyPlaces.reduce((acc, monopolyPlace) => allPlace.reduce((acc2, place) => { // eslint-disable-line
-              if (place.index === monopolyPlace.index &&
-                place.data.revenueType !== monopolyPlace.data.revenueType) {
-                if (shareWith.indexOf(place) === -1) {
-                  shareWith.push(place);
-                }
-              }
-            }, 0), 0);
-            console.log('shareWith', shareWith);
-            // filter keyword
-            let shareWithKeyword = [];
-            if (arrayRelativeKeyword.length > 0) {
-              shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
-              if (shareWithKeyword.length > 0) {
-                shareWith = shareWithKeyword;
-              }
             }
             // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
             const createMonopolyPlacesWithShare = (array, lib) => {
@@ -802,7 +783,29 @@ class Zone extends Entity {
             };
             let combinationMonopolyPlaces = [];
             // const numberOfCombination = monopolyPlaces.length;
+            monopolyPlaces = monopolyPlaces.filter(item =>
+            item.data.revenueType === shareConstruct[item.index].type);
+            // collect placements which share the place order with monopoly places ('cpd').
+            let shareWith = [];
+            monopolyPlaces.reduce((acc, monopolyPlace) => allPlace.reduce((acc2, place) => { // eslint-disable-line
+              if (place.index === monopolyPlace.index &&
+                place.data.revenueType !== monopolyPlace.data.revenueType) {
+                if (shareWith.indexOf(place) === -1) {
+                  shareWith.push(place);
+                }
+              }
+            }, 0), 0);
+            console.log('shareWith', shareWith);
+            // filter keyword
+            let shareWithKeyword = [];
+            if (arrayRelativeKeyword.length > 0) {
+              shareWithKeyword = filterPlaceWithKeyword(shareWith, arrayRelativeKeyword);
+              if (shareWithKeyword.length > 0) {
+                shareWith = shareWithKeyword;
+              }
+            }
             let monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
+            console.log('monopolyPlacesWithShare1', monopolyPlacesWithShare);
             // console.log('monopolyPlaces', monopolyPlaces);
             const numberOfMonopoly = shareConstruct.reduce((acc, item) =>
               (item.type === 'cpd' ? (acc + 1) : (acc + 0)), 0);
@@ -829,7 +832,7 @@ class Zone extends Entity {
                 }
                 return acc && item2.data.revenueType === shareConstruct[item2.index].type;
               }, 0));
-              console.log('monopolyPlacesWithShare', monopolyPlacesWithShare);
+              console.log('monopolyPlacesWithShare2', monopolyPlacesWithShare);
               for (let i = 0; i < monopolyPlacesWithShare.length; i += 1) {
                 combinationMonopolyPlaces = combinationMonopolyPlaces.concat(
                     util.kCombinations(monopolyPlacesWithShare[i], K));
