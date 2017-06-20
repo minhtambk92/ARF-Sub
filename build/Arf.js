@@ -10265,7 +10265,8 @@ var Banner = function (_Entity) {
       var bannerId = this.id;
       var placementId = this.placementId;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
-      var linkLog = 'http://localhost:3000/bannerLogging?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
+      var domainLog = 'http://lg1.logging.admicro.vn';
+      var linkLog = domainLog + '/cpx_cms?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
       var img = new Image();
       img.src = linkLog;
     }
