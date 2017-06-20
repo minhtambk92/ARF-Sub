@@ -183,6 +183,7 @@ class Banner extends Entity {
       const checkChannel = (channelData) => {
         if (channelData !== undefined && channelData !== null && channelData !== '') {
           const channel = channelData;
+          console.log('channell', channel);
           const options = channel.options.filter(item => (item.name !== 'Location'));
           const optionsLength = options.length;
           const a = eval; // eslint-disable-line no-eval
@@ -220,13 +221,17 @@ class Banner extends Entity {
                 switch (type) {
                   case 'isVariable': {
                     if (globalVariableName !== '') { // eslint-disable-line no-eval
-                      if (typeof (globalVariable) !== 'undefined' && globalVariable !== '') {
+                      if (a(`typeof (${globalVariableName}) !== 'undefined'`)) {
                         stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
                         console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+                      } else {
+                        console.log('olalala');
+                        stringCheck += false;
                       }
                     } else {
                       stringCheck += term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
-                      console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                      // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''),
+                      // comparison, value[j]);
                       // switch (comparison) {
                       //   case '==': {
                       //     stringCheck += false;
@@ -322,7 +327,18 @@ class Banner extends Entity {
           } else {
             strChk += 'true';
           }
-          console.log('strChk', strChk, a(strChk));
+          console.log('strChk', strChk, strChk.match(/&&+(true|false)*/ig));
+          const andValue = strChk.match(/&&+(true|false)*/ig);
+          if (andValue !== null && andValue.length > 0) {
+            console.log('here');
+            andValue.reduce((acc, item) => { strChk = strChk.replace(item, '') }, 0); // eslint-disable-line
+            const orValue = a(strChk);
+            let res = `${orValue}`;
+            console.log('strCkk1', strChk, res);
+            res = andValue.reduce((acc, item, index) => index === 0 ? eval(`${res}${item}`) : (`${acc}${item}`), 0); // eslint-disable-line
+            console.log('strCkk2', res, `${res}${andValue[0]}`);
+            return res;
+          }
           return a(strChk);
         }
         return true;
@@ -334,9 +350,11 @@ class Banner extends Entity {
         const type = optionBanner[i].type;
         const comparison = optionBanner[i].comparison;
         const value = optionBanner[i].value;
+        console.log('BigType', type);
         switch (type) {
           case 'pageUrl' : {
             stringCheck += term.checkPathLogic(value, 'Site:Pageurl', '', comparison);
+            console.log('BigStringCheck', stringCheck);
             break;
           }
           case 'channel' : {

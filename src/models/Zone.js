@@ -166,7 +166,7 @@ class Zone extends Entity {
       } else if (allShare.length === 1) {
         return allShare[0];
       }
-      return [];
+      return false;
     };
     // choose placement base on weight.
     const activePlacement = (allPlaces, type) => {
@@ -208,7 +208,8 @@ class Zone extends Entity {
     let arrayRelativeKeyword = [];
     let allPlace = [];
     const currentShare = [chooseShare()];
-    if (currentShare.length === 0) return [];
+    if (!currentShare[0]) return [];
+    console.log('shareTemplate', currentShare);
     currentShare.reduce((temp, share) => allPlace.push(share.allsharePlacements.map(item =>
           ({ data: item.placement,
             index: (item.positionOnShare !== 0 ? item.positionOnShare - 1 : 0) }))), 0);

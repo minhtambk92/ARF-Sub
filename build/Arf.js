@@ -10415,6 +10415,7 @@ var Banner = function (_Entity) {
         var checkChannel = function checkChannel(channelData) {
           if (channelData !== undefined && channelData !== null && channelData !== '') {
             var channel = channelData;
+            console.log('channell', channel);
             var options = channel.options.filter(function (item) {
               return item.name !== 'Location';
             });
@@ -10458,13 +10459,17 @@ var Banner = function (_Entity) {
                       {
                         if (globalVariableName !== '') {
                           // eslint-disable-line no-eval
-                          if (typeof globalVariable !== 'undefined' && globalVariable !== '') {
+                          if (a('typeof (' + globalVariableName + ') !== \'undefined\'')) {
                             stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', globalVariableName, comparison);
                             console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', globalVariableName), comparison, value[j]);
+                          } else {
+                            console.log('olalala');
+                            stringCheck += false;
                           }
                         } else {
                           stringCheck += _vendor.term.checkPathLogic(value[j], 'Site:Pageurl', '', comparison);
-                          console.log('checkChannel', type, _vendor.term.getPath2Check('Site:Pageurl', ''), comparison, value[j]);
+                          // console.log('checkChannel', type, term.getPath2Check('Site:Pageurl', ''),
+                          // comparison, value[j]);
                           // switch (comparison) {
                           //   case '==': {
                           //     stringCheck += false;
@@ -10573,7 +10578,22 @@ var Banner = function (_Entity) {
             } else {
               strChk += 'true';
             }
-            console.log('strChk', strChk, a(strChk));
+            console.log('strChk', strChk, strChk.match(/&&+(true|false)*/ig));
+            var andValue = strChk.match(/&&+(true|false)*/ig);
+            if (andValue !== null && andValue.length > 0) {
+              console.log('here');
+              andValue.reduce(function (acc, item) {
+                strChk = strChk.replace(item, '');
+              }, 0); // eslint-disable-line
+              var orValue = a(strChk);
+              var res = '' + orValue;
+              console.log('strCkk1', strChk, res);
+              res = andValue.reduce(function (acc, item, index) {
+                return index === 0 ? eval('' + res + item) : '' + acc + item;
+              }, 0); // eslint-disable-line
+              console.log('strCkk2', res, '' + res + andValue[0]);
+              return res;
+            }
             return a(strChk);
           }
           return true;
@@ -10585,10 +10605,12 @@ var Banner = function (_Entity) {
           var _type = optionBanner[i].type;
           var _comparison = optionBanner[i].comparison;
           var _value = optionBanner[i].value;
+          console.log('BigType', _type);
           switch (_type) {
             case 'pageUrl':
               {
                 _stringCheck += _vendor.term.checkPathLogic(_value, 'Site:Pageurl', '', _comparison);
+                console.log('BigStringCheck', _stringCheck);
                 break;
               }
             case 'channel':
@@ -12208,16 +12230,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 if (typeof window !== 'undefined' && window.document) {
   // load tracking -> this provide location
-  var trackingJs = document.getElementById('adm-tracking');
-  if (trackingJs == null) {
-    var b = document.createElement('script');
-    b.id = 'adm-tracking';
-    b.type = 'text/javascript';
-    b.async = !0;
-    b.src = '//media1.admicro.vn/core/adm_tracking.js?id=1';
-    var c = document.getElementsByTagName('script')[0];
-    c.parentNode.insertBefore(b, c);
-  }
+  // const trackingJs = document.getElementById('adm-tracking');
+  // if (trackingJs == null) {
+  //   const b = document.createElement('script');
+  //   b.id = 'adm-tracking';
+  //   b.type = 'text/javascript';
+  //   b.async = !0;
+  //   b.src = '//media1.admicro.vn/core/adm_tracking.js?id=1';
+  //   const c = document.getElementsByTagName('script')[0];
+  //   c.parentNode.insertBefore(b, c);
+  // }
   /**
    * Init queues
    * @type {Array}
@@ -12698,7 +12720,7 @@ var Zone = function (_Entity) {
         } else if (allShare.length === 1) {
           return allShare[0];
         }
-        return [];
+        return false;
       };
       // choose placement base on weight.
       var activePlacement = function activePlacement(allPlaces, type) {
@@ -12746,7 +12768,8 @@ var Zone = function (_Entity) {
       var arrayRelativeKeyword = [];
       var allPlace = [];
       var currentShare = [chooseShare()];
-      if (currentShare.length === 0) return [];
+      if (!currentShare[0]) return [];
+      console.log('shareTemplate', currentShare);
       currentShare.reduce(function (temp, share) {
         return allPlace.push(share.allsharePlacements.map(function (item) {
           return { data: item.placement,
