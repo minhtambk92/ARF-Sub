@@ -10579,19 +10579,19 @@ var Banner = function (_Entity) {
               strChk += 'true';
             }
             console.log('strChk', strChk, strChk.match(/&&+(true|false)*/ig));
-            var andValue = strChk.match(/&&+(true|false)*/ig);
-            if (andValue !== null && andValue.length > 0) {
+            var _andValue = strChk.match(/&&+(true|false)*/ig);
+            if (_andValue !== null && _andValue.length > 0) {
               console.log('here');
-              andValue.reduce(function (acc, item) {
+              _andValue.reduce(function (acc, item) {
                 strChk = strChk.replace(item, '');
               }, 0); // eslint-disable-line
               var orValue = a(strChk);
               var res = '' + orValue;
               console.log('strCkk1', strChk, res);
-              res = andValue.reduce(function (acc, item, index) {
+              res = _andValue.reduce(function (acc, item, index) {
                 return index === 0 ? eval('' + res + item) : '' + acc + item;
               }, 0); // eslint-disable-line
-              console.log('strCkk2', res, '' + res + andValue[0]);
+              console.log('strCkk2', res, '' + res + _andValue[0]);
               return res;
             }
             return a(strChk);
@@ -10646,16 +10646,28 @@ var Banner = function (_Entity) {
           }
           console.log('stringCheck', _stringCheck, logical, i);
           var checkValue = eval(_stringCheck); // eslint-disable-line
-          if (i === 0 && logical === '||') {
-            if (checkValue) {
-              stringCheckTotal += checkValue;
-              break;
-            }
-          }
+          // if (i === 0 && logical === '||') {
+          //   if (checkValue) {
+          //     stringCheckTotal += checkValue;
+          //     break;
+          //   }
+          // }
           if (i > 0) stringCheckTotal += logical;
           stringCheckTotal += checkValue;
         }
         console.log('stringCheckTotal', stringCheckTotal);
+        var andValue = stringCheckTotal.match(/&&+(true|false)*/ig);
+        if (andValue !== null && andValue.length > 0) {
+          andValue.reduce(function (acc, item) {
+            stringCheckTotal = stringCheckTotal.replace(item, '');
+          }, 0); // eslint-disable-line
+          var orValue = eval(stringCheckTotal); // eslint-disable-line
+          var res = '' + orValue;
+          res = andValue.reduce(function (acc, item, index) {
+            return index === 0 ? eval('' + res + item) : '' + acc + item;
+          }, 0); // eslint-disable-line
+          return res;
+        }
         return eval(stringCheckTotal); // eslint-disable-line
       }
       return true;

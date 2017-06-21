@@ -387,16 +387,24 @@ class Banner extends Entity {
         }
         console.log('stringCheck', stringCheck, logical, i);
         const checkValue = eval(stringCheck); // eslint-disable-line
-        if (i === 0 && logical === '||') {
-          if (checkValue) {
-            stringCheckTotal += checkValue;
-            break;
-          }
-        }
+        // if (i === 0 && logical === '||') {
+        //   if (checkValue) {
+        //     stringCheckTotal += checkValue;
+        //     break;
+        //   }
+        // }
         if (i > 0) stringCheckTotal += logical;
         stringCheckTotal += checkValue;
       }
       console.log('stringCheckTotal', stringCheckTotal);
+      const andValue = stringCheckTotal.match(/&&+(true|false)*/ig);
+      if (andValue !== null && andValue.length > 0) {
+        andValue.reduce((acc, item) => { stringCheckTotal = stringCheckTotal.replace(item, '') }, 0); // eslint-disable-line
+        const orValue = eval(stringCheckTotal); // eslint-disable-line
+        let res = `${orValue}`;
+        res = andValue.reduce((acc, item, index) => index === 0 ? eval(`${res}${item}`) : (`${acc}${item}`), 0); // eslint-disable-line
+        return res;
+      }
       return eval(stringCheckTotal); // eslint-disable-line
     }
     return true;
