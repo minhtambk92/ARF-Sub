@@ -61,8 +61,8 @@ const Banner = Vue.component('banner', {
     }
     const banner = document.getElementById(this.current.id);
     if (banner) {
-      const objMonitor = VisSense(banner);
-      const monitor = VisSense.VisMon.Builder(objMonitor);
+      const objMonitor = ViewTrackingLibrary(banner);
+      const monitor = ViewTrackingLibrary.VisMon.Builder(objMonitor);
         // let isMonitor = false;
         // let isUpdating = false;
         /* eslint-disable */
@@ -73,8 +73,8 @@ const Banner = Vue.component('banner', {
           //   visible: 2000,
           //   fullyvisible: 5000
           // }))
-          .strategy(new VisSense.VisMon.Strategy.EventStrategy({ throttle: 200 }))
-          .strategy(new VisSense.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
+          .strategy(new ViewTrackingLibrary.VisMon.Strategy.EventStrategy({ throttle: 200 }))
+          .strategy(new ViewTrackingLibrary.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
             percentageLimit: 0.3,
             timeLimit: 1000,
             interval: 100

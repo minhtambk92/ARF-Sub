@@ -22,7 +22,8 @@
     "it": true,
     "expect": true,
     "sinon": true,
-    "VisSense": false
+    "VisSense": false,
+    "ViewTrackingLibrary": false
   },
 
   "parser": "babel-eslint",

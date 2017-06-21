@@ -9,7 +9,7 @@
     root[name] = _newValue, root[name].noConflict = function () {
       return root[name] = _oldValue, _newValue;
     };
-}(window, 'VisSense', (window = window, document = window.document, undefined) => {
+}(window, 'ViewTrackingLibrary', (window = window, document = window.document, undefined) => {
   function async(callback, delay) {
     return function () {
       const args = arguments;
