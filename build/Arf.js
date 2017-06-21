@@ -13545,22 +13545,24 @@ var Zone = function (_Entity) {
             console.log('cpmAppear', cpmAppear, cpdAppear);
             if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
               console.log('everyThings1', shareConstruct);
-              if (cpdAppear === 1 && lastPlaceType.length >= 1) {
+              var isRemove = false;
+              if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
                 shareConstruct[i].splice(1, 1);
+                isRemove = true;
               }
-              if (cpmAppear === 2 && lastPlaceType.length >= 2) {
-                if (cpdAppear < 1) shareConstruct[i].splice(2, 1);
+              if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
+                if (isRemove === false) shareConstruct[i].splice(2, 1);
               }
             } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
-              var isRemove = false;
+              var _isRemove = false;
               if (cpmAppear >= 1 && lastPlaceType.length >= 2) {
                 if (lastPlaceType[2] === 'cpm' || lastPlaceType[1] === 'cpm') {
                   shareConstruct[i].splice(2, 1);
-                  isRemove = true;
+                  _isRemove = true;
                 }
               }
               if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
-                if (isRemove === false) shareConstruct[i].splice(1, 1);
+                if (_isRemove === false) shareConstruct[i].splice(1, 1);
               }
             }
             console.log('everyThings2', shareConstruct);
