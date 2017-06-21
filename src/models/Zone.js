@@ -751,7 +751,7 @@ class Zone extends Entity {
 
         if (placementType !== 'cpm') {
           // get all places have type === placementType
-          let monopolyPlaces = allPlacement.filter(y =>
+          const monopolyPlaces = allPlacement.filter(y =>
           y.data.AdsType.revenueType === placementType);
           console.log('monopolyPlaces2', monopolyPlaces);
           if (monopolyPlaces.length > 0) {
@@ -762,30 +762,30 @@ class Zone extends Entity {
             // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
             const createMonopolyPlacesWithShare = (array, lib) => {
               const res = [];
-              const replace = (library, index2, arrTemp) => {
-                const arrayTemp = arrTemp.map(item => item);
-                library.reduce((acc2, item) => {
-                  if (item.index === array[index2].index) {
-                    arrayTemp.splice(index2, 1, item);
-                    res.push(arrayTemp);
-                    if (index2 < (arrTemp.length - 1)) {
-                      replace(library, index2 + 1, arrayTemp);
+              if (lib.length > 0) {
+                const replace = (library, index2, arrTemp) => {
+                  const arrayTemp = arrTemp.map(item => item);
+                  library.reduce((acc2, item) => {
+                    if (item.index === array[index2].index) {
+                      arrayTemp.splice(index2, 1, item);
+                      res.push(arrayTemp);
+                      if (index2 < (arrTemp.length - 1)) {
+                        replace(library, index2 + 1, arrayTemp);
+                      }
                     }
-                  }
+                    return 0;
+                  }, 0);
+                };
+                array.reduce((acc1, ArrayItem, index1, array1) => {
+                  replace(lib, index1, array1);
                   return 0;
                 }, 0);
-              };
-              array.reduce((acc1, ArrayItem, index1, array1) => {
-                replace(lib, index1, array1);
-                return 0;
-              }, 0);
-              res.push(array);
+                res.push(array);
+              } else res.push(array);
               return res;
             };
             let combinationMonopolyPlaces = [];
             // const numberOfCombination = monopolyPlaces.length;
-            monopolyPlaces = monopolyPlaces.filter(item =>
-            item.data.revenueType === shareConstruct[item.index].type);
             // collect placements which share the place order with monopoly places ('cpd').
             let shareWith = [];
             monopolyPlaces.reduce((acc, monopolyPlace) => allPlace.reduce((acc2, place) => { // eslint-disable-line
@@ -806,6 +806,10 @@ class Zone extends Entity {
               }
             }
             let monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
+
+            // monopolyPlaces = monopolyPlaces.filter(item =>
+            // item.data.revenueType === shareConstruct[item.index].type);
+
             console.log('monopolyPlacesWithShare1', monopolyPlacesWithShare);
             // console.log('monopolyPlaces', monopolyPlaces);
             const numberOfMonopoly = shareConstruct.reduce((acc, item) =>
@@ -934,17 +938,33 @@ class Zone extends Entity {
 
           const cpdPercent = shareConstruct[i][1].weight;
           const cpdAppear = lastPlaceType.reduce((acc, place) =>
-            (place.type === 'cpd' ? acc + 1 : acc + 0), 0);
+            (place === 'cpd' ? acc + 1 : acc + 0), 0);
+          const cpmAppear = lastPlaceType.reduce((acc, place) =>
+            (place === 'cpm' ? acc + 1 : acc + 0), 0);
+          console.log('cpmAppear', cpmAppear, cpdAppear);
           if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
-            if (cpdAppear === 1 && lastPlaceType.length > 1) {
+            console.log('everyThings1', shareConstruct);
+            if (cpdAppear === 1 && lastPlaceType.length >= 1) {
               shareConstruct[i].splice(1, 1);
+            }
+            if (cpmAppear === 2 && lastPlaceType.length >= 2) {
+              if (cpdAppear < 1) shareConstruct[i].splice(2, 1);
             }
           } else if (cpdPercent > (100 / 3) && cpdPercent <= (200 / 3)) {
-            if (cpdAppear === 2 && lastPlaceType.length > 2) {
-              shareConstruct[i].splice(1, 1);
+            let isRemove = false;
+            if (cpmAppear >= 1 && lastPlaceType.length >= 2) {
+              if (lastPlaceType[2] === 'cpm' || lastPlaceType[1] === 'cpm') {
+                shareConstruct[i].splice(2, 1);
+                isRemove = true;
+              }
+            }
+            if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
+              if (isRemove === false) shareConstruct[i].splice(1, 1);
             }
           }
+          console.log('everyThings2', shareConstruct);
           const activeType = activeRevenue(shareConstruct[i]);
+          console.log('everyThings3', activeType);
           buildShareConstruct.push(activeType);
         }
       }

@@ -13345,33 +13345,32 @@ var Zone = function (_Entity) {
               // mix the monopoly share place with other place. array: monopolyPlace - lib: otherPlace
               var createMonopolyPlacesWithShare = function createMonopolyPlacesWithShare(array, lib) {
                 var res = [];
-                var replace = function replace(library, index2, arrTemp) {
-                  var arrayTemp = arrTemp.map(function (item) {
-                    return item;
-                  });
-                  library.reduce(function (acc2, item) {
-                    if (item.index === array[index2].index) {
-                      arrayTemp.splice(index2, 1, item);
-                      res.push(arrayTemp);
-                      if (index2 < arrTemp.length - 1) {
-                        replace(library, index2 + 1, arrayTemp);
+                if (lib.length > 0) {
+                  var replace = function replace(library, index2, arrTemp) {
+                    var arrayTemp = arrTemp.map(function (item) {
+                      return item;
+                    });
+                    library.reduce(function (acc2, item) {
+                      if (item.index === array[index2].index) {
+                        arrayTemp.splice(index2, 1, item);
+                        res.push(arrayTemp);
+                        if (index2 < arrTemp.length - 1) {
+                          replace(library, index2 + 1, arrayTemp);
+                        }
                       }
-                    }
+                      return 0;
+                    }, 0);
+                  };
+                  array.reduce(function (acc1, ArrayItem, index1, array1) {
+                    replace(lib, index1, array1);
                     return 0;
                   }, 0);
-                };
-                array.reduce(function (acc1, ArrayItem, index1, array1) {
-                  replace(lib, index1, array1);
-                  return 0;
-                }, 0);
-                res.push(array);
+                  res.push(array);
+                } else res.push(array);
                 return res;
               };
               var combinationMonopolyPlaces = [];
               // const numberOfCombination = monopolyPlaces.length;
-              monopolyPlaces = monopolyPlaces.filter(function (item) {
-                return item.data.revenueType === shareConstruct[item.index].type;
-              });
               // collect placements which share the place order with monopoly places ('cpd').
               var shareWith = [];
               monopolyPlaces.reduce(function (acc, monopolyPlace) {
@@ -13394,6 +13393,10 @@ var Zone = function (_Entity) {
                 }
               }
               var monopolyPlacesWithShare = createMonopolyPlacesWithShare(monopolyPlaces, shareWith); //eslint-disable-line
+
+              // monopolyPlaces = monopolyPlaces.filter(item =>
+              // item.data.revenueType === shareConstruct[item.index].type);
+
               console.log('monopolyPlacesWithShare1', monopolyPlacesWithShare);
               // console.log('monopolyPlaces', monopolyPlaces);
               var numberOfMonopoly = shareConstruct.reduce(function (acc, item) {
@@ -13534,18 +13537,35 @@ var Zone = function (_Entity) {
 
             var cpdPercent = shareConstruct[i][1].weight;
             var cpdAppear = lastPlaceType.reduce(function (acc, place) {
-              return place.type === 'cpd' ? acc + 1 : acc + 0;
+              return place === 'cpd' ? acc + 1 : acc + 0;
             }, 0);
+            var cpmAppear = lastPlaceType.reduce(function (acc, place) {
+              return place === 'cpm' ? acc + 1 : acc + 0;
+            }, 0);
+            console.log('cpmAppear', cpmAppear, cpdAppear);
             if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
-              if (cpdAppear === 1 && lastPlaceType.length > 1) {
+              console.log('everyThings1', shareConstruct);
+              if (cpdAppear === 1 && lastPlaceType.length >= 1) {
                 shareConstruct[i].splice(1, 1);
+              }
+              if (cpmAppear === 2 && lastPlaceType.length >= 2) {
+                if (cpdAppear < 1) shareConstruct[i].splice(2, 1);
               }
             } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
-              if (cpdAppear === 2 && lastPlaceType.length > 2) {
-                shareConstruct[i].splice(1, 1);
+              var isRemove = false;
+              if (cpmAppear >= 1 && lastPlaceType.length >= 2) {
+                if (lastPlaceType[2] === 'cpm' || lastPlaceType[1] === 'cpm') {
+                  shareConstruct[i].splice(2, 1);
+                  isRemove = true;
+                }
+              }
+              if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
+                if (isRemove === false) shareConstruct[i].splice(1, 1);
               }
             }
+            console.log('everyThings2', shareConstruct);
             var activeType = activeRevenue(shareConstruct[i]);
+            console.log('everyThings3', activeType);
             buildShareConstruct.push(activeType);
           }
         };
