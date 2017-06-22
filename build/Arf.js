@@ -10262,6 +10262,7 @@ var Banner = function (_Entity) {
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var domainLog = 'http://lg1.logging.admicro.vn';
       var linkLog = domainLog + '/cpx_cms?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
+      console.log('BannerLog', linkLog);
       var img = new Image();
       img.src = linkLog;
     }
@@ -13696,6 +13697,7 @@ var Zone = function (_Entity) {
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var domainLog = 'http://lg1.logging.admicro.vn';
       var linkLog = domainLog + '/advbcms?dmn=' + domain + '&zid=' + zoneID;
+      console.log('ZoneLog', linkLog);
       var img = new Image();
       img.src = linkLog;
     }

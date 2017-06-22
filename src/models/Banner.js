@@ -526,6 +526,7 @@ class Banner extends Entity {
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
     const domainLog = 'http://lg1.logging.admicro.vn';
     const linkLog = `${domainLog}/cpx_cms?dmn=${domain}&zid=${zoneID}&pli=${placementId}&items=${bannerId}&cov=${cov}`;
+    console.log('BannerLog', linkLog);
     const img = new Image();
     img.src = linkLog;
   }

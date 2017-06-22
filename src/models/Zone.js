@@ -1094,6 +1094,7 @@ class Zone extends Entity {
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
     const domainLog = 'http://lg1.logging.admicro.vn';
     const linkLog = `${domainLog}/advbcms?dmn=${domain}&zid=${zoneID}`;
+    console.log('ZoneLog', linkLog);
     const img = new Image();
     img.src = linkLog;
   }
