@@ -12344,16 +12344,16 @@ var adsData = _vue2.default.mixin({
       }();
 
       // load tracking -> this provide location
-      var trackingJs = document.getElementById('adm-tracking');
-      if (trackingJs == null) {
-        var b = document.createElement('script');
-        b.id = 'adm-tracking';
-        b.type = 'text/javascript';
-        b.async = !0;
-        b.src = '//media1.admicro.vn/core/adm_tracking.js?id=1';
-        var c = document.getElementsByTagName('script')[0];
-        c.parentNode.insertBefore(b, c);
-      }
+      // const trackingJs = document.getElementById('adm-tracking');
+      // if (trackingJs == null) {
+      //   const b = document.createElement('script');
+      //   b.id = 'adm-tracking';
+      //   b.type = 'text/javascript';
+      //   b.async = !0;
+      //   b.src = '//media1.admicro.vn/core/adm_tracking.js?id=1';
+      //   const c = document.getElementsByTagName('script')[0];
+      //   c.parentNode.insertBefore(b, c);
+      // }
       window.init = true;
     }
     // get data about location.
