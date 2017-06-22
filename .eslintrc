@@ -23,7 +23,8 @@
     "expect": true,
     "sinon": true,
     "VisSense": false,
-    "ViewTrackingLibrary": false
+    "ViewTrackingLibrary": false,
+    "postscribe": false
   },
 
   "parser": "babel-eslint",

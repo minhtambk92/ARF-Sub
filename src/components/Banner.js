@@ -311,7 +311,8 @@ const Banner = Vue.component('banner', {
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {
-        util.executeJS(htmlData, vm.current.id);
+        // util.executeJS(htmlData, vm.current.id);
+        postscribe(`#${vm.current.id}`, htmlData);
         //     clearInterval(loadAsync);
         //   }
         // }, 500);
