@@ -662,8 +662,10 @@ const util = {
         elementContainer.style.display = '';
       }, 1000);
     }
+    console.log('scriptTag', scriptTag);
     if (elementContainer && scriptTag.scripts.length > 0) {
       for (let i = 0; i < scriptTag.scripts.length; i += 1) {
+        console.log('installScript');
         this.installScript(elementContainer, scriptTag.scripts[i]);
       }
     }

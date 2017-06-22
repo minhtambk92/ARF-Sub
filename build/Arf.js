@@ -11438,7 +11438,7 @@ var Banner = _vue2.default.component('banner', {
     var _this = this;
 
     if (this.current.isIFrame) {
-      console.log('renderBannerHTML');
+      console.log('renderBannerIframe');
       this.renderToIFrame();
     } else {
       console.log('renderBannerNoIframe');
@@ -11686,13 +11686,13 @@ var Banner = _vue2.default.component('banner', {
       var vm = this;
       try {
         var htmlData = vm.current.html;
-        var loadAsync = setInterval(function () {
-          var idw = document.getElementById('' + vm.current.id);
-          if (idw) {
-            _vendor.util.executeJS(htmlData, vm.current.id);
-            clearInterval(loadAsync);
-          }
-        }, 500);
+        // const loadAsync = setInterval(() => {
+        //   const idw = document.getElementById(`${vm.current.id}`);
+        //   if (idw) {
+        _vendor.util.executeJS(htmlData, vm.current.id);
+        //     clearInterval(loadAsync);
+        //   }
+        // }, 500);
       } catch (error) {
         throw new Error(error);
       }
@@ -13695,7 +13695,7 @@ var Zone = function (_Entity) {
       var zoneID = this.id;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var domainLog = 'http://lg1.logging.admicro.vn';
-      var linkLog = domainLog + '/advb_cms?dmn=' + domain + '&zid=' + zoneID;
+      var linkLog = domainLog + '/advbcms?dmn=' + domain + '&zid=' + zoneID;
       var img = new Image();
       img.src = linkLog;
     }
@@ -15506,8 +15506,10 @@ var util = {
         elementContainer.style.display = '';
       }, 1000);
     }
+    console.log('scriptTag', scriptTag);
     if (elementContainer && scriptTag.scripts.length > 0) {
       for (var i = 0; i < scriptTag.scripts.length; i += 1) {
+        console.log('installScript');
         this.installScript(elementContainer, scriptTag.scripts[i]);
       }
     }

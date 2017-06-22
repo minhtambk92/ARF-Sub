@@ -48,7 +48,7 @@ const Banner = Vue.component('banner', {
 
   mounted() {
     if (this.current.isIFrame) {
-      console.log('renderBannerHTML');
+      console.log('renderBannerIframe');
       this.renderToIFrame();
     } else {
       console.log('renderBannerNoIframe');
@@ -308,13 +308,13 @@ const Banner = Vue.component('banner', {
       const vm = this;
       try {
         const htmlData = vm.current.html;
-        const loadAsync = setInterval(() => {
-          const idw = document.getElementById(`${vm.current.id}`);
-          if (idw) {
-            util.executeJS(htmlData, vm.current.id);
-            clearInterval(loadAsync);
-          }
-        }, 500);
+        // const loadAsync = setInterval(() => {
+        //   const idw = document.getElementById(`${vm.current.id}`);
+        //   if (idw) {
+        util.executeJS(htmlData, vm.current.id);
+        //     clearInterval(loadAsync);
+        //   }
+        // }, 500);
       } catch (error) {
         throw new Error(error);
       }

@@ -1093,7 +1093,7 @@ class Zone extends Entity {
     const zoneID = this.id;
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
     const domainLog = 'http://lg1.logging.admicro.vn';
-    const linkLog = `${domainLog}/advb_cms?dmn=${domain}&zid=${zoneID}`;
+    const linkLog = `${domainLog}/advbcms?dmn=${domain}&zid=${zoneID}`;
     const img = new Image();
     img.src = linkLog;
   }
