@@ -52,7 +52,7 @@ const Banner = Vue.component('banner', {
       console.log('renderBannerIframe');
       this.renderToIFrame();
     } else {
-      console.log('renderBannerNoIframe');
+      console.log('renderBannerNoIframe', 'newCode');
       this.renderBannerNoIframe();
     }
     this.current.countFrequency();
