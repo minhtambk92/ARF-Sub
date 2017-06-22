@@ -5,6 +5,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import Vue from 'vue';
+import postscribe from 'postscribe';
 import { Banner as BannerModel } from '../models';
 import { dom } from '../mixins';
 import { util, macro } from '../vendor';

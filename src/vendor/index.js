@@ -9,7 +9,6 @@ import util from './util';
 import macro from './macro';
 import VisSense from './VisSense';
 import VisSensePlugin from './VisSensePlugin';
-import postscribe from './postscribe';
 
-export { adsStorage, term, screen, util, macro, VisSense, VisSensePlugin, postscribe };
-export default { adsStorage, term, screen, util, macro, VisSense, VisSensePlugin, postscribe };
+export { adsStorage, term, screen, util, macro, VisSense, VisSensePlugin };
+export default { adsStorage, term, screen, util, macro, VisSense, VisSensePlugin };
