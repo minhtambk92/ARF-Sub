@@ -37,6 +37,7 @@ const Share = Vue.component('share', {
     //   }
     // });
     this.$on('render', (placeID, revenueType) => {
+      console.log('testEmit', placeID, revenueType);
       const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
         if (item.id === placeID) {
           return index;

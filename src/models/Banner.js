@@ -184,7 +184,7 @@ class Banner extends Entity {
         if (channelData !== undefined && channelData !== null && channelData !== '') {
           const channel = channelData;
           console.log('channell', channel);
-          const options = channel.options.filter(item => (item.name !== 'Location'));
+          const options = channel.optionChannels.filter(item => (item.name !== 'Location'));
           const optionsLength = options.length;
           const a = eval; // eslint-disable-line no-eval
           let strChk = '';

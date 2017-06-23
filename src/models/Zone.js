@@ -37,90 +37,6 @@ class Zone extends Entity {
     return 'top';
   }
 
-  filterShare() {
-    const allShare = this.allShares();
-    const Prs = [];
-    const Cpds = [];
-    const Cpms = [];
-
-    // filler pr places
-    const prShare = allShare.filter((share) => {
-      const places = share.activePlacements();
-
-      const prPlaces = places.filter(y => y.AdsType === 'pr');
-      if (prPlaces.length > 0) {
-        return prPlaces.reduce((acc, pr) => {
-          Prs.push(pr);
-          // check banner in this placement
-          if (pr.filterBanner().length === 0) {
-            return false;
-          }
-          return true;
-        }, 0);
-      }
-      return false;
-    });
-
-    if (prShare.length > 0) {
-      return prShare;
-    }
-
-    // filter cpd places
-    let cpdShare = [];
-    if (Prs.length === 0) {
-      cpdShare = allShare.filter((share) => {
-        const places = share.activePlacements();
-
-        const cpdPlaces = places.filter(y => y.AdsType === 'cpd');
-        if (cpdPlaces.length !== 0) {
-          return cpdPlaces.reduce((acc, cpd) => {
-            Cpds.push(cpd);
-            // check banner available in placement
-            if (cpd.filterBanner().length === 0) {
-              return false;
-            }
-            return true;
-          }, 0);
-        }
-
-        return false;
-      });
-    }
-
-    if (cpdShare.length > 0) {
-      // console.log('abc', cpdShare);
-      return cpdShare;
-    }
-
-    // filter cpm places
-    let cpmShare = [];
-    if (Cpds.length === 0) {
-      cpmShare = allShare.filter((share) => {
-        const places = share.activePlacements();
-
-        const cpmPlaces = places.filter(y => y.AdsType === 'cpm');
-        if (cpmPlaces.length !== 0) {
-          return cpmPlaces.reduce((acc, cpm) => {
-            Cpms.push(cpm);
-            // check banner available in placement
-            if (cpm.filterBanner().length === 0) {
-              return false;
-            }
-            return true;
-          }, 0);
-        }
-
-        return false;
-      });
-    }
-
-    if (cpmShare.length > 0) {
-      return cpmShare;
-    }
-    // console.log(allShare);
-    return allShare;
-  }
-
   filterShareDynamic(relativeKeyword) {
     const chooseShare = () => {
       let allShare = this.allShares();
@@ -997,11 +913,413 @@ class Zone extends Entity {
   }
 
   /**
+   * create all share and filter them fit with conditions
+   */
+
+  filterShare(relativeKeyword) {
+    /**
+     * [region: create Share construct]
+     *
+     */
+    const allShare = this.allShares();
+    let allSharePlace = allShare.reduce((acc, item, index) => { // eslint-disable-line
+      if (index === 0) {
+        return item.allsharePlacements;
+      }
+      return acc.concat(item.allsharePlacements);
+    }, 0);
+    allSharePlace.reduce((acc, item) => { // eslint-disable-line
+      if (item.positionOnShare !== 0) item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
+    }, 0);
+          /* This function to get placement have smallest area */
+    const getMinPlace = (allSharePlacement) => {
+      if (this.zoneType === 'right') {
+        let min = allSharePlacement[0].placement.height;
+        for (let i = 0, length = allSharePlacement.length; i < length; i += 1) {
+          if (allSharePlacement[i].placement.height < min) {
+            min = allSharePlacement[i].placement.height;
+          }
+        }
+        return min;
+      }
+      let min = allSharePlacement[0].placement.width;
+      for (let i = 0, length = allSharePlacement.length; i < length; i += 1) {
+        if (allSharePlacement[i].placement.width < min) {
+          min = allSharePlacement[i].placement.width;
+        }
+      }
+      return min;
+    };
+    const minPlace = getMinPlace(allSharePlace);
+
+          /* This function to get number of part which take in zone like placement,.. */
+    const getNumberOfParts = (height, isRoundUp) => {
+      if (this.zoneType === 'right') {
+        if (height % minPlace > 0 && isRoundUp) {
+          return Math.round(height / minPlace) + 1;
+        }
+        return Math.round(height / minPlace);
+      }
+      if (((height / minPlace) % 1) > 0.1 && isRoundUp) {
+        return Math.round(height / minPlace) + 1;
+      }
+      return Math.round(height / minPlace);
+    };
+    const numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
+    const shareConstruct = [];
+    // if cpdShare take all share percent in a place order -> filter
+    for (let i = 0; i < numberOfPlaceInShare; i += 1) {
+      const allSharePlaceInThisPosition = allSharePlace.filter(place =>
+      place.positionOnShare === i);
+      const allPlaceTypeInPosition = [];
+      allSharePlaceInThisPosition.reduce((acc, item, index) => { //eslint-disable-line
+        const type = item.placement.revenueType;
+        if (JSON.stringify(allPlaceTypeInPosition).indexOf(type) !== -1) return acc;
+        allPlaceTypeInPosition.push(type);
+      }, 0);
+      console.log('allPlaceTypeInPosition', allPlaceTypeInPosition);
+      const getAllPlaceType = [];
+      const isExistPlacePa = allPlaceTypeInPosition.indexOf('pa');
+      allSharePlaceInThisPosition.reduce((acc, item) => {
+        const type = item.placement.revenueType;
+        let weight = 0;
+        if (type === 'pa') weight = 100;
+        else {
+          const cpdWeight = allSharePlaceInThisPosition.reduce((acc2, place) =>
+            acc2 + (place.placement.cpdPercent * (this.zoneType === 'right' ? getNumberOfParts(place.placement.height, true) : getNumberOfParts(place.placement.width, true))), 0);
+          if (type === 'cpd') {
+            weight = isExistPlacePa ? 0 : cpdWeight;
+          } else {
+            weight = isExistPlacePa ? 0 : ((100 - cpdWeight) / allPlaceTypeInPosition.filter(x => x !== 'pa' && x !== 'cpd').length);
+          }
+        }
+        if (getAllPlaceType.map(x => x.type).indexOf(type) !== -1) return acc;
+        return getAllPlaceType.push({ type, weight });
+      }, 0);
+      console.log('getAllPlaceType', getAllPlaceType);
+      shareConstruct.push(getAllPlaceType);
+      /* eslint-disable */
+      // const isPr = allSharePlace.filter(place => place.positionOnShare === i && place.placement.revenueType === 'pr').length > 0;
+      // const totalCPDSharePercent = allSharePlace.filter(place =>
+      // place.positionOnShare === i && place.placement.revenueType === 'cpd').reduce((acc, place) =>
+      // acc + (place.placement.cpdPercent * place.placement.PlacementArea), 0);
+      // if (isPr) {
+      //   shareConstruct.push([
+      //     { type: 'pr', weight: 100 },
+      //     { type: 'cpd', weight: 0 },
+      //     { type: 'cpm', weight: 0 }]);
+      // } else {
+      //   shareConstruct.push([
+      //     { type: 'pr', weight: 0 },
+      //     { type: 'cpd', weight: totalCPDSharePercent },
+      //     { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
+      //   console.log('totalCPDSharePercent', totalCPDSharePercent, i);
+      // }
+      /* eslint-enable */
+    }
+    console.log('shareConstruct', shareConstruct);
+    let cookie = adsStorage.getStorage('_cpt');
+    let zoneCookie = adsStorage.subCookie(cookie, `${this.id}:`, 0);
+    zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
+    const ShareRendered = zoneCookie.split('|');
+    console.log('shareRender', ShareRendered);
+    const activeRevenue = (allRevenueType) => {
+      const randomNumber = Math.random() * 100;
+      const ratio = allRevenueType.reduce((acc, revenueType) =>
+          (revenueType.weight + acc), 0) / 100;
+      const result = allRevenueType.reduce((acc, revenueType) => {
+        const nextRange = acc + (revenueType.weight / ratio);
+
+        if (typeof acc === 'object') {
+          return acc;
+        }
+
+        if (randomNumber >= acc && randomNumber < nextRange) {
+          return revenueType;
+        }
+
+        return nextRange;
+      }, 0);
+      return result;
+    };
+    // build construct of current share.
+    let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
+    // console.log('lastThreeShare', lastThreeShare);
+    const numberOfChannel = util.uniqueItem(lastThreeShare.map(item => item.split(')(')[0])).length;
+    if (numberOfChannel > 1) {
+      lastThreeShare = [];
+      const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
+      cookie = `${cookie}`.replace(zoneCookie, '');
+      adsStorage.setStorage('_cpt', cookie, '', '/', domain);
+    }
+    const constructShareStructure = [];
+    for (let i = 0; i < numberOfPlaceInShare; i += 1) {
+      if (shareConstruct[i][0].weight === 100) {
+        constructShareStructure.push(shareConstruct[i][0]);
+      } else {
+        const lastPlaceType = [];
+        lastThreeShare.reduce((acc, share) => {
+          const shareTemp = share.split('][');
+          shareTemp.reduce((acc2, item, index) => {
+            if (index === i) {
+              lastPlaceType.push(item.split(')(')[2]);
+            }
+            return 0;
+          }, 0);
+          return 0;
+        }, 0);
+        console.log('lastPlaceType', lastPlaceType, i);
+
+        const cpdPercent = shareConstruct[i][1].weight;
+        const cpdAppear = lastPlaceType.reduce((acc, place) =>
+          (place === 'cpd' ? acc + 1 : acc + 0), 0);
+        const cpmAppear = lastPlaceType.reduce((acc, place) =>
+          (place === 'cpm' ? acc + 1 : acc + 0), 0);
+        console.log('cpmAppear', cpmAppear, cpdAppear);
+        if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
+          console.log('everyThings1', shareConstruct);
+          let isRemove = false;
+          if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
+            shareConstruct[i].splice(1, 1);
+            isRemove = true;
+          }
+          if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
+            if (isRemove === false) shareConstruct[i].splice(2, 1);
+          }
+        } else if (cpdPercent > (100 / 3) && cpdPercent <= (200 / 3)) {
+          let isRemove = false;
+          if (cpmAppear >= 1 && lastPlaceType.length >= 2) {
+            if (lastPlaceType[2] === 'cpm' || lastPlaceType[1] === 'cpm') {
+              shareConstruct[i].splice(2, 1);
+              isRemove = true;
+            }
+          }
+          if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
+            if (isRemove === false) shareConstruct[i].splice(1, 1);
+          }
+        }
+        console.log('everyThings2', shareConstruct);
+        const activeType = activeRevenue(shareConstruct[i]);
+        console.log('everyThings3', activeType);
+        constructShareStructure.push(activeType);
+      }
+    }
+    console.log('buildShareConstructXXX', constructShareStructure);
+    /**
+     * [end region: create Share construct]
+     */
+    /**
+     * filer placements suit with share structure and channel
+     */
+            /* filter place fit with share construct */
+    allSharePlace = allSharePlace.filter(item =>
+    item.placement.revenueType === constructShareStructure[item.positionOnShare].type);
+
+                /* filter place fit with current channel */
+    allSharePlace = allSharePlace.filter(place =>
+      place.placement.allBanners.reduce((acc, banner, index) => {
+        if (index === 0) {
+          return banner.checkChannel;
+        }
+        return acc && banner.checkChannel;
+      }, 0));
+    console.log('filterPlacement', allSharePlace);
+    /**
+     * end
+     */
+
+    /**
+     * get all monopoly placements
+     */
+    const monopolyPlaces = allSharePlace.filter(y =>
+    y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd');
+    console.log('monopolyPlacements', monopolyPlaces);
+    /**
+     * end
+     */
+
+    /**
+     * get share format in data
+     */
+    const shareFormats = allShare.map(x => (x.type === 'single' ? [1] : x.format.split(',')));
+    const checkShareFormat = format =>
+      shareFormats.reduce((acc, item, index) => {
+        if (index === 0) return util.checkTwoArrayEqual(item, format);
+        return acc || util.checkTwoArrayEqual(item, format);
+      }, 0);
+    const getShareInfo = (format) => {
+      for (let i = 0, length = allShare.length; i < length; i += 1) {
+        if (allShare[i].format !== format.join()) {
+          return allShare[i];
+        }
+      }
+      return false;
+    };
+    /**
+     * end
+     */
+    const activePlacement = (allPlaces, type) => {
+      const randomNumber = Math.random() * 100;
+      const ratio = allPlaces.reduce((tmp, place) => ((type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp), 0) / 100;
+      return allPlaces.reduce((range, placement) => {
+        const nextRange = range + ((type === 'cpd' ? placement.placement.cpdPercent : placement.placement.weight) / ratio);
+
+        if (typeof range === 'object') {
+          return range;
+        }
+
+        if (randomNumber >= range && randomNumber < nextRange) {
+          return placement;
+        }
+
+        return nextRange;
+      }, 0);
+    };
+    const filterPlaceWithKeyword = (places, arrRelativeKeyword) => {
+      const placesWithKeyword = places.filter(place =>
+        place.data.allBanners.reduce((acc1, banner) => {
+          const bannerKeyword = banner.keyword.split(',').map(item => item.replace(' ', ''));
+          return arrRelativeKeyword.filter(key =>
+              bannerKeyword.reduce((acc2, bannerKey, index2) =>
+                (index2 === 0 ? bannerKey === key :
+                  (acc2 || bannerKey === key)), 0)).length > 0;
+        }, 0));
+      return placesWithKeyword;
+    };
+    const createShare = (placeMonopolies) => {
+      const shares = [];
+      const shareDatas = [];
+      const arrayRelativeKeyword = [];
+      for (let i = 1; i <= numberOfPlaceInShare; i += 1) {
+        /*
+
+         divide share base on free area and number of part.
+
+          */
+        const createShareFormat = util.ComputeShare(numberOfPlaceInShare, i);
+        console.log('createShareFormat', createShareFormat);
+        /*
+
+         Browse each shareRatio on above and create a share for it.
+
+         */
+        createShareFormat.reduce((temp, shareFormat) => {
+          const checkS = checkShareFormat(shareFormat);
+          console.log('checkSnew', checkS);
+          if (checkS) {
+            /*
+
+             this variable to store places in a share which are chosen bellow.
+
+             */
+            const shareInfo = getShareInfo(shareFormat);
+            const share = { places: [], id: shareInfo.id, css: shareInfo.css };
+            let isRelative = false;
+            /*
+
+             Browse each placeRatio in shareRatio, then find a placement fit it.
+
+             */
+            shareFormat.reduce((temp2, placeRatio, index) => {
+              const placeChosen = [];
+                                       /* fill monopoly place first */
+              const listMonopolies = placeMonopolies.filter(x => x.positionOnShare === index &&
+              getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
+              if (placeMonopolies.map(item => item.positionOnShare).indexOf(index) !== -1 &&
+                listMonopolies.length > 0) {
+                const place = listMonopolies.length === 1 ? listMonopolies[0] :
+                  activePlacement(listMonopolies, shareConstruct[index]);
+                placeChosen.push(place);
+                share.places.push(place.placement);
+                return 0;
+              }
+              /*
+
+               Then, find all placement fit with area place for the rest part.
+
+               */
+              let places = allSharePlace.filter(place => (
+                getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
+                (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
+                  if (index2 === 0) return item.placement.id !== place.placement.id;
+                  return acc && item.placement.id !== place.placement.id;
+                }, 0) : true) &&
+                place.positionOnShare === index &&
+                place.placement.revenueType === constructShareStructure[index].type));
+              console.log('placementsForShare', places);
+
+              /*
+
+               filter place with relative keyword
+
+                */
+              let placesWithKeyword = [];
+              if (arrayRelativeKeyword.length > 0) {
+                placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+                if (placesWithKeyword.length > 0) {
+                  isRelative = true;
+                  places = placesWithKeyword;
+                }
+              }
+              /*
+
+               if don't have any places fit in area => return empty share.
+
+               */
+              if (places.length === 0) {
+                share.places = [];
+                share.id = '';
+                share.css = '';
+                return 0;
+              } else { // eslint-disable-line no-else-return
+                let place;
+                if (places.length === 1) {
+                  place = places[0];
+                } else {
+                  place = activePlacement(places, constructShareStructure[index]);
+                }
+
+                placeChosen.push(place);
+                share.places.push(place.placement);
+              }
+              return 0;
+            }, 0);
+            if (relativeKeyword !== '' && isRelative) {
+              console.log('ShareTest', share);
+              shares.push(share);
+              isRelative = false;
+            }
+            console.log('ShareTest', share);
+            shares.push(share);
+            isRelative = false;
+            return '';
+          }
+          return; // eslint-disable-line
+        }, 0);
+      }
+      if (shares.length > 0) {
+        const weight = 100 / shares.length;
+        for (let i = 0; i < shares.length; i += 1) {
+          const id = shares[i].id.replace('share-', '');
+          const outputCss = shares[i].css;
+          const placements = shares[i].places;
+          const newShare = new Share({ id, outputCss, placements, weight });
+          shareDatas.push(newShare);
+        }
+      }
+      return shareDatas;
+    };
+    const result = createShare(monopolyPlaces);
+    console.log('newShareFilter', result);
+    return result;
+  }
+
+  /**
    * Get a active share randomly by its weight
    * @return {Share}
    */
   activeShare(relativeKeyword) {
-    const allShare = this.filterShareDynamic(relativeKeyword);
+    const allShare = this.filterShare(relativeKeyword);
     if (allShare.length > 0) {
       const randomNumber = Math.random() * 100;
       const ratio = allShare.reduce((tmp, share) => {

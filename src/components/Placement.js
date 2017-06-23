@@ -8,7 +8,6 @@ import Vue from 'vue';
 import { Placement as PlacementModel } from '../models';
 import { Banner } from '../components';
 import { dom } from '../mixins';
-// import { VisSense } from '../vendor';
 
 const Placement = Vue.component('placement', {
 
