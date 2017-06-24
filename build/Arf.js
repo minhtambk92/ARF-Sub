@@ -11603,11 +11603,15 @@ var Banner = _vue2.default.component('banner', {
       var vm = this;
       try {
         var htmlData = vm.current.html;
+        (0, _postscribe2.default)('#' + vm.current.id, htmlData, {
+          done: function done() {
+            vm.$parent.$emit('renderAsyncCodeFinish');
+          }
+        });
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {
         // util.executeJS(htmlData, vm.current.id);
-        (0, _postscribe2.default)('#' + vm.current.id, htmlData);
         //     clearInterval(loadAsync);
         //   }
         // }, 500);
@@ -11738,10 +11742,15 @@ var Placement = _vue2.default.component('placement', {
   },
 
   render: function render(h) {
+    var _this = this;
+
     // eslint-disable-line no-unused-vars
     var vm = this;
-    // make a trigger to parent component(share) and send place;
-    this.$parent.$emit('render', this.current.id, this.current.revenueType);
+    this.$on('renderAsyncCodeFinish', function () {
+      console.log('renderAsyncCodeFinish');
+      // make a trigger to parent component(share) and send place;
+      _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
+    });
     var dev = location.search.indexOf('checkPlace=dev') !== -1;
     console.log('thisBanner', vm.activeBannerModel.zoneId);
     if (dev) {

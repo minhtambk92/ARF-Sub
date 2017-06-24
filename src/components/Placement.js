@@ -45,8 +45,11 @@ const Placement = Vue.component('placement', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-    // make a trigger to parent component(share) and send place;
-    this.$parent.$emit('render', this.current.id, this.current.revenueType);
+    this.$on('renderAsyncCodeFinish', () => {
+      console.log('renderAsyncCodeFinish');
+      // make a trigger to parent component(share) and send place;
+      this.$parent.$emit('render', this.current.id, this.current.revenueType);
+    });
     const dev = location.search.indexOf('checkPlace=dev') !== -1;
     console.log('thisBanner', vm.activeBannerModel.zoneId);
     if (dev) {

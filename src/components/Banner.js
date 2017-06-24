@@ -220,11 +220,15 @@ const Banner = Vue.component('banner', {
       const vm = this;
       try {
         const htmlData = vm.current.html;
+        postscribe(`#${vm.current.id}`, htmlData, {
+          done() {
+            vm.$parent.$emit('renderAsyncCodeFinish');
+          },
+        });
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {
         // util.executeJS(htmlData, vm.current.id);
-        postscribe(`#${vm.current.id}`, htmlData);
         //     clearInterval(loadAsync);
         //   }
         // }, 500);
