@@ -171,7 +171,7 @@ const Banner = Vue.component('banner', {
       const vm = this;
       try {
         const htmlData = vm.current.html;
-        setTimeout(() => {
+        const loadAsync = setInterval(() => {
           const container = document.getElementById(vm.current.id);
           if (container) {
             container.innerHTML = '';
@@ -181,9 +181,9 @@ const Banner = Vue.component('banner', {
                 vm.$parent.$emit('renderAsyncCodeFinish');
               },
             });
-            // clearInterval(loadAsync);
+            clearInterval(loadAsync);
           }
-        }, 1000);
+        }, 100);
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {

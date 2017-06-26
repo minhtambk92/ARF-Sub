@@ -11553,7 +11553,7 @@ var Banner = _vue2.default.component('banner', {
       var vm = this;
       try {
         var htmlData = vm.current.html;
-        setTimeout(function () {
+        var loadAsync = setInterval(function () {
           var container = document.getElementById(vm.current.id);
           if (container) {
             container.innerHTML = '';
@@ -11563,9 +11563,9 @@ var Banner = _vue2.default.component('banner', {
                 vm.$parent.$emit('renderAsyncCodeFinish');
               }
             });
-            // clearInterval(loadAsync);
+            clearInterval(loadAsync);
           }
-        }, 1000);
+        }, 100);
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {
