@@ -11699,9 +11699,9 @@ var Placement = _vue2.default.component('placement', {
       // make a trigger to parent component(share) and send place;
       _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
     });
-    setInterval(function () {
-      _this.$forceUpdate();
-    }, 3000);
+    // setInterval(() => {
+    //   this.$forceUpdate();
+    // }, 3000);
   },
 
 
