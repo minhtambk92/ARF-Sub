@@ -976,14 +976,15 @@ class Zone extends Entity {
       const allPlaceTypeInPosition = [];
       allSharePlaceInThisPosition.reduce((acc, item) => { //eslint-disable-line
         const type = item.placement.revenueType;
-        if (JSON.stringify(allPlaceTypeInPosition).indexOf(type) !== -1) return acc;
+        if (JSON.stringify(allPlaceTypeInPosition).indexOf(type) !== -1 || type === 'pb') return acc;
         allPlaceTypeInPosition.push(type);
       }, 0);
       console.log('allPlaceTypeInPosition', allPlaceTypeInPosition);
       const getAllPlaceType = [];
-      const isExistPlacePa = allPlaceTypeInPosition.indexOf('pa');
+      const isExistPlacePa = allPlaceTypeInPosition.indexOf('pa') !== -1;
       allSharePlaceInThisPosition.reduce((acc, item) => {
         const type = item.placement.revenueType;
+        if (type === 'pb') return acc;
         let weight = 0;
         if (type === 'pa') weight = 100;
         else {
@@ -992,7 +993,7 @@ class Zone extends Entity {
           if (type === 'cpd') {
             weight = isExistPlacePa ? 0 : cpdWeight;
           } else {
-            weight = isExistPlacePa ? 0 : ((100 - cpdWeight) / allPlaceTypeInPosition.filter(x => x !== 'pa' && x !== 'cpd').length);
+            weight = isExistPlacePa ? 0 : ((100 - cpdWeight) / allPlaceTypeInPosition.filter(x => (x !== 'pa' && x !== 'cpd') && x !== 'pb').length);
           }
         }
         if (getAllPlaceType.map(x => x.type).indexOf(type) !== -1) return acc;

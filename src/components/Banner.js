@@ -176,6 +176,7 @@ const Banner = Vue.component('banner', {
           if (container) {
             container.innerHTML = '';
             postscribe(`#${vm.current.id}`, htmlData, {
+              releaseAsync: true,
               done() {
                 vm.$parent.$emit('renderAsyncCodeFinish');
               },

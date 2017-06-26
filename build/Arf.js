@@ -11558,6 +11558,7 @@ var Banner = _vue2.default.component('banner', {
           if (container) {
             container.innerHTML = '';
             (0, _postscribe2.default)('#' + vm.current.id, htmlData, {
+              releaseAsync: true,
               done: function done() {
                 vm.$parent.$emit('renderAsyncCodeFinish');
               }
@@ -13448,14 +13449,15 @@ var Zone = function (_Entity) {
         allSharePlaceInThisPosition.reduce(function (acc, item) {
           //eslint-disable-line
           var type = item.placement.revenueType;
-          if ((0, _stringify2.default)(allPlaceTypeInPosition).indexOf(type) !== -1) return acc;
+          if ((0, _stringify2.default)(allPlaceTypeInPosition).indexOf(type) !== -1 || type === 'pb') return acc;
           allPlaceTypeInPosition.push(type);
         }, 0);
         console.log('allPlaceTypeInPosition', allPlaceTypeInPosition);
         var getAllPlaceType = [];
-        var isExistPlacePa = allPlaceTypeInPosition.indexOf('pa');
+        var isExistPlacePa = allPlaceTypeInPosition.indexOf('pa') !== -1;
         allSharePlaceInThisPosition.reduce(function (acc, item) {
           var type = item.placement.revenueType;
+          if (type === 'pb') return acc;
           var weight = 0;
           if (type === 'pa') weight = 100;else {
             var cpdWeight = allSharePlaceInThisPosition.reduce(function (acc2, place) {
@@ -13465,7 +13467,7 @@ var Zone = function (_Entity) {
               weight = isExistPlacePa ? 0 : cpdWeight;
             } else {
               weight = isExistPlacePa ? 0 : (100 - cpdWeight) / allPlaceTypeInPosition.filter(function (x) {
-                return x !== 'pa' && x !== 'cpd';
+                return x !== 'pa' && x !== 'cpd' && x !== 'pb';
               }).length;
             }
           }
