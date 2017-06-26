@@ -931,6 +931,7 @@ class Zone extends Entity {
     allSharePlace.reduce((acc, item) => { // eslint-disable-line
       if (item.positionOnShare !== 0) item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
     }, 0);
+
           /* This function to get placement have smallest area */
     const getMinPlace = (allSharePlacement) => {
       if (this.zoneType === 'right') {
@@ -967,12 +968,13 @@ class Zone extends Entity {
     };
     const numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
     const shareConstruct = [];
-    // if cpdShare take all share percent in a place order -> filter
+
+        /* if cpdShare take all share percent in a place order -> filter */
     for (let i = 0; i < numberOfPlaceInShare; i += 1) {
       const allSharePlaceInThisPosition = allSharePlace.filter(place =>
       place.positionOnShare === i);
       const allPlaceTypeInPosition = [];
-      allSharePlaceInThisPosition.reduce((acc, item, index) => { //eslint-disable-line
+      allSharePlaceInThisPosition.reduce((acc, item) => { //eslint-disable-line
         const type = item.placement.revenueType;
         if (JSON.stringify(allPlaceTypeInPosition).indexOf(type) !== -1) return acc;
         allPlaceTypeInPosition.push(type);
@@ -998,24 +1000,6 @@ class Zone extends Entity {
       }, 0);
       console.log('getAllPlaceType', getAllPlaceType);
       shareConstruct.push(getAllPlaceType);
-      /* eslint-disable */
-      // const isPr = allSharePlace.filter(place => place.positionOnShare === i && place.placement.revenueType === 'pr').length > 0;
-      // const totalCPDSharePercent = allSharePlace.filter(place =>
-      // place.positionOnShare === i && place.placement.revenueType === 'cpd').reduce((acc, place) =>
-      // acc + (place.placement.cpdPercent * place.placement.PlacementArea), 0);
-      // if (isPr) {
-      //   shareConstruct.push([
-      //     { type: 'pr', weight: 100 },
-      //     { type: 'cpd', weight: 0 },
-      //     { type: 'cpm', weight: 0 }]);
-      // } else {
-      //   shareConstruct.push([
-      //     { type: 'pr', weight: 0 },
-      //     { type: 'cpd', weight: totalCPDSharePercent },
-      //     { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
-      //   console.log('totalCPDSharePercent', totalCPDSharePercent, i);
-      // }
-      /* eslint-enable */
     }
     console.log('shareConstruct', shareConstruct);
     let cookie = adsStorage.getStorage('_cpt');
@@ -1042,9 +1026,9 @@ class Zone extends Entity {
       }, 0);
       return result;
     };
-    // build construct of current share.
+
+          /* build construct of current share. */
     let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
-    // console.log('lastThreeShare', lastThreeShare);
     const numberOfChannel = util.uniqueItem(lastThreeShare.map(item => item.split(')(')[0])).length;
     if (numberOfChannel > 1) {
       lastThreeShare = [];
@@ -1106,23 +1090,18 @@ class Zone extends Entity {
     }
     console.log('buildShareConstructXXX', constructShareStructure);
     /**
-     * [end region: create Share construct]
+     * [end region: create Share structure]
      */
     /**
      * filer placements suit with share structure and channel
      */
-            /* filter place fit with share construct */
+               /* filter place fit with share construct */
     allSharePlace = allSharePlace.filter(item =>
     item.placement.revenueType === constructShareStructure[item.positionOnShare].type);
 
                 /* filter place fit with current channel */
     allSharePlace = allSharePlace.filter(place =>
-      place.placement.allBanners.reduce((acc, banner, index) => {
-        if (index === 0) {
-          return banner.checkChannel;
-        }
-        return acc && banner.checkChannel;
-      }, 0));
+      place.placement.filterBanner().length > 0);
     console.log('filterPlacement', allSharePlace);
     /**
      * end
@@ -1238,16 +1217,16 @@ class Zone extends Entity {
                Then, find all placement fit with area place for the rest part.
 
                */
-              let places = allSharePlace.filter(place => (
+              const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && place.positionOnShare === index);
+              const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && place.positionOnShare === index);
+              let places = normalPlace.filter(place => (
                 getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
                 (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
                   if (index2 === 0) return item.placement.id !== place.placement.id;
                   return acc && item.placement.id !== place.placement.id;
                 }, 0) : true) &&
-                place.positionOnShare === index &&
                 place.placement.revenueType === constructShareStructure[index].type));
               console.log('placementsForShare', places);
-
               /*
 
                filter place with relative keyword
@@ -1260,6 +1239,15 @@ class Zone extends Entity {
                   isRelative = true;
                   places = placesWithKeyword;
                 }
+              }
+              /* fill pass back place if don't have any placement fit with conditional */
+              if (places.length === 0) {
+                places = passBackPlaces.filter(place => (
+                getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
+                (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
+                  if (index2 === 0) return item.placement.id !== place.placement.id;
+                  return acc && item.placement.id !== place.placement.id;
+                }, 0) : true)));
               }
               /*
 

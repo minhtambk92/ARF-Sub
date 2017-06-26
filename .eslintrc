@@ -23,7 +23,7 @@
     "expect": true,
     "sinon": true,
     "VisSense": false,
-    "ViewTrackingLibrary": false,
+    "ViewTracking": false,
     "postscribe": false
   },
 

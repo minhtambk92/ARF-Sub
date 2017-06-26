@@ -21,7 +21,7 @@ const Zone = Vue.component('zone', {
   mixins: [dom],
 
   created() {
-    if ((typeof window.ZoneConnect === 'undefined' && window.ZoneConnect === undefined)) {
+    if (window.ZoneConnect === undefined) {
       window.ZoneConnect = {
         relativeKeyword: '',
         setRelativeKeyword(keyword) {

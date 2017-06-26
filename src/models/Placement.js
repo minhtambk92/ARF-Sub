@@ -36,15 +36,16 @@ class Placement extends Entity {
   }
 
   filterBanner() {
+    if (this.revenueType === 'pb') return this.allBanners;
     let result = this.allBanners.filter(x => x.isRenderable());
-    console.log('numberOfBannerInPlacement', result);
     const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));
-    if (arrayKeyword.length > 0) {
+    if ((window.ZoneConnect.relativeKeyword !== undefined && window.ZoneConnect.relativeKeyword !== '') && arrayKeyword.length > 0) {
       const filterBannerWithKeyword = result.filter(banner => banner.keyword.split(',').map(item => item.replace(' ', '')).filter(item => arrayKeyword.indexOf(item) !== -1).length > 0);
       if (filterBannerWithKeyword.length > 0) {
         result = filterBannerWithKeyword;
       }
     }
+    console.log('numberOfBannerInPlacement', result, arrayKeyword);
     return result;
   }
 
@@ -61,7 +62,7 @@ class Placement extends Entity {
         }
         return acc && banner.weight > 0;
       }, 0);
-      console.log('isExitsWeight', isExitsWeight);
+      console.log('isExitsWeight', isExitsWeight, allBanner.length);
       if (!isExitsWeight) {
         const weight = 100 / allBanner.length;
         allBanner.reduce((acc, banner) => (banner.weight = weight), 0); // eslint-disable-line

@@ -4,7 +4,7 @@
 /* eslint-disable */
 // PercentageTimeMonitor
   !(function (root, factory) {
-    factory(root, root.ViewTrackingLibrary, root.ViewTrackingLibrary.Utils);
+    factory(root, root.ViewTracking, root.ViewTracking.Utils);
   }(window, (window, VisSense, VisSenseUtils, undefined) => {
     let createInnerMonitor = function (outerMonitor, callback, config) {
         let timeElapsed = 0,
@@ -89,7 +89,7 @@
 
 /*! { "name": "vissense-configurable-polling-strategy", "version": "0.0.1", "copyright": "(c) 2015 tbk" } */
   (function (root, factory) {
-    const vissense = root.ViewTrackingLibrary;
+    const vissense = root.ViewTracking;
     const utils = vissense.Utils;
     const strategy = vissense.VisMon.Strategy;
     factory(root, vissense, utils, strategy, root.Again);

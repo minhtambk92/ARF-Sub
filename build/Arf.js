@@ -10826,14 +10826,14 @@ var Placement = function (_Entity) {
   (0, _createClass3.default)(Placement, [{
     key: 'filterBanner',
     value: function filterBanner() {
+      if (this.revenueType === 'pb') return this.allBanners;
       var result = this.allBanners.filter(function (x) {
         return x.isRenderable();
       });
-      console.log('numberOfBannerInPlacement', result);
       var arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(function (item) {
         return item.replace(' ', '');
       });
-      if (arrayKeyword.length > 0) {
+      if (window.ZoneConnect.relativeKeyword !== undefined && window.ZoneConnect.relativeKeyword !== '' && arrayKeyword.length > 0) {
         var filterBannerWithKeyword = result.filter(function (banner) {
           return banner.keyword.split(',').map(function (item) {
             return item.replace(' ', '');
@@ -10845,6 +10845,7 @@ var Placement = function (_Entity) {
           result = filterBannerWithKeyword;
         }
       }
+      console.log('numberOfBannerInPlacement', result, arrayKeyword);
       return result;
     }
 
@@ -10864,7 +10865,7 @@ var Placement = function (_Entity) {
           }
           return acc && banner.weight > 0;
         }, 0);
-        console.log('isExitsWeight', isExitsWeight);
+        console.log('isExitsWeight', isExitsWeight, allBanner.length);
         if (!isExitsWeight) {
           var weight = 100 / allBanner.length;
           allBanner.reduce(function (acc, banner) {
@@ -11437,88 +11438,29 @@ var Banner = _vue2.default.component('banner', {
   mounted: function mounted() {
     var _this = this;
 
-    if (this.current.isIFrame) {
-      console.log('renderBannerIframe');
-      this.renderToIFrame();
-    } else {
-      console.log('renderBannerNoIframe', 'newCode');
-      this.renderBannerNoIframe();
-    }
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
       window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
     var banner = document.getElementById(this.current.id);
-    if (banner) {
-      var objMonitor = ViewTrackingLibrary(banner);
-      var monitor = ViewTrackingLibrary.VisMon.Builder(objMonitor);
-      // let isMonitor = false;
-      // let isUpdating = false;
-      /* eslint-disable */
+    var objMonitor = ViewTracking(banner);
+    var monitor = ViewTracking.VisMon.Builder(objMonitor);
+    setTimeout(function () {
       // throttle -> update time
-      monitor
-      // .strategy(new VisSense.VisMon.Strategy.ConfigurablePollingStrategy({
-      //   hidden: 1000,
-      //   visible: 2000,
-      //   fullyvisible: 5000
-      // }))
-      .strategy(new ViewTrackingLibrary.VisMon.Strategy.EventStrategy({ throttle: 200 })).strategy(new ViewTrackingLibrary.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
+      monitor.strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 })).strategy(new ViewTracking.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
         percentageLimit: 0.3,
-        timeLimit: 1000,
+        timeLimit: 200,
         interval: 100
-      }))
-      // .on('update', (monitor) => {
-      //   isUpdating = true;
-      //   const a = setTimeout(() => {
-      //     isUpdating = false;
-      //   }, 1000);
-      //   clearTimeout(a);
-      // })
-      // .on('start', (monitor) => {
-      //   console.log('start');
-      // })
-      // .on('visible', (monitor) => {
-      //   console.log('visible');
-      // })
-      // .on('fullyvisible', (monitor) => {
-      //   console.log('fullyvisible');
-      // })
-      // .on('hidden', (monitor) => {
-      //   console.log('hidden');
-      // })
-      // .on('visibilitychange', (monitor) => {
-      //   console.log('visibilitychange');
-      // })
-      // .on('percentagechange', (monitor, newValue, oldValue) => {
-      //   // console.log(`percentagechange ${oldValue} -> ${newValue}`);
-      //   // const percentChange = newValue === undefined ? 0 : newValue;
-      //   setTimeout(() => {
-      //     const temp = newValue;
-      //     const temp2 = oldValue;
-      //     if (!isMonitor && (temp === newValue && temp2 === oldValue)) {
-      //       isMonitor = true;
-      //       objMonitor.onPercentageTimeTestPassed(() => {
-      //         console.log('Banner display passed test for 30% visibility over 1 seconds.');
-      //         isMonitor = false;
-      //       }, {
-      //         percentageLimit: 0.3,
-      //         timeLimit: 1000,
-      //         interval: 200
-      //       });
-      //     }
-      //   }, 1000);
-      // })
-      .on('30%/1s', function (monitor) {
+      })).on('30%/1s', function () {
         _this.current.bannerLogging(2);
         console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
       }).build().start();
-      /* eslint-enable */
-      banner.addEventListener('click', function () {
-        _this.current.bannerLogging(1);
-        console.log('clickBanner');
-      });
-    }
+    }, 1000);
+    banner.addEventListener('click', function () {
+      _this.current.bannerLogging(1);
+      console.log('clickBanner');
+    });
   },
 
 
@@ -11530,84 +11472,99 @@ var Banner = _vue2.default.component('banner', {
       var _this2 = this;
 
       var vm = this;
-      var iframe = vm.iframe.el;
+      var tete = setInterval(function () {
+        var container = document.getElementById(vm.current.id);
+        if (container) {
+          container.innerHTML = '';
+          var iframe = document.createElement('iframe');
 
-      iframe.onload = function () {
-        if (vm.$data.isRendered === false) {
-          iframe.width = vm.current.width;
-          iframe.height = vm.current.height;
-          iframe.id = 'iframe-' + vm.current.id;
-          iframe.frameBorder = vm.iframe.frameBorder;
-          iframe.marginWidth = vm.iframe.marginWidth;
-          iframe.marginHeight = vm.iframe.marginHeight;
-          iframe.scrolling = 'no'; // Prevent iframe body scrolling
+          iframe.onload = function () {
+            if (vm.$data.isRendered === false) {
+              iframe.width = vm.current.width;
+              iframe.height = vm.current.height;
+              iframe.id = 'iframe-' + vm.current.id;
+              iframe.frameBorder = vm.iframe.frameBorder;
+              iframe.marginWidth = vm.iframe.marginWidth;
+              iframe.marginHeight = vm.iframe.marginHeight;
+              iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
-          iframe.contentWindow.document.open();
-          if (_this2.current.bannerType.isUpload !== undefined && _this2.current.bannerType.isUpload === true) {
-            iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
-          } else {
-            var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
-            var scriptCode = _vendor.util.getScriptTag(bannerData).scripts;
-            var marginBanner = '';
-            if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
-              // eslint-disable-next-line
-              var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
-              var bannerContainer = 'ads_zone' + bannerCode;
-              marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'setTimeout(function() {\n           //  eslint-disable-next-line\n                 var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
-              'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + '}}, 200);</script>';
-            }
-            // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
-            iframe.contentWindow.document.write(bannerData + marginBanner);
-            // iframe.contentWindow.document.write(bannerDataWithMacro);
-          }
-          iframe.contentWindow.document.close();
-
-          // Prevent scroll on IE
-          if (iframe.contentWindow.document.body !== null) {
-            iframe.contentWindow.document.body.style.margin = 0;
-          }
-
-          // resize iframe fit with content
-          var fixIframe = setInterval(function () {
-            if (document.readyState === 'complete') {
-              // Already loaded!
-              if (document.getElementById('iframe-' + vm.current.id)) {
-                _vendor.util.resizeIFrameToFitContent(iframe);
-              }
-              clearInterval(fixIframe);
-            } else {
-              // Add onload or DOMContentLoaded event listeners here
-              window.addEventListener('onload', function () {
-                if (document.getElementById('iframe-' + vm.current.id)) {
-                  _vendor.util.resizeIFrameToFitContent(iframe);
+              iframe.contentWindow.document.open();
+              if (_this2.current.bannerType.isUpload !== undefined && _this2.current.bannerType.isUpload === true) {
+                iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
+              } else {
+                var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
+                var scriptCode = _vendor.util.getScriptTag(bannerData).scripts;
+                var marginBanner = '';
+                if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
+                  // eslint-disable-next-line
+                  var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
+                  var bannerContainer = 'ads_zone' + bannerCode;
+                  marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'setTimeout(function() {\n           //  eslint-disable-next-line\n                 var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
+                  'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + '}}, 200);</script>';
                 }
-                clearInterval(fixIframe);
-              }, false);
-              // or
-              // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
+                // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
+                iframe.contentWindow.document.write(bannerData + marginBanner);
+                // iframe.contentWindow.document.write(bannerDataWithMacro);
+              }
+              iframe.contentWindow.document.close();
+
+              // Prevent scroll on IE
+              if (iframe.contentWindow.document.body !== null) {
+                iframe.contentWindow.document.body.style.margin = 0;
+              }
+
+              // resize iframe fit with content
+              var fixIframe = setInterval(function () {
+                if (document.readyState === 'complete') {
+                  // Already loaded!
+                  if (document.getElementById('iframe-' + vm.current.id)) {
+                    _vendor.util.resizeIFrameToFitContent(iframe);
+                  }
+                  clearInterval(fixIframe);
+                } else {
+                  // Add onload or DOMContentLoaded event listeners here
+                  window.addEventListener('onload', function () {
+                    if (document.getElementById('iframe-' + vm.current.id)) {
+                      _vendor.util.resizeIFrameToFitContent(iframe);
+                    }
+                    clearInterval(fixIframe);
+                  }, false);
+                  // or
+                  // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
+                }
+              }, 100);
+
+              // Prevent AppleWebKit iframe.onload loop
+              vm.$data.isRendered = true;
             }
-          }, 100);
+          };
 
-          // Prevent AppleWebKit iframe.onload loop
-          vm.$data.isRendered = true;
+          try {
+            // vm.$el.replaceChild(iframe, vm.$refs.banner); // Do the trick
+            vm.$el.appendChild(iframe);
+            clearInterval(tete);
+          } catch (error) {
+            throw new Error(error);
+          }
         }
-      };
-
-      try {
-        vm.$el.replaceChild(iframe, vm.$refs.banner); // Do the trick
-      } catch (error) {
-        throw new Error(error);
-      }
+      }, 500);
     },
     renderBannerNoIframe: function renderBannerNoIframe() {
       var vm = this;
       try {
         var htmlData = vm.current.html;
-        (0, _postscribe2.default)('#' + vm.current.id, htmlData, {
-          done: function done() {
-            vm.$parent.$emit('renderAsyncCodeFinish');
+        setTimeout(function () {
+          var container = document.getElementById(vm.current.id);
+          if (container) {
+            container.innerHTML = '';
+            (0, _postscribe2.default)('#' + vm.current.id, htmlData, {
+              done: function done() {
+                vm.$parent.$emit('renderAsyncCodeFinish');
+              }
+            });
+            // clearInterval(loadAsync);
           }
-        });
+        }, 1000);
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {
@@ -11624,6 +11581,14 @@ var Banner = _vue2.default.component('banner', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
+    if (this.current.isIFrame) {
+      console.log('renderBannerIframe');
+      vm.$data.isRendered = false;
+      this.renderToIFrame();
+    } else {
+      console.log('renderBannerNoIframe', 'newCode');
+      this.renderBannerNoIframe();
+    }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {
     //     this.$parent.$emit('bannerHeight', document.getElementById(`${vm.current.id}`)
@@ -11631,28 +11596,6 @@ var Banner = _vue2.default.component('banner', {
     //     clearInterval(height);
     //   }
     // }, 100);
-    var dev = location.search.indexOf('checkPlace=dev') !== -1;
-    if (dev) {
-      return h(
-        'div',
-        {
-          attrs: {
-            id: vm.current.id
-          },
-          'class': 'arf-banner',
-          style: {
-            width: vm.current.width + 'px',
-            zIndex: 0,
-            position: 'absolute'
-          }
-        },
-        [h(
-          'div',
-          { ref: 'banner' },
-          ['banner content']
-        )]
-      );
-    }
     return h(
       'div',
       {
@@ -11724,37 +11667,43 @@ var Placement = _vue2.default.component('placement', {
     window.arfPlacements[this.current.id] = this;
   },
   mounted: function mounted() {
+    var _this = this;
+
     // this.$on('bannerHeight', (bannerHeight) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
+    this.$on('renderAsyncCodeFinish', function () {
+      console.log('renderAsyncCodeFinish');
+      // make a trigger to parent component(share) and send place;
+      _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
+    });
+    // setInterval(() => {
+    //   this.$forceUpdate();
+    // }, 10000);
   },
 
 
   computed: {
     current: function current() {
       return this.model instanceof _models.Placement ? this.model : new _models.Placement(this.model);
-    },
+    }
+  },
+
+  methods: {
     activeBannerModel: function activeBannerModel() {
-      // console.log('placement is rendered', this.current.id);
       return this.current.activeBanner();
     }
   },
 
   render: function render(h) {
-    var _this = this;
-
     // eslint-disable-line no-unused-vars
     var vm = this;
-    this.$on('renderAsyncCodeFinish', function () {
-      console.log('renderAsyncCodeFinish');
-      // make a trigger to parent component(share) and send place;
-      _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
-    });
     var dev = location.search.indexOf('checkPlace=dev') !== -1;
-    console.log('thisBanner', vm.activeBannerModel.zoneId);
+    var currentBanner = vm.activeBannerModel();
+    console.log('currentBanner', currentBanner);
     if (dev) {
-      if (vm.activeBannerModel !== false) {
+      if (vm.activeBannerModel() !== false) {
         return h(
           'div',
           {
@@ -11770,7 +11719,7 @@ var Placement = _vue2.default.component('placement', {
           [h(
             _components.Banner,
             {
-              attrs: { model: vm.activeBannerModel }
+              attrs: { model: vm.activeBannerModel() }
             },
             []
           ), h(
@@ -11847,7 +11796,7 @@ var Placement = _vue2.default.component('placement', {
         )]
       );
     }
-    if (vm.activeBannerModel !== false) {
+    if (currentBanner !== false) {
       return h(
         'div',
         {
@@ -11862,7 +11811,7 @@ var Placement = _vue2.default.component('placement', {
         [h(
           _components.Banner,
           {
-            attrs: { model: vm.activeBannerModel }
+            attrs: { model: currentBanner }
           },
           []
         )]
@@ -11875,10 +11824,6 @@ var Placement = _vue2.default.component('placement', {
           id: vm.current.id
         },
         'class': 'arf-placement'
-        // style={{
-        //   width: `${vm.current.width}px`,
-        //   // height: `${vm.current.height}px`,
-        // }}
       },
       []
     );
@@ -12034,7 +11979,7 @@ var Zone = _vue2.default.component('zone', {
   mixins: [_mixins.dom],
 
   created: function created() {
-    if (typeof window.ZoneConnect === 'undefined' && window.ZoneConnect === undefined) {
+    if (window.ZoneConnect === undefined) {
       window.ZoneConnect = {
         relativeKeyword: '',
         setRelativeKeyword: function setRelativeKeyword(keyword) {
@@ -13455,6 +13400,7 @@ var Zone = function (_Entity) {
         // eslint-disable-line
         if (item.positionOnShare !== 0) item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
       }, 0);
+
       /* This function to get placement have smallest area */
       var getMinPlace = function getMinPlace(allSharePlacement) {
         if (_this3.zoneType === 'right') {
@@ -13491,14 +13437,15 @@ var Zone = function (_Entity) {
       };
       var numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
       var shareConstruct = [];
-      // if cpdShare take all share percent in a place order -> filter
+
+      /* if cpdShare take all share percent in a place order -> filter */
 
       var _loop4 = function _loop4(i) {
         var allSharePlaceInThisPosition = allSharePlace.filter(function (place) {
           return place.positionOnShare === i;
         });
         var allPlaceTypeInPosition = [];
-        allSharePlaceInThisPosition.reduce(function (acc, item, index) {
+        allSharePlaceInThisPosition.reduce(function (acc, item) {
           //eslint-disable-line
           var type = item.placement.revenueType;
           if ((0, _stringify2.default)(allPlaceTypeInPosition).indexOf(type) !== -1) return acc;
@@ -13529,24 +13476,6 @@ var Zone = function (_Entity) {
         }, 0);
         console.log('getAllPlaceType', getAllPlaceType);
         shareConstruct.push(getAllPlaceType);
-        /* eslint-disable */
-        // const isPr = allSharePlace.filter(place => place.positionOnShare === i && place.placement.revenueType === 'pr').length > 0;
-        // const totalCPDSharePercent = allSharePlace.filter(place =>
-        // place.positionOnShare === i && place.placement.revenueType === 'cpd').reduce((acc, place) =>
-        // acc + (place.placement.cpdPercent * place.placement.PlacementArea), 0);
-        // if (isPr) {
-        //   shareConstruct.push([
-        //     { type: 'pr', weight: 100 },
-        //     { type: 'cpd', weight: 0 },
-        //     { type: 'cpm', weight: 0 }]);
-        // } else {
-        //   shareConstruct.push([
-        //     { type: 'pr', weight: 0 },
-        //     { type: 'cpd', weight: totalCPDSharePercent },
-        //     { type: 'cpm', weight: 100 - totalCPDSharePercent }]);
-        //   console.log('totalCPDSharePercent', totalCPDSharePercent, i);
-        // }
-        /* eslint-enable */
       };
 
       for (var i = 0; i < numberOfPlaceInShare; i += 1) {
@@ -13578,9 +13507,9 @@ var Zone = function (_Entity) {
         }, 0);
         return result;
       };
-      // build construct of current share.
+
+      /* build construct of current share. */
       var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
-      // console.log('lastThreeShare', lastThreeShare);
       var numberOfChannel = _vendor.util.uniqueItem(lastThreeShare.map(function (item) {
         return item.split(')(')[0];
       })).length;
@@ -13651,7 +13580,7 @@ var Zone = function (_Entity) {
       }
       console.log('buildShareConstructXXX', constructShareStructure);
       /**
-       * [end region: create Share construct]
+       * [end region: create Share structure]
        */
       /**
        * filer placements suit with share structure and channel
@@ -13663,12 +13592,7 @@ var Zone = function (_Entity) {
 
       /* filter place fit with current channel */
       allSharePlace = allSharePlace.filter(function (place) {
-        return place.placement.allBanners.reduce(function (acc, banner, index) {
-          if (index === 0) {
-            return banner.checkChannel;
-          }
-          return acc && banner.checkChannel;
-        }, 0);
+        return place.placement.filterBanner().length > 0;
       });
       console.log('filterPlacement', allSharePlace);
       /**
@@ -13786,15 +13710,20 @@ var Zone = function (_Entity) {
                 /*
                   Then, find all placement fit with area place for the rest part.
                   */
-                var places = allSharePlace.filter(function (place) {
+                var normalPlace = allSharePlace.filter(function (place) {
+                  return place.placement.revenueType !== 'pb' && place.positionOnShare === index;
+                });
+                var passBackPlaces = allSharePlace.filter(function (place) {
+                  return place.placement.revenueType === 'pb' && place.positionOnShare === index;
+                });
+                var places = normalPlace.filter(function (place) {
                   return getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
                     // eslint-disable-line
                     if (index2 === 0) return item.placement.id !== place.placement.id;
                     return acc && item.placement.id !== place.placement.id;
-                  }, 0) : true) && place.positionOnShare === index && place.placement.revenueType === constructShareStructure[index].type;
+                  }, 0) : true) && place.placement.revenueType === constructShareStructure[index].type;
                 });
                 console.log('placementsForShare', places);
-
                 /*
                   filter place with relative keyword
                    */
@@ -13805,6 +13734,16 @@ var Zone = function (_Entity) {
                     isRelative = true;
                     places = placesWithKeyword;
                   }
+                }
+                /* fill pass back place if don't have any placement fit with conditional */
+                if (places.length === 0) {
+                  places = passBackPlaces.filter(function (place) {
+                    return getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                      // eslint-disable-line
+                      if (index2 === 0) return item.placement.id !== place.placement.id;
+                      return acc && item.placement.id !== place.placement.id;
+                    }, 0) : true);
+                  });
                 }
                 /*
                   if don't have any places fit in area => return empty share.
@@ -14028,7 +13967,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   root[name] = _newValue, root[name].noConflict = function () {
     return root[name] = _oldValue, _newValue;
   };
-}(window, 'ViewTrackingLibrary', function () {
+}(window, 'ViewTracking', function () {
   var window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window;
   var document = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window.document;
   var undefined = arguments[2];
@@ -14517,7 +14456,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* eslint-disable */
 // PercentageTimeMonitor
 !function (root, factory) {
-  factory(root, root.ViewTrackingLibrary, root.ViewTrackingLibrary.Utils);
+  factory(root, root.ViewTracking, root.ViewTracking.Utils);
 }(window, function (window, VisSense, VisSenseUtils, undefined) {
   var createInnerMonitor = function createInnerMonitor(outerMonitor, callback, config) {
     var timeElapsed = 0,
@@ -14601,7 +14540,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /*! { "name": "vissense-configurable-polling-strategy", "version": "0.0.1", "copyright": "(c) 2015 tbk" } */
 (function (root, factory) {
-  var vissense = root.ViewTrackingLibrary;
+  var vissense = root.ViewTracking;
   var utils = vissense.Utils;
   var strategy = vissense.VisMon.Strategy;
   factory(root, vissense, utils, strategy, root.Again);

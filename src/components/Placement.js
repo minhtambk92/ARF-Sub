@@ -30,30 +30,35 @@ const Placement = Vue.component('placement', {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
+    this.$on('renderAsyncCodeFinish', () => {
+      console.log('renderAsyncCodeFinish');
+      // make a trigger to parent component(share) and send place;
+      this.$parent.$emit('render', this.current.id, this.current.revenueType);
+    });
+    // setInterval(() => {
+    //   this.$forceUpdate();
+    // }, 10000);
   },
 
   computed: {
     current() {
       return (this.model instanceof PlacementModel) ? this.model : new PlacementModel(this.model);
     },
+  },
 
+  methods: {
     activeBannerModel() {
-      // console.log('placement is rendered', this.current.id);
       return this.current.activeBanner();
     },
   },
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-    this.$on('renderAsyncCodeFinish', () => {
-      console.log('renderAsyncCodeFinish');
-      // make a trigger to parent component(share) and send place;
-      this.$parent.$emit('render', this.current.id, this.current.revenueType);
-    });
     const dev = location.search.indexOf('checkPlace=dev') !== -1;
-    console.log('thisBanner', vm.activeBannerModel.zoneId);
+    const currentBanner = vm.activeBannerModel();
+    console.log('currentBanner', currentBanner);
     if (dev) {
-      if (vm.activeBannerModel !== false) {
+      if (vm.activeBannerModel() !== false) {
         return (
           <div
             id={vm.current.id}
@@ -63,7 +68,7 @@ const Placement = Vue.component('placement', {
               height: `${vm.current.height}px`,
             }}
           >
-            <Banner model={vm.activeBannerModel} />
+            <Banner model={vm.activeBannerModel()} />
             <div
               style={{
                 zIndex: 9999,
@@ -121,7 +126,7 @@ const Placement = Vue.component('placement', {
         </div>
       );
     }
-    if (vm.activeBannerModel !== false) {
+    if (currentBanner !== false) {
       return (
         <div
           id={vm.current.id}
@@ -131,7 +136,7 @@ const Placement = Vue.component('placement', {
             // height: `${vm.current.height}px`,
           }}
         >
-          <Banner model={vm.activeBannerModel} />
+          <Banner model={currentBanner} />
         </div>
       );
     }
@@ -139,10 +144,6 @@ const Placement = Vue.component('placement', {
       <div
         id={vm.current.id}
         class="arf-placement"
-        // style={{
-        //   width: `${vm.current.width}px`,
-        //   // height: `${vm.current.height}px`,
-        // }}
       />
     );
   },

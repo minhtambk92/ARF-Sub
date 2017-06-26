@@ -48,91 +48,34 @@ const Banner = Vue.component('banner', {
   },
 
   mounted() {
-    if (this.current.isIFrame) {
-      console.log('renderBannerIframe');
-      this.renderToIFrame();
-    } else {
-      console.log('renderBannerNoIframe', 'newCode');
-      this.renderBannerNoIframe();
-    }
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
       window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
     const banner = document.getElementById(this.current.id);
-    if (banner) {
-      const objMonitor = ViewTrackingLibrary(banner);
-      const monitor = ViewTrackingLibrary.VisMon.Builder(objMonitor);
-        // let isMonitor = false;
-        // let isUpdating = false;
-        /* eslint-disable */
-        // throttle -> update time
-        monitor
-          // .strategy(new VisSense.VisMon.Strategy.ConfigurablePollingStrategy({
-          //   hidden: 1000,
-          //   visible: 2000,
-          //   fullyvisible: 5000
-          // }))
-          .strategy(new ViewTrackingLibrary.VisMon.Strategy.EventStrategy({ throttle: 200 }))
-          .strategy(new ViewTrackingLibrary.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
-            percentageLimit: 0.3,
-            timeLimit: 1000,
-            interval: 100
-          }))
-          // .on('update', (monitor) => {
-          //   isUpdating = true;
-          //   const a = setTimeout(() => {
-          //     isUpdating = false;
-          //   }, 1000);
-          //   clearTimeout(a);
-          // })
-          // .on('start', (monitor) => {
-          //   console.log('start');
-          // })
-          // .on('visible', (monitor) => {
-          //   console.log('visible');
-          // })
-          // .on('fullyvisible', (monitor) => {
-          //   console.log('fullyvisible');
-          // })
-          // .on('hidden', (monitor) => {
-          //   console.log('hidden');
-          // })
-          // .on('visibilitychange', (monitor) => {
-          //   console.log('visibilitychange');
-          // })
-          // .on('percentagechange', (monitor, newValue, oldValue) => {
-          //   // console.log(`percentagechange ${oldValue} -> ${newValue}`);
-          //   // const percentChange = newValue === undefined ? 0 : newValue;
-          //   setTimeout(() => {
-          //     const temp = newValue;
-          //     const temp2 = oldValue;
-          //     if (!isMonitor && (temp === newValue && temp2 === oldValue)) {
-          //       isMonitor = true;
-          //       objMonitor.onPercentageTimeTestPassed(() => {
-          //         console.log('Banner display passed test for 30% visibility over 1 seconds.');
-          //         isMonitor = false;
-          //       }, {
-          //         percentageLimit: 0.3,
-          //         timeLimit: 1000,
-          //         interval: 200
-          //       });
-          //     }
-          //   }, 1000);
-          // })
-          .on('30%/1s', (monitor) => {
-            this.current.bannerLogging(2);
-            console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
-          })
-          .build()
-          .start();
-        /* eslint-enable */
-      banner.addEventListener('click', () => {
-        this.current.bannerLogging(1);
-        console.log('clickBanner');
-      });
-    }
+    const objMonitor = ViewTracking(banner);
+    const monitor = ViewTracking.VisMon.Builder(objMonitor);
+    setTimeout(() => {
+      // throttle -> update time
+      monitor
+        .strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 }))
+        .strategy(new ViewTracking.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
+          percentageLimit: 0.3,
+          timeLimit: 200,
+          interval: 100,
+        }))
+        .on('30%/1s', () => {
+          this.current.bannerLogging(2);
+          console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
+        })
+        .build()
+        .start();
+    }, 1000);
+    banner.addEventListener('click', () => {
+      this.current.bannerLogging(1);
+      console.log('clickBanner');
+    });
   },
 
   methods: {
@@ -141,90 +84,105 @@ const Banner = Vue.component('banner', {
      */
     renderToIFrame() {
       const vm = this;
-      const iframe = vm.iframe.el;
+      const tete = setInterval(() => {
+        const container = document.getElementById(vm.current.id);
+        if (container) {
+          container.innerHTML = '';
+          const iframe = document.createElement('iframe');
 
-      iframe.onload = () => {
-        if (vm.$data.isRendered === false) {
-          iframe.width = vm.current.width;
-          iframe.height = vm.current.height;
-          iframe.id = `iframe-${vm.current.id}`;
-          iframe.frameBorder = vm.iframe.frameBorder;
-          iframe.marginWidth = vm.iframe.marginWidth;
-          iframe.marginHeight = vm.iframe.marginHeight;
-          iframe.scrolling = 'no'; // Prevent iframe body scrolling
+          iframe.onload = () => {
+            if (vm.$data.isRendered === false) {
+              iframe.width = vm.current.width;
+              iframe.height = vm.current.height;
+              iframe.id = `iframe-${vm.current.id}`;
+              iframe.frameBorder = vm.iframe.frameBorder;
+              iframe.marginWidth = vm.iframe.marginWidth;
+              iframe.marginHeight = vm.iframe.marginHeight;
+              iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
-          iframe.contentWindow.document.open();
-          if (this.current.bannerType.isUpload !== undefined &&
-            this.current.bannerType.isUpload === true) {
-            iframe.contentWindow.document.write(`<img src="${vm.current.imageUrl}">`);
-          } else {
-            const bannerData = macro.replaceMacro(vm.current.html, true);
-            const scriptCode = util.getScriptTag(bannerData).scripts;
-            let marginBanner = '';
-            if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
-             // eslint-disable-next-line
-              const bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
-              const bannerContainer = `ads_zone${bannerCode}`;
-              marginBanner = `<script> var bannerParentID = "${bannerContainer}";` +
-                `setTimeout(function() {
+              iframe.contentWindow.document.open();
+              if (this.current.bannerType.isUpload !== undefined &&
+                this.current.bannerType.isUpload === true) {
+                iframe.contentWindow.document.write(`<img src="${vm.current.imageUrl}">`);
+              } else {
+                const bannerData = macro.replaceMacro(vm.current.html, true);
+                const scriptCode = util.getScriptTag(bannerData).scripts;
+                let marginBanner = '';
+                if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
+                  // eslint-disable-next-line
+                  const bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
+                  const bannerContainer = `ads_zone${bannerCode}`;
+                  marginBanner = `<script> var bannerParentID = "${bannerContainer}";` +
+                    `setTimeout(function() {
            //  eslint-disable-next-line
                  var bannerParent = document.getElementById(bannerParentID);` + // eslint-disable-line
-                'if (bannerParent) {' +
-                '   bannerParent.childNodes[1].style.marginLeft = 0;' +
-                '}}, 200);</script>';
-            }
-            // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
-            iframe.contentWindow.document.write(bannerData + marginBanner);
-            // iframe.contentWindow.document.write(bannerDataWithMacro);
-          }
-          iframe.contentWindow.document.close();
-
-          // Prevent scroll on IE
-          if (iframe.contentWindow.document.body !== null) {
-            iframe.contentWindow.document.body.style.margin = 0;
-          }
-
-          // resize iframe fit with content
-          const fixIframe = setInterval(() => {
-            if (document.readyState === 'complete') {
-             // Already loaded!
-              if (document.getElementById(`iframe-${vm.current.id}`)) {
-                util.resizeIFrameToFitContent(iframe);
-              }
-              clearInterval(fixIframe);
-            } else {
-             // Add onload or DOMContentLoaded event listeners here
-              window.addEventListener('onload', () => {
-                if (document.getElementById(`iframe-${vm.current.id}`)) {
-                  util.resizeIFrameToFitContent(iframe);
+                    'if (bannerParent) {' +
+                    '   bannerParent.childNodes[1].style.marginLeft = 0;' +
+                    '}}, 200);</script>';
                 }
-                clearInterval(fixIframe);
-              }, false);
-             // or
-             // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
+                // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
+                iframe.contentWindow.document.write(bannerData + marginBanner);
+                // iframe.contentWindow.document.write(bannerDataWithMacro);
+              }
+              iframe.contentWindow.document.close();
+
+              // Prevent scroll on IE
+              if (iframe.contentWindow.document.body !== null) {
+                iframe.contentWindow.document.body.style.margin = 0;
+              }
+
+              // resize iframe fit with content
+              const fixIframe = setInterval(() => {
+                if (document.readyState === 'complete') {
+                  // Already loaded!
+                  if (document.getElementById(`iframe-${vm.current.id}`)) {
+                    util.resizeIFrameToFitContent(iframe);
+                  }
+                  clearInterval(fixIframe);
+                } else {
+                  // Add onload or DOMContentLoaded event listeners here
+                  window.addEventListener('onload', () => {
+                    if (document.getElementById(`iframe-${vm.current.id}`)) {
+                      util.resizeIFrameToFitContent(iframe);
+                    }
+                    clearInterval(fixIframe);
+                  }, false);
+                  // or
+                  // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
+                }
+              }, 100);
+
+              // Prevent AppleWebKit iframe.onload loop
+              vm.$data.isRendered = true;
             }
-          }, 100);
+          };
 
-          // Prevent AppleWebKit iframe.onload loop
-          vm.$data.isRendered = true;
+          try {
+            // vm.$el.replaceChild(iframe, vm.$refs.banner); // Do the trick
+            vm.$el.appendChild(iframe);
+            clearInterval(tete);
+          } catch (error) {
+            throw new Error(error);
+          }
         }
-      };
-
-      try {
-        vm.$el.replaceChild(iframe, vm.$refs.banner); // Do the trick
-      } catch (error) {
-        throw new Error(error);
-      }
+      }, 500);
     },
     renderBannerNoIframe() {
       const vm = this;
       try {
         const htmlData = vm.current.html;
-        postscribe(`#${vm.current.id}`, htmlData, {
-          done() {
-            vm.$parent.$emit('renderAsyncCodeFinish');
-          },
-        });
+        setTimeout(() => {
+          const container = document.getElementById(vm.current.id);
+          if (container) {
+            container.innerHTML = '';
+            postscribe(`#${vm.current.id}`, htmlData, {
+              done() {
+                vm.$parent.$emit('renderAsyncCodeFinish');
+              },
+            });
+            // clearInterval(loadAsync);
+          }
+        }, 1000);
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {
@@ -236,16 +194,18 @@ const Banner = Vue.component('banner', {
         throw new Error(error);
       }
     },
-    // renderBannerImg() {
-    //   console.log('renderBannerImg');
-    //   const imgTag = document.createElement('img');
-    //   imgTag.src = this.current.imageUrl;
-    //   document.getElementById(`${this.current.id}`).appendChild(imgTag);
-    // },
   },
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
+    if (this.current.isIFrame) {
+      console.log('renderBannerIframe');
+      vm.$data.isRendered = false;
+      this.renderToIFrame();
+    } else {
+      console.log('renderBannerNoIframe', 'newCode');
+      this.renderBannerNoIframe();
+    }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {
     //     this.$parent.$emit('bannerHeight', document.getElementById(`${vm.current.id}`)
@@ -253,23 +213,6 @@ const Banner = Vue.component('banner', {
     //     clearInterval(height);
     //   }
     // }, 100);
-    const dev = location.search.indexOf('checkPlace=dev') !== -1;
-    if (dev) {
-      return (
-        <div
-          id={vm.current.id}
-          class="arf-banner"
-          style={{
-            width: `${vm.current.width}px`,
-            zIndex: 0,
-            position: 'absolute',
-            // height: `${vm.current.height}px`,
-          }}
-        >
-          <div ref="banner">{'banner content'}</div>
-        </div>
-      );
-    }
     return (
       <div
         id={vm.current.id}
