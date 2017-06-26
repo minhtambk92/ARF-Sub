@@ -993,11 +993,12 @@ class Zone extends Entity {
           if (type === 'cpd') {
             weight = isExistPlacePa ? 0 : cpdWeight;
           } else {
-            weight = isExistPlacePa ? 0 : ((100 - cpdWeight) / allPlaceTypeInPosition.filter(x => (x !== 'pa' && x !== 'cpd') && x !== 'pb').length);
+            weight = isExistPlacePa ? 0 : ((100 - cpdWeight) / allPlaceTypeInPosition.filter(x => x !== 'pa' && x !== 'cpd').length);
           }
         }
         if (getAllPlaceType.map(x => x.type).indexOf(type) !== -1) return acc;
-        return getAllPlaceType.push({ type, weight });
+        getAllPlaceType.push({ type, weight });
+        return acc;
       }, 0);
       console.log('getAllPlaceType', getAllPlaceType);
       shareConstruct.push(getAllPlaceType);
@@ -1029,7 +1030,7 @@ class Zone extends Entity {
     };
 
           /* build construct of current share. */
-    let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
+    let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 2, 1));
     const numberOfChannel = util.uniqueItem(lastThreeShare.map(item => item.split(')(')[0])).length;
     if (numberOfChannel > 1) {
       lastThreeShare = [];
@@ -1065,22 +1066,24 @@ class Zone extends Entity {
           console.log('everyThings1', shareConstruct);
           let isRemove = false;
           if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
-            shareConstruct[i].splice(1, 1);
+            const index = shareConstruct[i].map(x => x.type).indexOf('cpd');
+            if (index !== -1) shareConstruct[i].splice(index, 1);
             isRemove = true;
           }
           if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
-            if (isRemove === false) shareConstruct[i].splice(2, 1);
+            const index = shareConstruct[i].map(x => x.type).indexOf('cpm');
+            if (index !== -1 && isRemove === false) shareConstruct[i].splice(index, 1);
           }
         } else if (cpdPercent > (100 / 3) && cpdPercent <= (200 / 3)) {
           let isRemove = false;
-          if (cpmAppear >= 1 && lastPlaceType.length >= 2) {
-            if (lastPlaceType[2] === 'cpm' || lastPlaceType[1] === 'cpm') {
-              shareConstruct[i].splice(2, 1);
-              isRemove = true;
-            }
-          }
           if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
-            if (isRemove === false) shareConstruct[i].splice(1, 1);
+            const index = shareConstruct[i].map(x => x.type).indexOf('cpd');
+            if (index !== -1) shareConstruct[i].splice(index, 1);
+            isRemove = true;
+          }
+          if (cpmAppear >= 1 && lastPlaceType.length >= 1) {
+            const index = shareConstruct[i].map(x => x.type).indexOf('cpm');
+            if (index !== -1 && isRemove === false) shareConstruct[i].splice(index, 1);
           }
         }
         console.log('everyThings2', shareConstruct);

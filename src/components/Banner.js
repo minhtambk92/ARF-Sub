@@ -48,34 +48,18 @@ const Banner = Vue.component('banner', {
   },
 
   mounted() {
+    if (this.current.isIFrame) {
+      console.log('renderBannerIframe');
+      this.renderToIFrame();
+    } else {
+      console.log('renderBannerNoIframe', 'newCode');
+      this.renderBannerNoIframe();
+    }
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
       window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
-    const banner = document.getElementById(this.current.id);
-    const objMonitor = ViewTracking(banner);
-    const monitor = ViewTracking.VisMon.Builder(objMonitor);
-    setTimeout(() => {
-      // throttle -> update time
-      monitor
-        .strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 }))
-        .strategy(new ViewTracking.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
-          percentageLimit: 0.3,
-          timeLimit: 200,
-          interval: 100,
-        }))
-        .on('30%/1s', () => {
-          this.current.bannerLogging(2);
-          console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
-        })
-        .build()
-        .start();
-    }, 1000);
-    banner.addEventListener('click', () => {
-      this.current.bannerLogging(1);
-      console.log('clickBanner');
-    });
   },
 
   methods: {
@@ -195,18 +179,33 @@ const Banner = Vue.component('banner', {
         throw new Error(error);
       }
     },
+    bannerLogging() {
+      const banner = document.getElementById(this.current.id);
+      const objMonitor = ViewTracking(banner);
+      const monitor = ViewTracking.VisMon.Builder(objMonitor);
+        // throttle -> update time
+      monitor
+          .strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 }))
+          .strategy(new ViewTracking.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
+            percentageLimit: 0.3,
+            timeLimit: 200,
+            interval: 100,
+          }))
+          .on('30%/1s', () => {
+            this.current.bannerLogging(2);
+            console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
+          })
+          .build()
+          .start();
+      banner.addEventListener('click', () => {
+        this.current.bannerLogging(1);
+        console.log('clickBanner');
+      });
+    },
   },
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-    if (this.current.isIFrame) {
-      console.log('renderBannerIframe');
-      vm.$data.isRendered = false;
-      this.renderToIFrame();
-    } else {
-      console.log('renderBannerNoIframe', 'newCode');
-      this.renderBannerNoIframe();
-    }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {
     //     this.$parent.$emit('bannerHeight', document.getElementById(`${vm.current.id}`)

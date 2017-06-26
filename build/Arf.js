@@ -11436,31 +11436,18 @@ var Banner = _vue2.default.component('banner', {
     window.arfBanners[this.current.id] = this;
   },
   mounted: function mounted() {
-    var _this = this;
-
+    if (this.current.isIFrame) {
+      console.log('renderBannerIframe');
+      this.renderToIFrame();
+    } else {
+      console.log('renderBannerNoIframe', 'newCode');
+      this.renderBannerNoIframe();
+    }
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
       window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
-    var banner = document.getElementById(this.current.id);
-    var objMonitor = ViewTracking(banner);
-    var monitor = ViewTracking.VisMon.Builder(objMonitor);
-    setTimeout(function () {
-      // throttle -> update time
-      monitor.strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 })).strategy(new ViewTracking.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
-        percentageLimit: 0.3,
-        timeLimit: 200,
-        interval: 100
-      })).on('30%/1s', function () {
-        _this.current.bannerLogging(2);
-        console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
-      }).build().start();
-    }, 1000);
-    banner.addEventListener('click', function () {
-      _this.current.bannerLogging(1);
-      console.log('clickBanner');
-    });
   },
 
 
@@ -11469,7 +11456,7 @@ var Banner = _vue2.default.component('banner', {
      * Wrap ads by an iframe
      */
     renderToIFrame: function renderToIFrame() {
-      var _this2 = this;
+      var _this = this;
 
       var vm = this;
       var tete = setInterval(function () {
@@ -11489,7 +11476,7 @@ var Banner = _vue2.default.component('banner', {
               iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
               iframe.contentWindow.document.open();
-              if (_this2.current.bannerType.isUpload !== undefined && _this2.current.bannerType.isUpload === true) {
+              if (_this.current.bannerType.isUpload !== undefined && _this.current.bannerType.isUpload === true) {
                 iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
               } else {
                 var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
@@ -11576,20 +11563,32 @@ var Banner = _vue2.default.component('banner', {
       } catch (error) {
         throw new Error(error);
       }
+    },
+    bannerLogging: function bannerLogging() {
+      var _this2 = this;
+
+      var banner = document.getElementById(this.current.id);
+      var objMonitor = ViewTracking(banner);
+      var monitor = ViewTracking.VisMon.Builder(objMonitor);
+      // throttle -> update time
+      monitor.strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 })).strategy(new ViewTracking.VisMon.Strategy.PercentageTimeTestEventStrategy('30%/1s', {
+        percentageLimit: 0.3,
+        timeLimit: 200,
+        interval: 100
+      })).on('30%/1s', function () {
+        _this2.current.bannerLogging(2);
+        console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
+      }).build().start();
+      banner.addEventListener('click', function () {
+        _this2.current.bannerLogging(1);
+        console.log('clickBanner');
+      });
     }
   },
 
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
-    if (this.current.isIFrame) {
-      console.log('renderBannerIframe');
-      vm.$data.isRendered = false;
-      this.renderToIFrame();
-    } else {
-      console.log('renderBannerNoIframe', 'newCode');
-      this.renderBannerNoIframe();
-    }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {
     //     this.$parent.$emit('bannerHeight', document.getElementById(`${vm.current.id}`)
@@ -13467,14 +13466,15 @@ var Zone = function (_Entity) {
               weight = isExistPlacePa ? 0 : cpdWeight;
             } else {
               weight = isExistPlacePa ? 0 : (100 - cpdWeight) / allPlaceTypeInPosition.filter(function (x) {
-                return x !== 'pa' && x !== 'cpd' && x !== 'pb';
+                return x !== 'pa' && x !== 'cpd';
               }).length;
             }
           }
           if (getAllPlaceType.map(function (x) {
             return x.type;
           }).indexOf(type) !== -1) return acc;
-          return getAllPlaceType.push({ type: type, weight: weight });
+          getAllPlaceType.push({ type: type, weight: weight });
+          return acc;
         }, 0);
         console.log('getAllPlaceType', getAllPlaceType);
         shareConstruct.push(getAllPlaceType);
@@ -13511,7 +13511,7 @@ var Zone = function (_Entity) {
       };
 
       /* build construct of current share. */
-      var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 3, 1));
+      var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 2, 1));
       var numberOfChannel = _vendor.util.uniqueItem(lastThreeShare.map(function (item) {
         return item.split(')(')[0];
       })).length;
@@ -13552,22 +13552,32 @@ var Zone = function (_Entity) {
             console.log('everyThings1', shareConstruct);
             var isRemove = false;
             if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
-              shareConstruct[i].splice(1, 1);
+              var index = shareConstruct[i].map(function (x) {
+                return x.type;
+              }).indexOf('cpd');
+              if (index !== -1) shareConstruct[i].splice(index, 1);
               isRemove = true;
             }
             if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
-              if (isRemove === false) shareConstruct[i].splice(2, 1);
+              var _index = shareConstruct[i].map(function (x) {
+                return x.type;
+              }).indexOf('cpm');
+              if (_index !== -1 && isRemove === false) shareConstruct[i].splice(_index, 1);
             }
           } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
             var _isRemove2 = false;
-            if (cpmAppear >= 1 && lastPlaceType.length >= 2) {
-              if (lastPlaceType[2] === 'cpm' || lastPlaceType[1] === 'cpm') {
-                shareConstruct[i].splice(2, 1);
-                _isRemove2 = true;
-              }
-            }
             if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
-              if (_isRemove2 === false) shareConstruct[i].splice(1, 1);
+              var _index2 = shareConstruct[i].map(function (x) {
+                return x.type;
+              }).indexOf('cpd');
+              if (_index2 !== -1) shareConstruct[i].splice(_index2, 1);
+              _isRemove2 = true;
+            }
+            if (cpmAppear >= 1 && lastPlaceType.length >= 1) {
+              var _index3 = shareConstruct[i].map(function (x) {
+                return x.type;
+              }).indexOf('cpm');
+              if (_index3 !== -1 && _isRemove2 === false) shareConstruct[i].splice(_index3, 1);
             }
           }
           console.log('everyThings2', shareConstruct);
