@@ -11419,7 +11419,8 @@ var Banner = _vue2.default.component('banner', {
 
   data: function data() {
     return {
-      isRendered: false
+      isRendered: false,
+      isRotate: false
     };
   },
 
@@ -11439,9 +11440,11 @@ var Banner = _vue2.default.component('banner', {
     if (this.current.isIFrame) {
       console.log('renderBannerIframe');
       this.renderToIFrame();
+      this.$data.isRotate = true;
     } else {
-      console.log('renderBannerNoIframe', 'newCode');
+      console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
+      this.$data.isRotate = true;
     }
     this.current.countFrequency();
     if (this.current.isRelative) {
@@ -11453,7 +11456,7 @@ var Banner = _vue2.default.component('banner', {
 
   methods: {
     /**
-     * Wrap ads by an iframe
+     * render ads inside an iframe
      */
     renderToIFrame: function renderToIFrame() {
       var _this = this;
@@ -11486,7 +11489,7 @@ var Banner = _vue2.default.component('banner', {
                   // eslint-disable-next-line
                   var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
                   var bannerContainer = 'ads_zone' + bannerCode;
-                  marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'setTimeout(function() {\n           //  eslint-disable-next-line\n                 var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
+                  marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'setTimeout(function() {\n                 var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
                   'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + '}}, 200);</script>';
                 }
                 // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
@@ -11504,16 +11507,22 @@ var Banner = _vue2.default.component('banner', {
               var fixIframe = setInterval(function () {
                 if (document.readyState === 'complete') {
                   // Already loaded!
-                  if (document.getElementById('iframe-' + vm.current.id)) {
-                    _vendor.util.resizeIFrameToFitContent(iframe);
-                  }
+                  setTimeout(function () {
+                    if (document.getElementById('iframe-' + vm.current.id)) {
+                      _vendor.util.resizeIFrameToFitContent(iframe);
+                      vm.$parent.$emit('renderFinish');
+                    }
+                  }, 500);
                   clearInterval(fixIframe);
                 } else {
                   // Add onload or DOMContentLoaded event listeners here
                   window.addEventListener('onload', function () {
-                    if (document.getElementById('iframe-' + vm.current.id)) {
-                      _vendor.util.resizeIFrameToFitContent(iframe);
-                    }
+                    setTimeout(function () {
+                      if (document.getElementById('iframe-' + vm.current.id)) {
+                        _vendor.util.resizeIFrameToFitContent(iframe);
+                        vm.$parent.$emit('renderFinish');
+                      }
+                    }, 500);
                     clearInterval(fixIframe);
                   }, false);
                   // or
@@ -11536,6 +11545,10 @@ var Banner = _vue2.default.component('banner', {
         }
       }, 500);
     },
+
+    /**
+     * render ads async code without iframe
+     */
     renderBannerNoIframe: function renderBannerNoIframe() {
       var vm = this;
       try {
@@ -11547,7 +11560,7 @@ var Banner = _vue2.default.component('banner', {
             (0, _postscribe2.default)('#' + vm.current.id, htmlData, {
               releaseAsync: true,
               done: function done() {
-                vm.$parent.$emit('renderAsyncCodeFinish');
+                vm.$parent.$emit('renderFinish');
               }
             });
             clearInterval(loadAsync);
@@ -11564,6 +11577,10 @@ var Banner = _vue2.default.component('banner', {
         throw new Error(error);
       }
     },
+
+    /**
+     * logging
+     */
     bannerLogging: function bannerLogging() {
       var _this2 = this;
 
@@ -11589,6 +11606,10 @@ var Banner = _vue2.default.component('banner', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
+    if (vm.$data.isRotate) {
+      vm.$data.isRendered = false;
+      vm.renderToIFrame();
+    }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {
     //     this.$parent.$emit('bannerHeight', document.getElementById(`${vm.current.id}`)
@@ -11673,14 +11694,14 @@ var Placement = _vue2.default.component('placement', {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
-    this.$on('renderAsyncCodeFinish', function () {
-      console.log('renderAsyncCodeFinish');
+    this.$on('renderFinish', function () {
+      console.log('renderFinish');
       // make a trigger to parent component(share) and send place;
       _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
     });
-    // setInterval(() => {
-    //   this.$forceUpdate();
-    // }, 10000);
+    setInterval(function () {
+      _this.$forceUpdate();
+    }, 3000);
   },
 
 

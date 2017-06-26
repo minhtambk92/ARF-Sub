@@ -30,14 +30,14 @@ const Placement = Vue.component('placement', {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
-    this.$on('renderAsyncCodeFinish', () => {
-      console.log('renderAsyncCodeFinish');
+    this.$on('renderFinish', () => {
+      console.log('renderFinish');
       // make a trigger to parent component(share) and send place;
       this.$parent.$emit('render', this.current.id, this.current.revenueType);
     });
     // setInterval(() => {
     //   this.$forceUpdate();
-    // }, 10000);
+    // }, 3000);
   },
 
   computed: {

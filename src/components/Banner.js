@@ -32,6 +32,7 @@ const Banner = Vue.component('banner', {
   data() {
     return {
       isRendered: false,
+      isRotate: false,
     };
   },
 
@@ -51,9 +52,11 @@ const Banner = Vue.component('banner', {
     if (this.current.isIFrame) {
       console.log('renderBannerIframe');
       this.renderToIFrame();
+      this.$data.isRotate = true;
     } else {
-      console.log('renderBannerNoIframe', 'newCode');
+      console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
+      this.$data.isRotate = true;
     }
     this.current.countFrequency();
     if (this.current.isRelative) {
@@ -64,7 +67,7 @@ const Banner = Vue.component('banner', {
 
   methods: {
     /**
-     * Wrap ads by an iframe
+     * render ads inside an iframe
      */
     renderToIFrame() {
       const vm = this;
@@ -98,7 +101,6 @@ const Banner = Vue.component('banner', {
                   const bannerContainer = `ads_zone${bannerCode}`;
                   marginBanner = `<script> var bannerParentID = "${bannerContainer}";` +
                     `setTimeout(function() {
-           //  eslint-disable-next-line
                  var bannerParent = document.getElementById(bannerParentID);` + // eslint-disable-line
                     'if (bannerParent) {' +
                     '   bannerParent.childNodes[1].style.marginLeft = 0;' +
@@ -119,16 +121,22 @@ const Banner = Vue.component('banner', {
               const fixIframe = setInterval(() => {
                 if (document.readyState === 'complete') {
                   // Already loaded!
-                  if (document.getElementById(`iframe-${vm.current.id}`)) {
-                    util.resizeIFrameToFitContent(iframe);
-                  }
+                  setTimeout(() => {
+                    if (document.getElementById(`iframe-${vm.current.id}`)) {
+                      util.resizeIFrameToFitContent(iframe);
+                      vm.$parent.$emit('renderFinish');
+                    }
+                  }, 500);
                   clearInterval(fixIframe);
                 } else {
                   // Add onload or DOMContentLoaded event listeners here
                   window.addEventListener('onload', () => {
-                    if (document.getElementById(`iframe-${vm.current.id}`)) {
-                      util.resizeIFrameToFitContent(iframe);
-                    }
+                    setTimeout(() => {
+                      if (document.getElementById(`iframe-${vm.current.id}`)) {
+                        util.resizeIFrameToFitContent(iframe);
+                        vm.$parent.$emit('renderFinish');
+                      }
+                    }, 500);
                     clearInterval(fixIframe);
                   }, false);
                   // or
@@ -151,6 +159,9 @@ const Banner = Vue.component('banner', {
         }
       }, 500);
     },
+    /**
+     * render ads async code without iframe
+     */
     renderBannerNoIframe() {
       const vm = this;
       try {
@@ -162,7 +173,7 @@ const Banner = Vue.component('banner', {
             postscribe(`#${vm.current.id}`, htmlData, {
               releaseAsync: true,
               done() {
-                vm.$parent.$emit('renderAsyncCodeFinish');
+                vm.$parent.$emit('renderFinish');
               },
             });
             clearInterval(loadAsync);
@@ -179,6 +190,9 @@ const Banner = Vue.component('banner', {
         throw new Error(error);
       }
     },
+    /**
+     * logging
+     */
     bannerLogging() {
       const banner = document.getElementById(this.current.id);
       const objMonitor = ViewTracking(banner);
@@ -206,6 +220,10 @@ const Banner = Vue.component('banner', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
+    if (vm.$data.isRotate) {
+      vm.$data.isRendered = false;
+      vm.renderToIFrame();
+    }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {
     //     this.$parent.$emit('bannerHeight', document.getElementById(`${vm.current.id}`)
