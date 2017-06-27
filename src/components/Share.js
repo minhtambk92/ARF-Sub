@@ -62,7 +62,7 @@ const Share = Vue.component('share', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-
+    console.log('activePlacementsModels', vm.activePlacementsModels);
     return (
       <div
         id={vm.current.id}

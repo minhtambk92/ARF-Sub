@@ -970,6 +970,7 @@ class Zone extends Entity {
     const shareConstruct = [];
 
         /* if cpdShare take all share percent in a place order -> filter */
+    const constructShareStructure = [];
     for (let i = 0; i < numberOfPlaceInShare; i += 1) {
       const allSharePlaceInThisPosition = allSharePlace.filter(place =>
       place.positionOnShare === i);
@@ -1038,10 +1039,10 @@ class Zone extends Entity {
       cookie = `${cookie}`.replace(zoneCookie, '');
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     }
-    const constructShareStructure = [];
+
     for (let i = 0; i < numberOfPlaceInShare; i += 1) {
-      if (shareConstruct[i][0].weight === 100) {
-        constructShareStructure.push(shareConstruct[i][0]);
+      if (shareConstruct[i].filter(x => x.type === 'pa').length > 0) {
+        constructShareStructure.push('pa');
       } else {
         const lastPlaceType = [];
         lastThreeShare.reduce((acc, share) => {
@@ -1054,7 +1055,7 @@ class Zone extends Entity {
           }, 0);
           return 0;
         }, 0);
-        console.log('lastPlaceType', lastPlaceType, i);
+        console.log('lastPlaceType', lastPlaceType, i, numberOfPlaceInShare);
         const a = shareConstruct[i].map(x => x.type).indexOf('cpd');
         const cpdPercent = shareConstruct[i][a].weight;
         const cpdAppear = lastPlaceType.reduce((acc, place) =>
@@ -1063,33 +1064,35 @@ class Zone extends Entity {
           (place === 'cpm' ? acc + 1 : acc + 0), 0);
         console.log('cpmAppear', cpmAppear, cpdAppear);
         console.log('everyThings1', shareConstruct);
-        if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
-          let isRemove = false;
-          if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
-            const index = shareConstruct[i].map(x => x.type).indexOf('cpd');
-            if (index !== -1) shareConstruct[i].splice(index, 1);
-            isRemove = true;
-          }
-          if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
-            const index = shareConstruct[i].map(x => x.type).indexOf('cpm');
-            if (index !== -1 && isRemove === false) shareConstruct[i].splice(index, 1);
-          }
-        } else if (cpdPercent > (100 / 3) && cpdPercent <= (200 / 3)) {
-          let isRemove = false;
-          if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
-            const index = shareConstruct[i].map(x => x.type).indexOf('cpd');
-            if (index !== -1) shareConstruct[i].splice(index, 1);
-            isRemove = true;
-          }
-          if (cpmAppear >= 1 && lastPlaceType.length >= 1) {
-            const index = shareConstruct[i].map(x => x.type).indexOf('cpm');
-            if (index !== -1 && isRemove === false) shareConstruct[i].splice(index, 1);
+        if (shareConstruct[i].length > 1) {
+          if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
+            let isRemove = false;
+            if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
+              const index = shareConstruct[i].map(x => x.type).indexOf('cpd');
+              if (index !== -1) shareConstruct[i].splice(index, 1);
+              isRemove = true;
+            }
+            if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
+              const index = shareConstruct[i].map(x => x.type).indexOf('cpm');
+              if (index !== -1 && isRemove === false) shareConstruct[i].splice(index, 1);
+            }
+          } else if (cpdPercent > (100 / 3) && cpdPercent <= (200 / 3)) {
+            let isRemove = false;
+            if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
+              const index = shareConstruct[i].map(x => x.type).indexOf('cpd');
+              if (index !== -1) shareConstruct[i].splice(index, 1);
+              isRemove = true;
+            }
+            if (cpmAppear >= 1 && lastPlaceType.length >= 1) {
+              const index = shareConstruct[i].map(x => x.type).indexOf('cpm');
+              if (index !== -1 && isRemove === false) shareConstruct[i].splice(index, 1);
+            }
           }
         }
         console.log('everyThings2', shareConstruct);
         const activeType = activeRevenue(shareConstruct[i]);
         console.log('everyThings3', activeType);
-        constructShareStructure.push(activeType);
+        constructShareStructure.push(activeType.type);
       }
     }
     console.log('buildShareConstructXXX', constructShareStructure);
@@ -1101,7 +1104,7 @@ class Zone extends Entity {
      */
                /* filter place fit with share construct */
     let allSharePlaceFitShareStructure = allSharePlace.filter(item =>
-    item.placement.revenueType === constructShareStructure[item.positionOnShare].type);
+    item.placement.revenueType === constructShareStructure[item.positionOnShare]);
 
                 /* filter place fit with current channel */
     allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
@@ -1212,7 +1215,7 @@ class Zone extends Entity {
 
              */
             const shareInfo = getShareInfo(shareFormat);
-            const share = { places: [], id: shareInfo.id, css: shareInfo.css };
+            const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type }; // eslint-disable-line
             let isRelative = false;
             /*
 
@@ -1313,7 +1316,8 @@ class Zone extends Entity {
           const id = shares[i].id.replace('share-', '');
           const outputCss = shares[i].css;
           const placements = shares[i].places;
-          const newShare = new Share({ id, outputCss, placements, weight });
+          const type = shares[i].type;
+          const newShare = new Share({ id, outputCss, placements, weight, type });
           shareDatas.push(newShare);
         }
       }

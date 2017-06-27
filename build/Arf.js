@@ -11954,7 +11954,7 @@ var Share = _vue2.default.component('share', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
-
+    console.log('activePlacementsModels', vm.activePlacementsModels);
     return h(
       'div',
       {
@@ -13480,6 +13480,7 @@ var Zone = function (_Entity) {
       var shareConstruct = [];
 
       /* if cpdShare take all share percent in a place order -> filter */
+      var constructShareStructure = [];
 
       var _loop4 = function _loop4(i) {
         var allSharePlaceInThisPosition = allSharePlace.filter(function (place) {
@@ -13562,11 +13563,12 @@ var Zone = function (_Entity) {
         cookie = ('' + cookie).replace(zoneCookie, '');
         _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
       }
-      var constructShareStructure = [];
 
       var _loop5 = function _loop5(i) {
-        if (shareConstruct[i][0].weight === 100) {
-          constructShareStructure.push(shareConstruct[i][0]);
+        if (shareConstruct[i].filter(function (x) {
+          return x.type === 'pa';
+        }).length > 0) {
+          constructShareStructure.push('pa');
         } else {
           var lastPlaceType = [];
           lastThreeShare.reduce(function (acc, share) {
@@ -13579,7 +13581,7 @@ var Zone = function (_Entity) {
             }, 0);
             return 0;
           }, 0);
-          console.log('lastPlaceType', lastPlaceType, i);
+          console.log('lastPlaceType', lastPlaceType, i, numberOfPlaceInShare);
           var a = shareConstruct[i].map(function (x) {
             return x.type;
           }).indexOf('cpd');
@@ -13592,41 +13594,43 @@ var Zone = function (_Entity) {
           }, 0);
           console.log('cpmAppear', cpmAppear, cpdAppear);
           console.log('everyThings1', shareConstruct);
-          if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
-            var isRemove = false;
-            if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
-              var index = shareConstruct[i].map(function (x) {
-                return x.type;
-              }).indexOf('cpd');
-              if (index !== -1) shareConstruct[i].splice(index, 1);
-              isRemove = true;
-            }
-            if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
-              var _index = shareConstruct[i].map(function (x) {
-                return x.type;
-              }).indexOf('cpm');
-              if (_index !== -1 && isRemove === false) shareConstruct[i].splice(_index, 1);
-            }
-          } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
-            var _isRemove2 = false;
-            if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
-              var _index2 = shareConstruct[i].map(function (x) {
-                return x.type;
-              }).indexOf('cpd');
-              if (_index2 !== -1) shareConstruct[i].splice(_index2, 1);
-              _isRemove2 = true;
-            }
-            if (cpmAppear >= 1 && lastPlaceType.length >= 1) {
-              var _index3 = shareConstruct[i].map(function (x) {
-                return x.type;
-              }).indexOf('cpm');
-              if (_index3 !== -1 && _isRemove2 === false) shareConstruct[i].splice(_index3, 1);
+          if (shareConstruct[i].length > 1) {
+            if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
+              var isRemove = false;
+              if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
+                var index = shareConstruct[i].map(function (x) {
+                  return x.type;
+                }).indexOf('cpd');
+                if (index !== -1) shareConstruct[i].splice(index, 1);
+                isRemove = true;
+              }
+              if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
+                var _index = shareConstruct[i].map(function (x) {
+                  return x.type;
+                }).indexOf('cpm');
+                if (_index !== -1 && isRemove === false) shareConstruct[i].splice(_index, 1);
+              }
+            } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
+              var _isRemove2 = false;
+              if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
+                var _index2 = shareConstruct[i].map(function (x) {
+                  return x.type;
+                }).indexOf('cpd');
+                if (_index2 !== -1) shareConstruct[i].splice(_index2, 1);
+                _isRemove2 = true;
+              }
+              if (cpmAppear >= 1 && lastPlaceType.length >= 1) {
+                var _index3 = shareConstruct[i].map(function (x) {
+                  return x.type;
+                }).indexOf('cpm');
+                if (_index3 !== -1 && _isRemove2 === false) shareConstruct[i].splice(_index3, 1);
+              }
             }
           }
           console.log('everyThings2', shareConstruct);
           var activeType = activeRevenue(shareConstruct[i]);
           console.log('everyThings3', activeType);
-          constructShareStructure.push(activeType);
+          constructShareStructure.push(activeType.type);
         }
       };
 
@@ -13642,7 +13646,7 @@ var Zone = function (_Entity) {
        */
       /* filter place fit with share construct */
       var allSharePlaceFitShareStructure = allSharePlace.filter(function (item) {
-        return item.placement.revenueType === constructShareStructure[item.positionOnShare].type;
+        return item.placement.revenueType === constructShareStructure[item.positionOnShare];
       });
 
       /* filter place fit with current channel */
@@ -13763,7 +13767,7 @@ var Zone = function (_Entity) {
                 this variable to store places in a share which are chosen bellow.
                 */
               var shareInfo = getShareInfo(shareFormat);
-              var share = { places: [], id: shareInfo.id, css: shareInfo.css };
+              var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type }; // eslint-disable-line
               var isRelative = false;
               /*
                 Browse each placeRatio in shareRatio, then find a placement fit it.
@@ -13863,7 +13867,8 @@ var Zone = function (_Entity) {
             var id = shares[_i6].id.replace('share-', '');
             var outputCss = shares[_i6].css;
             var placements = shares[_i6].places;
-            var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight });
+            var type = shares[_i6].type;
+            var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type });
             shareDatas.push(newShare);
           }
         }
