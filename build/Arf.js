@@ -13420,8 +13420,10 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'filterShare',
-    value: function filterShare(relativeKeyword, isRotate) {
+    value: function filterShare(relativeKeyword) {
       var _this3 = this;
+
+      var isRotate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       /**
        * [region: create Share construct]
@@ -13670,9 +13672,17 @@ var Zone = function (_Entity) {
       /**
        * get share format in data
        */
-      var shareFormats = allShare.map(function (x) {
-        return x.type === 'single' ? [1] : x.format.split(',');
-      });
+      var shareFormats = void 0;
+      try {
+        shareFormats = allShare.map(function (x) {
+          return x.type === 'single' ? [1] : x.format.split(',').map(function (item) {
+            return parseInt(item, 10);
+          });
+        });
+      } catch (err) {
+        throw new Error('shareFormat Error!');
+      }
+      console.log('shareFormats', shareFormats);
       var checkShareFormat = function checkShareFormat(format) {
         return shareFormats.reduce(function (acc, item, index) {
           if (index === 0) return _vendor.util.checkTwoArrayEqual(item, format);
@@ -13681,7 +13691,7 @@ var Zone = function (_Entity) {
       };
       var getShareInfo = function getShareInfo(format) {
         for (var i = 0, length = allShare.length; i < length; i += 1) {
-          if (allShare[i].format !== format.join()) {
+          if (allShare[i].format === format.join()) {
             return allShare[i];
           }
         }

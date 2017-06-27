@@ -916,7 +916,7 @@ class Zone extends Entity {
    * create all share and filter them fit with conditions
    */
 
-  filterShare(relativeKeyword, isRotate) {
+  filterShare(relativeKeyword, isRotate = true) {
     /**
      * [region: create Share construct]
      *
@@ -1127,7 +1127,13 @@ class Zone extends Entity {
     /**
      * get share format in data
      */
-    const shareFormats = allShare.map(x => (x.type === 'single' ? [1] : x.format.split(',')));
+    let shareFormats;
+    try {
+      shareFormats = allShare.map(x => (x.type === 'single' ? [1] : x.format.split(',').map(item => parseInt(item, 10))));
+    } catch (err) {
+      throw new Error('shareFormat Error!');
+    }
+    console.log('shareFormats', shareFormats);
     const checkShareFormat = format =>
       shareFormats.reduce((acc, item, index) => {
         if (index === 0) return util.checkTwoArrayEqual(item, format);
@@ -1135,7 +1141,7 @@ class Zone extends Entity {
       }, 0);
     const getShareInfo = (format) => {
       for (let i = 0, length = allShare.length; i < length; i += 1) {
-        if (allShare[i].format !== format.join()) {
+        if (allShare[i].format === format.join()) {
           return allShare[i];
         }
       }
