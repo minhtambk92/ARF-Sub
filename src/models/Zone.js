@@ -916,7 +916,7 @@ class Zone extends Entity {
    * create all share and filter them fit with conditions
    */
 
-  filterShare(relativeKeyword) {
+  filterShare(relativeKeyword, isRotate) {
     /**
      * [region: create Share construct]
      *
@@ -1055,15 +1055,15 @@ class Zone extends Entity {
           return 0;
         }, 0);
         console.log('lastPlaceType', lastPlaceType, i);
-
-        const cpdPercent = shareConstruct[i][1].weight;
+        const a = shareConstruct[i].map(x => x.type).indexOf('cpd');
+        const cpdPercent = shareConstruct[i][a].weight;
         const cpdAppear = lastPlaceType.reduce((acc, place) =>
           (place === 'cpd' ? acc + 1 : acc + 0), 0);
         const cpmAppear = lastPlaceType.reduce((acc, place) =>
           (place === 'cpm' ? acc + 1 : acc + 0), 0);
         console.log('cpmAppear', cpmAppear, cpdAppear);
+        console.log('everyThings1', shareConstruct);
         if (cpdPercent > 0 && cpdPercent <= (100 / 3)) {
-          console.log('everyThings1', shareConstruct);
           let isRemove = false;
           if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
             const index = shareConstruct[i].map(x => x.type).indexOf('cpd');
@@ -1100,11 +1100,11 @@ class Zone extends Entity {
      * filer placements suit with share structure and channel
      */
                /* filter place fit with share construct */
-    allSharePlace = allSharePlace.filter(item =>
+    let allSharePlaceFitShareStructure = allSharePlace.filter(item =>
     item.placement.revenueType === constructShareStructure[item.positionOnShare].type);
 
                 /* filter place fit with current channel */
-    allSharePlace = allSharePlace.filter(place =>
+    allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
       place.placement.filterBanner().length > 0);
     console.log('filterPlacement', allSharePlace);
     /**
@@ -1114,9 +1114,12 @@ class Zone extends Entity {
     /**
      * get all monopoly placements
      */
+    const monopolyPlacesFitShareStructure = allSharePlaceFitShareStructure.filter(y =>
+    y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd');
+    console.log('monopolyPlacements', monopolyPlacesFitShareStructure);
+
     const monopolyPlaces = allSharePlace.filter(y =>
     y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd');
-    console.log('monopolyPlacements', monopolyPlaces);
     /**
      * end
      */
@@ -1142,6 +1145,7 @@ class Zone extends Entity {
      * end
      */
     const activePlacement = (allPlaces, type) => {
+      if (type === 'random') return allPlaces[Math.floor(Math.random() * allPlaces.length)];
       const randomNumber = Math.random() * 100;
       const ratio = allPlaces.reduce((tmp, place) => ((type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp), 0) / 100;
       return allPlaces.reduce((range, placement) => {
@@ -1169,7 +1173,13 @@ class Zone extends Entity {
         }, 0));
       return placesWithKeyword;
     };
-    const createShare = (placeMonopolies) => {
+    /**
+     * This function to create share
+     * @param placeMonopolies
+     * @param isRotate
+     * @returns {Array}
+     */
+    const createShare = (placeMonopolies, isRotate) => { // eslint-disable-line
       const shares = [];
       const shareDatas = [];
       const arrayRelativeKeyword = [];
@@ -1229,7 +1239,9 @@ class Zone extends Entity {
                   if (index2 === 0) return item.placement.id !== place.placement.id;
                   return acc && item.placement.id !== place.placement.id;
                 }, 0) : true) &&
-                place.placement.revenueType === constructShareStructure[index].type));
+                  /* if isRotate = true -> remove check share structure */
+                (isRotate ? true :
+                  place.placement.revenueType === constructShareStructure[index].type)));
               console.log('placementsForShare', places);
               /*
 
@@ -1301,9 +1313,41 @@ class Zone extends Entity {
       }
       return shareDatas;
     };
-    const result = createShare(monopolyPlaces);
+
+
+    /**
+     * [compute Share]
+     */
+    if (isRotate) {
+      /* if isRotate = true ->
+        * 1. Create a sets placementsInSharePosition placements
+         * that have a placement per a share position.
+        * 2. make a combination (1->k) of n :
+         * k number of share position - n is placementsInSharePosition.
+         * 3. Create share with these sets after combination */
+
+      /*  get sets placements contain normal placements and monopoly placements share a position */
+      let placementsInSharePosition = [];
+      const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => x.positionOnShare));
+      monopolyPositions.reduce((acc, item) =>
+                                      /* make a random choice placement in each share position */
+        placementsInSharePosition.push(activePlacement(allSharePlace.filter(x => (x.positionOnShare === item && x.placement.revenueType !== 'pr')), 'random')), 0);
+      placementsInSharePosition = util.flatten(placementsInSharePosition);
+      console.log('shareWith', placementsInSharePosition);
+
+      const result = createShare(monopolyPlacesFitShareStructure);
+      console.log('newShareFilter', result);
+      return result;
+      /*  */
+    }
+          /* if isRotate = false -> just create share with truly monopoly placement
+                            and share structure */
+    const result = createShare(monopolyPlacesFitShareStructure);
     console.log('newShareFilter', result);
     return result;
+    /**
+     *[end compute share]
+     */
   }
 
   /**

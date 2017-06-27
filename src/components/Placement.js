@@ -25,6 +25,13 @@ const Placement = Vue.component('placement', {
     window.arfPlacements[this.current.id] = this;
   },
 
+  data() {
+    return {
+      isRotateBanner: false,
+      lastBanner: '',
+    };
+  },
+
   mounted() {
     // this.$on('bannerHeight', (bannerHeight) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
@@ -35,9 +42,10 @@ const Placement = Vue.component('placement', {
       // make a trigger to parent component(share) and send place;
       this.$parent.$emit('render', this.current.id, this.current.revenueType);
     });
-    // setInterval(() => {
-    //   this.$forceUpdate();
-    // }, 3000);
+    setInterval(() => {
+      this.$data.isRotateBanner = (this.current.isRotate && this.current.filterBanner().length > 0);
+      // this.$forceUpdate();
+    }, 3000);
   },
 
   computed: {
@@ -47,7 +55,8 @@ const Placement = Vue.component('placement', {
   },
 
   methods: {
-    activeBannerModel() {
+    activeBannerModel(lastBanner) {
+      console.log('lastBanner', lastBanner);
       return this.current.activeBanner();
     },
   },
@@ -55,10 +64,12 @@ const Placement = Vue.component('placement', {
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
     const dev = location.search.indexOf('checkPlace=dev') !== -1;
-    const currentBanner = vm.activeBannerModel();
+    const currentBanner = this.activeBannerModel(vm.$data.lastBanner);
+    vm.$data.lastBanner = currentBanner.id;
+    currentBanner.isRotate = vm.$data.isRotateBanner;
     console.log('currentBanner', currentBanner);
     if (dev) {
-      if (vm.activeBannerModel() !== false) {
+      if (currentBanner !== false) {
         return (
           <div
             id={vm.current.id}
@@ -68,7 +79,7 @@ const Placement = Vue.component('placement', {
               height: `${vm.current.height}px`,
             }}
           >
-            <Banner model={vm.activeBannerModel()} />
+            <Banner model={currentBanner} />
             <div
               style={{
                 zIndex: 9999,
@@ -89,7 +100,7 @@ const Placement = Vue.component('placement', {
                 width: '35%',
                 textAlign: 'center',
               }}
-            >{vm.current.revenueType}</p></div>
+            >{vm.current.revenueType} {vm.current.positionOnShare}</p></div>
           </div>
         );
       }

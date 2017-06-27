@@ -27,6 +27,7 @@ class Banner extends Entity {
     this.zoneId = banner.zoneId;
     this.placementId = banner.placementId;
     this.optionBanners = banner.optionBanners;
+    this.isRotate = banner.isRotate;
   }
 
   // Banner Checking Process

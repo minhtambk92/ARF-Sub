@@ -52,12 +52,16 @@ const Banner = Vue.component('banner', {
     if (this.current.isIFrame) {
       console.log('renderBannerIframe');
       this.renderToIFrame();
-      this.$data.isRotate = true;
     } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
-      this.$data.isRotate = true;
     }
+    /**
+     * send log
+     */
+    this.$on('renderFinish', () => {
+      this.setupLogging();
+    });
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
@@ -124,7 +128,6 @@ const Banner = Vue.component('banner', {
                   setTimeout(() => {
                     if (document.getElementById(`iframe-${vm.current.id}`)) {
                       util.resizeIFrameToFitContent(iframe);
-                      vm.$parent.$emit('renderFinish');
                     }
                   }, 500);
                   clearInterval(fixIframe);
@@ -134,7 +137,6 @@ const Banner = Vue.component('banner', {
                     setTimeout(() => {
                       if (document.getElementById(`iframe-${vm.current.id}`)) {
                         util.resizeIFrameToFitContent(iframe);
-                        vm.$parent.$emit('renderFinish');
                       }
                     }, 500);
                     clearInterval(fixIframe);
@@ -152,6 +154,8 @@ const Banner = Vue.component('banner', {
           try {
             // vm.$el.replaceChild(iframe, vm.$refs.banner); // Do the trick
             vm.$el.appendChild(iframe);
+            vm.$parent.$emit('renderFinish');
+            vm.$emit('renderFinish');
             clearInterval(tete);
           } catch (error) {
             throw new Error(error);
@@ -174,6 +178,7 @@ const Banner = Vue.component('banner', {
               releaseAsync: true,
               done() {
                 vm.$parent.$emit('renderFinish');
+                vm.$emit('renderFinish');
               },
             });
             clearInterval(loadAsync);
@@ -193,7 +198,7 @@ const Banner = Vue.component('banner', {
     /**
      * logging
      */
-    bannerLogging() {
+    setupLogging() {
       const banner = document.getElementById(this.current.id);
       const objMonitor = ViewTracking(banner);
       const monitor = ViewTracking.VisMon.Builder(objMonitor);
@@ -220,7 +225,7 @@ const Banner = Vue.component('banner', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-    if (vm.$data.isRotate) {
+    if (this.current.isRotate) {
       vm.$data.isRendered = false;
       vm.renderToIFrame();
     }

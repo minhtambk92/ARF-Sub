@@ -10192,6 +10192,7 @@ var Banner = function (_Entity) {
     _this.zoneId = banner.zoneId;
     _this.placementId = banner.placementId;
     _this.optionBanners = banner.optionBanners;
+    _this.isRotate = banner.isRotate;
     return _this;
   }
 
@@ -11437,15 +11438,21 @@ var Banner = _vue2.default.component('banner', {
     window.arfBanners[this.current.id] = this;
   },
   mounted: function mounted() {
+    var _this = this;
+
     if (this.current.isIFrame) {
       console.log('renderBannerIframe');
       this.renderToIFrame();
-      this.$data.isRotate = true;
     } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
-      this.$data.isRotate = true;
     }
+    /**
+     * send log
+     */
+    this.$on('renderFinish', function () {
+      _this.setupLogging();
+    });
     this.current.countFrequency();
     if (this.current.isRelative) {
       // this.$parent.$emit('relativeBannerRender', this.current.keyword);
@@ -11459,7 +11466,7 @@ var Banner = _vue2.default.component('banner', {
      * render ads inside an iframe
      */
     renderToIFrame: function renderToIFrame() {
-      var _this = this;
+      var _this2 = this;
 
       var vm = this;
       var tete = setInterval(function () {
@@ -11479,7 +11486,7 @@ var Banner = _vue2.default.component('banner', {
               iframe.scrolling = 'no'; // Prevent iframe body scrolling
 
               iframe.contentWindow.document.open();
-              if (_this.current.bannerType.isUpload !== undefined && _this.current.bannerType.isUpload === true) {
+              if (_this2.current.bannerType.isUpload !== undefined && _this2.current.bannerType.isUpload === true) {
                 iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
               } else {
                 var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
@@ -11510,7 +11517,6 @@ var Banner = _vue2.default.component('banner', {
                   setTimeout(function () {
                     if (document.getElementById('iframe-' + vm.current.id)) {
                       _vendor.util.resizeIFrameToFitContent(iframe);
-                      vm.$parent.$emit('renderFinish');
                     }
                   }, 500);
                   clearInterval(fixIframe);
@@ -11520,7 +11526,6 @@ var Banner = _vue2.default.component('banner', {
                     setTimeout(function () {
                       if (document.getElementById('iframe-' + vm.current.id)) {
                         _vendor.util.resizeIFrameToFitContent(iframe);
-                        vm.$parent.$emit('renderFinish');
                       }
                     }, 500);
                     clearInterval(fixIframe);
@@ -11538,6 +11543,8 @@ var Banner = _vue2.default.component('banner', {
           try {
             // vm.$el.replaceChild(iframe, vm.$refs.banner); // Do the trick
             vm.$el.appendChild(iframe);
+            vm.$parent.$emit('renderFinish');
+            vm.$emit('renderFinish');
             clearInterval(tete);
           } catch (error) {
             throw new Error(error);
@@ -11561,6 +11568,7 @@ var Banner = _vue2.default.component('banner', {
               releaseAsync: true,
               done: function done() {
                 vm.$parent.$emit('renderFinish');
+                vm.$emit('renderFinish');
               }
             });
             clearInterval(loadAsync);
@@ -11581,8 +11589,8 @@ var Banner = _vue2.default.component('banner', {
     /**
      * logging
      */
-    bannerLogging: function bannerLogging() {
-      var _this2 = this;
+    setupLogging: function setupLogging() {
+      var _this3 = this;
 
       var banner = document.getElementById(this.current.id);
       var objMonitor = ViewTracking(banner);
@@ -11593,11 +11601,11 @@ var Banner = _vue2.default.component('banner', {
         timeLimit: 200,
         interval: 100
       })).on('30%/1s', function () {
-        _this2.current.bannerLogging(2);
+        _this3.current.bannerLogging(2);
         console.log('[Visibility Monitor] Banner display was >30% visible for 1 seconds!');
       }).build().start();
       banner.addEventListener('click', function () {
-        _this2.current.bannerLogging(1);
+        _this3.current.bannerLogging(1);
         console.log('clickBanner');
       });
     }
@@ -11606,7 +11614,7 @@ var Banner = _vue2.default.component('banner', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
-    if (vm.$data.isRotate) {
+    if (this.current.isRotate) {
       vm.$data.isRendered = false;
       vm.renderToIFrame();
     }
@@ -11687,6 +11695,12 @@ var Placement = _vue2.default.component('placement', {
     window.arfPlacements = window.arfPlacements || {};
     window.arfPlacements[this.current.id] = this;
   },
+  data: function data() {
+    return {
+      isRotateBanner: false,
+      lastBanner: ''
+    };
+  },
   mounted: function mounted() {
     var _this = this;
 
@@ -11699,9 +11713,10 @@ var Placement = _vue2.default.component('placement', {
       // make a trigger to parent component(share) and send place;
       _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
     });
-    // setInterval(() => {
-    //   this.$forceUpdate();
-    // }, 3000);
+    setInterval(function () {
+      _this.$data.isRotateBanner = _this.current.isRotate && _this.current.filterBanner().length > 0;
+      // this.$forceUpdate();
+    }, 3000);
   },
 
 
@@ -11712,7 +11727,8 @@ var Placement = _vue2.default.component('placement', {
   },
 
   methods: {
-    activeBannerModel: function activeBannerModel() {
+    activeBannerModel: function activeBannerModel(lastBanner) {
+      console.log('lastBanner', lastBanner);
       return this.current.activeBanner();
     }
   },
@@ -11721,10 +11737,12 @@ var Placement = _vue2.default.component('placement', {
     // eslint-disable-line no-unused-vars
     var vm = this;
     var dev = location.search.indexOf('checkPlace=dev') !== -1;
-    var currentBanner = vm.activeBannerModel();
+    var currentBanner = this.activeBannerModel(vm.$data.lastBanner);
+    vm.$data.lastBanner = currentBanner.id;
+    currentBanner.isRotate = vm.$data.isRotateBanner;
     console.log('currentBanner', currentBanner);
     if (dev) {
-      if (vm.activeBannerModel() !== false) {
+      if (currentBanner !== false) {
         return h(
           'div',
           {
@@ -11740,7 +11758,7 @@ var Placement = _vue2.default.component('placement', {
           [h(
             _components.Banner,
             {
-              attrs: { model: vm.activeBannerModel() }
+              attrs: { model: currentBanner }
             },
             []
           ), h(
@@ -11769,7 +11787,7 @@ var Placement = _vue2.default.component('placement', {
                   textAlign: 'center'
                 }
               },
-              [vm.current.revenueType]
+              [vm.current.revenueType, ' ', vm.current.positionOnShare]
             )]
           )]
         );
@@ -13402,7 +13420,7 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'filterShare',
-    value: function filterShare(relativeKeyword) {
+    value: function filterShare(relativeKeyword, isRotate) {
       var _this3 = this;
 
       /**
@@ -13560,8 +13578,10 @@ var Zone = function (_Entity) {
             return 0;
           }, 0);
           console.log('lastPlaceType', lastPlaceType, i);
-
-          var cpdPercent = shareConstruct[i][1].weight;
+          var a = shareConstruct[i].map(function (x) {
+            return x.type;
+          }).indexOf('cpd');
+          var cpdPercent = shareConstruct[i][a].weight;
           var cpdAppear = lastPlaceType.reduce(function (acc, place) {
             return place === 'cpd' ? acc + 1 : acc + 0;
           }, 0);
@@ -13569,8 +13589,8 @@ var Zone = function (_Entity) {
             return place === 'cpm' ? acc + 1 : acc + 0;
           }, 0);
           console.log('cpmAppear', cpmAppear, cpdAppear);
+          console.log('everyThings1', shareConstruct);
           if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
-            console.log('everyThings1', shareConstruct);
             var isRemove = false;
             if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
               var index = shareConstruct[i].map(function (x) {
@@ -13619,12 +13639,12 @@ var Zone = function (_Entity) {
        * filer placements suit with share structure and channel
        */
       /* filter place fit with share construct */
-      allSharePlace = allSharePlace.filter(function (item) {
+      var allSharePlaceFitShareStructure = allSharePlace.filter(function (item) {
         return item.placement.revenueType === constructShareStructure[item.positionOnShare].type;
       });
 
       /* filter place fit with current channel */
-      allSharePlace = allSharePlace.filter(function (place) {
+      allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(function (place) {
         return place.placement.filterBanner().length > 0;
       });
       console.log('filterPlacement', allSharePlace);
@@ -13635,10 +13655,14 @@ var Zone = function (_Entity) {
       /**
        * get all monopoly placements
        */
+      var monopolyPlacesFitShareStructure = allSharePlaceFitShareStructure.filter(function (y) {
+        return y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd';
+      });
+      console.log('monopolyPlacements', monopolyPlacesFitShareStructure);
+
       var monopolyPlaces = allSharePlace.filter(function (y) {
         return y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd';
       });
-      console.log('monopolyPlacements', monopolyPlaces);
       /**
        * end
        */
@@ -13667,6 +13691,7 @@ var Zone = function (_Entity) {
        * end
        */
       var activePlacement = function activePlacement(allPlaces, type) {
+        if (type === 'random') return allPlaces[Math.floor(Math.random() * allPlaces.length)];
         var randomNumber = Math.random() * 100;
         var ratio = allPlaces.reduce(function (tmp, place) {
           return (type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp;
@@ -13700,7 +13725,14 @@ var Zone = function (_Entity) {
         });
         return placesWithKeyword;
       };
-      var createShare = function createShare(placeMonopolies) {
+      /**
+       * This function to create share
+       * @param placeMonopolies
+       * @param isRotate
+       * @returns {Array}
+       */
+      var createShare = function createShare(placeMonopolies, isRotate) {
+        // eslint-disable-line
         var shares = [];
         var shareDatas = [];
         var arrayRelativeKeyword = [];
@@ -13754,7 +13786,9 @@ var Zone = function (_Entity) {
                     // eslint-disable-line
                     if (index2 === 0) return item.placement.id !== place.placement.id;
                     return acc && item.placement.id !== place.placement.id;
-                  }, 0) : true) && place.placement.revenueType === constructShareStructure[index].type;
+                  }, 0) : true) && (
+                  /* if isRotate = true -> remove check share structure */
+                  isRotate ? true : place.placement.revenueType === constructShareStructure[index].type);
                 });
                 console.log('placementsForShare', places);
                 /*
@@ -13825,9 +13859,47 @@ var Zone = function (_Entity) {
         }
         return shareDatas;
       };
-      var result = createShare(monopolyPlaces);
+
+      /**
+       * [compute Share]
+       */
+      if (isRotate) {
+        /* if isRotate = true ->
+          * 1. Create a sets placementsInSharePosition placements
+           * that have a placement per a share position.
+          * 2. make a combination (1->k) of n :
+           * k number of share position - n is placementsInSharePosition.
+           * 3. Create share with these sets after combination */
+
+        /*  get sets placements contain normal placements and monopoly placements share a position */
+        var placementsInSharePosition = [];
+        var monopolyPositions = _vendor.util.uniqueItem(monopolyPlaces.map(function (x) {
+          return x.positionOnShare;
+        }));
+        monopolyPositions.reduce(function (acc, item) {
+          return (
+            /* make a random choice placement in each share position */
+            placementsInSharePosition.push(activePlacement(allSharePlace.filter(function (x) {
+              return x.positionOnShare === item && x.placement.revenueType !== 'pr';
+            }), 'random'))
+          );
+        }, 0);
+        placementsInSharePosition = _vendor.util.flatten(placementsInSharePosition);
+        console.log('shareWith', placementsInSharePosition);
+
+        var _result = createShare(monopolyPlacesFitShareStructure);
+        console.log('newShareFilter', _result);
+        return _result;
+        /*  */
+      }
+      /* if isRotate = false -> just create share with truly monopoly placement
+                        and share structure */
+      var result = createShare(monopolyPlacesFitShareStructure);
       console.log('newShareFilter', result);
       return result;
+      /**
+       *[end compute share]
+       */
     }
 
     /**
