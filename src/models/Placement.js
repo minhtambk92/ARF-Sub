@@ -84,6 +84,7 @@ class Placement extends Entity {
         return nextRange;
       }, 0);
       result.zoneId = this.zoneId;
+      result.campaignId = this.campaign.id;
       return result;
     }
 

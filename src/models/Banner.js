@@ -28,6 +28,7 @@ class Banner extends Entity {
     this.placementId = banner.placementId;
     this.optionBanners = banner.optionBanners;
     this.isRotate = banner.isRotate;
+    this.campaignID = banner.campaignID;
   }
 
   // Banner Checking Process
@@ -527,8 +528,9 @@ class Banner extends Entity {
     const bannerId = this.id.indexOf('banner-') !== -1 ? this.id.replace('banner-', '') : this.id;
     const placementId = this.placementId.indexOf('placement-') !== -1 ? this.placementId.replace('placement-', '') : this.placementId;
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
+    const campaignID = this.campaignID;
     const domainLog = 'http://lg1.logging.admicro.vn';
-    const linkLog = `${domainLog}/cpx_cms?dmn=${domain}&zid=${zoneID}&pli=${placementId}&items=${bannerId}&cov=${cov}`;
+    const linkLog = `${domainLog}/cpx_cms?dmn=${domain}&zid=${zoneID}&pli=${placementId}&cmpg=${campaignID}&items=${bannerId}&cov=${cov}`;
     console.log('BannerLog', linkLog);
     const img = new Image();
     img.src = linkLog;

@@ -10193,6 +10193,7 @@ var Banner = function (_Entity) {
     _this.placementId = banner.placementId;
     _this.optionBanners = banner.optionBanners;
     _this.isRotate = banner.isRotate;
+    _this.campaignID = banner.campaignID;
     return _this;
   }
 
@@ -10261,8 +10262,9 @@ var Banner = function (_Entity) {
       var bannerId = this.id.indexOf('banner-') !== -1 ? this.id.replace('banner-', '') : this.id;
       var placementId = this.placementId.indexOf('placement-') !== -1 ? this.placementId.replace('placement-', '') : this.placementId;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
+      var campaignID = this.campaignID;
       var domainLog = 'http://lg1.logging.admicro.vn';
-      var linkLog = domainLog + '/cpx_cms?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
+      var linkLog = domainLog + '/cpx_cms?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&cmpg=' + campaignID + '&items=' + bannerId + '&cov=' + cov;
       console.log('BannerLog', linkLog);
       var img = new Image();
       img.src = linkLog;
@@ -10893,6 +10895,7 @@ var Placement = function (_Entity) {
           return nextRange;
         }, 0);
         result.zoneId = this.zoneId;
+        result.campaignId = this.campaign.id;
         return result;
       }
 
