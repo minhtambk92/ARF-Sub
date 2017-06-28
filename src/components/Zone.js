@@ -37,11 +37,19 @@ const Zone = Vue.component('zone', {
     window.arfZones[this.current.id] = this;
   },
 
+  data() {
+    return {
+      lastShare: '',
+    };
+  },
+
   mounted() {
     // this.$on('shareHeight', (height) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     // });
-
+    // setInterval(() => {
+    //   this.$forceUpdate();
+    // }, 3000);
     this.$on('placementRendered', (index, revenueType, placeID) => {
       console.log('compete', this.current.id, index, revenueType);
       const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
@@ -66,15 +74,20 @@ const Zone = Vue.component('zone', {
     current() {
       return (this.model instanceof ZoneModel) ? this.model : new ZoneModel(this.model);
     },
-
     activeShareModel() {
-      return this.current.activeShare(window.ZoneConnect.relativeKeyword);
+      const res = this.current.activeShare(window.ZoneConnect.relativeKeyword, true, this.$data.lastShare); // eslint-disable-line
+      this.$data.lastShare = JSON.stringify(res.placements.map(x => x.id));
+      return res;
     },
+  },
+
+  methods: {
   },
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-    if (vm.activeShareModel) {
+    const currentShare = vm.activeShareModel;
+    if (currentShare) {
       return (
         <div
           id={vm.current.id}
@@ -85,7 +98,7 @@ const Zone = Vue.component('zone', {
             margin: 'auto',
           }}
         >
-          <Share model={vm.activeShareModel} />
+          <Share model={currentShare} />
         </div>
       );
     }

@@ -95,7 +95,7 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 /***/ (function(module, exports, __webpack_require__) {
 
 var store      = __webpack_require__(40)('wks')
-  , uid        = __webpack_require__(28)
+  , uid        = __webpack_require__(29)
   , Symbol     = __webpack_require__(2).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
@@ -9734,6 +9734,12 @@ exports.Zone = _Zone3.default;
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = { "default": __webpack_require__(83), __esModule: true };
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -9759,7 +9765,7 @@ exports.dom = _dom3.default; /**
 exports.adsData = _adsData3.default;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9798,13 +9804,13 @@ var Entity = function Entity(entity) {
 exports.default = Entity;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = { "default": __webpack_require__(86), __esModule: true };
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9837,7 +9843,7 @@ exports.default = function () {
 }();
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9876,7 +9882,7 @@ exports.default = function (subClass, superClass) {
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9899,7 +9905,7 @@ exports.default = function (self, call) {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
@@ -9909,7 +9915,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 var id = 0
@@ -9917,12 +9923,6 @@ var id = 0
 module.exports = function(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(83), __esModule: true };
 
 /***/ }),
 /* 30 */
@@ -10060,7 +10060,7 @@ module.exports = function(it, tag, stat){
 /***/ (function(module, exports, __webpack_require__) {
 
 var shared = __webpack_require__(40)('keys')
-  , uid    = __webpack_require__(28);
+  , uid    = __webpack_require__(29);
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
@@ -10135,7 +10135,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getPrototypeOf = __webpack_require__(23);
+var _getPrototypeOf = __webpack_require__(24);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
@@ -10143,19 +10143,19 @@ var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(24);
+var _createClass2 = __webpack_require__(25);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(26);
+var _possibleConstructorReturn2 = __webpack_require__(27);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(25);
+var _inherits2 = __webpack_require__(26);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(22);
+var _Entity2 = __webpack_require__(23);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
@@ -10253,13 +10253,13 @@ var Banner = function (_Entity) {
   }, {
     key: 'bannerLogging',
     value: function bannerLogging(cov) {
-      // cov=0 OR cov=-1: view placment, banner.
+      // cov=0 OR cov=-1: view placement, banner.
       // cov=1: click
       // cov=2: true view
-      // cov=3: load box dạng extend khi dùng chức năng rotate.
-      var zoneID = this.zoneId;
-      var bannerId = this.id;
-      var placementId = this.placementId;
+      // cov=3: load box when using rotate.
+      var zoneID = this.zoneId.indexOf('zone-') !== -1 ? this.zoneId.replace('zone-', '') : this.zoneId;
+      var bannerId = this.id.indexOf('banner-') !== -1 ? this.id.replace('banner-', '') : this.id;
+      var placementId = this.placementId.indexOf('placement-') !== -1 ? this.placementId.replace('placement-', '') : this.placementId;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var domainLog = 'http://lg1.logging.admicro.vn';
       var linkLog = domainLog + '/cpx_cms?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&items=' + bannerId + '&cov=' + cov;
@@ -10406,6 +10406,7 @@ var Banner = function (_Entity) {
   }, {
     key: 'checkChannel',
     get: function get() {
+      if (this.optionBanners !== undefined && (this.optionBanners.length === 0 || this.optionBanners !== null)) return true;
       if (this.optionBanners !== undefined && this.optionBanners !== null) {
         var optionBanner = this.optionBanners;
         var checkLength = optionBanner.length;
@@ -10771,7 +10772,7 @@ var _typeof2 = __webpack_require__(5);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _getPrototypeOf = __webpack_require__(23);
+var _getPrototypeOf = __webpack_require__(24);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
@@ -10779,19 +10780,19 @@ var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(24);
+var _createClass2 = __webpack_require__(25);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(26);
+var _possibleConstructorReturn2 = __webpack_require__(27);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(25);
+var _inherits2 = __webpack_require__(26);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(22);
+var _Entity2 = __webpack_require__(23);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
@@ -10961,7 +10962,7 @@ var _typeof2 = __webpack_require__(5);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _getPrototypeOf = __webpack_require__(23);
+var _getPrototypeOf = __webpack_require__(24);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
@@ -10969,19 +10970,19 @@ var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(24);
+var _createClass2 = __webpack_require__(25);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(26);
+var _possibleConstructorReturn2 = __webpack_require__(27);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(25);
+var _inherits2 = __webpack_require__(26);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(22);
+var _Entity2 = __webpack_require__(23);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
@@ -11281,7 +11282,7 @@ exports.f = Object.getOwnPropertySymbols;
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = __webpack_require__(8)
-  , toObject    = __webpack_require__(27)
+  , toObject    = __webpack_require__(28)
   , IE_PROTO    = __webpack_require__(39)('IE_PROTO')
   , ObjectProto = Object.prototype;
 
@@ -11391,7 +11392,7 @@ var _postscribe2 = _interopRequireDefault(_postscribe);
 
 var _models = __webpack_require__(13);
 
-var _mixins = __webpack_require__(21);
+var _mixins = __webpack_require__(22);
 
 var _vendor = __webpack_require__(4);
 
@@ -11490,17 +11491,23 @@ var Banner = _vue2.default.component('banner', {
                 iframe.contentWindow.document.write('<img src="' + vm.current.imageUrl + '">');
               } else {
                 var bannerData = _vendor.macro.replaceMacro(vm.current.html, true);
-                var scriptCode = _vendor.util.getScriptTag(bannerData).scripts;
-                var marginBanner = '';
-                if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
-                  // eslint-disable-next-line
-                  var bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
-                  var bannerContainer = 'ads_zone' + bannerCode;
-                  marginBanner = '<script> var bannerParentID = "' + bannerContainer + '";' + 'setTimeout(function() {\n                 var bannerParent = document.getElementById(bannerParentID);' + // eslint-disable-line
-                  'if (bannerParent) {' + '   bannerParent.childNodes[1].style.marginLeft = 0;' + '}}, 200);</script>';
-                }
+                /* eslint-disable */
+                // const scriptCode = util.getScriptTag(bannerData).scripts;
+                // let marginBanner = '';
+                // if (scriptCode.length > 0 && scriptCode[0].indexOf('ads_box') !== -1) {
+                //   // eslint-disable-next-line
+                //   const bannerCode = scriptCode[0].split('/')[scriptCode[0].split('/').length - 1].split('.')[0].match(/\d+/ig)[0];
+                //   const bannerContainer = `ads_zone${bannerCode}`;
+                //   marginBanner = `<script> var bannerParentID = "${bannerContainer}";` +
+                //     `setTimeout(function() {
+                //      var bannerParent = document.getElementById(bannerParentID);` + // eslint-disable-line
+                //     'if (bannerParent) {' +
+                //     '   bannerParent.childNodes[1].style.marginLeft = 0;' +
+                //     '}}, 200);</script>';
+                // }
                 // const bannerDataWithMacro = macro.replaceMacro(vm.current.html);
-                iframe.contentWindow.document.write(bannerData + marginBanner);
+                /* eslint-enable */
+                iframe.contentWindow.document.write(bannerData /* + marginBanner */);
                 // iframe.contentWindow.document.write(bannerDataWithMacro);
               }
               iframe.contentWindow.document.close();
@@ -11511,29 +11518,25 @@ var Banner = _vue2.default.component('banner', {
               }
 
               // resize iframe fit with content
-              var fixIframe = setInterval(function () {
-                if (document.readyState === 'complete') {
-                  // Already loaded!
+              if (document.readyState === 'complete') {
+                // Already loaded!
+                setTimeout(function () {
+                  if (document.getElementById('iframe-' + vm.current.id)) {
+                    _vendor.util.resizeIFrameToFitContent(iframe);
+                  }
+                }, 700);
+              } else {
+                // Add onload or DOMContentLoaded event listeners here
+                window.addEventListener('onload', function () {
                   setTimeout(function () {
                     if (document.getElementById('iframe-' + vm.current.id)) {
                       _vendor.util.resizeIFrameToFitContent(iframe);
                     }
-                  }, 500);
-                  clearInterval(fixIframe);
-                } else {
-                  // Add onload or DOMContentLoaded event listeners here
-                  window.addEventListener('onload', function () {
-                    setTimeout(function () {
-                      if (document.getElementById('iframe-' + vm.current.id)) {
-                        _vendor.util.resizeIFrameToFitContent(iframe);
-                      }
-                    }, 500);
-                    clearInterval(fixIframe);
-                  }, false);
-                  // or
-                  // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
-                }
-              }, 100);
+                  }, 700);
+                }, false);
+                // or
+                // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
+              }
 
               // Prevent AppleWebKit iframe.onload loop
               vm.$data.isRendered = true;
@@ -11670,7 +11673,7 @@ var _models = __webpack_require__(13);
 
 var _components = __webpack_require__(20);
 
-var _mixins = __webpack_require__(21);
+var _mixins = __webpack_require__(22);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11713,10 +11716,11 @@ var Placement = _vue2.default.component('placement', {
       // make a trigger to parent component(share) and send place;
       _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
     });
-    setInterval(function () {
-      _this.$data.isRotateBanner = _this.current.isRotate && _this.current.filterBanner().length > 0;
-      // this.$forceUpdate();
-    }, 3000);
+    // setInterval(() => {
+    // eslint-disable-next-line
+    //   this.$data.isRotateBanner = (this.current.isRotate && this.current.filterBanner().length > 0);
+    //   this.$forceUpdate();
+    // }, 3000);
   },
 
 
@@ -11890,7 +11894,7 @@ var _models = __webpack_require__(13);
 
 var _components = __webpack_require__(20);
 
-var _mixins = __webpack_require__(21);
+var _mixins = __webpack_require__(22);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11993,6 +11997,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _stringify = __webpack_require__(21);
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
 var _vue = __webpack_require__(10);
 
 var _vue2 = _interopRequireDefault(_vue);
@@ -12001,7 +12009,7 @@ var _models = __webpack_require__(13);
 
 var _components = __webpack_require__(20);
 
-var _mixins = __webpack_require__(21);
+var _mixins = __webpack_require__(22);
 
 var _vendor = __webpack_require__(4);
 
@@ -12033,13 +12041,20 @@ var Zone = _vue2.default.component('zone', {
     window.arfZones = window.arfZones || {};
     window.arfZones[this.current.id] = this;
   },
+  data: function data() {
+    return {
+      lastShare: ''
+    };
+  },
   mounted: function mounted() {
     var _this = this;
 
     // this.$on('shareHeight', (height) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     // });
-
+    // setInterval(() => {
+    //   this.$forceUpdate();
+    // }, 3000);
     this.$on('placementRendered', function (index, revenueType, placeID) {
       console.log('compete', _this.current.id, index, revenueType);
       var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
@@ -12066,14 +12081,21 @@ var Zone = _vue2.default.component('zone', {
       return this.model instanceof _models.Zone ? this.model : new _models.Zone(this.model);
     },
     activeShareModel: function activeShareModel() {
-      return this.current.activeShare(window.ZoneConnect.relativeKeyword);
+      var res = this.current.activeShare(window.ZoneConnect.relativeKeyword, true, this.$data.lastShare); // eslint-disable-line
+      this.$data.lastShare = (0, _stringify2.default)(res.placements.map(function (x) {
+        return x.id;
+      }));
+      return res;
     }
   },
+
+  methods: {},
 
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
-    if (vm.activeShareModel) {
+    var currentShare = vm.activeShareModel;
+    if (currentShare) {
       return h(
         'div',
         {
@@ -12090,7 +12112,7 @@ var Zone = _vue2.default.component('zone', {
         [h(
           _components.Share,
           {
-            attrs: { model: vm.activeShareModel }
+            attrs: { model: currentShare }
           },
           []
         )]
@@ -12132,7 +12154,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Banner = exports.Placement = exports.Share = exports.Zone = undefined;
 
-var _stringify = __webpack_require__(29);
+var _stringify = __webpack_require__(21);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -12403,7 +12425,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(29);
+var _stringify = __webpack_require__(21);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -12411,7 +12433,7 @@ var _typeof2 = __webpack_require__(5);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
-var _getPrototypeOf = __webpack_require__(23);
+var _getPrototypeOf = __webpack_require__(24);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
@@ -12419,19 +12441,19 @@ var _classCallCheck2 = __webpack_require__(14);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = __webpack_require__(24);
+var _createClass2 = __webpack_require__(25);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _possibleConstructorReturn2 = __webpack_require__(26);
+var _possibleConstructorReturn2 = __webpack_require__(27);
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(25);
+var _inherits2 = __webpack_require__(26);
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _Entity2 = __webpack_require__(22);
+var _Entity2 = __webpack_require__(23);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
@@ -13420,10 +13442,8 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'filterShare',
-    value: function filterShare(relativeKeyword) {
+    value: function filterShare(relativeKeyword, isRotate, lastShare) {
       var _this3 = this;
-
-      var isRotate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       /**
        * [region: create Share construct]
@@ -13481,6 +13501,11 @@ var Zone = function (_Entity) {
 
       /* if cpdShare take all share percent in a place order -> filter */
       var constructShareStructure = [];
+      var listPositionOnShare = allSharePlace.map(function (x) {
+        return x.positionOnShare;
+      });
+      var countPositionOnShare = _vendor.util.uniqueItem(listPositionOnShare).length;
+      console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
 
       var _loop4 = function _loop4(i) {
         var allSharePlaceInThisPosition = allSharePlace.filter(function (place) {
@@ -13522,7 +13547,7 @@ var Zone = function (_Entity) {
         shareConstruct.push(getAllPlaceType);
       };
 
-      for (var i = 0; i < numberOfPlaceInShare; i += 1) {
+      for (var i = 0; i < countPositionOnShare; i += 1) {
         _loop4(i);
       }
       console.log('shareConstruct', shareConstruct);
@@ -13582,10 +13607,10 @@ var Zone = function (_Entity) {
             return 0;
           }, 0);
           console.log('lastPlaceType', lastPlaceType, i, numberOfPlaceInShare);
-          var a = shareConstruct[i].map(function (x) {
+          var indexOfCpd = shareConstruct[i].map(function (x) {
             return x.type;
           }).indexOf('cpd');
-          var cpdPercent = shareConstruct[i][a].weight;
+          var cpdPercent = indexOfCpd !== -1 ? shareConstruct[i][indexOfCpd].weight : 0;
           var cpdAppear = lastPlaceType.reduce(function (acc, place) {
             return place === 'cpd' ? acc + 1 : acc + 0;
           }, 0);
@@ -13634,7 +13659,7 @@ var Zone = function (_Entity) {
         }
       };
 
-      for (var i = 0; i < numberOfPlaceInShare; i += 1) {
+      for (var i = 0; i < countPositionOnShare; i += 1) {
         _loop5(i);
       }
       console.log('buildShareConstructXXX', constructShareStructure);
@@ -13695,7 +13720,9 @@ var Zone = function (_Entity) {
       };
       var getShareInfo = function getShareInfo(format) {
         for (var i = 0, length = allShare.length; i < length; i += 1) {
-          if (allShare[i].format === format.join()) {
+          if (format.length > 1 && allShare[i].format === format.join()) {
+            return allShare[i];
+          } else if (format.length === 1 && allShare[i].type === 'single') {
             return allShare[i];
           }
         }
@@ -13778,6 +13805,7 @@ var Zone = function (_Entity) {
                 var listMonopolies = placeMonopolies.filter(function (x) {
                   return x.positionOnShare === index && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
                 });
+
                 if (placeMonopolies.map(function (item) {
                   return item.positionOnShare;
                 }).indexOf(index) !== -1 && listMonopolies.length > 0) {
@@ -13792,17 +13820,20 @@ var Zone = function (_Entity) {
                 var normalPlace = allSharePlace.filter(function (place) {
                   return place.placement.revenueType !== 'pb' && place.positionOnShare === index;
                 });
+                console.log('normalPlace', normalPlace);
                 var passBackPlaces = allSharePlace.filter(function (place) {
                   return place.placement.revenueType === 'pb' && place.positionOnShare === index;
                 });
                 var places = normalPlace.filter(function (place) {
-                  return getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
-                    // eslint-disable-line
-                    if (index2 === 0) return item.placement.id !== place.placement.id;
-                    return acc && item.placement.id !== place.placement.id;
-                  }, 0) : true) && (
-                  /* if isRotate = true -> remove check share structure */
-                  isRotate ? true : place.placement.revenueType === constructShareStructure[index].type);
+                  return (
+                    // eslint-disable-next-line
+                    getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                      if (index2 === 0) return item.placement.id !== place.placement.id;
+                      return acc && item.placement.id !== place.placement.id;
+                    }, 0) : true) && (
+                    /* if isRotate = true -> check share structure will cancel */
+                    isRotate ? true : place.placement.revenueType === constructShareStructure[index].type)
+                  );
                 });
                 console.log('placementsForShare', places);
                 /*
@@ -13886,7 +13917,7 @@ var Zone = function (_Entity) {
            * k number of share position - n is placementsInSharePosition.
            * 3. Create share with these sets after combination */
 
-        /*  get sets placements contain normal placements and monopoly placements share a position */
+        /*  1  */
         var placementsInSharePosition = [];
         var monopolyPositions = _vendor.util.uniqueItem(monopolyPlaces.map(function (x) {
           return x.positionOnShare;
@@ -13900,10 +13931,20 @@ var Zone = function (_Entity) {
           );
         }, 0);
         placementsInSharePosition = _vendor.util.flatten(placementsInSharePosition);
-        console.log('shareWith', placementsInSharePosition);
+        console.log('placementsInSharePosition', placementsInSharePosition);
 
-        var _result = createShare(monopolyPlacesFitShareStructure);
-        console.log('newShareFilter', _result);
+        /* 2 */
+        var combinationPlaceInShare = placementsInSharePosition.length === 1 ? [placementsInSharePosition] : _vendor.util.combinations(placementsInSharePosition);
+        console.log('combinationPlaceInShare', combinationPlaceInShare);
+
+        /* 3 */
+        console.log('lastShare', lastShare);
+        var _result = [];
+        if (placementsInSharePosition.length <= 0) _result = createShare([], true);else combinationPlaceInShare.map(function (x) {
+          _result = _result.concat(createShare(x, true));
+        }); // eslint-disable-line
+        // const result = createShare(monopolyPlacesFitShareStructure);
+        console.log('hohohoho', _result);
         return _result;
         /*  */
       }
@@ -13924,8 +13965,9 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'activeShare',
-    value: function activeShare(relativeKeyword) {
-      var allShare = this.filterShare(relativeKeyword);
+    value: function activeShare(relativeKeyword, isRotate, lastShare) {
+      var allShare = this.filterShare(relativeKeyword, isRotate, lastShare);
+      if (allShare.length === 1) return allShare[0];
       if (allShare.length > 0) {
         var randomNumber = Math.random() * 100;
         var ratio = allShare.reduce(function (tmp, share) {
@@ -14022,7 +14064,7 @@ var Zone = function (_Entity) {
   }, {
     key: 'zoneLogging',
     value: function zoneLogging() {
-      var zoneID = this.id;
+      var zoneID = this.id.indexOf('zone-') !== -1 ? this.id.replace('zone-', '') : this.id;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
       var domainLog = 'http://lg1.logging.admicro.vn';
       var linkLog = domainLog + '/advbcms?dmn=' + domain + '&zid=' + zoneID;
@@ -15141,7 +15183,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(29);
+var _stringify = __webpack_require__(21);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -16387,7 +16429,7 @@ module.exports = function(object, el){
 /* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var META     = __webpack_require__(28)('meta')
+var META     = __webpack_require__(29)('meta')
   , isObject = __webpack_require__(16)
   , has      = __webpack_require__(8)
   , setDesc  = __webpack_require__(3).f
@@ -16569,7 +16611,7 @@ module.exports = __webpack_require__(0).getIteratorMethod = function(it){
 
 var ctx            = __webpack_require__(32)
   , $export        = __webpack_require__(7)
-  , toObject       = __webpack_require__(27)
+  , toObject       = __webpack_require__(28)
   , call           = __webpack_require__(101)
   , isArrayIter    = __webpack_require__(99)
   , toLength       = __webpack_require__(59)
@@ -16666,7 +16708,7 @@ $export($export.S + $export.F * !__webpack_require__(6), 'Object', {defineProper
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 Object.getPrototypeOf(O)
-var toObject        = __webpack_require__(27)
+var toObject        = __webpack_require__(28)
   , $getPrototypeOf = __webpack_require__(55);
 
 __webpack_require__(57)('getPrototypeOf', function(){
@@ -16680,7 +16722,7 @@ __webpack_require__(57)('getPrototypeOf', function(){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 Object.keys(O)
-var toObject = __webpack_require__(27)
+var toObject = __webpack_require__(28)
   , $keys    = __webpack_require__(18);
 
 __webpack_require__(57)('keys', function(){
@@ -16719,7 +16761,7 @@ var global         = __webpack_require__(2)
   , $fails         = __webpack_require__(15)
   , shared         = __webpack_require__(40)
   , setToStringTag = __webpack_require__(38)
-  , uid            = __webpack_require__(28)
+  , uid            = __webpack_require__(29)
   , wks            = __webpack_require__(1)
   , wksExt         = __webpack_require__(44)
   , wksDefine      = __webpack_require__(43)

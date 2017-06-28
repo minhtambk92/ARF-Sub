@@ -916,7 +916,7 @@ class Zone extends Entity {
    * create all share and filter them fit with conditions
    */
 
-  filterShare(relativeKeyword, isRotate = true) {
+  filterShare(relativeKeyword, isRotate, lastShare) {
     /**
      * [region: create Share construct]
      *
@@ -971,7 +971,10 @@ class Zone extends Entity {
 
         /* if cpdShare take all share percent in a place order -> filter */
     const constructShareStructure = [];
-    for (let i = 0; i < numberOfPlaceInShare; i += 1) {
+    const listPositionOnShare = allSharePlace.map(x => x.positionOnShare);
+    const countPositionOnShare = util.uniqueItem(listPositionOnShare).length;
+    console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
+    for (let i = 0; i < countPositionOnShare; i += 1) {
       const allSharePlaceInThisPosition = allSharePlace.filter(place =>
       place.positionOnShare === i);
       const allPlaceTypeInPosition = [];
@@ -1040,7 +1043,7 @@ class Zone extends Entity {
       adsStorage.setStorage('_cpt', cookie, '', '/', domain);
     }
 
-    for (let i = 0; i < numberOfPlaceInShare; i += 1) {
+    for (let i = 0; i < countPositionOnShare; i += 1) {
       if (shareConstruct[i].filter(x => x.type === 'pa').length > 0) {
         constructShareStructure.push('pa');
       } else {
@@ -1056,8 +1059,8 @@ class Zone extends Entity {
           return 0;
         }, 0);
         console.log('lastPlaceType', lastPlaceType, i, numberOfPlaceInShare);
-        const a = shareConstruct[i].map(x => x.type).indexOf('cpd');
-        const cpdPercent = shareConstruct[i][a].weight;
+        const indexOfCpd = shareConstruct[i].map(x => x.type).indexOf('cpd');
+        const cpdPercent = indexOfCpd !== -1 ? shareConstruct[i][indexOfCpd].weight : 0;
         const cpdAppear = lastPlaceType.reduce((acc, place) =>
           (place === 'cpd' ? acc + 1 : acc + 0), 0);
         const cpmAppear = lastPlaceType.reduce((acc, place) =>
@@ -1144,7 +1147,9 @@ class Zone extends Entity {
       }, 0);
     const getShareInfo = (format) => {
       for (let i = 0, length = allShare.length; i < length; i += 1) {
-        if (allShare[i].format === format.join()) {
+        if (format.length > 1 && allShare[i].format === format.join()) {
+          return allShare[i];
+        } else if (format.length === 1 && allShare[i].type === 'single') {
           return allShare[i];
         }
       }
@@ -1227,6 +1232,7 @@ class Zone extends Entity {
                                        /* fill monopoly place first */
               const listMonopolies = placeMonopolies.filter(x => x.positionOnShare === index &&
               getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
+
               if (placeMonopolies.map(item => item.positionOnShare).indexOf(index) !== -1 &&
                 listMonopolies.length > 0) {
                 const place = listMonopolies.length === 1 ? listMonopolies[0] :
@@ -1241,14 +1247,16 @@ class Zone extends Entity {
 
                */
               const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && place.positionOnShare === index);
+              console.log('normalPlace', normalPlace);
               const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && place.positionOnShare === index);
               let places = normalPlace.filter(place => (
+                // eslint-disable-next-line
                 getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
-                (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
+                (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
                   if (index2 === 0) return item.placement.id !== place.placement.id;
                   return acc && item.placement.id !== place.placement.id;
                 }, 0) : true) &&
-                  /* if isRotate = true -> remove check share structure */
+                  /* if isRotate = true -> check share structure will cancel */
                 (isRotate ? true :
                   place.placement.revenueType === constructShareStructure[index].type)));
               console.log('placementsForShare', places);
@@ -1336,17 +1344,27 @@ class Zone extends Entity {
          * k number of share position - n is placementsInSharePosition.
          * 3. Create share with these sets after combination */
 
-      /*  get sets placements contain normal placements and monopoly placements share a position */
+      /*  1  */
       let placementsInSharePosition = [];
       const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => x.positionOnShare));
       monopolyPositions.reduce((acc, item) =>
                                       /* make a random choice placement in each share position */
         placementsInSharePosition.push(activePlacement(allSharePlace.filter(x => (x.positionOnShare === item && x.placement.revenueType !== 'pr')), 'random')), 0);
       placementsInSharePosition = util.flatten(placementsInSharePosition);
-      console.log('shareWith', placementsInSharePosition);
+      console.log('placementsInSharePosition', placementsInSharePosition);
 
-      const result = createShare(monopolyPlacesFitShareStructure);
-      console.log('newShareFilter', result);
+      /* 2 */
+      const combinationPlaceInShare = placementsInSharePosition.length === 1 ?
+        [placementsInSharePosition] : util.combinations(placementsInSharePosition);
+      console.log('combinationPlaceInShare', combinationPlaceInShare);
+
+      /* 3 */
+      console.log('lastShare', lastShare);
+      let result = [];
+      if (placementsInSharePosition.length <= 0) result = createShare([], true);
+      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, true)); }); // eslint-disable-line
+      // const result = createShare(monopolyPlacesFitShareStructure);
+      console.log('hohohoho', result);
       return result;
       /*  */
     }
@@ -1364,8 +1382,9 @@ class Zone extends Entity {
    * Get a active share randomly by its weight
    * @return {Share}
    */
-  activeShare(relativeKeyword) {
-    const allShare = this.filterShare(relativeKeyword);
+  activeShare(relativeKeyword, isRotate, lastShare) {
+    const allShare = this.filterShare(relativeKeyword, isRotate, lastShare);
+    if (allShare.length === 1) return allShare[0];
     if (allShare.length > 0) {
       const randomNumber = Math.random() * 100;
       const ratio = allShare.reduce((tmp, share) => {
@@ -1454,7 +1473,7 @@ class Zone extends Entity {
    * Track @zone load
    */
   zoneLogging() {
-    const zoneID = this.id;
+    const zoneID = this.id.indexOf('zone-') !== -1 ? this.id.replace('zone-', '') : this.id;
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
     const domainLog = 'http://lg1.logging.admicro.vn';
     const linkLog = `${domainLog}/advbcms?dmn=${domain}&zid=${zoneID}`;

@@ -42,10 +42,11 @@ const Placement = Vue.component('placement', {
       // make a trigger to parent component(share) and send place;
       this.$parent.$emit('render', this.current.id, this.current.revenueType);
     });
-    setInterval(() => {
-      this.$data.isRotateBanner = (this.current.isRotate && this.current.filterBanner().length > 0);
-      // this.$forceUpdate();
-    }, 3000);
+    // setInterval(() => {
+    // eslint-disable-next-line
+    //   this.$data.isRotateBanner = (this.current.isRotate && this.current.filterBanner().length > 0);
+    //   this.$forceUpdate();
+    // }, 3000);
   },
 
   computed: {

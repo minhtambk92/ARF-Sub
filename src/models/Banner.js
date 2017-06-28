@@ -178,6 +178,8 @@ class Banner extends Entity {
   /* eslint-enable */
 
   get checkChannel() {
+    if (this.optionBanners !== undefined &&
+      (this.optionBanners.length === 0 || this.optionBanners !== null)) return true;
     if (this.optionBanners !== undefined && this.optionBanners !== null) {
       const optionBanner = this.optionBanners;
       const checkLength = optionBanner.length;
@@ -517,13 +519,13 @@ class Banner extends Entity {
   }
 
   bannerLogging(cov) {
-    // cov=0 OR cov=-1: view placment, banner.
+    // cov=0 OR cov=-1: view placement, banner.
     // cov=1: click
     // cov=2: true view
-    // cov=3: load box dạng extend khi dùng chức năng rotate.
-    const zoneID = this.zoneId;
-    const bannerId = this.id;
-    const placementId = this.placementId;
+    // cov=3: load box when using rotate.
+    const zoneID = this.zoneId.indexOf('zone-') !== -1 ? this.zoneId.replace('zone-', '') : this.zoneId;
+    const bannerId = this.id.indexOf('banner-') !== -1 ? this.id.replace('banner-', '') : this.id;
+    const placementId = this.placementId.indexOf('placement-') !== -1 ? this.placementId.replace('placement-', '') : this.placementId;
     const domain = encodeURIComponent(term.getCurrentDomain('Site:Pageurl'));
     const domainLog = 'http://lg1.logging.admicro.vn';
     const linkLog = `${domainLog}/cpx_cms?dmn=${domain}&zid=${zoneID}&pli=${placementId}&items=${bannerId}&cov=${cov}`;
