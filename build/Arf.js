@@ -10193,7 +10193,7 @@ var Banner = function (_Entity) {
     _this.placementId = banner.placementId;
     _this.optionBanners = banner.optionBanners;
     _this.isRotate = banner.isRotate;
-    _this.campaignID = banner.campaignID;
+    _this.campaignId = banner.campaignId;
     return _this;
   }
 
@@ -10262,7 +10262,8 @@ var Banner = function (_Entity) {
       var bannerId = this.id.indexOf('banner-') !== -1 ? this.id.replace('banner-', '') : this.id;
       var placementId = this.placementId.indexOf('placement-') !== -1 ? this.placementId.replace('placement-', '') : this.placementId;
       var domain = encodeURIComponent(_vendor.term.getCurrentDomain('Site:Pageurl'));
-      var campaignID = this.campaignID;
+      var campaignID = this.campaignId;
+      console.log('campaignId', campaignID);
       var domainLog = 'http://lg1.logging.admicro.vn';
       var linkLog = domainLog + '/cpx_cms?dmn=' + domain + '&zid=' + zoneID + '&pli=' + placementId + '&cmpg=' + campaignID + '&items=' + bannerId + '&cov=' + cov;
       console.log('BannerLog', linkLog);
@@ -11455,6 +11456,9 @@ var Banner = _vue2.default.component('banner', {
      * send log
      */
     this.$on('renderFinish', function () {
+      // log view
+      _this.current.bannerLogging(0);
+      // log true view
       _this.setupLogging();
     });
     this.current.countFrequency();
@@ -12046,7 +12050,8 @@ var Zone = _vue2.default.component('zone', {
   },
   data: function data() {
     return {
-      lastShare: ''
+      lastShare: '',
+      isReCompute: false
     };
   },
   mounted: function mounted() {
@@ -12083,12 +12088,16 @@ var Zone = _vue2.default.component('zone', {
     current: function current() {
       return this.model instanceof _models.Zone ? this.model : new _models.Zone(this.model);
     },
-    activeShareModel: function activeShareModel() {
-      var res = this.current.activeShare(window.ZoneConnect.relativeKeyword, true, this.$data.lastShare); // eslint-disable-line
-      this.$data.lastShare = (0, _stringify2.default)(res.placements.map(function (x) {
-        return x.id;
-      }));
-      return res;
+
+    activeShareModel: {
+      cache: true,
+      get: function get() {
+        var res = this.current.activeShare(window.ZoneConnect.relativeKeyword, true, this.$data.lastShare); // eslint-disable-line
+        this.$data.lastShare = (0, _stringify2.default)(res.placements.map(function (x) {
+          return x.id;
+        }));
+        return res;
+      }
     }
   },
 

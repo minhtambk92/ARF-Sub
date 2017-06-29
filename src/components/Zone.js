@@ -40,6 +40,7 @@ const Zone = Vue.component('zone', {
   data() {
     return {
       lastShare: '',
+      isReCompute: false,
     };
   },
 
@@ -74,10 +75,13 @@ const Zone = Vue.component('zone', {
     current() {
       return (this.model instanceof ZoneModel) ? this.model : new ZoneModel(this.model);
     },
-    activeShareModel() {
-      const res = this.current.activeShare(window.ZoneConnect.relativeKeyword, true, this.$data.lastShare); // eslint-disable-line
-      this.$data.lastShare = JSON.stringify(res.placements.map(x => x.id));
-      return res;
+    activeShareModel: {
+      cache: true,
+      get() {
+        const res = this.current.activeShare(window.ZoneConnect.relativeKeyword, true, this.$data.lastShare); // eslint-disable-line
+        this.$data.lastShare = JSON.stringify(res.placements.map(x => x.id));
+        return res;
+      },
     },
   },
 

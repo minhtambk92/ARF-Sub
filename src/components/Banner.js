@@ -60,6 +60,9 @@ const Banner = Vue.component('banner', {
      * send log
      */
     this.$on('renderFinish', () => {
+      // log view
+      this.current.bannerLogging(0);
+      // log true view
       this.setupLogging();
     });
     this.current.countFrequency();
