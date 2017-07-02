@@ -13647,7 +13647,7 @@ var Zone = function (_Entity) {
 
       var _loop4 = function _loop4(i) {
         var allSharePlaceInThisPosition = allSharePlace.filter(function (place) {
-          return place.positionOnShare - 1 === i;
+          return (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === i;
         });
         var allPlaceTypeInPosition = [];
         allSharePlaceInThisPosition.reduce(function (acc, item) {
@@ -13809,8 +13809,9 @@ var Zone = function (_Entity) {
        */
       /* filter place fit with share construct */
       var allSharePlaceFitShareStructure = allSharePlace.filter(function (item) {
-        return item.placement.revenueType === constructShareStructure[item.positionOnShare - 1];
+        return item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1];
       });
+      console.log('allSharePlaceFitShareStructure', allSharePlaceFitShareStructure);
 
       /* filter place fit with current channel */
       allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(function (place) {
@@ -13952,12 +13953,11 @@ var Zone = function (_Entity) {
                 /* fill monopoly place first */
                 if (placeMonopolies.length > 0) {
                   var listMonopolies = placeMonopolies.filter(function (x) {
-                    return x.positionOnShare === index + 1 && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
+                    return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === index + 1) && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
                   });
+                  console.log('listMonopoliesAfterFilter', listMonopolies);
 
-                  if (placeMonopolies.map(function (item) {
-                    return item.positionOnShare - 1;
-                  }).indexOf(index) !== -1 && listMonopolies.length > 0) {
+                  if (listMonopolies.length > 0) {
                     var place = listMonopolies.length === 1 ? listMonopolies[0] : activePlacement(listMonopolies, shareConstruct[index]);
                     placeChosen.push(place);
                     share.places.push(place.placement);

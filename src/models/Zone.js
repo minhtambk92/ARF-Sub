@@ -976,7 +976,7 @@ class Zone extends Entity {
     console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
     for (let i = 0; i < countPositionOnShare; i += 1) {
       const allSharePlaceInThisPosition = allSharePlace.filter(place =>
-      (place.positionOnShare - 1) === i);
+      (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === i);
       const allPlaceTypeInPosition = [];
       allSharePlaceInThisPosition.reduce((acc, item) => { //eslint-disable-line
         const type = item.placement.revenueType;
@@ -1107,7 +1107,8 @@ class Zone extends Entity {
      */
                /* filter place fit with share construct */
     let allSharePlaceFitShareStructure = allSharePlace.filter(item =>
-    item.placement.revenueType === constructShareStructure[item.positionOnShare - 1]);
+    item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]);
+    console.log('allSharePlaceFitShareStructure', allSharePlaceFitShareStructure);
 
                 /* filter place fit with current channel */
     allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
@@ -1243,11 +1244,11 @@ class Zone extends Entity {
                                        /* fill monopoly place first */
               if (placeMonopolies.length > 0) {
                 const listMonopolies = placeMonopolies.filter(
-                  x => x.positionOnShare === (index + 1) &&
+                  x => (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === (index + 1)) &&
                 getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
+                console.log('listMonopoliesAfterFilter', listMonopolies);
 
-                if (placeMonopolies.map(item => (item.positionOnShare - 1)).indexOf(index) !== -1 &&
-                  listMonopolies.length > 0) {
+                if (listMonopolies.length > 0) {
                   const place = listMonopolies.length === 1 ? listMonopolies[0] :
                     activePlacement(listMonopolies, shareConstruct[index]);
                   placeChosen.push(place);
