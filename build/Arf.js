@@ -11487,7 +11487,7 @@ var Banner = _vue2.default.component('banner', {
       var _this2 = this;
 
       var vm = this;
-      var tete = setInterval(function () {
+      var wait = setInterval(function () {
         var container = document.getElementById(vm.current.id);
         if (container) {
           container.innerHTML = '';
@@ -11565,8 +11565,9 @@ var Banner = _vue2.default.component('banner', {
             vm.$el.appendChild(iframe);
             vm.$parent.$emit('renderFinish');
             vm.$emit('renderFinish');
-            clearInterval(tete);
+            clearInterval(wait);
           } catch (error) {
+            clearInterval(wait);
             throw new Error(error);
           }
         }
@@ -11578,15 +11579,18 @@ var Banner = _vue2.default.component('banner', {
      */
     renderBannerNoIframe: function renderBannerNoIframe() {
       var vm = this;
-      try {
-        var htmlData = vm.current.html;
-        console.log('htmlData', htmlData);
-        var loadAsync = setInterval(function () {
+      var htmlData = vm.current.html;
+      console.log('htmlData', htmlData);
+      var loadAsync = setInterval(function () {
+        try {
           var container = document.getElementById(vm.current.id);
           if (container) {
             container.innerHTML = '';
             var writeAsync = _postscribe2.default;
             writeAsync('#' + vm.current.id, htmlData, {
+              error: function error() {
+                clearInterval(loadAsync);
+              },
               done: function done() {
                 vm.$parent.$emit('renderFinish');
                 vm.$emit('renderFinish');
@@ -11594,17 +11598,18 @@ var Banner = _vue2.default.component('banner', {
             });
             clearInterval(loadAsync);
           }
-        }, 100);
-        // const loadAsync = setInterval(() => {
-        //   const idw = document.getElementById(`${vm.current.id}`);
-        //   if (idw) {
-        // util.executeJS(htmlData, vm.current.id);
-        //     clearInterval(loadAsync);
-        //   }
-        // }, 500);
-      } catch (error) {
-        throw new Error('Banner Error!');
-      }
+        } catch (error) {
+          clearInterval(loadAsync);
+          throw new Error('Banner Error!');
+        }
+      }, 100);
+      // const loadAsync = setInterval(() => {
+      //   const idw = document.getElementById(`${vm.current.id}`);
+      //   if (idw) {
+      // util.executeJS(htmlData, vm.current.id);
+      //     clearInterval(loadAsync);
+      //   }
+      // }, 500);
     },
 
     /**

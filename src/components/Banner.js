@@ -78,7 +78,7 @@ const Banner = Vue.component('banner', {
      */
     renderToIFrame() {
       const vm = this;
-      const tete = setInterval(() => {
+      const wait = setInterval(() => {
         const container = document.getElementById(vm.current.id);
         if (container) {
           container.innerHTML = '';
@@ -157,8 +157,9 @@ const Banner = Vue.component('banner', {
             vm.$el.appendChild(iframe);
             vm.$parent.$emit('renderFinish');
             vm.$emit('renderFinish');
-            clearInterval(tete);
+            clearInterval(wait);
           } catch (error) {
+            clearInterval(wait);
             throw new Error(error);
           }
         }
@@ -169,15 +170,18 @@ const Banner = Vue.component('banner', {
      */
     renderBannerNoIframe() {
       const vm = this;
-      try {
-        const htmlData = vm.current.html;
-        console.log('htmlData', htmlData);
-        const loadAsync = setInterval(() => {
+      const htmlData = vm.current.html;
+      console.log('htmlData', htmlData);
+      const loadAsync = setInterval(() => {
+        try {
           const container = document.getElementById(vm.current.id);
           if (container) {
             container.innerHTML = '';
             const writeAsync = postscribe;
             writeAsync(`#${vm.current.id}`, htmlData, {
+              error() {
+                clearInterval(loadAsync);
+              },
               done() {
                 vm.$parent.$emit('renderFinish');
                 vm.$emit('renderFinish');
@@ -185,7 +189,11 @@ const Banner = Vue.component('banner', {
             });
             clearInterval(loadAsync);
           }
-        }, 100);
+        } catch (error) {
+          clearInterval(loadAsync);
+          throw new Error('Banner Error!');
+        }
+      }, 100);
         // const loadAsync = setInterval(() => {
         //   const idw = document.getElementById(`${vm.current.id}`);
         //   if (idw) {
@@ -193,9 +201,6 @@ const Banner = Vue.component('banner', {
         //     clearInterval(loadAsync);
         //   }
         // }, 500);
-      } catch (error) {
-        throw new Error('Banner Error!');
-      }
     },
     /**
      * logging
