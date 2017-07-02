@@ -21,6 +21,8 @@ class Placement extends Entity {
     this.campaign = placement.campaign;
     this.positionOnShare = placement.positionOnShare;
     this.zoneId = placement.zoneId;
+    this.isRotate = placement.isRotate;
+    this.isRotateFromShare = placement.isRotateFromShare;
   }
 
   get PlacementArea() {
@@ -35,9 +37,13 @@ class Placement extends Entity {
     return this.banners.map(banner => new Banner(banner));
   }
 
-  filterBanner() {
-    if (this.revenueType === 'pb') return this.allBanners;
-    let result = this.allBanners.filter(x => x.isRenderable());
+  filterBanner(lastBanner) {
+    console.log('lastBanner', lastBanner, this.allBanners.length);
+    const allBanner = (this.allBanners.length > 1 && (lastBanner !== undefined && lastBanner !== null)) ? this.allBanners.filter(item => item.id !== lastBanner) : this.allBanners;
+    if (this.revenueType === 'pb') {
+      return allBanner;
+    }
+    let result = allBanner.filter(x => x.isRenderable());
     const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));
     if ((window.ZoneConnect.relativeKeyword !== undefined && window.ZoneConnect.relativeKeyword !== '') && arrayKeyword.length > 0) {
       const filterBannerWithKeyword = result.filter(banner => banner.keyword.split(',').map(item => item.replace(' ', '')).filter(item => arrayKeyword.indexOf(item) !== -1).length > 0);
@@ -53,8 +59,8 @@ class Placement extends Entity {
    * Get active banner by its weight
    * @returns {Banner}
    */
-  activeBanner() {
-    const allBanner = this.filterBanner();
+  activeBanner(isRotate, lastBanner) {
+    const allBanner = this.filterBanner(lastBanner);
     if (allBanner.length > 0) {
       const isExitsWeight = allBanner.reduce((acc, banner, index) => {
         if (index === 0) {
@@ -85,6 +91,7 @@ class Placement extends Entity {
       }, 0);
       result.zoneId = this.zoneId;
       result.campaignId = this.campaign.id;
+      if (isRotate) result.isRotate = true;
       return result;
     }
 

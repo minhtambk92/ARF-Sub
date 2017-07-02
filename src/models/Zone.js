@@ -916,7 +916,7 @@ class Zone extends Entity {
    * create all share and filter them fit with conditions
    */
 
-  filterShare(relativeKeyword, isRotate, lastShare) {
+  filterShare(relativeKeyword, isRotate, formatRotate, lastShare) {
     /**
      * [region: create Share construct]
      *
@@ -928,10 +928,10 @@ class Zone extends Entity {
       }
       return acc.concat(item.allsharePlacements);
     }, 0);
-    allSharePlace.reduce((acc, item) => { // eslint-disable-line
-      if (item.positionOnShare !== 0) item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
-    }, 0);
-
+    // allSharePlace.reduce((acc, item) => { // eslint-disable-line
+    //   if (item.positionOnShare !== 0)
+    // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
+    // }, 0);
           /* This function to get placement have smallest area */
     const getMinPlace = (allSharePlacement) => {
       if (this.zoneType === 'right') {
@@ -976,7 +976,7 @@ class Zone extends Entity {
     console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
     for (let i = 0; i < countPositionOnShare; i += 1) {
       const allSharePlaceInThisPosition = allSharePlace.filter(place =>
-      place.positionOnShare === i);
+      (place.positionOnShare - 1) === i);
       const allPlaceTypeInPosition = [];
       allSharePlaceInThisPosition.reduce((acc, item) => { //eslint-disable-line
         const type = item.placement.revenueType;
@@ -1107,7 +1107,7 @@ class Zone extends Entity {
      */
                /* filter place fit with share construct */
     let allSharePlaceFitShareStructure = allSharePlace.filter(item =>
-    item.placement.revenueType === constructShareStructure[item.positionOnShare]);
+    item.placement.revenueType === constructShareStructure[item.positionOnShare - 1]);
 
                 /* filter place fit with current channel */
     allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
@@ -1140,11 +1140,21 @@ class Zone extends Entity {
       throw new Error('shareFormat Error!');
     }
     console.log('shareFormats', shareFormats);
-    const checkShareFormat = format =>
-      shareFormats.reduce((acc, item, index) => {
-        if (index === 0) return util.checkTwoArrayEqual(item, format);
-        return acc || util.checkTwoArrayEqual(item, format);
-      }, 0);
+    const checkShareFormat = (format, format2) => {
+      if (format2 === undefined || format2 === '') {
+        return shareFormats.reduce((acc, item, index) => {
+          if (index === 0) return util.checkTwoArrayEqual(item, format);
+          return acc || util.checkTwoArrayEqual(item, format);
+        }, 0);
+      }
+      let x;
+      if (typeof format === 'string') x = format;
+      if (typeof format === 'object' && Array.isArray(format)) x = format.join();
+      let y;
+      if (typeof format2 === 'string') y = format;
+      if (typeof format2 === 'object' && Array.isArray(format2)) y = format.join();
+      return x === y;
+    };
     const getShareInfo = (format) => {
       for (let i = 0, length = allShare.length; i < length; i += 1) {
         if (format.length > 1 && allShare[i].format === format.join()) {
@@ -1193,7 +1203,7 @@ class Zone extends Entity {
      * @param isRotate
      * @returns {Array}
      */
-    const createShare = (placeMonopolies, isRotate) => { // eslint-disable-line
+    const createShare = (placeMonopolies, isRotate, format, lastShare) => { // eslint-disable-line
       const shares = [];
       const shareDatas = [];
       const arrayRelativeKeyword = [];
@@ -1211,7 +1221,7 @@ class Zone extends Entity {
 
          */
         createShareFormat.reduce((temp, shareFormat) => {
-          const checkS = checkShareFormat(shareFormat);
+          const checkS = checkShareFormat(shareFormat, format);
           console.log('checkSnew', checkS);
           if (checkS) {
             /*
@@ -1220,7 +1230,8 @@ class Zone extends Entity {
 
              */
             const shareInfo = getShareInfo(shareFormat);
-            const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type }; // eslint-disable-line
+            const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate };// eslint-disable-line
+            console.log('olala', share);
             let isRelative = false;
             /*
 
@@ -1230,25 +1241,28 @@ class Zone extends Entity {
             shareFormat.reduce((temp2, placeRatio, index) => {
               const placeChosen = [];
                                        /* fill monopoly place first */
-              const listMonopolies = placeMonopolies.filter(x => x.positionOnShare === index &&
-              getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
+              if (placeMonopolies.length > 0) {
+                const listMonopolies = placeMonopolies.filter(
+                  x => x.positionOnShare === (index + 1) &&
+                getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
 
-              if (placeMonopolies.map(item => item.positionOnShare).indexOf(index) !== -1 &&
-                listMonopolies.length > 0) {
-                const place = listMonopolies.length === 1 ? listMonopolies[0] :
-                  activePlacement(listMonopolies, shareConstruct[index]);
-                placeChosen.push(place);
-                share.places.push(place.placement);
-                return 0;
+                if (placeMonopolies.map(item => (item.positionOnShare - 1)).indexOf(index) !== -1 &&
+                  listMonopolies.length > 0) {
+                  const place = listMonopolies.length === 1 ? listMonopolies[0] :
+                    activePlacement(listMonopolies, shareConstruct[index]);
+                  placeChosen.push(place);
+                  share.places.push(place.placement);
+                  return 0;
+                }
               }
               /*
 
                Then, find all placement fit with area place for the rest part.
 
                */
-              const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && place.positionOnShare === index);
+              const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && place.positionOnShare === (index + 1));
               console.log('normalPlace', normalPlace);
-              const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && place.positionOnShare === index);
+              const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && place.positionOnShare === (index + 1));
               let places = normalPlace.filter(place => (
                 // eslint-disable-next-line
                 getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
@@ -1258,7 +1272,7 @@ class Zone extends Entity {
                 }, 0) : true) &&
                   /* if isRotate = true -> check share structure will cancel */
                 (isRotate ? true :
-                  place.placement.revenueType === constructShareStructure[index].type)));
+                  place.placement.revenueType === constructShareStructure[index])));
               console.log('placementsForShare', places);
               /*
 
@@ -1325,7 +1339,9 @@ class Zone extends Entity {
           const outputCss = shares[i].css;
           const placements = shares[i].places;
           const type = shares[i].type;
-          const newShare = new Share({ id, outputCss, placements, weight, type });
+          const isShareRotate = shares[i].isRotate;
+          console.log('checkRotate', shares[i].isRotate);
+          const newShare = new Share({ id, outputCss, placements, weight, type, isRotate: isShareRotate });
           shareDatas.push(newShare);
         }
       }
@@ -1346,10 +1362,10 @@ class Zone extends Entity {
 
       /*  1  */
       let placementsInSharePosition = [];
-      const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => x.positionOnShare));
+      const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => x.positionOnShare - 1));
       monopolyPositions.reduce((acc, item) =>
                                       /* make a random choice placement in each share position */
-        placementsInSharePosition.push(activePlacement(allSharePlace.filter(x => (x.positionOnShare === item && x.placement.revenueType !== 'pr')), 'random')), 0);
+        placementsInSharePosition.push(activePlacement(allSharePlace.filter(x => (x.positionOnShare === (item + 1) && x.placement.revenueType !== 'pr')), 'random')), 0);
       placementsInSharePosition = util.flatten(placementsInSharePosition);
       console.log('placementsInSharePosition', placementsInSharePosition);
 
@@ -1361,8 +1377,8 @@ class Zone extends Entity {
       /* 3 */
       console.log('lastShare', lastShare);
       let result = [];
-      if (placementsInSharePosition.length <= 0) result = createShare([], true);
-      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, true)); }); // eslint-disable-line
+      if (placementsInSharePosition.length <= 0) result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
+      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, true, formatRotate, lastShare)); }); // eslint-disable-line
       // const result = createShare(monopolyPlacesFitShareStructure);
       console.log('hohohoho', result);
       return result;
@@ -1382,9 +1398,9 @@ class Zone extends Entity {
    * Get a active share randomly by its weight
    * @return {Share}
    */
-  activeShare(relativeKeyword, isRotate, lastShare) {
-    const allShare = this.filterShare(relativeKeyword, isRotate, lastShare);
-    if (allShare.length === 1) return allShare[0];
+  activeShare(relativeKeyword, isRotate, formatRotate, lastShare) {
+    const allShare = this.filterShare(relativeKeyword, isRotate, formatRotate, lastShare);
+    // if (allShare.length === 1) return allShare[0];
     if (allShare.length > 0) {
       const randomNumber = Math.random() * 100;
       const ratio = allShare.reduce((tmp, share) => {
@@ -1454,6 +1470,7 @@ class Zone extends Entity {
       //       banner.isIFrame));
       //   }, 0);
       // }, 0);
+      if (isRotate) res.placements.map(item => (item.isRotateFromShare = true)); // eslint-disable-line
       return res;
     }
     return false;

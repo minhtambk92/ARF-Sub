@@ -16,6 +16,7 @@ class Share extends Entity {
     this.sharePlacements = share.sharePlacements;
     this.format = share.format;
     this.zoneId = share.zoneId;
+    this.isRotate = share.isRotate;
   }
 
   get shareArea() {

@@ -27,9 +27,14 @@ const Placement = Vue.component('placement', {
 
   data() {
     return {
-      isRotateBanner: false,
-      lastBanner: '',
+      lastBanner: null,
+      activeBannerModel: null,
     };
+  },
+
+  beforeMount() {
+    const currentBanner = this.current.activeBanner(false, '');
+    this.$set(this, 'activeBannerModel', currentBanner);
   },
 
   mounted() {
@@ -37,16 +42,23 @@ const Placement = Vue.component('placement', {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
+
+    // const conditional = (this.current.isRotate && this.current.filterBanner().length > 1);
+    // if (conditional) {
+    //   const rotateBanner = setInterval(() => {
+    //     if (!conditional) clearInterval(rotateBanner);
+    //     this.$set(this, 'activeBannerModel', this.current.activeBanner(conditional, this.$data.lastBanner));
+    //     this.$forceUpdate();
+    //   }, 5000);
+    // }
+    setTimeout(() => {
+      this.setupRotate();
+    }, 1000);
     this.$on('renderFinish', () => {
       console.log('renderFinish');
       // make a trigger to parent component(share) and send place;
       this.$parent.$emit('render', this.current.id, this.current.revenueType);
     });
-    // setInterval(() => {
-    // eslint-disable-next-line
-    //   this.$data.isRotateBanner = (this.current.isRotate && this.current.filterBanner().length > 0);
-    //   this.$forceUpdate();
-    // }, 3000);
   },
 
   computed: {
@@ -56,18 +68,61 @@ const Placement = Vue.component('placement', {
   },
 
   methods: {
-    activeBannerModel(lastBanner) {
-      console.log('lastBanner', lastBanner);
-      return this.current.activeBanner();
+    // activeBannerModel(lastBanner) {
+    //   console.log('lastBanner', lastBanner);
+    //   return this.current.activeBanner();
+    // },
+    setupRotate() {
+      const conditional = (this.current.isRotate && this.current.filterBanner().length > 1);
+      console.log('conditional', this.current.filterBanner().length);
+      if (conditional) {
+        const placement = document.getElementById(this.current.id);
+        const objMonitor = ViewTracking(placement);
+        const monitor = ViewTracking.VisMon.Builder(objMonitor);
+        let isTrack = false;
+        let isRotate = null;
+        // throttle -> update time
+        monitor
+          .strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 }))
+          .on('update', (track) => {
+            console.log('testUpdatePlacement');
+            /*  at least 80% -> setup rotate  */
+            if (track.state().percentage >= 0.8 && isTrack === false) {
+              isTrack = true;
+              const aaa = ViewTracking(placement);
+              aaa.onPercentageTimeTestPassed(() => {
+                if (isRotate === null) {
+                  isRotate = setInterval(() => {
+                    this.$set(this, 'activeBannerModel', this.current.activeBanner(conditional, this.$data.lastBanner));
+                    this.$forceUpdate();
+                  }, 5000);
+                }
+                isTrack = false;
+              }, {
+                percentageLimit: 0.8,
+                timeLimit: 3000,
+                interval: 100,
+              });
+            }
+            /* under 20% -> cancel rotate */
+            if (track.state().percentage <= 0.2 && isRotate !== null) {
+              console.log('clearInterval');
+              clearInterval(isRotate);
+              isRotate = null;
+            }
+          })
+          .build()
+          .start();
+      }
     },
   },
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
     const dev = location.search.indexOf('checkPlace=dev') !== -1;
-    const currentBanner = this.activeBannerModel(vm.$data.lastBanner);
+    const currentBanner = this.current.isRotateFromShare ? this.$set(this, 'activeBannerModel', this.current.activeBanner(true, null)) : this.activeBannerModel;
     vm.$data.lastBanner = currentBanner.id;
-    currentBanner.isRotate = vm.$data.isRotateBanner;
+    // currentBanner.isRotate = vm.current.isRotate || vm.$data.isRotateBanner;
     console.log('currentBanner', currentBanner);
     if (dev) {
       if (currentBanner !== false) {

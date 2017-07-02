@@ -10825,14 +10825,22 @@ var Placement = function (_Entity) {
     _this.campaign = placement.campaign;
     _this.positionOnShare = placement.positionOnShare;
     _this.zoneId = placement.zoneId;
+    _this.isRotate = placement.isRotate;
+    _this.isRotateFromShare = placement.isRotateFromShare;
     return _this;
   }
 
   (0, _createClass3.default)(Placement, [{
     key: 'filterBanner',
-    value: function filterBanner() {
-      if (this.revenueType === 'pb') return this.allBanners;
-      var result = this.allBanners.filter(function (x) {
+    value: function filterBanner(lastBanner) {
+      console.log('lastBanner', lastBanner, this.allBanners.length);
+      var allBanner = this.allBanners.length > 1 && lastBanner !== undefined && lastBanner !== null ? this.allBanners.filter(function (item) {
+        return item.id !== lastBanner;
+      }) : this.allBanners;
+      if (this.revenueType === 'pb') {
+        return allBanner;
+      }
+      var result = allBanner.filter(function (x) {
         return x.isRenderable();
       });
       var arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(function (item) {
@@ -10861,8 +10869,8 @@ var Placement = function (_Entity) {
 
   }, {
     key: 'activeBanner',
-    value: function activeBanner() {
-      var allBanner = this.filterBanner();
+    value: function activeBanner(isRotate, lastBanner) {
+      var allBanner = this.filterBanner(lastBanner);
       if (allBanner.length > 0) {
         var isExitsWeight = allBanner.reduce(function (acc, banner, index) {
           if (index === 0) {
@@ -10897,6 +10905,7 @@ var Placement = function (_Entity) {
         }, 0);
         result.zoneId = this.zoneId;
         result.campaignId = this.campaign.id;
+        if (isRotate) result.isRotate = true;
         return result;
       }
 
@@ -11011,6 +11020,7 @@ var Share = function (_Entity) {
     _this.sharePlacements = share.sharePlacements;
     _this.format = share.format;
     _this.zoneId = share.zoneId;
+    _this.isRotate = share.isRotate;
     return _this;
   }
 
@@ -11531,7 +11541,7 @@ var Banner = _vue2.default.component('banner', {
                   if (document.getElementById('iframe-' + vm.current.id)) {
                     _vendor.util.resizeIFrameToFitContent(iframe);
                   }
-                }, 700);
+                }, 1000);
               } else {
                 // Add onload or DOMContentLoaded event listeners here
                 window.addEventListener('onload', function () {
@@ -11539,7 +11549,7 @@ var Banner = _vue2.default.component('banner', {
                     if (document.getElementById('iframe-' + vm.current.id)) {
                       _vendor.util.resizeIFrameToFitContent(iframe);
                     }
-                  }, 700);
+                  }, 1000);
                 }, false);
                 // or
                 // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
@@ -11570,12 +11580,13 @@ var Banner = _vue2.default.component('banner', {
       var vm = this;
       try {
         var htmlData = vm.current.html;
+        console.log('htmlData', htmlData);
         var loadAsync = setInterval(function () {
           var container = document.getElementById(vm.current.id);
           if (container) {
             container.innerHTML = '';
-            (0, _postscribe2.default)('#' + vm.current.id, htmlData, {
-              releaseAsync: true,
+            var writeAsync = _postscribe2.default;
+            writeAsync('#' + vm.current.id, htmlData, {
               done: function done() {
                 vm.$parent.$emit('renderFinish');
                 vm.$emit('renderFinish');
@@ -11592,7 +11603,7 @@ var Banner = _vue2.default.component('banner', {
         //   }
         // }, 500);
       } catch (error) {
-        throw new Error(error);
+        throw new Error('Banner Error!');
       }
     },
 
@@ -11707,9 +11718,13 @@ var Placement = _vue2.default.component('placement', {
   },
   data: function data() {
     return {
-      isRotateBanner: false,
-      lastBanner: ''
+      lastBanner: null,
+      activeBannerModel: null
     };
+  },
+  beforeMount: function beforeMount() {
+    var currentBanner = this.current.activeBanner(false, '');
+    this.$set(this, 'activeBannerModel', currentBanner);
   },
   mounted: function mounted() {
     var _this = this;
@@ -11718,16 +11733,23 @@ var Placement = _vue2.default.component('placement', {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
     //   this.$parent.$emit('PlaceHeight', bannerHeight);
     // });
+
+    // const conditional = (this.current.isRotate && this.current.filterBanner().length > 1);
+    // if (conditional) {
+    //   const rotateBanner = setInterval(() => {
+    //     if (!conditional) clearInterval(rotateBanner);
+    //     this.$set(this, 'activeBannerModel', this.current.activeBanner(conditional, this.$data.lastBanner));
+    //     this.$forceUpdate();
+    //   }, 5000);
+    // }
+    setTimeout(function () {
+      _this.setupRotate();
+    }, 1000);
     this.$on('renderFinish', function () {
       console.log('renderFinish');
       // make a trigger to parent component(share) and send place;
       _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
     });
-    // setInterval(() => {
-    // eslint-disable-next-line
-    //   this.$data.isRotateBanner = (this.current.isRotate && this.current.filterBanner().length > 0);
-    //   this.$forceUpdate();
-    // }, 3000);
   },
 
 
@@ -11738,9 +11760,50 @@ var Placement = _vue2.default.component('placement', {
   },
 
   methods: {
-    activeBannerModel: function activeBannerModel(lastBanner) {
-      console.log('lastBanner', lastBanner);
-      return this.current.activeBanner();
+    // activeBannerModel(lastBanner) {
+    //   console.log('lastBanner', lastBanner);
+    //   return this.current.activeBanner();
+    // },
+    setupRotate: function setupRotate() {
+      var _this2 = this;
+
+      var conditional = this.current.isRotate && this.current.filterBanner().length > 1;
+      console.log('conditional', this.current.filterBanner().length);
+      if (conditional) {
+        var placement = document.getElementById(this.current.id);
+        var objMonitor = ViewTracking(placement);
+        var monitor = ViewTracking.VisMon.Builder(objMonitor);
+        var isTrack = false;
+        var isRotate = null;
+        // throttle -> update time
+        monitor.strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 })).on('update', function (track) {
+          console.log('testUpdatePlacement');
+          /*  at least 80% -> setup rotate  */
+          if (track.state().percentage >= 0.8 && isTrack === false) {
+            isTrack = true;
+            var aaa = ViewTracking(placement);
+            aaa.onPercentageTimeTestPassed(function () {
+              if (isRotate === null) {
+                isRotate = setInterval(function () {
+                  _this2.$set(_this2, 'activeBannerModel', _this2.current.activeBanner(conditional, _this2.$data.lastBanner));
+                  _this2.$forceUpdate();
+                }, 5000);
+              }
+              isTrack = false;
+            }, {
+              percentageLimit: 0.8,
+              timeLimit: 3000,
+              interval: 100
+            });
+          }
+          /* under 20% -> cancel rotate */
+          if (track.state().percentage <= 0.2 && isRotate !== null) {
+            console.log('clearInterval');
+            clearInterval(isRotate);
+            isRotate = null;
+          }
+        }).build().start();
+      }
     }
   },
 
@@ -11748,9 +11811,9 @@ var Placement = _vue2.default.component('placement', {
     // eslint-disable-line no-unused-vars
     var vm = this;
     var dev = location.search.indexOf('checkPlace=dev') !== -1;
-    var currentBanner = this.activeBannerModel(vm.$data.lastBanner);
+    var currentBanner = this.current.isRotateFromShare ? this.$set(this, 'activeBannerModel', this.current.activeBanner(true, null)) : this.activeBannerModel;
     vm.$data.lastBanner = currentBanner.id;
-    currentBanner.isRotate = vm.$data.isRotateBanner;
+    // currentBanner.isRotate = vm.current.isRotate || vm.$data.isRotateBanner;
     console.log('currentBanner', currentBanner);
     if (dev) {
       if (currentBanner !== false) {
@@ -12050,19 +12113,32 @@ var Zone = _vue2.default.component('zone', {
   },
   data: function data() {
     return {
-      lastShare: '',
-      isReCompute: false
+      lastShare: null,
+      isReCompute: false,
+      isRotate: false,
+      activeShareModel: null
     };
+  },
+  beforeMount: function beforeMount() {
+    var currentShare = this.current.activeShare(window.ZoneConnect.relativeKeyword, false, '');
+    console.log('currentShare', currentShare);
+    this.$set(this, 'activeShareModel', currentShare);
   },
   mounted: function mounted() {
     var _this = this;
 
+    // if (this.activeShareModel.isRotate) {
+    //   const shareFormat = this.activeShareModel.format;
+    //   setInterval(() => {
+    //     this.$data.isRotate = true;
+    //     this.$set(this, 'activeShareModel', this.current.activeShare(window.ZoneConnect.relativeKeyword, true, shareFormat, this.$data.lastShare));
+    //     this.$forceUpdate();
+    //   }, 5000);
+    // }
+    this.setupRotate();
     // this.$on('shareHeight', (height) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     // });
-    // setInterval(() => {
-    //   this.$forceUpdate();
-    // }, 3000);
     this.$on('placementRendered', function (index, revenueType, placeID) {
       console.log('compete', _this.current.id, index, revenueType);
       var domain = _vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
@@ -12089,10 +12165,10 @@ var Zone = _vue2.default.component('zone', {
       return this.model instanceof _models.Zone ? this.model : new _models.Zone(this.model);
     },
 
-    activeShareModel: {
+    initActiveShareModel: {
       cache: true,
       get: function get() {
-        var res = this.current.activeShare(window.ZoneConnect.relativeKeyword, true, this.$data.lastShare); // eslint-disable-line
+        var res = this.current.activeShare(window.ZoneConnect.relativeKeyword, false, '');
         this.$data.lastShare = (0, _stringify2.default)(res.placements.map(function (x) {
           return x.id;
         }));
@@ -12101,12 +12177,58 @@ var Zone = _vue2.default.component('zone', {
     }
   },
 
-  methods: {},
+  methods: {
+    setupRotate: function setupRotate() {
+      var _this2 = this;
+
+      var zone = document.getElementById(this.current.id);
+      var objMonitor = ViewTracking(zone);
+      var monitor = ViewTracking.VisMon.Builder(objMonitor);
+      var isTrack = false;
+      var isRotate = null;
+      // throttle -> update time
+      monitor.strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 })).on('update', function (track) {
+        /*  at least 80% -> setup rotate  */
+        if (track.state().percentage >= 0.8 && isTrack === false) {
+          console.log('testMonitorZone', track.state().percentage);
+          isTrack = true;
+          var aaa = ViewTracking(zone);
+          aaa.onPercentageTimeTestPassed(function () {
+            if (_this2.activeShareModel.isRotate) {
+              var shareFormat = _this2.activeShareModel.format;
+              if (isRotate === null) {
+                console.log('Zone display was >80% visible for 1 seconds!', isRotate);
+                isRotate = setInterval(function () {
+                  _this2.$data.isRotate = true;
+                  _this2.$set(_this2, 'activeShareModel', _this2.current.activeShare(window.ZoneConnect.relativeKeyword, true, shareFormat, _this2.$data.lastShare));
+                  _this2.$forceUpdate();
+                }, 5000);
+              }
+            }
+            isTrack = false;
+          }, {
+            percentageLimit: 0.8,
+            timeLimit: 3000,
+            interval: 100
+          });
+        }
+        /* under 20% -> cancel rotate */
+        if (track.state().percentage <= 0.2 && isRotate !== null) {
+          console.log('clearInterval');
+          clearInterval(isRotate);
+          isRotate = null;
+        }
+      }).build().start();
+    }
+  },
 
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
     var currentShare = vm.activeShareModel;
+    vm.$data.lastShare = (0, _stringify2.default)(currentShare.placements.map(function (x) {
+      return x.id;
+    }));
     if (currentShare) {
       return h(
         'div',
@@ -13454,7 +13576,7 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'filterShare',
-    value: function filterShare(relativeKeyword, isRotate, lastShare) {
+    value: function filterShare(relativeKeyword, isRotate, formatRotate, lastShare) {
       var _this3 = this;
 
       /**
@@ -13469,11 +13591,10 @@ var Zone = function (_Entity) {
         }
         return acc.concat(item.allsharePlacements);
       }, 0);
-      allSharePlace.reduce(function (acc, item) {
-        // eslint-disable-line
-        if (item.positionOnShare !== 0) item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
-      }, 0);
-
+      // allSharePlace.reduce((acc, item) => { // eslint-disable-line
+      //   if (item.positionOnShare !== 0)
+      // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
+      // }, 0);
       /* This function to get placement have smallest area */
       var getMinPlace = function getMinPlace(allSharePlacement) {
         if (_this3.zoneType === 'right') {
@@ -13521,7 +13642,7 @@ var Zone = function (_Entity) {
 
       var _loop4 = function _loop4(i) {
         var allSharePlaceInThisPosition = allSharePlace.filter(function (place) {
-          return place.positionOnShare === i;
+          return place.positionOnShare - 1 === i;
         });
         var allPlaceTypeInPosition = [];
         allSharePlaceInThisPosition.reduce(function (acc, item) {
@@ -13683,7 +13804,7 @@ var Zone = function (_Entity) {
        */
       /* filter place fit with share construct */
       var allSharePlaceFitShareStructure = allSharePlace.filter(function (item) {
-        return item.placement.revenueType === constructShareStructure[item.positionOnShare];
+        return item.placement.revenueType === constructShareStructure[item.positionOnShare - 1];
       });
 
       /* filter place fit with current channel */
@@ -13724,11 +13845,20 @@ var Zone = function (_Entity) {
         throw new Error('shareFormat Error!');
       }
       console.log('shareFormats', shareFormats);
-      var checkShareFormat = function checkShareFormat(format) {
-        return shareFormats.reduce(function (acc, item, index) {
-          if (index === 0) return _vendor.util.checkTwoArrayEqual(item, format);
-          return acc || _vendor.util.checkTwoArrayEqual(item, format);
-        }, 0);
+      var checkShareFormat = function checkShareFormat(format, format2) {
+        if (format2 === undefined || format2 === '') {
+          return shareFormats.reduce(function (acc, item, index) {
+            if (index === 0) return _vendor.util.checkTwoArrayEqual(item, format);
+            return acc || _vendor.util.checkTwoArrayEqual(item, format);
+          }, 0);
+        }
+        var x = void 0;
+        if (typeof format === 'string') x = format;
+        if ((typeof format === 'undefined' ? 'undefined' : (0, _typeof3.default)(format)) === 'object' && Array.isArray(format)) x = format.join();
+        var y = void 0;
+        if (typeof format2 === 'string') y = format;
+        if ((typeof format2 === 'undefined' ? 'undefined' : (0, _typeof3.default)(format2)) === 'object' && Array.isArray(format2)) y = format.join();
+        return x === y;
       };
       var getShareInfo = function getShareInfo(format) {
         for (var i = 0, length = allShare.length; i < length; i += 1) {
@@ -13784,7 +13914,7 @@ var Zone = function (_Entity) {
        * @param isRotate
        * @returns {Array}
        */
-      var createShare = function createShare(placeMonopolies, isRotate) {
+      var createShare = function createShare(placeMonopolies, isRotate, format, lastShare) {
         // eslint-disable-line
         var shares = [];
         var shareDatas = [];
@@ -13799,14 +13929,15 @@ var Zone = function (_Entity) {
             Browse each shareRatio on above and create a share for it.
             */
           createShareFormat.reduce(function (temp, shareFormat) {
-            var checkS = checkShareFormat(shareFormat);
+            var checkS = checkShareFormat(shareFormat, format);
             console.log('checkSnew', checkS);
             if (checkS) {
               /*
                 this variable to store places in a share which are chosen bellow.
                 */
               var shareInfo = getShareInfo(shareFormat);
-              var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type }; // eslint-disable-line
+              var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate }; // eslint-disable-line
+              console.log('olala', share);
               var isRelative = false;
               /*
                 Browse each placeRatio in shareRatio, then find a placement fit it.
@@ -13814,27 +13945,29 @@ var Zone = function (_Entity) {
               shareFormat.reduce(function (temp2, placeRatio, index) {
                 var placeChosen = [];
                 /* fill monopoly place first */
-                var listMonopolies = placeMonopolies.filter(function (x) {
-                  return x.positionOnShare === index && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
-                });
+                if (placeMonopolies.length > 0) {
+                  var listMonopolies = placeMonopolies.filter(function (x) {
+                    return x.positionOnShare === index + 1 && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
+                  });
 
-                if (placeMonopolies.map(function (item) {
-                  return item.positionOnShare;
-                }).indexOf(index) !== -1 && listMonopolies.length > 0) {
-                  var place = listMonopolies.length === 1 ? listMonopolies[0] : activePlacement(listMonopolies, shareConstruct[index]);
-                  placeChosen.push(place);
-                  share.places.push(place.placement);
-                  return 0;
+                  if (placeMonopolies.map(function (item) {
+                    return item.positionOnShare - 1;
+                  }).indexOf(index) !== -1 && listMonopolies.length > 0) {
+                    var place = listMonopolies.length === 1 ? listMonopolies[0] : activePlacement(listMonopolies, shareConstruct[index]);
+                    placeChosen.push(place);
+                    share.places.push(place.placement);
+                    return 0;
+                  }
                 }
                 /*
                   Then, find all placement fit with area place for the rest part.
                   */
                 var normalPlace = allSharePlace.filter(function (place) {
-                  return place.placement.revenueType !== 'pb' && place.positionOnShare === index;
+                  return place.placement.revenueType !== 'pb' && place.positionOnShare === index + 1;
                 });
                 console.log('normalPlace', normalPlace);
                 var passBackPlaces = allSharePlace.filter(function (place) {
-                  return place.placement.revenueType === 'pb' && place.positionOnShare === index;
+                  return place.placement.revenueType === 'pb' && place.positionOnShare === index + 1;
                 });
                 var places = normalPlace.filter(function (place) {
                   return (
@@ -13844,7 +13977,7 @@ var Zone = function (_Entity) {
                       return acc && item.placement.id !== place.placement.id;
                     }, 0) : true) && (
                     /* if isRotate = true -> check share structure will cancel */
-                    isRotate ? true : place.placement.revenueType === constructShareStructure[index].type)
+                    isRotate ? true : place.placement.revenueType === constructShareStructure[index])
                   );
                 });
                 console.log('placementsForShare', places);
@@ -13911,7 +14044,9 @@ var Zone = function (_Entity) {
             var outputCss = shares[_i6].css;
             var placements = shares[_i6].places;
             var type = shares[_i6].type;
-            var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type });
+            var isShareRotate = shares[_i6].isRotate;
+            console.log('checkRotate', shares[_i6].isRotate);
+            var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type, isRotate: isShareRotate });
             shareDatas.push(newShare);
           }
         }
@@ -13932,13 +14067,13 @@ var Zone = function (_Entity) {
         /*  1  */
         var placementsInSharePosition = [];
         var monopolyPositions = _vendor.util.uniqueItem(monopolyPlaces.map(function (x) {
-          return x.positionOnShare;
+          return x.positionOnShare - 1;
         }));
         monopolyPositions.reduce(function (acc, item) {
           return (
             /* make a random choice placement in each share position */
             placementsInSharePosition.push(activePlacement(allSharePlace.filter(function (x) {
-              return x.positionOnShare === item && x.placement.revenueType !== 'pr';
+              return x.positionOnShare === item + 1 && x.placement.revenueType !== 'pr';
             }), 'random'))
           );
         }, 0);
@@ -13952,9 +14087,10 @@ var Zone = function (_Entity) {
         /* 3 */
         console.log('lastShare', lastShare);
         var _result = [];
-        if (placementsInSharePosition.length <= 0) _result = createShare([], true);else combinationPlaceInShare.map(function (x) {
-          _result = _result.concat(createShare(x, true));
-        }); // eslint-disable-line
+        if (placementsInSharePosition.length <= 0) _result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
+        else combinationPlaceInShare.map(function (x) {
+            _result = _result.concat(createShare(x, true, formatRotate, lastShare));
+          }); // eslint-disable-line
         // const result = createShare(monopolyPlacesFitShareStructure);
         console.log('hohohoho', _result);
         return _result;
@@ -13977,9 +14113,9 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'activeShare',
-    value: function activeShare(relativeKeyword, isRotate, lastShare) {
-      var allShare = this.filterShare(relativeKeyword, isRotate, lastShare);
-      if (allShare.length === 1) return allShare[0];
+    value: function activeShare(relativeKeyword, isRotate, formatRotate, lastShare) {
+      var allShare = this.filterShare(relativeKeyword, isRotate, formatRotate, lastShare);
+      // if (allShare.length === 1) return allShare[0];
       if (allShare.length > 0) {
         var randomNumber = Math.random() * 100;
         var ratio = allShare.reduce(function (tmp, share) {
@@ -14051,6 +14187,9 @@ var Zone = function (_Entity) {
         //       banner.isIFrame));
         //   }, 0);
         // }, 0);
+        if (isRotate) res.placements.map(function (item) {
+          return item.isRotateFromShare = true;
+        }); // eslint-disable-line
         return res;
       }
       return false;

@@ -70,7 +70,7 @@
           width: 728,
           height: 90,
           classes: '',
-          isRotate: false,
+          isRotate: true,
           type: 'single',
           format: '',
           description: '',

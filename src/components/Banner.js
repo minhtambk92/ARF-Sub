@@ -133,7 +133,7 @@ const Banner = Vue.component('banner', {
                   if (document.getElementById(`iframe-${vm.current.id}`)) {
                     util.resizeIFrameToFitContent(iframe);
                   }
-                }, 700);
+                }, 1000);
               } else {
                   // Add onload or DOMContentLoaded event listeners here
                 window.addEventListener('onload', () => {
@@ -141,7 +141,7 @@ const Banner = Vue.component('banner', {
                     if (document.getElementById(`iframe-${vm.current.id}`)) {
                       util.resizeIFrameToFitContent(iframe);
                     }
-                  }, 700);
+                  }, 1000);
                 }, false);
                   // or
                   // document.addEventListener("DOMContentLoaded", function () {/* code */}, false);
@@ -171,12 +171,13 @@ const Banner = Vue.component('banner', {
       const vm = this;
       try {
         const htmlData = vm.current.html;
+        console.log('htmlData', htmlData);
         const loadAsync = setInterval(() => {
           const container = document.getElementById(vm.current.id);
           if (container) {
             container.innerHTML = '';
-            postscribe(`#${vm.current.id}`, htmlData, {
-              releaseAsync: true,
+            const writeAsync = postscribe;
+            writeAsync(`#${vm.current.id}`, htmlData, {
               done() {
                 vm.$parent.$emit('renderFinish');
                 vm.$emit('renderFinish');
@@ -193,7 +194,7 @@ const Banner = Vue.component('banner', {
         //   }
         // }, 500);
       } catch (error) {
-        throw new Error(error);
+        throw new Error('Banner Error!');
       }
     },
     /**
