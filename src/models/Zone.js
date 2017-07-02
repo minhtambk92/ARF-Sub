@@ -840,16 +840,13 @@ class Zone extends Entity {
           buildShareConstruct.push(shareConstruct[i][0]);
         } else {
           const lastPlaceType = [];
-          lastThreeShare.reduce((acc, share) => {
+          lastThreeShare.map((share) => { // eslint-disable-line
             const shareTemp = share.split('][');
-            shareTemp.reduce((acc2, item, index) => {
-              if (index === i) {
-                lastPlaceType.push(item.split(')(')[2]);
-              }
-              return 0;
-            }, 0);
-            return 0;
-          }, 0);
+            shareTemp.map((item) => { // eslint-disable-line
+              const isAdd = item.split(')(')[1] === i;
+              if (isAdd) lastPlaceType.push(item.split(')(')[2]);
+            });
+          });
           console.log('lastPlaceType', lastPlaceType, i);
 
           const cpdPercent = shareConstruct[i][1].weight;
@@ -1048,16 +1045,13 @@ class Zone extends Entity {
         constructShareStructure.push('pa');
       } else {
         const lastPlaceType = [];
-        lastThreeShare.reduce((acc, share) => {
+        lastThreeShare.map((share) => { // eslint-disable-line
           const shareTemp = share.split('][');
-          shareTemp.reduce((acc2, item, index) => {
-            if (index === i) {
-              lastPlaceType.push(item.split(')(')[2]);
-            }
-            return 0;
-          }, 0);
-          return 0;
-        }, 0);
+          shareTemp.map((item) => { // eslint-disable-line
+            console.log('hehehe', item.split(')('), i);
+            if (item.split(')(')[1] === i.toString()) lastPlaceType.push(item.split(')(')[2]);
+          });
+        });
         console.log('lastPlaceType', lastPlaceType, i, numberOfPlaceInShare);
         const indexOfCpd = shareConstruct[i].map(x => x.type).indexOf('cpd');
         const cpdPercent = indexOfCpd !== -1 ? shareConstruct[i][indexOfCpd].weight : 0;

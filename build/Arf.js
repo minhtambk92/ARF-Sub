@@ -13491,16 +13491,15 @@ var Zone = function (_Entity) {
             buildShareConstruct.push(shareConstruct[i][0]);
           } else {
             var lastPlaceType = [];
-            lastThreeShare.reduce(function (acc, share) {
+            lastThreeShare.map(function (share) {
+              // eslint-disable-line
               var shareTemp = share.split('][');
-              shareTemp.reduce(function (acc2, item, index) {
-                if (index === i) {
-                  lastPlaceType.push(item.split(')(')[2]);
-                }
-                return 0;
-              }, 0);
-              return 0;
-            }, 0);
+              shareTemp.map(function (item) {
+                // eslint-disable-line
+                var isAdd = item.split(')(')[1] === i;
+                if (isAdd) lastPlaceType.push(item.split(')(')[2]);
+              });
+            });
             console.log('lastPlaceType', lastPlaceType, i);
 
             var cpdPercent = shareConstruct[i][1].weight;
@@ -13734,16 +13733,15 @@ var Zone = function (_Entity) {
           constructShareStructure.push('pa');
         } else {
           var lastPlaceType = [];
-          lastThreeShare.reduce(function (acc, share) {
+          lastThreeShare.map(function (share) {
+            // eslint-disable-line
             var shareTemp = share.split('][');
-            shareTemp.reduce(function (acc2, item, index) {
-              if (index === i) {
-                lastPlaceType.push(item.split(')(')[2]);
-              }
-              return 0;
-            }, 0);
-            return 0;
-          }, 0);
+            shareTemp.map(function (item) {
+              // eslint-disable-line
+              console.log('hehehe', item.split(')('), i);
+              if (item.split(')(')[1] === i.toString()) lastPlaceType.push(item.split(')(')[2]);
+            });
+          });
           console.log('lastPlaceType', lastPlaceType, i, numberOfPlaceInShare);
           var indexOfCpd = shareConstruct[i].map(function (x) {
             return x.type;
