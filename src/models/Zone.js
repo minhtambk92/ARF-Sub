@@ -1255,9 +1255,9 @@ class Zone extends Entity {
                Then, find all placement fit with area place for the rest part.
 
                */
-              const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && place.positionOnShare === (index + 1));
+              const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
               console.log('normalPlace', normalPlace);
-              const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && place.positionOnShare === (index + 1));
+              const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
               let places = normalPlace.filter(place => (
                 // eslint-disable-next-line
                 getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
@@ -1357,10 +1357,10 @@ class Zone extends Entity {
 
       /*  1  */
       let placementsInSharePosition = [];
-      const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => x.positionOnShare - 1));
+      const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => (x.positionOnShare === 0 ? x.positionOnShare : (x.positionOnShare - 1))));
       monopolyPositions.reduce((acc, item) =>
                                       /* make a random choice placement in each share position */
-        placementsInSharePosition.push(activePlacement(allSharePlace.filter(x => (x.positionOnShare === (item + 1) && x.placement.revenueType !== 'pr')), 'random')), 0);
+        placementsInSharePosition.push(activePlacement(allSharePlace.filter(x => ((x.positionOnShare === 0 ? x.positionOnShare === item : (x.positionOnShare === (item + 1))) && x.placement.revenueType !== 'pr')), 'random')), 0);
       placementsInSharePosition = util.flatten(placementsInSharePosition);
       console.log('placementsInSharePosition', placementsInSharePosition);
 

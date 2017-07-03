@@ -11792,12 +11792,12 @@ var Placement = _vue2.default.component('placement', {
                 isRotate = setInterval(function () {
                   _this2.$set(_this2, 'activeBannerModel', _this2.current.activeBanner(conditional, _this2.$data.lastBanner));
                   _this2.$forceUpdate();
-                }, 5000);
+                }, 3000);
               }
               isTrack = false;
             }, {
               percentageLimit: 0.8,
-              timeLimit: 3000,
+              timeLimit: 2000,
               interval: 100
             });
           }
@@ -12207,13 +12207,13 @@ var Zone = _vue2.default.component('zone', {
                   _this2.$data.isRotate = true;
                   _this2.$set(_this2, 'activeShareModel', _this2.current.activeShare(window.ZoneConnect.relativeKeyword, true, shareFormat, _this2.$data.lastShare));
                   _this2.$forceUpdate();
-                }, 5000);
+                }, 7000);
               }
             }
             isTrack = false;
           }, {
             percentageLimit: 0.8,
-            timeLimit: 3000,
+            timeLimit: 2000,
             interval: 100
           });
         }
@@ -13966,11 +13966,11 @@ var Zone = function (_Entity) {
                   Then, find all placement fit with area place for the rest part.
                   */
                 var normalPlace = allSharePlace.filter(function (place) {
-                  return place.placement.revenueType !== 'pb' && place.positionOnShare === index + 1;
+                  return place.placement.revenueType !== 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : place.positionOnShare === index + 1);
                 });
                 console.log('normalPlace', normalPlace);
                 var passBackPlaces = allSharePlace.filter(function (place) {
-                  return place.placement.revenueType === 'pb' && place.positionOnShare === index + 1;
+                  return place.placement.revenueType === 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : place.positionOnShare === index + 1);
                 });
                 var places = normalPlace.filter(function (place) {
                   return (
@@ -14070,13 +14070,13 @@ var Zone = function (_Entity) {
         /*  1  */
         var placementsInSharePosition = [];
         var monopolyPositions = _vendor.util.uniqueItem(monopolyPlaces.map(function (x) {
-          return x.positionOnShare - 1;
+          return x.positionOnShare === 0 ? x.positionOnShare : x.positionOnShare - 1;
         }));
         monopolyPositions.reduce(function (acc, item) {
           return (
             /* make a random choice placement in each share position */
             placementsInSharePosition.push(activePlacement(allSharePlace.filter(function (x) {
-              return x.positionOnShare === item + 1 && x.placement.revenueType !== 'pr';
+              return (x.positionOnShare === 0 ? x.positionOnShare === item : x.positionOnShare === item + 1) && x.placement.revenueType !== 'pr';
             }), 'random'))
           );
         }, 0);

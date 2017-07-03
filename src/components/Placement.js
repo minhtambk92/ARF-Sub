@@ -95,12 +95,12 @@ const Placement = Vue.component('placement', {
                   isRotate = setInterval(() => {
                     this.$set(this, 'activeBannerModel', this.current.activeBanner(conditional, this.$data.lastBanner));
                     this.$forceUpdate();
-                  }, 5000);
+                  }, 3000);
                 }
                 isTrack = false;
               }, {
                 percentageLimit: 0.8,
-                timeLimit: 3000,
+                timeLimit: 2000,
                 interval: 100,
               });
             }

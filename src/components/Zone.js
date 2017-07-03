@@ -124,13 +124,13 @@ const Zone = Vue.component('zone', {
                     this.$data.isRotate = true;
                     this.$set(this, 'activeShareModel', this.current.activeShare(window.ZoneConnect.relativeKeyword, true, shareFormat, this.$data.lastShare));
                     this.$forceUpdate();
-                  }, 5000);
+                  }, 7000);
                 }
               }
               isTrack = false;
             }, {
               percentageLimit: 0.8,
-              timeLimit: 3000,
+              timeLimit: 2000,
               interval: 100,
             });
           }
