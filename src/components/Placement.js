@@ -42,7 +42,7 @@ const Placement = Vue.component('placement', {
         console.log('abc', keywords, vm.current.relative);
         this.$parent.$emit('relativeKeywordsInPlacement', vm.current.relative, keywords);
       });
-      this.activeBannerModel.isRelative = true;
+      if (this.activeBannerModel) this.activeBannerModel.isRelative = true;
     }
   },
 
