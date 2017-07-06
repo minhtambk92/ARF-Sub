@@ -23,6 +23,7 @@ class Placement extends Entity {
     this.zoneId = placement.zoneId;
     this.isRotate = placement.isRotate;
     this.isRotateFromShare = placement.isRotateFromShare;
+    this.relative = placement.relative;
   }
 
   get PlacementArea() {
@@ -44,14 +45,16 @@ class Placement extends Entity {
       return allBanner;
     }
     let result = allBanner.filter(x => x.isRenderable());
-    const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));
-    if ((window.ZoneConnect.relativeKeyword !== undefined && window.ZoneConnect.relativeKeyword !== '') && arrayKeyword.length > 0) {
-      const filterBannerWithKeyword = result.filter(banner => banner.keyword.split(',').map(item => item.replace(' ', '')).filter(item => arrayKeyword.indexOf(item) !== -1).length > 0);
-      if (filterBannerWithKeyword.length > 0) {
-        result = filterBannerWithKeyword;
+    if ((window.ZoneConnect !== undefined && window.ZoneConnect.relativeKeyword !== '')) {
+      const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));
+      if (arrayKeyword.length > 0) {
+        const filterBannerWithKeyword = result.filter(banner => banner.keyword.split(',').map(item => item.replace(' ', '')).filter(item => arrayKeyword.indexOf(item) !== -1).length > 0);
+        if (filterBannerWithKeyword.length > 0) {
+          result = filterBannerWithKeyword;
+        }
       }
+      console.log('numberOfBannerInPlacement', result, arrayKeyword);
     }
-    console.log('numberOfBannerInPlacement', result, arrayKeyword);
     return result;
   }
 

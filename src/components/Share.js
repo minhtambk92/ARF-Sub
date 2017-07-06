@@ -25,6 +25,25 @@ const Share = Vue.component('share', {
     window.arfShares[this.current.id] = this;
   },
 
+  beforeMount() {
+    this.$on('relativeKeywordsInPlacement', (relativeCode, keywords) => {
+      console.log('relativeKeywordsInPlacement', relativeCode, keywords);
+      const isExistRelativeCode = window.ZoneConnect.relativePlacement.reduce((acc, item, index) => {
+        if (index === 0) {
+          return item.relativeCode === relativeCode;
+        }
+        return acc || item.relativeCode === relativeCode;
+      }, 0);
+      if (!isExistRelativeCode && relativeCode !== 0) window.ZoneConnect.relativePlacement.push({ relativeCode, keywords });
+      else {
+        const index = window.ZoneConnect.relativePlacement.map(x => x.relativeCode).indexOf(relativeCode);
+        let key = window.ZoneConnect.relativePlacement[index].keywords;
+        if (key.indexOf(keywords) === -1) key += `${key === '' ? '' : ','}${keywords}`;
+        window.ZoneConnect.relativePlacement[index].keywords = key;
+      }
+    });
+  },
+
   mounted() {
     // this.$on('PlaceHeight', (PlaceHeight) => {
     //   let count = 0;

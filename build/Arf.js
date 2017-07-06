@@ -10409,7 +10409,7 @@ var Banner = function (_Entity) {
   }, {
     key: 'checkChannel',
     get: function get() {
-      if (this.optionBanners !== undefined && (this.optionBanners.length === 0 || this.optionBanners !== null)) return true;
+      if (this.optionBanners !== undefined && (this.optionBanners.length === 0 || this.optionBanners === null)) return true;
       if (this.optionBanners !== undefined && this.optionBanners !== null) {
         var optionBanner = this.optionBanners;
         var checkLength = optionBanner.length;
@@ -10827,6 +10827,7 @@ var Placement = function (_Entity) {
     _this.zoneId = placement.zoneId;
     _this.isRotate = placement.isRotate;
     _this.isRotateFromShare = placement.isRotateFromShare;
+    _this.relative = placement.relative;
     return _this;
   }
 
@@ -10843,22 +10844,24 @@ var Placement = function (_Entity) {
       var result = allBanner.filter(function (x) {
         return x.isRenderable();
       });
-      var arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(function (item) {
-        return item.replace(' ', '');
-      });
-      if (window.ZoneConnect.relativeKeyword !== undefined && window.ZoneConnect.relativeKeyword !== '' && arrayKeyword.length > 0) {
-        var filterBannerWithKeyword = result.filter(function (banner) {
-          return banner.keyword.split(',').map(function (item) {
-            return item.replace(' ', '');
-          }).filter(function (item) {
-            return arrayKeyword.indexOf(item) !== -1;
-          }).length > 0;
+      if (window.ZoneConnect !== undefined && window.ZoneConnect.relativeKeyword !== '') {
+        var arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(function (item) {
+          return item.replace(' ', '');
         });
-        if (filterBannerWithKeyword.length > 0) {
-          result = filterBannerWithKeyword;
+        if (arrayKeyword.length > 0) {
+          var filterBannerWithKeyword = result.filter(function (banner) {
+            return banner.keyword.split(',').map(function (item) {
+              return item.replace(' ', '');
+            }).filter(function (item) {
+              return arrayKeyword.indexOf(item) !== -1;
+            }).length > 0;
+          });
+          if (filterBannerWithKeyword.length > 0) {
+            result = filterBannerWithKeyword;
+          }
         }
+        console.log('numberOfBannerInPlacement', result, arrayKeyword);
       }
-      console.log('numberOfBannerInPlacement', result, arrayKeyword);
       return result;
     }
 
@@ -11473,8 +11476,8 @@ var Banner = _vue2.default.component('banner', {
     });
     this.current.countFrequency();
     if (this.current.isRelative) {
-      // this.$parent.$emit('relativeBannerRender', this.current.keyword);
-      window.ZoneConnect.setRelativeKeyword(this.current.keyword);
+      this.$parent.$emit('relativeBannerRender', this.current.keyword);
+      // window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
   },
 
@@ -11728,11 +11731,22 @@ var Placement = _vue2.default.component('placement', {
     };
   },
   beforeMount: function beforeMount() {
+    var _this = this;
+
+    var vm = this;
+    console.log('xxx', vm.current.relative);
     var currentBanner = this.current.activeBanner(false, '');
     this.$set(this, 'activeBannerModel', currentBanner);
+    if (this.current.relative !== 0) {
+      this.$on('relativeBannerRender', function (keywords) {
+        console.log('abc', keywords, vm.current.relative);
+        _this.$parent.$emit('relativeKeywordsInPlacement', vm.current.relative, keywords);
+      });
+      this.activeBannerModel.isRelative = true;
+    }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     // this.$on('bannerHeight', (bannerHeight) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${bannerHeight}px`;
@@ -11748,12 +11762,12 @@ var Placement = _vue2.default.component('placement', {
     //   }, 5000);
     // }
     setTimeout(function () {
-      _this.setupRotate();
+      _this2.setupRotate();
     }, 1000);
     this.$on('renderFinish', function () {
       console.log('renderFinish');
       // make a trigger to parent component(share) and send place;
-      _this.$parent.$emit('render', _this.current.id, _this.current.revenueType);
+      _this2.$parent.$emit('render', _this2.current.id, _this2.current.revenueType);
     });
   },
 
@@ -11770,7 +11784,7 @@ var Placement = _vue2.default.component('placement', {
     //   return this.current.activeBanner();
     // },
     setupRotate: function setupRotate() {
-      var _this2 = this;
+      var _this3 = this;
 
       var conditional = this.current.isRotate && this.current.filterBanner().length > 1;
       console.log('conditional', this.current.filterBanner().length);
@@ -11790,8 +11804,8 @@ var Placement = _vue2.default.component('placement', {
             aaa.onPercentageTimeTestPassed(function () {
               if (isRotate === null) {
                 isRotate = setInterval(function () {
-                  _this2.$set(_this2, 'activeBannerModel', _this2.current.activeBanner(conditional, _this2.$data.lastBanner));
-                  _this2.$forceUpdate();
+                  _this3.$set(_this3, 'activeBannerModel', _this3.current.activeBanner(conditional, _this3.$data.lastBanner));
+                  _this3.$forceUpdate();
                 }, 3000);
               }
               isTrack = false;
@@ -11994,6 +12008,25 @@ var Share = _vue2.default.component('share', {
     window.arfShares = window.arfShares || {};
     window.arfShares[this.current.id] = this;
   },
+  beforeMount: function beforeMount() {
+    this.$on('relativeKeywordsInPlacement', function (relativeCode, keywords) {
+      console.log('relativeKeywordsInPlacement', relativeCode, keywords);
+      var isExistRelativeCode = window.ZoneConnect.relativePlacement.reduce(function (acc, item, index) {
+        if (index === 0) {
+          return item.relativeCode === relativeCode;
+        }
+        return acc || item.relativeCode === relativeCode;
+      }, 0);
+      if (!isExistRelativeCode && relativeCode !== 0) window.ZoneConnect.relativePlacement.push({ relativeCode: relativeCode, keywords: keywords });else {
+        var index = window.ZoneConnect.relativePlacement.map(function (x) {
+          return x.relativeCode;
+        }).indexOf(relativeCode);
+        var key = window.ZoneConnect.relativePlacement[index].keywords;
+        if (key.indexOf(keywords) === -1) key += '' + (key === '' ? '' : ',') + keywords;
+        window.ZoneConnect.relativePlacement[index].keywords = key;
+      }
+    });
+  },
   mounted: function mounted() {
     var _this = this;
 
@@ -12103,12 +12136,13 @@ var Zone = _vue2.default.component('zone', {
   created: function created() {
     if (window.ZoneConnect === undefined) {
       window.ZoneConnect = {
+        relativePlacement: [],
         relativeKeyword: '',
         setRelativeKeyword: function setRelativeKeyword(keyword) {
           this.relativeKeyword += '' + (this.relativeKeyword === '' ? '' : ',') + keyword;
         },
         clearRelativeKeyword: function clearRelativeKeyword() {
-          this.relativeKeyword = '';
+          this.relativePlacement = [];
         }
       };
     }
@@ -12125,7 +12159,7 @@ var Zone = _vue2.default.component('zone', {
     };
   },
   beforeMount: function beforeMount() {
-    var currentShare = this.current.activeShare(window.ZoneConnect.relativeKeyword, false, '');
+    var currentShare = this.current.activeShare(window.ZoneConnect.relativePlacement, false, '');
     console.log('currentShare', currentShare);
     this.$set(this, 'activeShareModel', currentShare);
   },
@@ -13580,7 +13614,7 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'filterShare',
-    value: function filterShare(relativeKeyword, isRotate, formatRotate, lastShare) {
+    value: function filterShare(relativePlacement, isRotate, formatRotate, lastShare) {
       var _this3 = this;
 
       /**
@@ -13922,7 +13956,6 @@ var Zone = function (_Entity) {
         // eslint-disable-line
         var shares = [];
         var shareDatas = [];
-        var arrayRelativeKeyword = [];
         for (var i = 1; i <= numberOfPlaceInShare; i += 1) {
           /*
             divide share base on free area and number of part.
@@ -13942,7 +13975,6 @@ var Zone = function (_Entity) {
               var shareInfo = getShareInfo(shareFormat);
               var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate }; // eslint-disable-line
               console.log('olala', share);
-              var isRelative = false;
               /*
                 Browse each placeRatio in shareRatio, then find a placement fit it.
                 */
@@ -13988,10 +14020,9 @@ var Zone = function (_Entity) {
                   filter place with relative keyword
                    */
                 var placesWithKeyword = [];
-                if (arrayRelativeKeyword.length > 0) {
-                  placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+                if (relativePlacement.length > 0) {
+                  placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
                   if (placesWithKeyword.length > 0) {
-                    isRelative = true;
                     places = placesWithKeyword;
                   }
                 }
@@ -14027,14 +14058,14 @@ var Zone = function (_Entity) {
                 }
                 return 0;
               }, 0);
-              if (relativeKeyword !== '' && isRelative) {
-                console.log('ShareTest', share);
-                shares.push(share);
-                isRelative = false;
-              }
+              // if (relativePlacement.length > 0 && isRelative) {
+              //   console.log('ShareTest', share);
+              //   relativePlacemen
+              //   shares.push(share);
+              //   isRelative = false;
+              // }
               console.log('ShareTest', share);
               shares.push(share);
-              isRelative = false;
               return '';
             }
             return; // eslint-disable-line
@@ -14116,8 +14147,8 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'activeShare',
-    value: function activeShare(relativeKeyword, isRotate, formatRotate, lastShare) {
-      var allShare = this.filterShare(relativeKeyword, isRotate, formatRotate, lastShare);
+    value: function activeShare(relativePlacement, isRotate, formatRotate, lastShare) {
+      var allShare = this.filterShare(relativePlacement, isRotate, formatRotate, lastShare);
       // if (allShare.length === 1) return allShare[0];
       if (allShare.length > 0) {
         var randomNumber = Math.random() * 100;

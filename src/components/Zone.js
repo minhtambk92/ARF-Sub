@@ -23,12 +23,13 @@ const Zone = Vue.component('zone', {
   created() {
     if (window.ZoneConnect === undefined) {
       window.ZoneConnect = {
+        relativePlacement: [],
         relativeKeyword: '',
         setRelativeKeyword(keyword) {
           this.relativeKeyword += `${this.relativeKeyword === '' ? '' : ','}${keyword}`;
         },
         clearRelativeKeyword() {
-          this.relativeKeyword = '';
+          this.relativePlacement = [];
         },
       };
     }
@@ -47,7 +48,7 @@ const Zone = Vue.component('zone', {
   },
 
   beforeMount() {
-    const currentShare = this.current.activeShare(window.ZoneConnect.relativeKeyword, false, '');
+    const currentShare = this.current.activeShare(window.ZoneConnect.relativePlacement, false, '');
     console.log('currentShare', currentShare);
     this.$set(this, 'activeShareModel', currentShare);
   },

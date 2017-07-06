@@ -75,17 +75,11 @@
           type: 'multiple',
           format: '1,1,1',
           description: '',
-          createdAt: '2017-06-27T16:00:31.000Z',
-          updatedAt: '2017-06-28T03:18:46.000Z',
-          deletedAt: null,
           zoneId: '63b987ee-524e-4af6-87a3-e9afdeea24f5',
           sharePlacements: [
             {
               id: '09e6801e-65cd-4710-8805-16762aec2e01',
               positionOnShare: 2,
-              deletedAt: null,
-              createdAt: '2017-06-28T04:14:10.000Z',
-              updatedAt: '2017-06-28T04:14:37.000Z',
               placementId: 'e35d7013-4c89-4156-b949-97a4b95a3dd5',
               shareId: 'a3bb3001-9d2b-4230-9175-f554242e5312',
               placement: {
@@ -103,9 +97,6 @@
                 relative: 0,
                 endTime: null,
                 status: 'active',
-                createdAt: '2017-06-27T16:03:08.000Z',
-                updatedAt: '2017-06-27T16:03:08.000Z',
-                deletedAt: null,
                 campaignId: '0a0477ca-ba7e-4fc6-8993-8aa52317398a',
                 banners: [
                   {
@@ -131,9 +122,6 @@
                     activationDate: '2017-06-27T17:00:00.000Z',
                     expirationDate: null,
                     status: 'active',
-                    createdAt: '2017-06-28T04:11:40.000Z',
-                    updatedAt: '2017-06-28T04:11:40.000Z',
-                    deletedAt: null,
                     placementId: 'e35d7013-4c89-4156-b949-97a4b95a3dd5',
                     bannerHtmlTypeId: 'd2ac74ae-e9e4-4518-b68a-d5e45e19c2dd',
                     bannerTypeId: '374da180-02c6-4558-8985-90cad792f14f',
@@ -146,9 +134,6 @@
                       isUpload: false,
                       userId: null,
                       status: 'active',
-                      createdAt: '2017-04-18T09:57:18.000Z',
-                      updatedAt: '2017-04-18T09:57:18.000Z',
-                      deletedAt: null,
                     },
                     bannerHtmlType: {
                       id: 'd2ac74ae-e9e4-4518-b68a-d5e45e19c2dd',

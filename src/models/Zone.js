@@ -913,7 +913,7 @@ class Zone extends Entity {
    * create all share and filter them fit with conditions
    */
 
-  filterShare(relativeKeyword, isRotate, formatRotate, lastShare) {
+  filterShare(relativePlacement, isRotate, formatRotate, lastShare) {
     /**
      * [region: create Share construct]
      *
@@ -1201,7 +1201,6 @@ class Zone extends Entity {
     const createShare = (placeMonopolies, isRotate, format, lastShare) => { // eslint-disable-line
       const shares = [];
       const shareDatas = [];
-      const arrayRelativeKeyword = [];
       for (let i = 1; i <= numberOfPlaceInShare; i += 1) {
         /*
 
@@ -1227,7 +1226,6 @@ class Zone extends Entity {
             const shareInfo = getShareInfo(shareFormat);
             const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate };// eslint-disable-line
             console.log('olala', share);
-            let isRelative = false;
             /*
 
              Browse each placeRatio in shareRatio, then find a placement fit it.
@@ -1275,10 +1273,9 @@ class Zone extends Entity {
 
                 */
               let placesWithKeyword = [];
-              if (arrayRelativeKeyword.length > 0) {
-                placesWithKeyword = filterPlaceWithKeyword(places, arrayRelativeKeyword);
+              if (relativePlacement.length > 0) {
+                placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
                 if (placesWithKeyword.length > 0) {
-                  isRelative = true;
                   places = placesWithKeyword;
                 }
               }
@@ -1314,14 +1311,14 @@ class Zone extends Entity {
               }
               return 0;
             }, 0);
-            if (relativeKeyword !== '' && isRelative) {
-              console.log('ShareTest', share);
-              shares.push(share);
-              isRelative = false;
-            }
+            // if (relativePlacement.length > 0 && isRelative) {
+            //   console.log('ShareTest', share);
+            //   relativePlacemen
+            //   shares.push(share);
+            //   isRelative = false;
+            // }
             console.log('ShareTest', share);
             shares.push(share);
-            isRelative = false;
             return '';
           }
           return; // eslint-disable-line
@@ -1393,8 +1390,8 @@ class Zone extends Entity {
    * Get a active share randomly by its weight
    * @return {Share}
    */
-  activeShare(relativeKeyword, isRotate, formatRotate, lastShare) {
-    const allShare = this.filterShare(relativeKeyword, isRotate, formatRotate, lastShare);
+  activeShare(relativePlacement, isRotate, formatRotate, lastShare) {
+    const allShare = this.filterShare(relativePlacement, isRotate, formatRotate, lastShare);
     // if (allShare.length === 1) return allShare[0];
     if (allShare.length > 0) {
       const randomNumber = Math.random() * 100;

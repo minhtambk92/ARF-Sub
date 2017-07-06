@@ -180,7 +180,7 @@ class Banner extends Entity {
 
   get checkChannel() {
     if (this.optionBanners !== undefined &&
-      (this.optionBanners.length === 0 || this.optionBanners !== null)) return true;
+      (this.optionBanners.length === 0 || this.optionBanners === null)) return true;
     if (this.optionBanners !== undefined && this.optionBanners !== null) {
       const optionBanner = this.optionBanners;
       const checkLength = optionBanner.length;

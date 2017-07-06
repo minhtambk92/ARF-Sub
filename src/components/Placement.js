@@ -33,8 +33,17 @@ const Placement = Vue.component('placement', {
   },
 
   beforeMount() {
+    const vm = this;
+    console.log('xxx', vm.current.relative);
     const currentBanner = this.current.activeBanner(false, '');
     this.$set(this, 'activeBannerModel', currentBanner);
+    if (this.current.relative !== 0) {
+      this.$on('relativeBannerRender', (keywords) => {
+        console.log('abc', keywords, vm.current.relative);
+        this.$parent.$emit('relativeKeywordsInPlacement', vm.current.relative, keywords);
+      });
+      this.activeBannerModel.isRelative = true;
+    }
   },
 
   mounted() {
