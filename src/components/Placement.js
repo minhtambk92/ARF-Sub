@@ -40,7 +40,7 @@ const Placement = Vue.component('placement', {
     if (this.current.relative !== 0) {
       this.$on('relativeBannerRender', (keywords) => {
         console.log('abc', keywords, vm.current.relative);
-        this.$parent.$emit('relativeKeywordsInPlacement', vm.current.relative, keywords);
+        this.$parent.$emit('relativeKeywordsInPlacement', vm.current.campaign.id, vm.current.relative, keywords);
       });
       if (this.activeBannerModel) this.activeBannerModel.isRelative = true;
     }

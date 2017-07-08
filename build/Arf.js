@@ -11740,7 +11740,7 @@ var Placement = _vue2.default.component('placement', {
     if (this.current.relative !== 0) {
       this.$on('relativeBannerRender', function (keywords) {
         console.log('abc', keywords, vm.current.relative);
-        _this.$parent.$emit('relativeKeywordsInPlacement', vm.current.relative, keywords);
+        _this.$parent.$emit('relativeKeywordsInPlacement', vm.current.campaign.id, vm.current.relative, keywords);
       });
       if (this.activeBannerModel) this.activeBannerModel.isRelative = true;
     }
@@ -12009,21 +12009,24 @@ var Share = _vue2.default.component('share', {
     window.arfShares[this.current.id] = this;
   },
   beforeMount: function beforeMount() {
-    this.$on('relativeKeywordsInPlacement', function (relativeCode, keywords) {
+    this.$on('relativeKeywordsInPlacement', function (campaignId, relativeCode, keywords) {
       console.log('relativeKeywordsInPlacement', relativeCode, keywords);
-      var isExistRelativeCode = window.ZoneConnect.relativePlacement.reduce(function (acc, item, index) {
+      var isExistCampaignId = window.ZoneConnect.relativePlacement.reduce(function (acc, item, index) {
         if (index === 0) {
-          return item.relativeCode === relativeCode;
+          return item.campaignId === campaignId;
         }
-        return acc || item.relativeCode === relativeCode;
+        return acc || item.campaignId === campaignId;
       }, 0);
-      if (!isExistRelativeCode && relativeCode !== 0) window.ZoneConnect.relativePlacement.push({ relativeCode: relativeCode, keywords: keywords });else {
-        var index = window.ZoneConnect.relativePlacement.map(function (x) {
-          return x.relativeCode;
-        }).indexOf(relativeCode);
-        var key = window.ZoneConnect.relativePlacement[index].keywords;
-        if (key.indexOf(keywords) === -1) key += '' + (key === '' ? '' : ',') + keywords;
-        window.ZoneConnect.relativePlacement[index].keywords = key;
+      if (!isExistCampaignId && relativeCode !== 0) {
+        window.ZoneConnect.relativePlacement.push({ campaignId: campaignId, relativeCodes: [relativeCode] });
+      } else {
+        var indexOfCampaign = window.ZoneConnect.relativePlacement.map(function (x) {
+          return x.campaignId;
+        }).indexOf(campaignId);
+        var relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
+        var isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
+        if (!isExistRelativeCodes) relativeCodes.push(relativeCodes);
+        window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
       }
     });
   },
@@ -13931,21 +13934,17 @@ var Zone = function (_Entity) {
           return nextRange;
         }, 0);
       };
-      var filterPlaceWithKeyword = function filterPlaceWithKeyword(places, arrRelativeKeyword) {
-        var placesWithKeyword = places.filter(function (place) {
-          return place.data.allBanners.reduce(function (acc1, banner) {
-            var bannerKeyword = banner.keyword.split(',').map(function (item) {
-              return item.replace(' ', '');
-            });
-            return arrRelativeKeyword.filter(function (key) {
-              return bannerKeyword.reduce(function (acc2, bannerKey, index2) {
-                return index2 === 0 ? bannerKey === key : acc2 || bannerKey === key;
-              }, 0);
-            }).length > 0;
-          }, 0);
-        });
-        return placesWithKeyword;
-      };
+      // const filterPlaceWithKeyword = (places, arrRelativeKeyword) => {
+      //   const placesWithKeyword = places.filter(place =>
+      //     place.data.allBanners.reduce((acc1, banner) => {
+      //       const bannerKeyword = banner.keyword.split(',').map(item => item.replace(' ', ''));
+      //       return arrRelativeKeyword.filter(key =>
+      //           bannerKeyword.reduce((acc2, bannerKey, index2) =>
+      //             (index2 === 0 ? bannerKey === key :
+      //               (acc2 || bannerKey === key)), 0)).length > 0;
+      //     }, 0));
+      //   return placesWithKeyword;
+      // };
       /**
        * This function to create share
        * @param placeMonopolies
@@ -14021,7 +14020,19 @@ var Zone = function (_Entity) {
                    */
                 var placesWithKeyword = [];
                 if (relativePlacement.length > 0) {
-                  placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
+                  // placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
+                  var filterRelative = function filterRelative(relativePlace, place) {
+                    var campaignId = place.placement.campaign.campaignId;
+                    var relativeCode = place.placement.relative;
+                    var indexOfCampaignId = relativePlace.map(function (x) {
+                      return x.campaignId;
+                    }).indexOf(campaignId);
+                    if (indexOfCampaignId !== -1 && relativeCode !== 0) return relativePlace[indexOfCampaignId].relativeCodes.indexOf(relativeCode) !== -1;
+                    return false;
+                  };
+                  placesWithKeyword = places.filter(function (item) {
+                    return filterRelative(relativePlacement, item);
+                  });
                   if (placesWithKeyword.length > 0) {
                     places = placesWithKeyword;
                   }

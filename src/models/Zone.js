@@ -1181,17 +1181,17 @@ class Zone extends Entity {
         return nextRange;
       }, 0);
     };
-    const filterPlaceWithKeyword = (places, arrRelativeKeyword) => {
-      const placesWithKeyword = places.filter(place =>
-        place.data.allBanners.reduce((acc1, banner) => {
-          const bannerKeyword = banner.keyword.split(',').map(item => item.replace(' ', ''));
-          return arrRelativeKeyword.filter(key =>
-              bannerKeyword.reduce((acc2, bannerKey, index2) =>
-                (index2 === 0 ? bannerKey === key :
-                  (acc2 || bannerKey === key)), 0)).length > 0;
-        }, 0));
-      return placesWithKeyword;
-    };
+    // const filterPlaceWithKeyword = (places, arrRelativeKeyword) => {
+    //   const placesWithKeyword = places.filter(place =>
+    //     place.data.allBanners.reduce((acc1, banner) => {
+    //       const bannerKeyword = banner.keyword.split(',').map(item => item.replace(' ', ''));
+    //       return arrRelativeKeyword.filter(key =>
+    //           bannerKeyword.reduce((acc2, bannerKey, index2) =>
+    //             (index2 === 0 ? bannerKey === key :
+    //               (acc2 || bannerKey === key)), 0)).length > 0;
+    //     }, 0));
+    //   return placesWithKeyword;
+    // };
     /**
      * This function to create share
      * @param placeMonopolies
@@ -1274,7 +1274,15 @@ class Zone extends Entity {
                 */
               let placesWithKeyword = [];
               if (relativePlacement.length > 0) {
-                placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
+                // placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
+                const filterRelative = (relativePlace, place) => {
+                  const campaignId = place.placement.campaign.campaignId;
+                  const relativeCode = place.placement.relative;
+                  const indexOfCampaignId = relativePlace.map(x => x.campaignId).indexOf(campaignId);
+                  if (indexOfCampaignId !== -1 && relativeCode !== 0) return relativePlace[indexOfCampaignId].relativeCodes.indexOf(relativeCode) !== -1;
+                  return false;
+                };
+                placesWithKeyword = places.filter(item => filterRelative(relativePlacement, item));
                 if (placesWithKeyword.length > 0) {
                   places = placesWithKeyword;
                 }
