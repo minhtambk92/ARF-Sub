@@ -913,7 +913,8 @@ class Zone extends Entity {
    * create all share and filter them fit with conditions
    */
 
-  filterShare(relativePlacement, isRotate, formatRotate, lastShare) {
+  filterShare(isRotate, formatRotate, lastShare) {
+    const relativePlacement = window.ZoneConnect.relativePlacement;
     if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
     /**
      * [region: create Share construct]
@@ -1049,7 +1050,6 @@ class Zone extends Entity {
         lastThreeShare.map((share) => { // eslint-disable-line
           const shareTemp = share.split('][');
           shareTemp.map((item) => { // eslint-disable-line
-            console.log('hehehe', item.split(')('), i);
             if (item.split(')(')[1] === i.toString()) lastPlaceType.push(item.split(')(')[2]);
           });
         });
@@ -1349,8 +1349,6 @@ class Zone extends Entity {
       }
       return shareDatas;
     };
-
-
     /**
      * [compute Share]
      */
@@ -1402,8 +1400,8 @@ class Zone extends Entity {
    * Get a active share randomly by its weight
    * @return {Share}
    */
-  activeShare(relativePlacement, isRotate, formatRotate, lastShare) {
-    const allShare = this.filterShare(relativePlacement, isRotate, formatRotate, lastShare);
+  activeShare(isRotate, formatRotate, lastShare) {
+    const allShare = this.filterShare(isRotate, formatRotate, lastShare);
     // if (allShare.length === 1) return allShare[0];
     if (allShare.length > 0) {
       const randomNumber = Math.random() * 100;

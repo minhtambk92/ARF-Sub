@@ -235,6 +235,8 @@ const Banner = Vue.component('banner', {
     if (this.current.isRotate) {
       vm.$data.isRendered = false;
       vm.renderToIFrame();
+      // logging when rotate.
+      this.current.bannerLogging(3);
     }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {

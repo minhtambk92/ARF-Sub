@@ -11646,6 +11646,7 @@ var Banner = _vue2.default.component('banner', {
     if (this.current.isRotate) {
       vm.$data.isRendered = false;
       vm.renderToIFrame();
+      this.current.bannerLogging(3);
     }
     // const height = setInterval(() => {
     //   if (document.getElementById(`${vm.current.id}`)) {
@@ -12162,7 +12163,7 @@ var Zone = _vue2.default.component('zone', {
     };
   },
   beforeMount: function beforeMount() {
-    var currentShare = this.current.activeShare(window.ZoneConnect.relativePlacement, false, '');
+    var currentShare = this.current.activeShare(false, '');
     console.log('currentShare', currentShare);
     this.$set(this, 'activeShareModel', currentShare);
   },
@@ -12242,7 +12243,7 @@ var Zone = _vue2.default.component('zone', {
                 console.log('Zone display was >80% visible for 1 seconds!', isRotate);
                 isRotate = setInterval(function () {
                   _this2.$data.isRotate = true;
-                  _this2.$set(_this2, 'activeShareModel', _this2.current.activeShare(window.ZoneConnect.relativeKeyword, true, shareFormat, _this2.$data.lastShare));
+                  _this2.$set(_this2, 'activeShareModel', _this2.current.activeShare(true, shareFormat, _this2.$data.lastShare));
                   _this2.$forceUpdate();
                 }, 7000);
               }
@@ -13617,9 +13618,10 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'filterShare',
-    value: function filterShare(relativePlacement, isRotate, formatRotate, lastShare) {
+    value: function filterShare(isRotate, formatRotate, lastShare) {
       var _this3 = this;
 
+      var relativePlacement = window.ZoneConnect.relativePlacement;
       if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
       /**
        * [region: create Share construct]
@@ -13776,7 +13778,6 @@ var Zone = function (_Entity) {
             var shareTemp = share.split('][');
             shareTemp.map(function (item) {
               // eslint-disable-line
-              console.log('hehehe', item.split(')('), i);
               if (item.split(')(')[1] === i.toString()) lastPlaceType.push(item.split(')(')[2]);
             });
           });
@@ -14099,7 +14100,6 @@ var Zone = function (_Entity) {
         }
         return shareDatas;
       };
-
       /**
        * [compute Share]
        */
@@ -14163,8 +14163,8 @@ var Zone = function (_Entity) {
 
   }, {
     key: 'activeShare',
-    value: function activeShare(relativePlacement, isRotate, formatRotate, lastShare) {
-      var allShare = this.filterShare(relativePlacement, isRotate, formatRotate, lastShare);
+    value: function activeShare(isRotate, formatRotate, lastShare) {
+      var allShare = this.filterShare(isRotate, formatRotate, lastShare);
       // if (allShare.length === 1) return allShare[0];
       if (allShare.length > 0) {
         var randomNumber = Math.random() * 100;
@@ -16259,6 +16259,13 @@ var util = {
       return false;
     }
     return (0, _stringify2.default)(arr1) === (0, _stringify2.default)(arr2);
+  },
+  wait: function wait(ms) {
+    var start = new Date().getTime();
+    var end = start;
+    while (end < start + ms) {
+      end = new Date().getTime();
+    }
   }
 }; /**
     * Created by tlm on 14/03/2017.

@@ -48,7 +48,7 @@ const Zone = Vue.component('zone', {
   },
 
   beforeMount() {
-    const currentShare = this.current.activeShare(window.ZoneConnect.relativePlacement, false, '');
+    const currentShare = this.current.activeShare(false, '');
     console.log('currentShare', currentShare);
     this.$set(this, 'activeShareModel', currentShare);
   },
@@ -123,7 +123,7 @@ const Zone = Vue.component('zone', {
                   console.log('Zone display was >80% visible for 1 seconds!', isRotate);
                   isRotate = setInterval(() => {
                     this.$data.isRotate = true;
-                    this.$set(this, 'activeShareModel', this.current.activeShare(window.ZoneConnect.relativeKeyword, true, shareFormat, this.$data.lastShare));
+                    this.$set(this, 'activeShareModel', this.current.activeShare(true, shareFormat, this.$data.lastShare));
                     this.$forceUpdate();
                   }, 7000);
                 }
