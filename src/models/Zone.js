@@ -1198,7 +1198,7 @@ class Zone extends Entity {
      * @param isRotate
      * @returns {Array}
      */
-    const createShare = (placeMonopolies, isRotate, format, lastShare) => { // eslint-disable-line
+    const createShare = (placeMonopolies, allSharePlace, isRotate, format, lastShare) => { // eslint-disable-line
       const shares = [];
       const shareDatas = [];
       for (let i = 1; i <= numberOfPlaceInShare; i += 1) {
@@ -1361,11 +1361,13 @@ class Zone extends Entity {
          * 3. Create share with these sets after combination */
 
       /*  1  */
+      const sharePlacementsFitCurrentChannel = allSharePlace.filter(place =>
+      place.placement.filterBanner().length > 0);
       let placementsInSharePosition = [];
       const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => (x.positionOnShare === 0 ? x.positionOnShare : (x.positionOnShare - 1))));
       monopolyPositions.reduce((acc, item) =>
                                       /* make a random choice placement in each share position */
-        placementsInSharePosition.push(activePlacement(allSharePlace.filter(x => ((x.positionOnShare === 0 ? x.positionOnShare === item : (x.positionOnShare === (item + 1))) && x.placement.revenueType !== 'pr')), 'random')), 0);
+        placementsInSharePosition.push(activePlacement(sharePlacementsFitCurrentChannel.filter(x => ((x.positionOnShare === 0 ? x.positionOnShare === item : (x.positionOnShare === (item + 1))) && x.placement.revenueType !== 'pr')), 'random')), 0);
       placementsInSharePosition = util.flatten(placementsInSharePosition);
       console.log('placementsInSharePosition', placementsInSharePosition);
 
@@ -1377,8 +1379,8 @@ class Zone extends Entity {
       /* 3 */
       console.log('lastShare', lastShare);
       let result = [];
-      if (placementsInSharePosition.length <= 0) result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
-      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, true, formatRotate, lastShare)); }); // eslint-disable-line
+      if (placementsInSharePosition.length <= 0) result = createShare([], sharePlacementsFitCurrentChannel, true, formatRotate, lastShare); // eslint-disable-line
+      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, sharePlacementsFitCurrentChannel, true, formatRotate, lastShare)); }); // eslint-disable-line
       // const result = createShare(monopolyPlacesFitShareStructure);
       console.log('hohohoho', result);
       return result;
@@ -1386,7 +1388,7 @@ class Zone extends Entity {
     }
           /* if isRotate = false -> just create share with truly monopoly placement
                             and share structure */
-    const result = createShare(monopolyPlacesFitShareStructure);
+    const result = createShare(monopolyPlacesFitShareStructure, allSharePlaceFitShareStructure);
     console.log('newShareFilter', result);
     return result;
     /**

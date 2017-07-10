@@ -13951,7 +13951,7 @@ var Zone = function (_Entity) {
        * @param isRotate
        * @returns {Array}
        */
-      var createShare = function createShare(placeMonopolies, isRotate, format, lastShare) {
+      var createShare = function createShare(placeMonopolies, allSharePlace, isRotate, format, lastShare) {
         // eslint-disable-line
         var shares = [];
         var shareDatas = [];
@@ -14110,6 +14110,9 @@ var Zone = function (_Entity) {
            * 3. Create share with these sets after combination */
 
         /*  1  */
+        var sharePlacementsFitCurrentChannel = allSharePlace.filter(function (place) {
+          return place.placement.filterBanner().length > 0;
+        });
         var placementsInSharePosition = [];
         var monopolyPositions = _vendor.util.uniqueItem(monopolyPlaces.map(function (x) {
           return x.positionOnShare === 0 ? x.positionOnShare : x.positionOnShare - 1;
@@ -14117,7 +14120,7 @@ var Zone = function (_Entity) {
         monopolyPositions.reduce(function (acc, item) {
           return (
             /* make a random choice placement in each share position */
-            placementsInSharePosition.push(activePlacement(allSharePlace.filter(function (x) {
+            placementsInSharePosition.push(activePlacement(sharePlacementsFitCurrentChannel.filter(function (x) {
               return (x.positionOnShare === 0 ? x.positionOnShare === item : x.positionOnShare === item + 1) && x.placement.revenueType !== 'pr';
             }), 'random'))
           );
@@ -14132,9 +14135,9 @@ var Zone = function (_Entity) {
         /* 3 */
         console.log('lastShare', lastShare);
         var _result = [];
-        if (placementsInSharePosition.length <= 0) _result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
+        if (placementsInSharePosition.length <= 0) _result = createShare([], sharePlacementsFitCurrentChannel, true, formatRotate, lastShare); // eslint-disable-line
         else combinationPlaceInShare.map(function (x) {
-            _result = _result.concat(createShare(x, true, formatRotate, lastShare));
+            _result = _result.concat(createShare(x, sharePlacementsFitCurrentChannel, true, formatRotate, lastShare));
           }); // eslint-disable-line
         // const result = createShare(monopolyPlacesFitShareStructure);
         console.log('hohohoho', _result);
@@ -14143,7 +14146,7 @@ var Zone = function (_Entity) {
       }
       /* if isRotate = false -> just create share with truly monopoly placement
                         and share structure */
-      var result = createShare(monopolyPlacesFitShareStructure);
+      var result = createShare(monopolyPlacesFitShareStructure, allSharePlaceFitShareStructure);
       console.log('newShareFilter', result);
       return result;
       /**
