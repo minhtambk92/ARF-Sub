@@ -914,6 +914,7 @@ class Zone extends Entity {
    */
 
   filterShare(relativePlacement, isRotate, formatRotate, lastShare) {
+    if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
     /**
      * [region: create Share construct]
      *
@@ -1272,19 +1273,20 @@ class Zone extends Entity {
                filter place with relative keyword
 
                 */
-              let placesWithKeyword = [];
+              let placesRelative = [];
               if (relativePlacement.length > 0) {
                 // placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
                 const filterRelative = (relativePlace, place) => {
-                  const campaignId = place.placement.campaign.campaignId;
+                  const campaignId = place.placement.campaign.id;
                   const relativeCode = place.placement.relative;
                   const indexOfCampaignId = relativePlace.map(x => x.campaignId).indexOf(campaignId);
                   if (indexOfCampaignId !== -1 && relativeCode !== 0) return relativePlace[indexOfCampaignId].relativeCodes.indexOf(relativeCode) !== -1;
                   return false;
                 };
-                placesWithKeyword = places.filter(item => filterRelative(relativePlacement, item));
-                if (placesWithKeyword.length > 0) {
-                  places = placesWithKeyword;
+                placesRelative = places.filter(item => filterRelative(relativePlacement, item));
+                console.log('placesRelative', placesRelative, places);
+                if (placesRelative.length > 0) {
+                  places = placesRelative;
                 }
               }
               /* fill pass back place if don't have any placement fit with conditional */
@@ -1361,13 +1363,13 @@ class Zone extends Entity {
          * 3. Create share with these sets after combination */
 
       /*  1  */
-      const sharePlacementsFitCurrentChannel = allSharePlace.filter(place =>
+      const sharePlacementsFitChannel = allSharePlace.filter(place =>
       place.placement.filterBanner().length > 0);
       let placementsInSharePosition = [];
       const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => (x.positionOnShare === 0 ? x.positionOnShare : (x.positionOnShare - 1))));
       monopolyPositions.reduce((acc, item) =>
                                       /* make a random choice placement in each share position */
-        placementsInSharePosition.push(activePlacement(sharePlacementsFitCurrentChannel.filter(x => ((x.positionOnShare === 0 ? x.positionOnShare === item : (x.positionOnShare === (item + 1))) && x.placement.revenueType !== 'pr')), 'random')), 0);
+        placementsInSharePosition.push(activePlacement(sharePlacementsFitChannel.filter(x => ((x.positionOnShare === 0 ? x.positionOnShare === item : (x.positionOnShare === (item + 1))) && x.placement.revenueType !== 'pr')), 'random')), 0);
       placementsInSharePosition = util.flatten(placementsInSharePosition);
       console.log('placementsInSharePosition', placementsInSharePosition);
 
@@ -1379,8 +1381,8 @@ class Zone extends Entity {
       /* 3 */
       console.log('lastShare', lastShare);
       let result = [];
-      if (placementsInSharePosition.length <= 0) result = createShare([], sharePlacementsFitCurrentChannel, true, formatRotate, lastShare); // eslint-disable-line
-      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, sharePlacementsFitCurrentChannel, true, formatRotate, lastShare)); }); // eslint-disable-line
+      if (placementsInSharePosition.length <= 0) result = createShare([], sharePlacementsFitChannel, true, formatRotate, lastShare); // eslint-disable-line
+      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, sharePlacementsFitChannel, true, formatRotate, lastShare)); }); // eslint-disable-line
       // const result = createShare(monopolyPlacesFitShareStructure);
       console.log('hohohoho', result);
       return result;

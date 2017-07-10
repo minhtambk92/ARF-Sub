@@ -13620,6 +13620,7 @@ var Zone = function (_Entity) {
     value: function filterShare(relativePlacement, isRotate, formatRotate, lastShare) {
       var _this3 = this;
 
+      if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
       /**
        * [region: create Share construct]
        *
@@ -14018,11 +14019,11 @@ var Zone = function (_Entity) {
                 /*
                   filter place with relative keyword
                    */
-                var placesWithKeyword = [];
+                var placesRelative = [];
                 if (relativePlacement.length > 0) {
                   // placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
                   var filterRelative = function filterRelative(relativePlace, place) {
-                    var campaignId = place.placement.campaign.campaignId;
+                    var campaignId = place.placement.campaign.id;
                     var relativeCode = place.placement.relative;
                     var indexOfCampaignId = relativePlace.map(function (x) {
                       return x.campaignId;
@@ -14030,11 +14031,12 @@ var Zone = function (_Entity) {
                     if (indexOfCampaignId !== -1 && relativeCode !== 0) return relativePlace[indexOfCampaignId].relativeCodes.indexOf(relativeCode) !== -1;
                     return false;
                   };
-                  placesWithKeyword = places.filter(function (item) {
+                  placesRelative = places.filter(function (item) {
                     return filterRelative(relativePlacement, item);
                   });
-                  if (placesWithKeyword.length > 0) {
-                    places = placesWithKeyword;
+                  console.log('placesRelative', placesRelative, places);
+                  if (placesRelative.length > 0) {
+                    places = placesRelative;
                   }
                 }
                 /* fill pass back place if don't have any placement fit with conditional */
@@ -14110,7 +14112,7 @@ var Zone = function (_Entity) {
            * 3. Create share with these sets after combination */
 
         /*  1  */
-        var sharePlacementsFitCurrentChannel = allSharePlace.filter(function (place) {
+        var sharePlacementsFitChannel = allSharePlace.filter(function (place) {
           return place.placement.filterBanner().length > 0;
         });
         var placementsInSharePosition = [];
@@ -14120,7 +14122,7 @@ var Zone = function (_Entity) {
         monopolyPositions.reduce(function (acc, item) {
           return (
             /* make a random choice placement in each share position */
-            placementsInSharePosition.push(activePlacement(sharePlacementsFitCurrentChannel.filter(function (x) {
+            placementsInSharePosition.push(activePlacement(sharePlacementsFitChannel.filter(function (x) {
               return (x.positionOnShare === 0 ? x.positionOnShare === item : x.positionOnShare === item + 1) && x.placement.revenueType !== 'pr';
             }), 'random'))
           );
@@ -14135,9 +14137,9 @@ var Zone = function (_Entity) {
         /* 3 */
         console.log('lastShare', lastShare);
         var _result = [];
-        if (placementsInSharePosition.length <= 0) _result = createShare([], sharePlacementsFitCurrentChannel, true, formatRotate, lastShare); // eslint-disable-line
+        if (placementsInSharePosition.length <= 0) _result = createShare([], sharePlacementsFitChannel, true, formatRotate, lastShare); // eslint-disable-line
         else combinationPlaceInShare.map(function (x) {
-            _result = _result.concat(createShare(x, sharePlacementsFitCurrentChannel, true, formatRotate, lastShare));
+            _result = _result.concat(createShare(x, sharePlacementsFitChannel, true, formatRotate, lastShare));
           }); // eslint-disable-line
         // const result = createShare(monopolyPlacesFitShareStructure);
         console.log('hohohoho', _result);
