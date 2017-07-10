@@ -68,6 +68,9 @@ const Placement = Vue.component('placement', {
       // make a trigger to parent component(share) and send place;
       this.$parent.$emit('render', this.current.id, this.current.revenueType);
     });
+    this.$on('callbackBanner', () => {
+
+    });
   },
 
   computed: {

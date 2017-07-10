@@ -228,6 +228,12 @@ const Banner = Vue.component('banner', {
         console.log('clickBanner');
       });
     },
+    /**
+     * Callback other banner cpm > cpd
+     */
+    bannerCallback() {
+      this.$parent.$emit('callbackBanner');
+    },
   },
 
   render(h) { // eslint-disable-line no-unused-vars

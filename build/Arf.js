@@ -11637,6 +11637,13 @@ var Banner = _vue2.default.component('banner', {
         _this3.current.bannerLogging(1);
         console.log('clickBanner');
       });
+    },
+
+    /**
+     * Callback other banner cpm > cpd
+     */
+    bannerCallback: function bannerCallback() {
+      this.$parent.$emit('callbackBanner');
     }
   },
 
@@ -11646,6 +11653,7 @@ var Banner = _vue2.default.component('banner', {
     if (this.current.isRotate) {
       vm.$data.isRendered = false;
       vm.renderToIFrame();
+      // logging when rotate.
       this.current.bannerLogging(3);
     }
     // const height = setInterval(() => {
@@ -11770,6 +11778,7 @@ var Placement = _vue2.default.component('placement', {
       // make a trigger to parent component(share) and send place;
       _this2.$parent.$emit('render', _this2.current.id, _this2.current.revenueType);
     });
+    this.$on('callbackBanner', function () {});
   },
 
 
