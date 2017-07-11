@@ -83,20 +83,24 @@ const Share = Vue.component('share', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
-    console.log('activePlacementsModels', vm.activePlacementsModels);
+    const activePlacements = vm.activePlacementsModels;
+    if (activePlacements.length > 0) {
+      return (
+        <div
+          id={vm.current.id}
+          class="arf-share"
+        >
+          {vm.activePlacementsModels.map(placement => (
+            <Placement model={placement} />
+          ))}
+        </div>
+      );
+    }
     return (
       <div
         id={vm.current.id}
         class="arf-share"
-        // style={{
-        //   width: `${vm.current.width}px`,
-        //   height: `${vm.current.height}px`,
-        // }}
-      >
-        {vm.activePlacementsModels.map(placement => (
-          <Placement model={placement} />
-        ))}
-      </div>
+      />
     );
   },
 

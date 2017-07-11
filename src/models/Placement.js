@@ -35,7 +35,11 @@ class Placement extends Entity {
    * @returns [Banner]
    */
   get allBanners() {
-    return this.banners.map(banner => new Banner(banner));
+    try {
+      return this.banners.map(banner => new Banner(banner));
+    } catch (err) {
+      return [];
+    }
   }
 
   filterBanner(lastBanner) {

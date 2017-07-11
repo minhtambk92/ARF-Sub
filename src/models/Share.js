@@ -24,21 +24,25 @@ class Share extends Entity {
   }
 
   get allPlacements() {
-    const allPlace = this.placements.map(placement => new Placement(placement));
-    const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
-      if (index === 0) {
-        return item.positionOnShare !== undefined && item.positionOnShare !== 0;
+    try {
+      const allPlace = this.placements.map(placement => new Placement(placement));
+      const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
+        if (index === 0) {
+          return item.positionOnShare !== undefined && item.positionOnShare !== 0;
+        }
+        return acc && (item.positionOnShare !== undefined && item.positionOnShare !== 0);
+      }, 0);
+      console.log('isUsePlacePosition', isUsePlacePosition);
+      if (isUsePlacePosition) {
+        allPlace.sort((a, b) => a.positionOnShare - b.positionOnShare);
+        console.log('sort', allPlace);
+        return allPlace;
       }
-      return acc && (item.positionOnShare !== undefined && item.positionOnShare !== 0);
-    }, 0);
-    console.log('isUsePlacePosition', isUsePlacePosition);
-    if (isUsePlacePosition) {
-      allPlace.sort((a, b) => a.positionOnShare - b.positionOnShare);
-      console.log('sort', allPlace);
+      console.log('allPlaceNew', allPlace);
       return allPlace;
+    } catch (err) {
+      return [];
     }
-    console.log('allPlaceNew', allPlace);
-    return allPlace;
   }
   /**
    * Get all placements from this share

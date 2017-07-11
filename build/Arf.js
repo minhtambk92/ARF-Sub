@@ -10929,9 +10929,13 @@ var Placement = function (_Entity) {
   }, {
     key: 'allBanners',
     get: function get() {
-      return this.banners.map(function (banner) {
-        return new _Banner2.default(banner);
-      });
+      try {
+        return this.banners.map(function (banner) {
+          return new _Banner2.default(banner);
+        });
+      } catch (err) {
+        return [];
+      }
     }
   }, {
     key: 'AdsType',
@@ -11087,25 +11091,29 @@ var Share = function (_Entity) {
   }, {
     key: 'allPlacements',
     get: function get() {
-      var allPlace = this.placements.map(function (placement) {
-        return new _Placement2.default(placement);
-      });
-      var isUsePlacePosition = allPlace.reduce(function (acc, item, index) {
-        if (index === 0) {
-          return item.positionOnShare !== undefined && item.positionOnShare !== 0;
-        }
-        return acc && item.positionOnShare !== undefined && item.positionOnShare !== 0;
-      }, 0);
-      console.log('isUsePlacePosition', isUsePlacePosition);
-      if (isUsePlacePosition) {
-        allPlace.sort(function (a, b) {
-          return a.positionOnShare - b.positionOnShare;
+      try {
+        var allPlace = this.placements.map(function (placement) {
+          return new _Placement2.default(placement);
         });
-        console.log('sort', allPlace);
+        var isUsePlacePosition = allPlace.reduce(function (acc, item, index) {
+          if (index === 0) {
+            return item.positionOnShare !== undefined && item.positionOnShare !== 0;
+          }
+          return acc && item.positionOnShare !== undefined && item.positionOnShare !== 0;
+        }, 0);
+        console.log('isUsePlacePosition', isUsePlacePosition);
+        if (isUsePlacePosition) {
+          allPlace.sort(function (a, b) {
+            return a.positionOnShare - b.positionOnShare;
+          });
+          console.log('sort', allPlace);
+          return allPlace;
+        }
+        console.log('allPlaceNew', allPlace);
         return allPlace;
+      } catch (err) {
+        return [];
       }
-      console.log('allPlaceNew', allPlace);
-      return allPlace;
     }
     /**
      * Get all placements from this share
@@ -11907,35 +11915,7 @@ var Placement = _vue2.default.component('placement', {
             height: vm.current.height + 'px'
           }
         },
-        [h(
-          'div',
-          {
-            style: {
-              zIndex: 9999,
-              margin: 'auto',
-              position: 'relative',
-              color: 'red',
-              paddingTop: '5px',
-              // backgroundColor: 'yellow',
-              // opacity: 0.5,
-              width: vm.current.width + 'px',
-              height: vm.current.height + 'px'
-            }
-          },
-          [h(
-            'p',
-            {
-              style: {
-                backgroundColor: 'black',
-                color: 'white',
-                fontSize: '15pt',
-                width: '35%',
-                textAlign: 'center'
-              }
-            },
-            [vm.current.revenueType]
-          )]
-        )]
+        []
       );
     }
     if (currentBanner !== false) {
@@ -12079,7 +12059,27 @@ var Share = _vue2.default.component('share', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
-    console.log('activePlacementsModels', vm.activePlacementsModels);
+    var activePlacements = vm.activePlacementsModels;
+    if (activePlacements.length > 0) {
+      return h(
+        'div',
+        {
+          attrs: {
+            id: vm.current.id
+          },
+          'class': 'arf-share'
+        },
+        [vm.activePlacementsModels.map(function (placement) {
+          return h(
+            _components.Placement,
+            {
+              attrs: { model: placement }
+            },
+            []
+          );
+        })]
+      );
+    }
     return h(
       'div',
       {
@@ -12087,20 +12087,8 @@ var Share = _vue2.default.component('share', {
           id: vm.current.id
         },
         'class': 'arf-share'
-        // style={{
-        //   width: `${vm.current.width}px`,
-        //   height: `${vm.current.height}px`,
-        // }}
       },
-      [vm.activePlacementsModels.map(function (placement) {
-        return h(
-          _components.Placement,
-          {
-            attrs: { model: placement }
-          },
-          []
-        );
-      })]
+      []
     );
   }
 });
@@ -12281,7 +12269,7 @@ var Zone = _vue2.default.component('zone', {
     vm.$data.lastShare = (0, _stringify2.default)(currentShare.placements.map(function (x) {
       return x.id;
     }));
-    if (currentShare) {
+    if (currentShare && currentShare.placements.length > 0) {
       return h(
         'div',
         {
@@ -13688,7 +13676,7 @@ var Zone = function (_Entity) {
       /* if cpdShare take all share percent in a place order -> filter */
       var constructShareStructure = [];
       var listPositionOnShare = allSharePlace.map(function (x) {
-        return x.positionOnShare;
+        return x.positionOnShare === 0 ? 1 : x.positionOnShare;
       });
       var countPositionOnShare = _vendor.util.uniqueItem(listPositionOnShare).length;
       console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
@@ -13863,7 +13851,10 @@ var Zone = function (_Entity) {
       allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(function (place) {
         return place.placement.filterBanner().length > 0;
       });
-      console.log('filterPlacement', allSharePlace);
+      var ttt = allSharePlace.filter(function (place) {
+        return place.placement.filterBanner().length > 0;
+      });
+      console.log('filterPlacement', ttt);
       /**
        * end
        */

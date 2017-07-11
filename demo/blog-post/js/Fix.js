@@ -1,6 +1,3 @@
-/**
- * Created by tamleminh on 06/07/2017.
- */
 /*!
  * Advertisement data
  * Template file v0.8.1
@@ -40,7 +37,7 @@
   let r = location.search.indexOf('corejs_env=dev') !== -1 ? '' : '.min',
     o = document.createElement('script');
   o.id = 'arf-core-js', o.type = 'application/javascript', o.src = `//localhost:63342/ARF-Sub/build/Arf${r}.js`, document.getElementById(o.id) || document.getElementsByTagName('body')[0].appendChild(o), window.arfZonesQueue = window.arfZonesQueue || [], window.arfZonesQueue.push({
-    el: document.getElementById('9ee4fd3b-0933-46d6-9377-bed202c24013'),
+    el: document.getElementById('7e989e7b-c93d-426d-b743-c5a68d668bdf'),
     propsData: {
       model: {
         id: '9ee4fd3b-0933-46d6-9377-bed202c24013',
@@ -434,7 +431,7 @@
                 imageUrl: '',
                 url: '',
                 target: '',
-                isIFrame: true,
+                isIFrame: false,
                 isCountView: true,
                 isFixIE: false,
                 isDefault: false,
@@ -446,7 +443,7 @@
                 expirationDate: null,
                 status: 'active',
                 createdAt: '2017-06-27T03:47:52.000Z',
-                updatedAt: '2017-06-28T04:28:29.000Z',
+                updatedAt: '2017-07-09T17:02:02.000Z',
                 deletedAt: null,
                 placementId: '1a3806d2-b7b2-4cc4-8b81-0a7d5840960f',
                 bannerHtmlTypeId: 'f7aace90-c849-45b2-8d8c-cb23e0f6f051',
@@ -460,36 +457,36 @@
                   comparison: '==',
                   value: '',
                   createdAt: '2017-06-27T03:49:46.000Z',
-                  updatedAt: '2017-06-27T03:49:46.000Z',
+                  updatedAt: '2017-07-11T08:27:55.000Z',
                   deletedAt: null,
                   bannerId: '24c73b66-d84e-461f-90e8-f1cff44144fb',
                   optionBannerChannels: [{
-                    id: '48c88605-5b6d-44f8-a4d9-ac1db8888679',
-                    createdAt: '2017-06-27T03:49:46.000Z',
-                    updatedAt: '2017-06-27T03:49:46.000Z',
+                    id: '9b9c4a2c-7dad-4859-b52b-0110e21098cd',
+                    createdAt: '2017-07-11T08:27:56.000Z',
+                    updatedAt: '2017-07-11T08:27:56.000Z',
                     deletedAt: null,
                     optionBannerId: '57537451-b9b3-4278-a55c-7173e72a1c82',
-                    channelId: 'e7315720-2de7-4ed8-93bb-93d1ee647066',
+                    channelId: '72eae4de-2c53-43e8-99d5-45039ae9a28d',
                     channel: {
-                      id: 'e7315720-2de7-4ed8-93bb-93d1ee647066',
-                      name: 'du lich tuoi tre - Home',
+                      id: '72eae4de-2c53-43e8-99d5-45039ae9a28d',
+                      name: 'Nhip song so _ home',
                       description: '',
                       status: 'active',
-                      createdAt: '2017-06-21T05:03:19.000Z',
-                      updatedAt: '2017-06-21T05:03:19.000Z',
+                      createdAt: '2017-06-22T09:04:25.000Z',
+                      updatedAt: '2017-06-22T09:04:25.000Z',
                       deletedAt: null,
-                      siteId: 'a7a821b7-9b08-414d-b903-d6328c8b3642',
+                      siteId: '16a7cb15-ca76-4091-ae38-b29177056652',
                       optionChannels: [{
-                        id: '6c2262d1-2f9f-4980-a70b-167750f7ea5c',
-                        name: 'http://dulich.tuoitre.vn/',
+                        id: '38936f1f-50f1-4654-b945-a41d2a3a8dd6',
+                        name: 'http://nhipsongso.tuoitre.vn/',
                         logical: 'and',
                         globalVariables: 'ADS_Channel',
                         comparison: '==',
                         value: '/home/',
-                        createdAt: '2017-06-21T05:04:20.000Z',
-                        updatedAt: '2017-06-21T05:04:20.000Z',
+                        createdAt: '2017-06-22T09:05:05.000Z',
+                        updatedAt: '2017-06-22T09:05:05.000Z',
                         deletedAt: null,
-                        channelId: 'e7315720-2de7-4ed8-93bb-93d1ee647066',
+                        channelId: '72eae4de-2c53-43e8-99d5-45039ae9a28d',
                         optionChannelTypeId: '334288f0-8a58-4372-b262-2fba4fffabf9',
                         optionChannelType: {
                           id: '334288f0-8a58-4372-b262-2fba4fffabf9',

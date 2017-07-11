@@ -180,29 +180,7 @@ const Placement = Vue.component('placement', {
             width: `${vm.current.width}px`,
             height: `${vm.current.height}px`,
           }}
-        >
-          <div
-            style={{
-              zIndex: 9999,
-              margin: 'auto',
-              position: 'relative',
-              color: 'red',
-              paddingTop: '5px',
-              // backgroundColor: 'yellow',
-              // opacity: 0.5,
-              width: `${vm.current.width}px`,
-              height: `${vm.current.height}px`,
-            }}
-          ><p
-            style={{
-              backgroundColor: 'black',
-              color: 'white',
-              fontSize: '15pt',
-              width: '35%',
-              textAlign: 'center',
-            }}
-          >{vm.current.revenueType}</p></div>
-        </div>
+        />
       );
     }
     if (currentBanner !== false) {

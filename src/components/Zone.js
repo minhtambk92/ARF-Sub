@@ -151,7 +151,7 @@ const Zone = Vue.component('zone', {
     const vm = this;
     const currentShare = vm.activeShareModel;
     vm.$data.lastShare = JSON.stringify(currentShare.placements.map(x => x.id));
-    if (currentShare) {
+    if (currentShare && currentShare.placements.length > 0) {
       return (
         <div
           id={vm.current.id}

@@ -970,7 +970,7 @@ class Zone extends Entity {
 
         /* if cpdShare take all share percent in a place order -> filter */
     const constructShareStructure = [];
-    const listPositionOnShare = allSharePlace.map(x => x.positionOnShare);
+    const listPositionOnShare = allSharePlace.map(x => (x.positionOnShare === 0 ? 1 : x.positionOnShare));
     const countPositionOnShare = util.uniqueItem(listPositionOnShare).length;
     console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
     for (let i = 0; i < countPositionOnShare; i += 1) {
@@ -1108,7 +1108,7 @@ class Zone extends Entity {
                 /* filter place fit with current channel */
     allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
       place.placement.filterBanner().length > 0);
-    console.log('filterPlacement', allSharePlace);
+    console.log('filterPlacement', allSharePlaceFitShareStructure);
     /**
      * end
      */
