@@ -44,10 +44,10 @@ class Placement extends Entity {
 
   filterBanner(lastBanner) {
     console.log('lastBanner', lastBanner, this.allBanners.length);
-    const allBanner = (this.allBanners.length > 1 && (lastBanner !== undefined && lastBanner !== null)) ? this.allBanners.filter(item => item.id !== lastBanner) : this.allBanners;
     if (this.revenueType === 'pb') {
-      return allBanner;
+      return this.allBanners;
     }
+    const allBanner = (this.allBanners.length > 1 && (lastBanner !== undefined && lastBanner !== null)) ? this.allBanners.filter(item => item.id !== lastBanner) : this.allBanners;
     let result = allBanner.filter(x => x.isRenderable());
     if ((window.ZoneConnect !== undefined && window.ZoneConnect.relativeKeyword !== '')) {
       const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));

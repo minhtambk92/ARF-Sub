@@ -10835,12 +10835,12 @@ var Placement = function (_Entity) {
     key: 'filterBanner',
     value: function filterBanner(lastBanner) {
       console.log('lastBanner', lastBanner, this.allBanners.length);
+      if (this.revenueType === 'pb') {
+        return this.allBanners;
+      }
       var allBanner = this.allBanners.length > 1 && lastBanner !== undefined && lastBanner !== null ? this.allBanners.filter(function (item) {
         return item.id !== lastBanner;
       }) : this.allBanners;
-      if (this.revenueType === 'pb') {
-        return allBanner;
-      }
       var result = allBanner.filter(function (x) {
         return x.isRenderable();
       });
@@ -13843,7 +13843,7 @@ var Zone = function (_Entity) {
        */
       /* filter place fit with share construct */
       var allSharePlaceFitShareStructure = allSharePlace.filter(function (item) {
-        return item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1];
+        return item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1] || item.placement.revenueType === 'pb';
       });
       console.log('allSharePlaceFitShareStructure', allSharePlaceFitShareStructure);
 
@@ -13851,10 +13851,7 @@ var Zone = function (_Entity) {
       allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(function (place) {
         return place.placement.filterBanner().length > 0;
       });
-      var ttt = allSharePlace.filter(function (place) {
-        return place.placement.filterBanner().length > 0;
-      });
-      console.log('filterPlacement', ttt);
+      console.log('filterPlacement', allSharePlaceFitShareStructure);
       /**
        * end
        */
@@ -13980,6 +13977,7 @@ var Zone = function (_Entity) {
                 Browse each placeRatio in shareRatio, then find a placement fit it.
                 */
               shareFormat.reduce(function (temp2, placeRatio, index) {
+                console.log('testxxx', index);
                 var placeChosen = [];
                 /* fill monopoly place first */
                 if (placeMonopolies.length > 0) {
@@ -14005,6 +14003,7 @@ var Zone = function (_Entity) {
                 var passBackPlaces = allSharePlace.filter(function (place) {
                   return place.placement.revenueType === 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : place.positionOnShare === index + 1);
                 });
+                console.log('passBackPlaces', passBackPlaces, allSharePlace, index);
                 var places = normalPlace.filter(function (place) {
                   return (
                     // eslint-disable-next-line
@@ -14042,22 +14041,23 @@ var Zone = function (_Entity) {
                 }
                 /* fill pass back place if don't have any placement fit with conditional */
                 if (places.length === 0) {
-                  places = passBackPlaces.filter(function (place) {
-                    return getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
-                      // eslint-disable-line
-                      if (index2 === 0) return item.placement.id !== place.placement.id;
-                      return acc && item.placement.id !== place.placement.id;
-                    }, 0) : true);
-                  });
+                  // places = passBackPlaces.filter(place => (
+                  // getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
+                  // (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
+                  //   if (index2 === 0) return item.placement.id !== place.placement.id;
+                  //   return acc && item.placement.id !== place.placement.id;
+                  // }, 0) : true)));
+                  places = passBackPlaces;
+                  console.log('runPB', places);
                 }
                 /*
                   if don't have any places fit in area => return empty share.
                   */
                 if (places.length === 0) {
-                  share.places = [];
-                  share.id = '';
-                  share.css = '';
-                  return 0;
+                  // share.places = [];
+                  // share.id = '';
+                  // share.css = '';
+                  // return 0;
                 } else {
                   // eslint-disable-line no-else-return
                   var _place2 = void 0;

@@ -1102,7 +1102,7 @@ class Zone extends Entity {
      */
                /* filter place fit with share construct */
     let allSharePlaceFitShareStructure = allSharePlace.filter(item =>
-    item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]);
+      (item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb'));
     console.log('allSharePlaceFitShareStructure', allSharePlaceFitShareStructure);
 
                 /* filter place fit with current channel */
@@ -1233,6 +1233,7 @@ class Zone extends Entity {
 
              */
             shareFormat.reduce((temp2, placeRatio, index) => {
+              console.log('testxxx', index);
               const placeChosen = [];
                                        /* fill monopoly place first */
               if (placeMonopolies.length > 0) {
@@ -1257,6 +1258,7 @@ class Zone extends Entity {
               const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
               console.log('normalPlace', normalPlace);
               const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
+              console.log('passBackPlaces', passBackPlaces, allSharePlace, index);
               let places = normalPlace.filter(place => (
                 // eslint-disable-next-line
                 getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
@@ -1291,12 +1293,14 @@ class Zone extends Entity {
               }
               /* fill pass back place if don't have any placement fit with conditional */
               if (places.length === 0) {
-                places = passBackPlaces.filter(place => (
-                getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
-                (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
-                  if (index2 === 0) return item.placement.id !== place.placement.id;
-                  return acc && item.placement.id !== place.placement.id;
-                }, 0) : true)));
+                // places = passBackPlaces.filter(place => (
+                // getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
+                // (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => { // eslint-disable-line
+                //   if (index2 === 0) return item.placement.id !== place.placement.id;
+                //   return acc && item.placement.id !== place.placement.id;
+                // }, 0) : true)));
+                places = passBackPlaces;
+                console.log('runPB', places);
               }
               /*
 
@@ -1304,10 +1308,10 @@ class Zone extends Entity {
 
                */
               if (places.length === 0) {
-                share.places = [];
-                share.id = '';
-                share.css = '';
-                return 0;
+                // share.places = [];
+                // share.id = '';
+                // share.css = '';
+                // return 0;
               } else { // eslint-disable-line no-else-return
                 let place;
                 if (places.length === 1) {
