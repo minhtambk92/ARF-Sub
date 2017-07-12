@@ -994,7 +994,7 @@ class Zone extends Entity {
         if (type === 'pa') weight = 100;
         else {
           const cpdWeight = allSharePlaceInThisPosition.reduce((acc2, place) =>
-            acc2 + (place.placement.cpdPercent * (this.zoneType === 'right' ? getNumberOfParts(place.placement.height, true) : getNumberOfParts(place.placement.width, true))), 0);
+            acc2 + (place.placement.cpdPercent), 0);
           if (type === 'cpd') {
             weight = isExistPlacePa ? 0 : cpdWeight;
           } else {

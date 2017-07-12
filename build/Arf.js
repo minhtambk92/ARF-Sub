@@ -13709,7 +13709,7 @@ var Zone = function (_Entity) {
           var weight = 0;
           if (type === 'pa') weight = 100;else {
             var cpdWeight = allSharePlaceInThisPosition.reduce(function (acc2, place) {
-              return acc2 + place.placement.cpdPercent * (_this3.zoneType === 'right' ? getNumberOfParts(place.placement.height, true) : getNumberOfParts(place.placement.width, true));
+              return acc2 + place.placement.cpdPercent;
             }, 0);
             if (type === 'cpd') {
               weight = isExistPlacePa ? 0 : cpdWeight;
