@@ -10828,6 +10828,7 @@ var Placement = function (_Entity) {
     _this.isRotate = placement.isRotate;
     _this.isRotateFromShare = placement.isRotateFromShare;
     _this.relative = placement.relative;
+    _this.shareType = placement.shareType;
     return _this;
   }
 
@@ -11129,6 +11130,9 @@ var Share = function (_Entity) {
       var allPlace = this.sharePlacements.filter(function (sharePlacement) {
         return sharePlacement.placement !== null;
       });
+      allPlace.map(function (item) {
+        return item.placement.shareType = _this3.type;
+      }); // eslint-disable-line
       /* eslint-disable */
       allPlace.reduce(function (acc, item) {
         item.placement.zoneId = _this3.zoneId;
@@ -13625,13 +13629,17 @@ var Zone = function (_Entity) {
        *
        */
       var allShare = this.allShares();
-      var allSharePlace = allShare.reduce(function (acc, item, index) {
+      var allSharePlaces = allShare.reduce(function (acc, item, index) {
         // eslint-disable-line
         if (index === 0) {
           return item.allsharePlacements;
         }
         return acc.concat(item.allsharePlacements);
       }, 0);
+      /* filter place fit with current channel */
+      var allSharePlaceInCurrentChannel = allSharePlaces.filter(function (place) {
+        return place.placement.filterBanner().length > 0;
+      });
       // allSharePlace.reduce((acc, item) => { // eslint-disable-line
       //   if (item.positionOnShare !== 0)
       // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
@@ -13655,7 +13663,7 @@ var Zone = function (_Entity) {
         }
         return min;
       };
-      var minPlace = getMinPlace(allSharePlace);
+      var minPlace = getMinPlace(allSharePlaceInCurrentChannel);
 
       /* This function to get number of part which take in zone like placement,.. */
       var getNumberOfParts = function getNumberOfParts(height, isRoundUp) {
@@ -13674,15 +13682,15 @@ var Zone = function (_Entity) {
       var shareConstruct = [];
 
       /* if cpdShare take all share percent in a place order -> filter */
-      var constructShareStructure = [];
-      var listPositionOnShare = allSharePlace.map(function (x) {
+      var shareStructure = [];
+      var listPositionOnShare = allSharePlaceInCurrentChannel.map(function (x) {
         return x.positionOnShare === 0 ? 1 : x.positionOnShare;
       });
       var countPositionOnShare = _vendor.util.uniqueItem(listPositionOnShare).length;
       console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
 
       var _loop4 = function _loop4(i) {
-        var allSharePlaceInThisPosition = allSharePlace.filter(function (place) {
+        var allSharePlaceInThisPosition = allSharePlaceInCurrentChannel.filter(function (place) {
           return (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === i;
         });
         var allPlaceTypeInPosition = [];
@@ -13767,7 +13775,7 @@ var Zone = function (_Entity) {
         if (shareConstruct[i].filter(function (x) {
           return x.type === 'pa';
         }).length > 0) {
-          constructShareStructure.push('pa');
+          shareStructure.push('pa');
         } else {
           var lastPlaceType = [];
           lastThreeShare.map(function (share) {
@@ -13827,14 +13835,14 @@ var Zone = function (_Entity) {
           console.log('everyThings2', shareConstruct);
           var activeType = activeRevenue(shareConstruct[i]);
           console.log('everyThings3', activeType);
-          constructShareStructure.push(activeType.type);
+          shareStructure.push(activeType.type);
         }
       };
 
       for (var i = 0; i < countPositionOnShare; i += 1) {
         _loop5(i);
       }
-      console.log('buildShareConstructXXX', constructShareStructure);
+      console.log('buildShareConstructXXX', shareStructure);
       /**
        * [end region: create Share structure]
        */
@@ -13842,16 +13850,15 @@ var Zone = function (_Entity) {
        * filer placements suit with share structure and channel
        */
       /* filter place fit with share construct */
-      var allSharePlaceFitShareStructure = allSharePlace.filter(function (item) {
-        return item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1] || item.placement.revenueType === 'pb';
+      var allSharePlaceFitShareStructure = allSharePlaceInCurrentChannel.filter(function (item) {
+        return item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1] || item.placement.revenueType === 'pb';
       });
       console.log('allSharePlaceFitShareStructure', allSharePlaceFitShareStructure);
 
       /* filter place fit with current channel */
-      allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(function (place) {
-        return place.placement.filterBanner().length > 0;
-      });
-      console.log('filterPlacement', allSharePlaceFitShareStructure);
+      // allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
+      //   place.placement.filterBanner().length > 0);
+      // console.log('filterPlacement', allSharePlaceFitShareStructure);
       /**
        * end
        */
@@ -13864,7 +13871,7 @@ var Zone = function (_Entity) {
       });
       console.log('monopolyPlacements', monopolyPlacesFitShareStructure);
 
-      var monopolyPlaces = allSharePlace.filter(function (y) {
+      var monopolyPlaces = allSharePlaces.filter(function (y) {
         return y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd';
       });
       /**
@@ -13887,17 +13894,25 @@ var Zone = function (_Entity) {
       console.log('shareFormats', shareFormats);
       var checkShareFormat = function checkShareFormat(format, format2) {
         if (format2 === undefined || format2 === '') {
-          return shareFormats.reduce(function (acc, item, index) {
-            if (index === 0) return _vendor.util.checkTwoArrayEqual(item, format);
-            return acc || _vendor.util.checkTwoArrayEqual(item, format);
-          }, 0);
+          if (format.length > 1) {
+            return shareFormats.reduce(function (acc, item, index) {
+              if (index === 0) return _vendor.util.checkTwoArrayEqual(item, format);
+              return acc || _vendor.util.checkTwoArrayEqual(item, format);
+            }, 0);
+          }
+          if (format.length === 1) {
+            return shareFormats.reduce(function (acc, item, index) {
+              if (index === 0) return item.length === 1;
+              return acc || item.length === 1;
+            }, 0);
+          }
         }
         var x = void 0;
         if (typeof format === 'string') x = format;
         if ((typeof format === 'undefined' ? 'undefined' : (0, _typeof3.default)(format)) === 'object' && Array.isArray(format)) x = format.join();
         var y = void 0;
-        if (typeof format2 === 'string') y = format;
-        if ((typeof format2 === 'undefined' ? 'undefined' : (0, _typeof3.default)(format2)) === 'object' && Array.isArray(format2)) y = format.join();
+        if (typeof format2 === 'string') y = format2;
+        if ((typeof format2 === 'undefined' ? 'undefined' : (0, _typeof3.default)(format2)) === 'object' && Array.isArray(format2)) y = format2.join();
         return x === y;
       };
       var getShareInfo = function getShareInfo(format) {
@@ -13982,14 +13997,15 @@ var Zone = function (_Entity) {
                 /* fill monopoly place first */
                 if (placeMonopolies.length > 0) {
                   var listMonopolies = placeMonopolies.filter(function (x) {
-                    return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === index + 1) && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
+                    return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === index + 1) && (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio : x.shareType === 'single');
                   });
                   console.log('listMonopoliesAfterFilter', listMonopolies);
 
                   if (listMonopolies.length > 0) {
-                    var place = listMonopolies.length === 1 ? listMonopolies[0] : activePlacement(listMonopolies, shareConstruct[index]);
-                    placeChosen.push(place);
-                    share.places.push(place.placement);
+                    console.log('listMonopolies', listMonopolies.length);
+                    var _place2 = listMonopolies.length === 1 ? listMonopolies[0] : activePlacement(listMonopolies, shareStructure[index]);
+                    placeChosen.push(_place2);
+                    share.places.push(_place2.placement);
                     return 0;
                   }
                 }
@@ -14007,12 +14023,12 @@ var Zone = function (_Entity) {
                 var places = normalPlace.filter(function (place) {
                   return (
                     // eslint-disable-next-line
-                    getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                    (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
                       if (index2 === 0) return item.placement.id !== place.placement.id;
                       return acc && item.placement.id !== place.placement.id;
                     }, 0) : true) && (
                     /* if isRotate = true -> check share structure will cancel */
-                    isRotate ? true : place.placement.revenueType === constructShareStructure[index])
+                    isRotate ? true : place.placement.revenueType === shareStructure[index])
                   );
                 });
                 console.log('placementsForShare', places);
@@ -14051,25 +14067,37 @@ var Zone = function (_Entity) {
                   console.log('runPB', places);
                 }
                 /*
-                  if don't have any places fit in area => return empty share.
+                  if don't have any places fit in area => make a random choose in all placement in this position.
                   */
                 if (places.length === 0) {
                   // share.places = [];
                   // share.id = '';
                   // share.css = '';
                   // return 0;
-                } else {
-                  // eslint-disable-line no-else-return
-                  var _place2 = void 0;
-                  if (places.length === 1) {
-                    _place2 = places[0];
-                  } else {
-                    _place2 = activePlacement(places, constructShareStructure[index]);
+                  var collection = allSharePlaceInCurrentChannel.filter(function (place) {
+                    return (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                      if (index2 === 0) return item.placement.id !== place.placement.id;
+                      return acc && item.placement.id !== place.placement.id;
+                    }, 0) : true);
+                  });
+                  if (collection.length > 0) places = collection;else {
+                    places = allSharePlaces.filter(function (place) {
+                      return (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                        if (index2 === 0) return item.placement.id !== place.placement.id;
+                        return acc && item.placement.id !== place.placement.id;
+                      }, 0) : true);
+                    });
                   }
-
-                  placeChosen.push(_place2);
-                  share.places.push(_place2.placement);
                 }
+                var place = void 0;
+                if (places.length === 1) {
+                  place = places[0];
+                } else {
+                  place = activePlacement(places, shareStructure[index]);
+                }
+
+                placeChosen.push(place);
+                share.places.push(place.placement);
                 return 0;
               }, 0);
               // if (relativePlacement.length > 0 && isRelative) {
@@ -14112,7 +14140,7 @@ var Zone = function (_Entity) {
            * 3. Create share with these sets after combination */
 
         /*  1  */
-        var sharePlacementsFitChannel = allSharePlace.filter(function (place) {
+        var sharePlacementsFitChannel = allSharePlaces.filter(function (place) {
           return place.placement.filterBanner().length > 0;
         });
         var placementsInSharePosition = [];

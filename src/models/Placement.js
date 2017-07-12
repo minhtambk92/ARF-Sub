@@ -24,6 +24,7 @@ class Placement extends Entity {
     this.isRotate = placement.isRotate;
     this.isRotateFromShare = placement.isRotateFromShare;
     this.relative = placement.relative;
+    this.shareType = placement.shareType;
   }
 
   get PlacementArea() {

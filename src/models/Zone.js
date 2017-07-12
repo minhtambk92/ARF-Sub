@@ -921,12 +921,14 @@ class Zone extends Entity {
      *
      */
     const allShare = this.allShares();
-    let allSharePlace = allShare.reduce((acc, item, index) => { // eslint-disable-line
+    let allSharePlaces = allShare.reduce((acc, item, index) => { // eslint-disable-line
       if (index === 0) {
         return item.allsharePlacements;
       }
       return acc.concat(item.allsharePlacements);
     }, 0);
+                    /* filter place fit with current channel */
+    const allSharePlaceInCurrentChannel = allSharePlaces.filter(place => place.placement.filterBanner().length > 0);
     // allSharePlace.reduce((acc, item) => { // eslint-disable-line
     //   if (item.positionOnShare !== 0)
     // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
@@ -950,7 +952,7 @@ class Zone extends Entity {
       }
       return min;
     };
-    const minPlace = getMinPlace(allSharePlace);
+    const minPlace = getMinPlace(allSharePlaceInCurrentChannel);
 
           /* This function to get number of part which take in zone like placement,.. */
     const getNumberOfParts = (height, isRoundUp) => {
@@ -969,12 +971,12 @@ class Zone extends Entity {
     const shareConstruct = [];
 
         /* if cpdShare take all share percent in a place order -> filter */
-    const constructShareStructure = [];
-    const listPositionOnShare = allSharePlace.map(x => (x.positionOnShare === 0 ? 1 : x.positionOnShare));
+    const shareStructure = [];
+    const listPositionOnShare = allSharePlaceInCurrentChannel.map(x => (x.positionOnShare === 0 ? 1 : x.positionOnShare));
     const countPositionOnShare = util.uniqueItem(listPositionOnShare).length;
     console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
     for (let i = 0; i < countPositionOnShare; i += 1) {
-      const allSharePlaceInThisPosition = allSharePlace.filter(place =>
+      const allSharePlaceInThisPosition = allSharePlaceInCurrentChannel.filter(place =>
       (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === i);
       const allPlaceTypeInPosition = [];
       allSharePlaceInThisPosition.reduce((acc, item) => { //eslint-disable-line
@@ -1044,7 +1046,7 @@ class Zone extends Entity {
 
     for (let i = 0; i < countPositionOnShare; i += 1) {
       if (shareConstruct[i].filter(x => x.type === 'pa').length > 0) {
-        constructShareStructure.push('pa');
+        shareStructure.push('pa');
       } else {
         const lastPlaceType = [];
         lastThreeShare.map((share) => { // eslint-disable-line
@@ -1090,10 +1092,10 @@ class Zone extends Entity {
         console.log('everyThings2', shareConstruct);
         const activeType = activeRevenue(shareConstruct[i]);
         console.log('everyThings3', activeType);
-        constructShareStructure.push(activeType.type);
+        shareStructure.push(activeType.type);
       }
     }
-    console.log('buildShareConstructXXX', constructShareStructure);
+    console.log('buildShareConstructXXX', shareStructure);
     /**
      * [end region: create Share structure]
      */
@@ -1101,14 +1103,14 @@ class Zone extends Entity {
      * filer placements suit with share structure and channel
      */
                /* filter place fit with share construct */
-    let allSharePlaceFitShareStructure = allSharePlace.filter(item =>
-      (item.placement.revenueType === constructShareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb'));
+    const allSharePlaceFitShareStructure = allSharePlaceInCurrentChannel.filter(item =>
+      (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb'));
     console.log('allSharePlaceFitShareStructure', allSharePlaceFitShareStructure);
 
                 /* filter place fit with current channel */
-    allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
-      place.placement.filterBanner().length > 0);
-    console.log('filterPlacement', allSharePlaceFitShareStructure);
+    // allSharePlaceFitShareStructure = allSharePlaceFitShareStructure.filter(place =>
+    //   place.placement.filterBanner().length > 0);
+    // console.log('filterPlacement', allSharePlaceFitShareStructure);
     /**
      * end
      */
@@ -1120,7 +1122,7 @@ class Zone extends Entity {
     y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd');
     console.log('monopolyPlacements', monopolyPlacesFitShareStructure);
 
-    const monopolyPlaces = allSharePlace.filter(y =>
+    const monopolyPlaces = allSharePlaces.filter(y =>
     y.placement.AdsType.revenueType === 'pa' || y.placement.AdsType.revenueType === 'cpd');
     /**
      * end
@@ -1138,17 +1140,25 @@ class Zone extends Entity {
     console.log('shareFormats', shareFormats);
     const checkShareFormat = (format, format2) => {
       if (format2 === undefined || format2 === '') {
-        return shareFormats.reduce((acc, item, index) => {
-          if (index === 0) return util.checkTwoArrayEqual(item, format);
-          return acc || util.checkTwoArrayEqual(item, format);
-        }, 0);
+        if (format.length > 1) {
+          return shareFormats.reduce((acc, item, index) => {
+            if (index === 0) return util.checkTwoArrayEqual(item, format);
+            return acc || util.checkTwoArrayEqual(item, format);
+          }, 0);
+        }
+        if (format.length === 1) {
+          return shareFormats.reduce((acc, item, index) => {
+            if (index === 0) return item.length === 1;
+            return acc || item.length === 1;
+          }, 0);
+        }
       }
       let x;
       if (typeof format === 'string') x = format;
       if (typeof format === 'object' && Array.isArray(format)) x = format.join();
       let y;
-      if (typeof format2 === 'string') y = format;
-      if (typeof format2 === 'object' && Array.isArray(format2)) y = format.join();
+      if (typeof format2 === 'string') y = format2;
+      if (typeof format2 === 'object' && Array.isArray(format2)) y = format2.join();
       return x === y;
     };
     const getShareInfo = (format) => {
@@ -1239,12 +1249,13 @@ class Zone extends Entity {
               if (placeMonopolies.length > 0) {
                 const listMonopolies = placeMonopolies.filter(
                   x => (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === (index + 1)) &&
-                getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
+                  (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio) : x.shareType === 'single'));
                 console.log('listMonopoliesAfterFilter', listMonopolies);
 
                 if (listMonopolies.length > 0) {
+                  console.log('listMonopolies', listMonopolies.length);
                   const place = listMonopolies.length === 1 ? listMonopolies[0] :
-                    activePlacement(listMonopolies, shareConstruct[index]);
+                    activePlacement(listMonopolies, shareStructure[index]);
                   placeChosen.push(place);
                   share.places.push(place.placement);
                   return 0;
@@ -1261,14 +1272,14 @@ class Zone extends Entity {
               console.log('passBackPlaces', passBackPlaces, allSharePlace, index);
               let places = normalPlace.filter(place => (
                 // eslint-disable-next-line
-                getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio &&
+              (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.shareType === 'single') &&
                 (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
                   if (index2 === 0) return item.placement.id !== place.placement.id;
                   return acc && item.placement.id !== place.placement.id;
                 }, 0) : true) &&
                   /* if isRotate = true -> check share structure will cancel */
                 (isRotate ? true :
-                  place.placement.revenueType === constructShareStructure[index])));
+                  place.placement.revenueType === shareStructure[index])));
               console.log('placementsForShare', places);
               /*
 
@@ -1304,7 +1315,7 @@ class Zone extends Entity {
               }
               /*
 
-               if don't have any places fit in area => return empty share.
+               if don't have any places fit in area => make a random choose in all placement in this position.
 
                */
               if (places.length === 0) {
@@ -1312,17 +1323,31 @@ class Zone extends Entity {
                 // share.id = '';
                 // share.css = '';
                 // return 0;
-              } else { // eslint-disable-line no-else-return
-                let place;
-                if (places.length === 1) {
-                  place = places[0];
-                } else {
-                  place = activePlacement(places, constructShareStructure[index]);
+                const collection = allSharePlaceInCurrentChannel.filter(place =>
+                (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.shareType === 'single') &&
+                (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
+                  if (index2 === 0) return item.placement.id !== place.placement.id;
+                  return acc && item.placement.id !== place.placement.id;
+                }, 0) : true));
+                if (collection.length > 0) places = collection;
+                else {
+                  places = allSharePlaces.filter(place =>
+                  (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.shareType === 'single') &&
+                  (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
+                    if (index2 === 0) return item.placement.id !== place.placement.id;
+                    return acc && item.placement.id !== place.placement.id;
+                  }, 0) : true));
                 }
-
-                placeChosen.push(place);
-                share.places.push(place.placement);
               }
+              let place;
+              if (places.length === 1) {
+                place = places[0];
+              } else {
+                place = activePlacement(places, shareStructure[index]);
+              }
+
+              placeChosen.push(place);
+              share.places.push(place.placement);
               return 0;
             }, 0);
             // if (relativePlacement.length > 0 && isRelative) {
@@ -1365,7 +1390,7 @@ class Zone extends Entity {
          * 3. Create share with these sets after combination */
 
       /*  1  */
-      const sharePlacementsFitChannel = allSharePlace.filter(place =>
+      const sharePlacementsFitChannel = allSharePlaces.filter(place =>
       place.placement.filterBanner().length > 0);
       let placementsInSharePosition = [];
       const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => (x.positionOnShare === 0 ? x.positionOnShare : (x.positionOnShare - 1))));

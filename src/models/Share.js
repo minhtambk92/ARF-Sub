@@ -52,6 +52,7 @@ class Share extends Entity {
     // const allPlace = this.placements.map(placement => new Placement(placement));
     const allPlace = this.sharePlacements.filter(sharePlacement =>
     sharePlacement.placement !== null);
+    allPlace.map(item => item.placement.shareType = this.type); // eslint-disable-line
     /* eslint-disable */
     allPlace.reduce((acc, item) => {
       item.placement.zoneId = this.zoneId;
