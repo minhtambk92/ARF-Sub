@@ -1248,8 +1248,13 @@ class Zone extends Entity {
                                        /* fill monopoly place first */
               if (placeMonopolies.length > 0) {
                 const listMonopolies = placeMonopolies.filter(
-                  x => (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === (index + 1)) &&
-                  (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio) : x.shareType === 'single'));
+                  (x) => {
+                    if (share.type === 'single') {
+                      return x.placement.shareType === 'single';
+                    }
+                    return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === (index + 1)) &&
+                      (getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
+                  });
                 console.log('listMonopoliesAfterFilter', listMonopolies);
 
                 if (listMonopolies.length > 0) {
@@ -1266,13 +1271,16 @@ class Zone extends Entity {
                Then, find all placement fit with area place for the rest part.
 
                */
-              const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
+              const normalPlace = allSharePlace.filter(place => place.placement.revenueType !== 'pb' &&
+              place.placement.revenueType !== 'pa' &&
+              place.placement.revenueType !== 'cpd' &&
+              (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
               console.log('normalPlace', normalPlace);
               const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
               console.log('passBackPlaces', passBackPlaces, allSharePlace, index);
               let places = normalPlace.filter(place => (
                 // eslint-disable-next-line
-              (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.shareType === 'single') &&
+              (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.placement.shareType === 'single') &&
                 (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
                   if (index2 === 0) return item.placement.id !== place.placement.id;
                   return acc && item.placement.id !== place.placement.id;
@@ -1324,7 +1332,7 @@ class Zone extends Entity {
                 // share.css = '';
                 // return 0;
                 const collection = allSharePlaceInCurrentChannel.filter(place =>
-                (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.shareType === 'single') &&
+                (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.placement.shareType === 'single') &&
                 (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
                   if (index2 === 0) return item.placement.id !== place.placement.id;
                   return acc && item.placement.id !== place.placement.id;
@@ -1332,7 +1340,7 @@ class Zone extends Entity {
                 if (collection.length > 0) places = collection;
                 else {
                   places = allSharePlaces.filter(place =>
-                  (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.shareType === 'single') &&
+                  (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.placement.shareType === 'single') &&
                   (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
                     if (index2 === 0) return item.placement.id !== place.placement.id;
                     return acc && item.placement.id !== place.placement.id;

@@ -13997,7 +13997,10 @@ var Zone = function (_Entity) {
                 /* fill monopoly place first */
                 if (placeMonopolies.length > 0) {
                   var listMonopolies = placeMonopolies.filter(function (x) {
-                    return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === index + 1) && (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio : x.shareType === 'single');
+                    if (share.type === 'single') {
+                      return x.placement.shareType === 'single';
+                    }
+                    return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === index + 1) && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
                   });
                   console.log('listMonopoliesAfterFilter', listMonopolies);
 
@@ -14013,7 +14016,7 @@ var Zone = function (_Entity) {
                   Then, find all placement fit with area place for the rest part.
                   */
                 var normalPlace = allSharePlace.filter(function (place) {
-                  return place.placement.revenueType !== 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : place.positionOnShare === index + 1);
+                  return place.placement.revenueType !== 'pb' && place.placement.revenueType !== 'pa' && place.placement.revenueType !== 'cpd' && (place.positionOnShare === 0 ? place.positionOnShare === index : place.positionOnShare === index + 1);
                 });
                 console.log('normalPlace', normalPlace);
                 var passBackPlaces = allSharePlace.filter(function (place) {
@@ -14023,7 +14026,7 @@ var Zone = function (_Entity) {
                 var places = normalPlace.filter(function (place) {
                   return (
                     // eslint-disable-next-line
-                    (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                    (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.placement.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
                       if (index2 === 0) return item.placement.id !== place.placement.id;
                       return acc && item.placement.id !== place.placement.id;
                     }, 0) : true) && (
@@ -14075,14 +14078,14 @@ var Zone = function (_Entity) {
                   // share.css = '';
                   // return 0;
                   var collection = allSharePlaceInCurrentChannel.filter(function (place) {
-                    return (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                    return (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.placement.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
                       if (index2 === 0) return item.placement.id !== place.placement.id;
                       return acc && item.placement.id !== place.placement.id;
                     }, 0) : true);
                   });
                   if (collection.length > 0) places = collection;else {
                     places = allSharePlaces.filter(function (place) {
-                      return (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
+                      return (share.type !== 'single' ? getNumberOfParts(_this3.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio : place.placement.shareType === 'single') && (placeChosen.length > 0 ? placeChosen.reduce(function (acc, item, index2) {
                         if (index2 === 0) return item.placement.id !== place.placement.id;
                         return acc && item.placement.id !== place.placement.id;
                       }, 0) : true);
