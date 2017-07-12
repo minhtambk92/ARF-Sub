@@ -13986,7 +13986,7 @@ var Zone = function (_Entity) {
                 this variable to store places in a share which are chosen bellow.
                 */
               var shareInfo = getShareInfo(shareFormat);
-              var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate }; // eslint-disable-line
+              var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, weight: 0 }; // eslint-disable-line
               console.log('olala', share);
               /*
                 Browse each placeRatio in shareRatio, then find a placement fit it.
@@ -14117,8 +14117,40 @@ var Zone = function (_Entity) {
           }, 0);
         }
         if (shares.length > 0) {
-          var weight = 100 / shares.length;
+          var normalWeight = 100 / shares.length;
+          var bestShare = shares.reduce(function (share, item, index, arr) {
+            var current = item.places.reduce(function (count, p) {
+              if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
+              return count;
+            }, 0);
+            if (index === 0) {
+              return { item: item, index: index };
+            }
+            var last = share.item.places.reduce(function (count, p) {
+              if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
+              return count;
+            }, 0);
+            console.log('testABC', current, last, item, share);
+            if (last < current) {
+              return { item: item, index: index };
+            }
+            if (index === arr.length && current === 0) return false;
+            return share;
+          }, 0);
+          console.log('indexOfBestShare', bestShare);
           for (var _i6 = 0; _i6 < shares.length; _i6 += 1) {
+            var isUsePassBack = shares[_i6].places.reduce(function (acc, item, index) {
+              if (index === 0) return item.revenueType === 'pb';
+              return acc || item.revenueType === 'pb';
+            }, 0);
+            var weight = 0;
+            if (bestShare && _i6 === bestShare.index) {
+              weight = 100;
+            } else if (bestShare && _i6 !== bestShare.index) {
+              weight = 0;
+            } else {
+              weight = isUsePassBack && shares.length > 1 ? 0 : normalWeight;
+            }
             var id = shares[_i6].id.replace('share-', '');
             var outputCss = shares[_i6].css;
             var placements = shares[_i6].places;
@@ -14199,9 +14231,16 @@ var Zone = function (_Entity) {
       // if (allShare.length === 1) return allShare[0];
       if (allShare.length > 0) {
         var randomNumber = Math.random() * 100;
+        var isNoneWeight = allShare.reduce(function (acc, item, index) {
+          if (index === 0) return item.weight === undefined || item.weight === 0;
+          return acc && (item.weight === undefined || item.weight === 0);
+        }, 0);
+        if (isNoneWeight) allShare.map(function (item) {
+          return item.weight = 100 / allShare.length;
+        }); // eslint-disable-line
         var ratio = allShare.reduce(function (tmp, share) {
           if (share.weight === undefined) {
-            share.weight = 100 / allShare.length; // eslint-disable-line
+            share.weight = 0; // eslint-disable-line
           }
           return share.weight + tmp;
         }, 0) / 100;

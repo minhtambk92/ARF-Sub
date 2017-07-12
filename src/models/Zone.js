@@ -1235,7 +1235,7 @@ class Zone extends Entity {
 
              */
             const shareInfo = getShareInfo(shareFormat);
-            const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate };// eslint-disable-line
+            const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, weight: 0 };// eslint-disable-line
             console.log('olala', share);
             /*
 
@@ -1372,8 +1372,40 @@ class Zone extends Entity {
         }, 0);
       }
       if (shares.length > 0) {
-        const weight = 100 / shares.length;
+        const normalWeight = 100 / shares.length;
+        const bestShare = shares.reduce((share, item, index, arr) => {
+          const current = item.places.reduce((count, p) => {
+            if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
+            return count;
+          }, 0);
+          if (index === 0) {
+            return { item, index };
+          }
+          const last = share.item.places.reduce((count, p) => {
+            if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
+            return count;
+          }, 0);
+          console.log('testABC', current, last, item, share);
+          if (last < current) {
+            return { item, index };
+          }
+          if (index === arr.length && current === 0) return false;
+          return share;
+        }, 0);
+        console.log('indexOfBestShare', bestShare);
         for (let i = 0; i < shares.length; i += 1) {
+          const isUsePassBack = shares[i].places.reduce((acc, item, index) => {
+            if (index === 0) return item.revenueType === 'pb';
+            return acc || item.revenueType === 'pb';
+          }, 0);
+          let weight = 0;
+          if (bestShare && i === bestShare.index) {
+            weight = 100;
+          } else if (bestShare && i !== bestShare.index) {
+            weight = 0;
+          } else {
+            weight = isUsePassBack && shares.length > 1 ? 0 : normalWeight;
+          }
           const id = shares[i].id.replace('share-', '');
           const outputCss = shares[i].css;
           const placements = shares[i].places;
@@ -1442,9 +1474,14 @@ class Zone extends Entity {
     // if (allShare.length === 1) return allShare[0];
     if (allShare.length > 0) {
       const randomNumber = Math.random() * 100;
+      const isNoneWeight = allShare.reduce((acc, item, index) => {
+        if (index === 0) return item.weight === undefined || item.weight === 0;
+        return acc && (item.weight === undefined || item.weight === 0);
+      }, 0);
+      if (isNoneWeight) allShare.map(item => item.weight = (100 / allShare.length)); // eslint-disable-line
       const ratio = allShare.reduce((tmp, share) => {
         if (share.weight === undefined) {
-            share.weight = 100 / allShare.length; // eslint-disable-line
+            share.weight = 0; // eslint-disable-line
         }
         return (share.weight + tmp);
       }, 0) / 100;
