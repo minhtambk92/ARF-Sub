@@ -13761,6 +13761,7 @@ var Zone = function (_Entity) {
 
       /* build construct of current share. */
       var lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 2, 1));
+      console.log('lastThreeShare', lastThreeShare);
       var numberOfChannel = _vendor.util.uniqueItem(lastThreeShare.map(function (item) {
         return item.split(')(')[0];
       })).length;
@@ -13999,7 +14000,7 @@ var Zone = function (_Entity) {
        * @param isRotate
        * @returns {Array}
        */
-      var createShare = function createShare(placeMonopolies, allSharePlace, isRotate, format, lastShare) {
+      var createShare = function createShare(placeMonopolies, isRotate, format, lastShare) {
         // eslint-disable-line
         var shares = [];
         var shareDatas = [];
@@ -14020,6 +14021,11 @@ var Zone = function (_Entity) {
                 this variable to store places in a share which are chosen bellow.
                 */
               var shareInfo = getShareInfo(shareFormat);
+              var allSharePlace = shareInfo.allsharePlacements.filter(function (item) {
+                return item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1] || item.placement.revenueType === 'pb';
+              }).filter(function (place) {
+                return place.placement.filterBanner().length > 0;
+              });
               var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent }; // eslint-disable-line
               console.log('shareInfo', share);
               /*
@@ -14181,6 +14187,34 @@ var Zone = function (_Entity) {
             }, 0);
           });
           if (filter.length > 0) bestShare = filter;
+          var placementBelongTo = function placementBelongTo(placementID) {
+            return allShare.reduce(function (result, item) {
+              if (item.allsharePlacements.map(function (x) {
+                return x.placement.id;
+              }).indexOf(placementID) !== -1) {
+                return item.id;
+              }
+              return result;
+            }, 0);
+          };
+          var lastTwoShareFormat = lastThreeShare.map(function (item) {
+            return item.split('][').map(function (x) {
+              return x.split(')(').slice(-1)[0];
+            });
+          }).map(function (item) {
+            return placementBelongTo(item[0]);
+          });
+          console.log('lastTwoShareFormat', lastTwoShareFormat);
+          // filter with numbers of times CPD appear
+          bestShare = bestShare.filter(function (item) {
+            if (item.item.cpdWeightInOnePosition <= 33 && lastTwoShareFormat.indexOf(item.item.id) !== -1) {
+              return false;
+            }
+            if (item.item.cpdWeightInOnePosition > 33 && item.item.cpdWeightInOnePosition <= 66) {
+              if (lastTwoShareFormat.indexOf(item.item.id) !== -1 && lastTwoShareFormat.indexOf(item.item.id) !== lastTwoShareFormat.lastIndexOf(item.item.id)) return false;
+            }
+            return true;
+          });
           console.log('indexOfBestShare', bestShare);
 
           var _loop6 = function _loop6(_i6) {
@@ -14255,9 +14289,9 @@ var Zone = function (_Entity) {
         /* 3 */
         console.log('lastShare', lastShare);
         var _result = [];
-        if (placementsInSharePosition.length <= 0) _result = createShare([], sharePlacementsFitChannel, true, formatRotate, lastShare); // eslint-disable-line
+        if (placementsInSharePosition.length <= 0) _result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
         else combinationPlaceInShare.map(function (x) {
-            _result = _result.concat(createShare(x, sharePlacementsFitChannel, true, formatRotate, lastShare));
+            _result = _result.concat(createShare(x, true, formatRotate, lastShare));
           }); // eslint-disable-line
         // const result = createShare(monopolyPlacesFitShareStructure);
         console.log('hohohoho', _result);

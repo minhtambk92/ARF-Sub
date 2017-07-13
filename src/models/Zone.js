@@ -1036,6 +1036,7 @@ class Zone extends Entity {
 
           /* build construct of current share. */
     let lastThreeShare = ShareRendered.slice(Math.max(ShareRendered.length - 2, 1));
+    console.log('lastThreeShare', lastThreeShare);
     const numberOfChannel = util.uniqueItem(lastThreeShare.map(item => item.split(')(')[0])).length;
     if (numberOfChannel > 1) {
       lastThreeShare = [];
@@ -1237,7 +1238,7 @@ class Zone extends Entity {
      * @param isRotate
      * @returns {Array}
      */
-    const createShare = (placeMonopolies, allSharePlace, isRotate, format, lastShare) => { // eslint-disable-line
+    const createShare = (placeMonopolies, isRotate, format, lastShare) => { // eslint-disable-line
       const shares = [];
       const shareDatas = [];
       for (let i = 1; i <= numberOfPlaceInShare; i += 1) {
@@ -1263,6 +1264,9 @@ class Zone extends Entity {
 
              */
             const shareInfo = getShareInfo(shareFormat);
+            const allSharePlace = shareInfo.allsharePlacements.filter(item =>
+            (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb')).filter(place =>
+            place.placement.filterBanner().length > 0);
             const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent };// eslint-disable-line
             console.log('shareInfo', share);
             /*
@@ -1426,6 +1430,26 @@ class Zone extends Entity {
         }, 0);
         const filter = bestShare.filter(x => x.item.places.reduce((res, item) => (res !== false ? item.revenueType !== 'pb' : false), 0));
         if (filter.length > 0) bestShare = filter;
+        const placementBelongTo = placementID => allShare.reduce((result, item) => {
+          if (item.allsharePlacements.map(x => x.placement.id).indexOf(placementID) !== -1) {
+            return item.id;
+          }
+          return result;
+        }, 0);
+        const lastTwoShareFormat = lastThreeShare.map(item => item.split('][').map(x => x.split(')(').slice(-1)[0])).map(item => placementBelongTo(item[0]));
+        console.log('lastTwoShareFormat', lastTwoShareFormat);
+        // filter with numbers of times CPD appear
+        bestShare = bestShare.filter((item) => {
+          if (item.item.cpdWeightInOnePosition <= 33 && lastTwoShareFormat.indexOf(item.item.id) !== -1) {
+            return false;
+          }
+          if (item.item.cpdWeightInOnePosition > 33 && item.item.cpdWeightInOnePosition <= 66) {
+            if (
+              lastTwoShareFormat.indexOf(item.item.id) !== -1 &&
+              lastTwoShareFormat.indexOf(item.item.id) !== lastTwoShareFormat.lastIndexOf(item.item.id)) return false;
+          }
+          return true;
+        });
         console.log('indexOfBestShare', bestShare);
         for (let i = 0; i < shares.length; i += 1) {
           const isUsePassBack = shares[i].places.reduce((acc, item, index) => {
@@ -1482,8 +1506,8 @@ class Zone extends Entity {
       /* 3 */
       console.log('lastShare', lastShare);
       let result = [];
-      if (placementsInSharePosition.length <= 0) result = createShare([], sharePlacementsFitChannel, true, formatRotate, lastShare); // eslint-disable-line
-      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, sharePlacementsFitChannel, true, formatRotate, lastShare)); }); // eslint-disable-line
+      if (placementsInSharePosition.length <= 0) result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
+      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, true, formatRotate, lastShare)); }); // eslint-disable-line
       // const result = createShare(monopolyPlacesFitShareStructure);
       console.log('hohohoho', result);
       return result;
