@@ -13916,12 +13916,46 @@ var Zone = function (_Entity) {
         return x === y;
       };
       var getShareInfo = function getShareInfo(format) {
+        var result = null;
         for (var i = 0, length = allShare.length; i < length; i += 1) {
           if (format.length > 1 && allShare[i].format === format.join()) {
-            return allShare[i];
+            result = allShare[i];
+            break;
           } else if (format.length === 1 && allShare[i].type === 'single') {
-            return allShare[i];
+            result = allShare[i];
+            break;
           }
+        }
+        if (result !== null) {
+          result.cpdWeightInOnePosition = result.allsharePlacements.filter(function (x) {
+            return x.placement.filterBanner().length > 0;
+          }).reduce(function (res, item, index, arr) {
+            if (index === 0) {
+              return [{ positionOnShare: item.positionOnShare, percent: item.placement.cpdPercent }];
+            }
+            if (!res.reduce(function (check, item2) {
+              return check !== true ? item2.positionOnShare === item.positionOnShare : true;
+            }, 0)) {
+              res.push({ positionOnShare: item.positionOnShare, percent: item.placement.cpdPercent });
+              return res;
+            }
+            res.map(function (x) {
+              if (x.positionOnShare === item.positionOnShare) x.percent += item.placement.cpdPercent;
+            }); // eslint-disable-line
+            if (index === arr.length - 1) {
+              return res.reduce(function (r, it, i) {
+                if (i === 0) {
+                  return it;
+                }
+                if (r.percent < it.percent) {
+                  return it;
+                }
+                return r;
+              }, 0);
+            }
+            return res;
+          }, 0);
+          return result;
         }
         return false;
       };
@@ -13986,8 +14020,8 @@ var Zone = function (_Entity) {
                 this variable to store places in a share which are chosen bellow.
                 */
               var shareInfo = getShareInfo(shareFormat);
-              var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, weight: 0 }; // eslint-disable-line
-              console.log('olala', share);
+              var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent }; // eslint-disable-line
+              console.log('shareInfo', share);
               /*
                 Browse each placeRatio in shareRatio, then find a placement fit it.
                 */
@@ -14146,7 +14180,6 @@ var Zone = function (_Entity) {
               return res !== false ? item.revenueType !== 'pb' : false;
             }, 0);
           });
-          console.log('huhuhu', filter);
           if (filter.length > 0) bestShare = filter;
           console.log('indexOfBestShare', bestShare);
 
@@ -14159,7 +14192,9 @@ var Zone = function (_Entity) {
             if (bestShare && bestShare.reduce(function (res, item) {
               return res !== true ? item.index === _i6 : true;
             }, 0)) {
-              weight = 100 / bestShare.length;
+              weight = bestShare.length === 1 ? 100 : bestShare.reduce(function (res, item) {
+                return item.index === _i6 ? item.item.cpdWeightInOnePosition : res;
+              }, 0);
             } else if (bestShare && !bestShare.reduce(function (res, item) {
               return res !== true ? item.index === _i6 : true;
             }, 0)) {
