@@ -1373,25 +1373,32 @@ class Zone extends Entity {
       }
       if (shares.length > 0) {
         const normalWeight = 100 / shares.length;
-        const bestShare = shares.reduce((share, item, index, arr) => {
+        let bestShare = shares.reduce((share, item, index, arr) => {
           const current = item.places.reduce((count, p) => {
             if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
             return count;
           }, 0);
           if (index === 0) {
-            return { item, index };
+            return [{ item, index }];
           }
-          const last = share.item.places.reduce((count, p) => {
+          const last = share[0].item.places.reduce((count, p) => {
             if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
             return count;
           }, 0);
           console.log('testABC', current, last, item, share);
           if (last < current) {
-            return { item, index };
+            return [{ item, index }];
           }
-          if (index === arr.length && current === 0) return false;
+          if (last === current) {
+            if (index === (arr.length - 1) && current === 0) return false;
+            share.push({ item, index });
+            return share;
+          }
           return share;
         }, 0);
+        const filter = bestShare.filter(x => x.item.places.reduce((res, item) => (res !== false ? item.revenueType !== 'pb' : false), 0));
+        console.log('huhuhu', filter);
+        if (filter.length > 0) bestShare = filter;
         console.log('indexOfBestShare', bestShare);
         for (let i = 0; i < shares.length; i += 1) {
           const isUsePassBack = shares[i].places.reduce((acc, item, index) => {
@@ -1399,9 +1406,9 @@ class Zone extends Entity {
             return acc || item.revenueType === 'pb';
           }, 0);
           let weight = 0;
-          if (bestShare && i === bestShare.index) {
-            weight = 100;
-          } else if (bestShare && i !== bestShare.index) {
+          if (bestShare && bestShare.reduce((res, item) => (res !== true ? item.index === i : true), 0)) {
+            weight = 100 / bestShare.length;
+          } else if (bestShare && !bestShare.reduce((res, item) => (res !== true ? item.index === i : true), 0)) {
             weight = 0;
           } else {
             weight = isUsePassBack && shares.length > 1 ? 0 : normalWeight;

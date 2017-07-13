@@ -14124,29 +14124,45 @@ var Zone = function (_Entity) {
               return count;
             }, 0);
             if (index === 0) {
-              return { item: item, index: index };
+              return [{ item: item, index: index }];
             }
-            var last = share.item.places.reduce(function (count, p) {
+            var last = share[0].item.places.reduce(function (count, p) {
               if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
               return count;
             }, 0);
             console.log('testABC', current, last, item, share);
             if (last < current) {
-              return { item: item, index: index };
+              return [{ item: item, index: index }];
             }
-            if (index === arr.length && current === 0) return false;
+            if (last === current) {
+              if (index === arr.length - 1 && current === 0) return false;
+              share.push({ item: item, index: index });
+              return share;
+            }
             return share;
           }, 0);
+          var filter = bestShare.filter(function (x) {
+            return x.item.places.reduce(function (res, item) {
+              return res !== false ? item.revenueType !== 'pb' : false;
+            }, 0);
+          });
+          console.log('huhuhu', filter);
+          if (filter.length > 0) bestShare = filter;
           console.log('indexOfBestShare', bestShare);
-          for (var _i6 = 0; _i6 < shares.length; _i6 += 1) {
+
+          var _loop6 = function _loop6(_i6) {
             var isUsePassBack = shares[_i6].places.reduce(function (acc, item, index) {
               if (index === 0) return item.revenueType === 'pb';
               return acc || item.revenueType === 'pb';
             }, 0);
             var weight = 0;
-            if (bestShare && _i6 === bestShare.index) {
-              weight = 100;
-            } else if (bestShare && _i6 !== bestShare.index) {
+            if (bestShare && bestShare.reduce(function (res, item) {
+              return res !== true ? item.index === _i6 : true;
+            }, 0)) {
+              weight = 100 / bestShare.length;
+            } else if (bestShare && !bestShare.reduce(function (res, item) {
+              return res !== true ? item.index === _i6 : true;
+            }, 0)) {
               weight = 0;
             } else {
               weight = isUsePassBack && shares.length > 1 ? 0 : normalWeight;
@@ -14159,6 +14175,10 @@ var Zone = function (_Entity) {
             console.log('checkRotate', shares[_i6].isRotate);
             var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type, isRotate: isShareRotate });
             shareDatas.push(newShare);
+          };
+
+          for (var _i6 = 0; _i6 < shares.length; _i6 += 1) {
+            _loop6(_i6);
           }
         }
         return shareDatas;
