@@ -25,6 +25,7 @@ class Placement extends Entity {
     this.isRotateFromShare = placement.isRotateFromShare;
     this.relative = placement.relative;
     this.shareType = placement.shareType;
+    this.default = placement.default;
   }
 
   get PlacementArea() {
@@ -45,7 +46,8 @@ class Placement extends Entity {
 
   filterBanner(lastBanner) {
     console.log('lastBanner', lastBanner, this.allBanners.length);
-    if (this.revenueType === 'pb') {
+    console.log('testDefault', this.default);
+    if (this.revenueType === 'pb' || this.default === true) {
       return this.allBanners;
     }
     const allBanner = (this.allBanners.length > 1 && (lastBanner !== undefined && lastBanner !== null)) ? this.allBanners.filter(item => item.id !== lastBanner) : this.allBanners;

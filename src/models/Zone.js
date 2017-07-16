@@ -952,8 +952,8 @@ class Zone extends Entity {
       }
       return min;
     };
-    const minPlace = getMinPlace(allSharePlaceInCurrentChannel);
-
+    const minPlace = getMinPlace(allSharePlaces);
+    console.log('minPlace', minPlace);
           /* This function to get number of part which take in zone like placement,.. */
     const getNumberOfParts = (height, isRoundUp) => {
       if (this.zoneType === 'right') {
@@ -1267,6 +1267,7 @@ class Zone extends Entity {
             const allSharePlace = shareInfo.allsharePlacements.filter(item =>
             (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb')).filter(place =>
             place.placement.filterBanner().length > 0);
+            console.log('allSharePlace', allSharePlace, shareInfo);
             const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent };// eslint-disable-line
             console.log('shareInfo', share);
             /*
@@ -1279,7 +1280,8 @@ class Zone extends Entity {
               const placeChosen = [];
                                        /* fill monopoly place first */
               if (placeMonopolies.length > 0) {
-                const listMonopolies = placeMonopolies.filter(
+                let listMonopolies = placeMonopolies.filter(x => (`share-${x.shareId}` === shareInfo.id || x.placement.revenueType === 'pa'));
+                listMonopolies = listMonopolies.filter(
                   (x) => {
                     if (share.type === 'single') {
                       return x.placement.shareType === 'single';
@@ -1378,6 +1380,12 @@ class Zone extends Entity {
                     return acc && item.placement.id !== place.placement.id;
                   }, 0) : true));
                 }
+                const place = activePlacement(places, 'random');
+                const placeTemp = JSON.parse(JSON.stringify(place));
+                placeTemp.placement.default = true;
+                console.log('placeTemp', placeTemp);
+                places = [placeTemp];
+                console.log('defaultPlace', places);
               }
               let place;
               if (places.length === 1) {
@@ -1407,14 +1415,14 @@ class Zone extends Entity {
         const normalWeight = 100 / shares.length;
         let bestShare = shares.reduce((share, item, index, arr) => {
           const current = item.places.reduce((count, p) => {
-            if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
+            if ((p.revenueType === 'cpd' || p.revenueType === 'pa') && p.default !== true) return count + 1;
             return count;
           }, 0);
           if (index === 0) {
             return [{ item, index }];
           }
           const last = share[0].item.places.reduce((count, p) => {
-            if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
+            if ((p.revenueType === 'cpd' || p.revenueType === 'pa') && p.default !== true) return count + 1;
             return count;
           }, 0);
           console.log('testABC', current, last, item, share);
@@ -1428,18 +1436,63 @@ class Zone extends Entity {
           }
           return share;
         }, 0);
-        const filter = bestShare.filter(x => x.item.places.reduce((res, item) => (res !== false ? item.revenueType !== 'pb' : false), 0));
-        if (filter.length > 0) bestShare = filter;
-        const placementBelongTo = placementID => allShare.reduce((result, item) => {
-          if (item.allsharePlacements.map(x => x.placement.id).indexOf(placementID) !== -1) {
-            return item.id;
+        console.log('first', bestShare);
+        // remove pb
+        const filterPB = bestShare ? bestShare.filter(x => x.item.places.reduce((res, item) => (res !== false ? item.revenueType !== 'pb' : false), 0)) : [];
+        if (filterPB.length > 0) bestShare = filterPB;
+        if (!bestShare) {
+          bestShare = shares.filter((item) => {
+            const isUsePassBack = item.places.reduce((acc, itm, i) => {
+              if (i === 0) return itm.revenueType === 'pb';
+              return acc || itm.revenueType === 'pb';
+            }, 0);
+            const isUseDefault = item.places.reduce((acc, itm, i) => {
+              if (i === 0) return itm.default === true;
+              return acc || itm.default === true;
+            }, 0);
+            console.log('shareTTT', (isUseDefault && !isUsePassBack), shares, isUseDefault, isUsePassBack);
+            if (isUseDefault && !isUsePassBack) return false;
+            return true;
+          }).map(item => ({ item, index: shares.reduce((res, itm, i) => (item.id === itm.id ? i : res), 0) }));
+          console.log('second', bestShare);
+        }
+        console.log('indexOfBestShare', bestShare);
+        const placementBelongTo = (listPlacement) => {
+          if (listPlacement.length === 1) {
+            return allShare.filter(item => item.type === 'single')[0].id;
           }
-          return result;
-        }, 0);
-        const lastTwoShareFormat = lastThreeShare.map(item => item.split('][').map(x => x.split(')(').slice(-1)[0])).map(item => placementBelongTo(item[0]));
+          return listPlacement.reduce((res, placementID, i, arr) => {
+            const listBelong = allShare.reduce((result, item, index) => {
+              if (item.allsharePlacements.map(x => x.placement.id).indexOf(placementID) !== -1) {
+                if (index === 0 || result === 0) return [item.id];
+                if (result.indexOf(item.id) !== -1) result.push(item.id);
+                return result;
+              }
+              return result;
+            }, 0);
+            if (i === 0) return listBelong;
+            if (i === arr.length - 1) {
+              const share = util.getIntersect(res, listBelong)[0];
+              console.log('testIntersect', share, res, listBelong);
+              if (share !== undefined) return share;
+              const returnValue = allShare.reduce((result, item, index) => {
+                if (item.allsharePlacements.map(x => x.placement.id).indexOf(listPlacement[0]) !== -1) {
+                  if (index === 0 || result === 0) return item.id;
+                  // if (result.indexOf(item.id) !== -1) result.push(item.id);
+                  return result;
+                }
+                return result;
+              }, 0);
+              console.log('returnValue', returnValue);
+              return returnValue;
+            }
+            return util.getIntersect(res, listBelong);
+          }, 0);
+        };
+        const lastTwoShareFormat = lastThreeShare.map(item => item.split('][').map(x => x.split(')(').slice(-1)[0])).map(item => placementBelongTo(item));
         console.log('lastTwoShareFormat', lastTwoShareFormat);
         // filter with numbers of times CPD appear
-        bestShare = bestShare.filter((item) => {
+        bestShare = bestShare ? bestShare.filter((item) => {
           if (item.item.cpdWeightInOnePosition <= 33 && lastTwoShareFormat.indexOf(item.item.id) !== -1) {
             return false;
           }
@@ -1449,8 +1502,7 @@ class Zone extends Entity {
               lastTwoShareFormat.indexOf(item.item.id) !== lastTwoShareFormat.lastIndexOf(item.item.id)) return false;
           }
           return true;
-        });
-        console.log('indexOfBestShare', bestShare);
+        }) : false;
         for (let i = 0; i < shares.length; i += 1) {
           const isUsePassBack = shares[i].places.reduce((acc, item, index) => {
             if (index === 0) return item.revenueType === 'pb';
@@ -1458,7 +1510,11 @@ class Zone extends Entity {
           }, 0);
           let weight = 0;
           if (bestShare && bestShare.reduce((res, item) => (res !== true ? item.index === i : true), 0)) {
-            weight = bestShare.length === 1 ? 100 : bestShare.reduce((res, item) => (item.index === i ? item.item.cpdWeightInOnePosition : res), 0);
+            weight = bestShare.length === 1 ? 100 : bestShare.reduce((res, item) => {
+              const r = item.index === i ? item.item.cpdWeightInOnePosition : res;
+              if (r !== undefined) return r;
+              return item.index === i ? (100 / bestShare.length) : res;
+            }, 0);
           } else if (bestShare && !bestShare.reduce((res, item) => (res !== true ? item.index === i : true), 0)) {
             weight = 0;
           } else {

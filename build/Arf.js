@@ -10829,6 +10829,7 @@ var Placement = function (_Entity) {
     _this.isRotateFromShare = placement.isRotateFromShare;
     _this.relative = placement.relative;
     _this.shareType = placement.shareType;
+    _this.default = placement.default;
     return _this;
   }
 
@@ -10836,7 +10837,8 @@ var Placement = function (_Entity) {
     key: 'filterBanner',
     value: function filterBanner(lastBanner) {
       console.log('lastBanner', lastBanner, this.allBanners.length);
-      if (this.revenueType === 'pb') {
+      console.log('testDefault', this.default);
+      if (this.revenueType === 'pb' || this.default === true) {
         return this.allBanners;
       }
       var allBanner = this.allBanners.length > 1 && lastBanner !== undefined && lastBanner !== null ? this.allBanners.filter(function (item) {
@@ -13663,8 +13665,8 @@ var Zone = function (_Entity) {
         }
         return min;
       };
-      var minPlace = getMinPlace(allSharePlaceInCurrentChannel);
-
+      var minPlace = getMinPlace(allSharePlaces);
+      console.log('minPlace', minPlace);
       /* This function to get number of part which take in zone like placement,.. */
       var getNumberOfParts = function getNumberOfParts(height, isRoundUp) {
         if (_this3.zoneType === 'right') {
@@ -14026,6 +14028,7 @@ var Zone = function (_Entity) {
               }).filter(function (place) {
                 return place.placement.filterBanner().length > 0;
               });
+              console.log('allSharePlace', allSharePlace, shareInfo);
               var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent }; // eslint-disable-line
               console.log('shareInfo', share);
               /*
@@ -14037,6 +14040,9 @@ var Zone = function (_Entity) {
                 /* fill monopoly place first */
                 if (placeMonopolies.length > 0) {
                   var listMonopolies = placeMonopolies.filter(function (x) {
+                    return 'share-' + x.shareId === shareInfo.id || x.placement.revenueType === 'pa';
+                  });
+                  listMonopolies = listMonopolies.filter(function (x) {
                     if (share.type === 'single') {
                       return x.placement.shareType === 'single';
                     }
@@ -14131,6 +14137,12 @@ var Zone = function (_Entity) {
                       }, 0) : true);
                     });
                   }
+                  var _place3 = activePlacement(places, 'random');
+                  var placeTemp = JSON.parse((0, _stringify2.default)(_place3));
+                  placeTemp.placement.default = true;
+                  console.log('placeTemp', placeTemp);
+                  places = [placeTemp];
+                  console.log('defaultPlace', places);
                 }
                 var place = void 0;
                 if (places.length === 1) {
@@ -14157,98 +14169,152 @@ var Zone = function (_Entity) {
           }, 0);
         }
         if (shares.length > 0) {
-          var normalWeight = 100 / shares.length;
-          var bestShare = shares.reduce(function (share, item, index, arr) {
-            var current = item.places.reduce(function (count, p) {
-              if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
-              return count;
-            }, 0);
-            if (index === 0) {
-              return [{ item: item, index: index }];
-            }
-            var last = share[0].item.places.reduce(function (count, p) {
-              if (p.revenueType === 'cpd' || p.revenueType === 'pa') return count + 1;
-              return count;
-            }, 0);
-            console.log('testABC', current, last, item, share);
-            if (last < current) {
-              return [{ item: item, index: index }];
-            }
-            if (last === current) {
-              if (index === arr.length - 1 && current === 0) return false;
-              share.push({ item: item, index: index });
-              return share;
-            }
-            return share;
-          }, 0);
-          var filter = bestShare.filter(function (x) {
-            return x.item.places.reduce(function (res, item) {
-              return res !== false ? item.revenueType !== 'pb' : false;
-            }, 0);
-          });
-          if (filter.length > 0) bestShare = filter;
-          var placementBelongTo = function placementBelongTo(placementID) {
-            return allShare.reduce(function (result, item) {
-              if (item.allsharePlacements.map(function (x) {
-                return x.placement.id;
-              }).indexOf(placementID) !== -1) {
-                return item.id;
-              }
-              return result;
-            }, 0);
-          };
-          var lastTwoShareFormat = lastThreeShare.map(function (item) {
-            return item.split('][').map(function (x) {
-              return x.split(')(').slice(-1)[0];
-            });
-          }).map(function (item) {
-            return placementBelongTo(item[0]);
-          });
-          console.log('lastTwoShareFormat', lastTwoShareFormat);
-          // filter with numbers of times CPD appear
-          bestShare = bestShare.filter(function (item) {
-            if (item.item.cpdWeightInOnePosition <= 33 && lastTwoShareFormat.indexOf(item.item.id) !== -1) {
-              return false;
-            }
-            if (item.item.cpdWeightInOnePosition > 33 && item.item.cpdWeightInOnePosition <= 66) {
-              if (lastTwoShareFormat.indexOf(item.item.id) !== -1 && lastTwoShareFormat.indexOf(item.item.id) !== lastTwoShareFormat.lastIndexOf(item.item.id)) return false;
-            }
-            return true;
-          });
-          console.log('indexOfBestShare', bestShare);
-
-          var _loop6 = function _loop6(_i6) {
-            var isUsePassBack = shares[_i6].places.reduce(function (acc, item, index) {
-              if (index === 0) return item.revenueType === 'pb';
-              return acc || item.revenueType === 'pb';
-            }, 0);
-            var weight = 0;
-            if (bestShare && bestShare.reduce(function (res, item) {
-              return res !== true ? item.index === _i6 : true;
-            }, 0)) {
-              weight = bestShare.length === 1 ? 100 : bestShare.reduce(function (res, item) {
-                return item.index === _i6 ? item.item.cpdWeightInOnePosition : res;
+          (function () {
+            var normalWeight = 100 / shares.length;
+            var bestShare = shares.reduce(function (share, item, index, arr) {
+              var current = item.places.reduce(function (count, p) {
+                if ((p.revenueType === 'cpd' || p.revenueType === 'pa') && p.default !== true) return count + 1;
+                return count;
               }, 0);
-            } else if (bestShare && !bestShare.reduce(function (res, item) {
-              return res !== true ? item.index === _i6 : true;
-            }, 0)) {
-              weight = 0;
-            } else {
-              weight = isUsePassBack && shares.length > 1 ? 0 : normalWeight;
+              if (index === 0) {
+                return [{ item: item, index: index }];
+              }
+              var last = share[0].item.places.reduce(function (count, p) {
+                if ((p.revenueType === 'cpd' || p.revenueType === 'pa') && p.default !== true) return count + 1;
+                return count;
+              }, 0);
+              console.log('testABC', current, last, item, share);
+              if (last < current) {
+                return [{ item: item, index: index }];
+              }
+              if (last === current) {
+                if (index === arr.length - 1 && current === 0) return false;
+                share.push({ item: item, index: index });
+                return share;
+              }
+              return share;
+            }, 0);
+            console.log('first', bestShare);
+            // remove pb
+            var filterPB = bestShare ? bestShare.filter(function (x) {
+              return x.item.places.reduce(function (res, item) {
+                return res !== false ? item.revenueType !== 'pb' : false;
+              }, 0);
+            }) : [];
+            if (filterPB.length > 0) bestShare = filterPB;
+            if (!bestShare) {
+              bestShare = shares.filter(function (item) {
+                var isUsePassBack = item.places.reduce(function (acc, itm, i) {
+                  if (i === 0) return itm.revenueType === 'pb';
+                  return acc || itm.revenueType === 'pb';
+                }, 0);
+                var isUseDefault = item.places.reduce(function (acc, itm, i) {
+                  if (i === 0) return itm.default === true;
+                  return acc || itm.default === true;
+                }, 0);
+                console.log('shareTTT', isUseDefault && !isUsePassBack, shares, isUseDefault, isUsePassBack);
+                if (isUseDefault && !isUsePassBack) return false;
+                return true;
+              }).map(function (item) {
+                return { item: item, index: shares.reduce(function (res, itm, i) {
+                    return item.id === itm.id ? i : res;
+                  }, 0) };
+              });
+              console.log('second', bestShare);
             }
-            var id = shares[_i6].id.replace('share-', '');
-            var outputCss = shares[_i6].css;
-            var placements = shares[_i6].places;
-            var type = shares[_i6].type;
-            var isShareRotate = shares[_i6].isRotate;
-            console.log('checkRotate', shares[_i6].isRotate);
-            var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type, isRotate: isShareRotate });
-            shareDatas.push(newShare);
-          };
+            console.log('indexOfBestShare', bestShare);
+            var placementBelongTo = function placementBelongTo(listPlacement) {
+              if (listPlacement.length === 1) {
+                return allShare.filter(function (item) {
+                  return item.type === 'single';
+                })[0].id;
+              }
+              return listPlacement.reduce(function (res, placementID, i, arr) {
+                var listBelong = allShare.reduce(function (result, item, index) {
+                  if (item.allsharePlacements.map(function (x) {
+                    return x.placement.id;
+                  }).indexOf(placementID) !== -1) {
+                    if (index === 0 || result === 0) return [item.id];
+                    if (result.indexOf(item.id) !== -1) result.push(item.id);
+                    return result;
+                  }
+                  return result;
+                }, 0);
+                if (i === 0) return listBelong;
+                if (i === arr.length - 1) {
+                  var share = _vendor.util.getIntersect(res, listBelong)[0];
+                  console.log('testIntersect', share, res, listBelong);
+                  if (share !== undefined) return share;
+                  var returnValue = allShare.reduce(function (result, item, index) {
+                    if (item.allsharePlacements.map(function (x) {
+                      return x.placement.id;
+                    }).indexOf(listPlacement[0]) !== -1) {
+                      if (index === 0 || result === 0) return item.id;
+                      // if (result.indexOf(item.id) !== -1) result.push(item.id);
+                      return result;
+                    }
+                    return result;
+                  }, 0);
+                  console.log('returnValue', returnValue);
+                  return returnValue;
+                }
+                return _vendor.util.getIntersect(res, listBelong);
+              }, 0);
+            };
+            var lastTwoShareFormat = lastThreeShare.map(function (item) {
+              return item.split('][').map(function (x) {
+                return x.split(')(').slice(-1)[0];
+              });
+            }).map(function (item) {
+              return placementBelongTo(item);
+            });
+            console.log('lastTwoShareFormat', lastTwoShareFormat);
+            // filter with numbers of times CPD appear
+            bestShare = bestShare ? bestShare.filter(function (item) {
+              if (item.item.cpdWeightInOnePosition <= 33 && lastTwoShareFormat.indexOf(item.item.id) !== -1) {
+                return false;
+              }
+              if (item.item.cpdWeightInOnePosition > 33 && item.item.cpdWeightInOnePosition <= 66) {
+                if (lastTwoShareFormat.indexOf(item.item.id) !== -1 && lastTwoShareFormat.indexOf(item.item.id) !== lastTwoShareFormat.lastIndexOf(item.item.id)) return false;
+              }
+              return true;
+            }) : false;
 
-          for (var _i6 = 0; _i6 < shares.length; _i6 += 1) {
-            _loop6(_i6);
-          }
+            var _loop6 = function _loop6(_i6) {
+              var isUsePassBack = shares[_i6].places.reduce(function (acc, item, index) {
+                if (index === 0) return item.revenueType === 'pb';
+                return acc || item.revenueType === 'pb';
+              }, 0);
+              var weight = 0;
+              if (bestShare && bestShare.reduce(function (res, item) {
+                return res !== true ? item.index === _i6 : true;
+              }, 0)) {
+                weight = bestShare.length === 1 ? 100 : bestShare.reduce(function (res, item) {
+                  var r = item.index === _i6 ? item.item.cpdWeightInOnePosition : res;
+                  if (r !== undefined) return r;
+                  return item.index === _i6 ? 100 / bestShare.length : res;
+                }, 0);
+              } else if (bestShare && !bestShare.reduce(function (res, item) {
+                return res !== true ? item.index === _i6 : true;
+              }, 0)) {
+                weight = 0;
+              } else {
+                weight = isUsePassBack && shares.length > 1 ? 0 : normalWeight;
+              }
+              var id = shares[_i6].id.replace('share-', '');
+              var outputCss = shares[_i6].css;
+              var placements = shares[_i6].places;
+              var type = shares[_i6].type;
+              var isShareRotate = shares[_i6].isRotate;
+              console.log('checkRotate', shares[_i6].isRotate);
+              var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type, isRotate: isShareRotate });
+              shareDatas.push(newShare);
+            };
+
+            for (var _i6 = 0; _i6 < shares.length; _i6 += 1) {
+              _loop6(_i6);
+            }
+          })();
         }
         return shareDatas;
       };
@@ -16425,6 +16491,24 @@ var util = {
     while (end < start + ms) {
       end = new Date().getTime();
     }
+  },
+  getIntersect: function getIntersect(arr1, arr2) {
+    var r = [];
+    var o = {};
+    var l = arr2.length;
+    var i = void 0;
+    var v = void 0;
+    for (i = 0; i < l; i += 1) {
+      o[arr2[i]] = true;
+    }
+    l = arr1.length;
+    for (i = 0; i < l; i += 1) {
+      v = arr1[i];
+      if (v in o) {
+        r.push(v);
+      }
+    }
+    return r;
   }
 }; /**
     * Created by tlm on 14/03/2017.

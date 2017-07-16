@@ -850,6 +850,25 @@ const util = {
       end = new Date().getTime();
     }
   },
+
+  getIntersect(arr1, arr2) {
+    const r = [];
+    const o = {};
+    let l = arr2.length;
+    let i;
+    let v;
+    for (i = 0; i < l; i += 1) {
+      o[arr2[i]] = true;
+    }
+    l = arr1.length;
+    for (i = 0; i < l; i += 1) {
+      v = arr1[i];
+      if (v in o) {
+        r.push(v);
+      }
+    }
+    return r;
+  },
 };
 
 export default util;
