@@ -303,14 +303,27 @@ class Zone extends Entity {
         }
       }
       if (result !== null) {
-        result.cpdWeightInOnePosition = result.allsharePlacements.filter(x => x.placement.filterBanner().length > 0).reduce((res, item, index, arr) => {
+        const cpdWeightInOnePosition = result.allsharePlacements.filter(x => x.placement.filterBanner().length > 0).reduce((res, item, index, arr) => {
           if (index === 0) {
-            return [{ positionOnShare: item.positionOnShare, percent: item.placement.cpdPercent }];
+            if (arr.length > 1) return [{ positionOnShare: item.positionOnShare, percent: item.placement.cpdPercent }];
+            return { positionOnShare: item.positionOnShare, percent: item.placement.cpdPercent };
           }
           if (!res.reduce((check, item2) => (check !== true ? item2.positionOnShare === item.positionOnShare : true), 0)) {
             res.push({ positionOnShare: item.positionOnShare, percent: item.placement.cpdPercent });
+            if (index === (arr.length - 1)) {
+              return res.reduce((r, it, i) => {
+                if (i === 0) {
+                  return it;
+                }
+                if (r.percent < it.percent) {
+                  return it;
+                }
+                return r;
+              }, 0);
+            }
             return res;
           }
+          console.log('testResutl', res);
           res.map((x) => { if (x.positionOnShare === item.positionOnShare) x.percent += item.placement.cpdPercent; }); // eslint-disable-line
           if (index === (arr.length - 1)) {
             return res.reduce((r, it, i) => {
@@ -325,6 +338,8 @@ class Zone extends Entity {
           }
           return res;
         }, 0);
+        result.cpdWeightInOnePosition = cpdWeightInOnePosition;
+        console.log('cpdWeightInOnePosition', cpdWeightInOnePosition);
         return result;
       }
       return false;
