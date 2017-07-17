@@ -12757,6 +12757,7 @@ var Zone = function (_Entity) {
         var allSharePlaceInThisPosition = allSharePlaceInCurrentChannel.filter(function (place) {
           return (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === i;
         });
+        console.log('allSharePlaceInThisPosition', allSharePlaceInThisPosition, allSharePlaceInCurrentChannel);
         var allPlaceTypeInPosition = [];
         allSharePlaceInThisPosition.reduce(function (acc, item) {
           //eslint-disable-line
@@ -13264,6 +13265,7 @@ var Zone = function (_Entity) {
               }, 0);
             }) : [];
             if (filterPB.length > 0) bestShare = filterPB;
+            console.log('second', bestShare);
             if (!bestShare) {
               bestShare = shares.filter(function (item) {
                 var isUsePassBack = item.places.reduce(function (acc, itm, i) {
@@ -13282,9 +13284,8 @@ var Zone = function (_Entity) {
                     return item.id === itm.id ? i : res;
                   }, 0) };
               });
-              console.log('second', bestShare);
+              console.log('third', bestShare);
             }
-            console.log('indexOfBestShare', bestShare);
             var placementBelongTo = function placementBelongTo(listPlacement) {
               if (listPlacement.length === 1) {
                 return allShare.filter(function (item) {
@@ -13333,14 +13334,15 @@ var Zone = function (_Entity) {
             console.log('lastTwoShareFormat', lastTwoShareFormat);
             // filter with numbers of times CPD appear
             bestShare = bestShare ? bestShare.filter(function (item) {
-              if (item.item.cpdWeightInOnePosition <= 33 && lastTwoShareFormat.indexOf(item.item.id) !== -1) {
-                return false;
+              if (item.item.cpdWeightInOnePosition > 0 && item.item.cpdWeightInOnePosition <= 33) {
+                if (lastTwoShareFormat.indexOf(item.item.id) !== -1) return false;
               }
               if (item.item.cpdWeightInOnePosition > 33 && item.item.cpdWeightInOnePosition <= 66) {
                 if (lastTwoShareFormat.indexOf(item.item.id) !== -1 && lastTwoShareFormat.indexOf(item.item.id) !== lastTwoShareFormat.lastIndexOf(item.item.id)) return false;
               }
               return true;
             }) : false;
+            console.log('indexOfBestShare', bestShare);
 
             var _loop3 = function _loop3(_i2) {
               var isUsePassBack = shares[_i2].places.reduce(function (acc, item, index) {
@@ -13348,11 +13350,28 @@ var Zone = function (_Entity) {
                 return acc || item.revenueType === 'pb';
               }, 0);
               var weight = 0;
+              console.log('testBestShare', bestShare.reduce(function (res, item) {
+                var aa = res !== true ? item.index === _i2 : true;
+                console.log('checkcheck', aa, res, item);
+                return aa;
+              }, 0), _i2);
               if (bestShare && bestShare.reduce(function (res, item) {
                 return res !== true ? item.index === _i2 : true;
               }, 0)) {
+                console.log('runBestShare', bestShare);
                 weight = bestShare.length === 1 ? 100 : bestShare.reduce(function (res, item) {
-                  var r = item.index === _i2 ? item.item.cpdWeightInOnePosition : res;
+                  var r = 0;
+                  if (item.index === _i2) {
+                    if (item.item.places.reduce(function (c, itm) {
+                      return c !== true ? itm.revenueType === 'pa' : true;
+                    }, 0)) {
+                      r = 100;
+                    } else {
+                      r = item.item.cpdWeightInOnePosition;
+                    }
+                  } else {
+                    r = res;
+                  }
                   if (r !== undefined) return r;
                   return item.index === _i2 ? 100 / bestShare.length : res;
                 }, 0);
