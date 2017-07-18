@@ -48,7 +48,9 @@ class Zone extends Entity {
      * [region: create Share construct]
      *
      */
-    const allShare = this.allShares();
+    let allShare = this.allShares();
+    allShare = allShare.filter(item => item.allsharePlacements.length > 0);
+    if (allShare.length === 0) return [];
     let allSharePlaces = allShare.reduce((acc, item, index) => { // eslint-disable-line
       if (index === 0) {
         return item.allsharePlacements;

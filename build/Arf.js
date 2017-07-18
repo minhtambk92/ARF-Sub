@@ -12272,9 +12272,9 @@ var Zone = _vue2.default.component('zone', {
     // eslint-disable-line no-unused-vars
     var vm = this;
     var currentShare = vm.activeShareModel;
-    vm.$data.lastShare = (0, _stringify2.default)(currentShare.placements.map(function (x) {
+    vm.$data.lastShare = currentShare ? (0, _stringify2.default)(currentShare.placements.map(function (x) {
       return x.id;
-    }));
+    })) : null;
     if (currentShare && currentShare.placements.length > 0) {
       return h(
         'div',
@@ -12693,6 +12693,10 @@ var Zone = function (_Entity) {
        *
        */
       var allShare = this.allShares();
+      allShare = allShare.filter(function (item) {
+        return item.allsharePlacements.length > 0;
+      });
+      if (allShare.length === 0) return [];
       var allSharePlaces = allShare.reduce(function (acc, item, index) {
         // eslint-disable-line
         if (index === 0) {

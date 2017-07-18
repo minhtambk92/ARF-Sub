@@ -150,7 +150,7 @@ const Zone = Vue.component('zone', {
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
     const currentShare = vm.activeShareModel;
-    vm.$data.lastShare = JSON.stringify(currentShare.placements.map(x => x.id));
+    vm.$data.lastShare = currentShare ? JSON.stringify(currentShare.placements.map(x => x.id)) : null;
     if (currentShare && currentShare.placements.length > 0) {
       return (
         <div
