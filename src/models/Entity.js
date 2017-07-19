@@ -16,6 +16,7 @@ class Entity {
     this.css = entity.css;
     this.outputCss = entity.outputCss;
     this.cpm = entity.cpm;
+    this.globalFilters = entity.globalFilters;
   }
 
 }

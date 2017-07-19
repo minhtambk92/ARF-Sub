@@ -13,8 +13,18 @@ class Zone extends Entity {
 
     this.id = `zone-${zone.id}`;
     this.shares = zone.shares;
+    this.globalFilters = zone.site.globalFilters;
   }
 
+  passGlobalFiltersToBanner() {
+    try {
+      this.shares.map(share => share.sharePlacements.filter(sharePlacement => sharePlacement.placement !== null)
+      .map(sharePlacement => sharePlacement.placement.banners
+      .map(banner => banner.globalFilters = this.globalFilters))); // eslint-disable-line
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
   fixZoneHeight(height) {
     this.height = height;
   }
@@ -44,6 +54,7 @@ class Zone extends Entity {
   filterShare(isRotate, formatRotate, lastShare) {
     const relativePlacement = window.ZoneConnect.relativePlacement;
     if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
+    console.log('relativePlacement', relativePlacement, this.id);
     /**
      * [region: create Share construct]
      *
@@ -59,6 +70,7 @@ class Zone extends Entity {
     }, 0);
                     /* filter place fit with current channel */
     const allSharePlaceInCurrentChannel = allSharePlaces.filter(place => place.placement.filterBanner().length > 0);
+    const allSharePlaceFilterGlobal = allSharePlaces.filter(place => place.placement.filterBannerGlobal().length > 0);
     // allSharePlace.reduce((acc, item) => { // eslint-disable-line
     //   if (item.positionOnShare !== 0)
     // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
@@ -425,7 +437,7 @@ class Zone extends Entity {
               console.log('testxxx', index);
               const placeChosen = [];
                                        /* fill monopoly place first */
-              if (placeMonopolies.length > 0) {
+              if (placeMonopolies.length > 0 && relativePlacement.length === 0) {
                 let listMonopolies = placeMonopolies.filter(x => (`share-${x.shareId}` === shareInfo.id || x.placement.revenueType === 'pa'));
                 listMonopolies = listMonopolies.filter(
                   (x) => {
@@ -475,6 +487,7 @@ class Zone extends Entity {
 
                 */
               let placesRelative = [];
+              console.log('testRelative', relativePlacement);
               if (relativePlacement.length > 0) {
                 // placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
                 const filterRelative = (relativePlace, place) => {
@@ -484,7 +497,7 @@ class Zone extends Entity {
                   if (indexOfCampaignId !== -1 && relativeCode !== 0) return relativePlace[indexOfCampaignId].relativeCodes.indexOf(relativeCode) !== -1;
                   return false;
                 };
-                placesRelative = places.filter(item => filterRelative(relativePlacement, item));
+                placesRelative = allSharePlace.filter(item => filterRelative(relativePlacement, item));
                 console.log('placesRelative', placesRelative, places);
                 if (placesRelative.length > 0) {
                   places = placesRelative;
@@ -519,7 +532,7 @@ class Zone extends Entity {
                 }, 0) : true));
                 if (collection.length > 0) places = collection;
                 else {
-                  places = allSharePlaces.filter(place =>
+                  places = allSharePlaceFilterGlobal.filter(place =>
                   (share.type !== 'single' ? (getNumberOfParts(this.zoneType === 'right' ? place.placement.height : place.placement.width) === placeRatio) : place.placement.shareType === 'single') &&
                   (placeChosen.length > 0 ? placeChosen.reduce((acc, item, index2) => {
                     if (index2 === 0) return item.placement.id !== place.placement.id;

@@ -65,6 +65,25 @@ class Placement extends Entity {
     return result;
   }
 
+  filterBannerGlobal() {
+    if (this.revenueType === 'pb' || this.default === true) {
+      return this.allBanners;
+    }
+    const allBanner = this.allBanners;
+    let result = allBanner.filter(x => x.checkChannel.checkGlobal);
+    if ((window.ZoneConnect !== undefined && window.ZoneConnect.relativeKeyword !== '')) {
+      const arrayKeyword = window.ZoneConnect.relativeKeyword.split(',').map(item => item.replace(' ', ''));
+      if (arrayKeyword.length > 0) {
+        const filterBannerWithKeyword = result.filter(banner => banner.keyword.split(',').map(item => item.replace(' ', '')).filter(item => arrayKeyword.indexOf(item) !== -1).length > 0);
+        if (filterBannerWithKeyword.length > 0) {
+          result = filterBannerWithKeyword;
+        }
+      }
+      console.log('numberOfBannerInPlacement', result, arrayKeyword);
+    }
+    return result;
+  }
+
   /**
    * Get active banner by its weight
    * @returns {Banner}

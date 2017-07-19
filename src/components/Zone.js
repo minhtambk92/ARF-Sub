@@ -21,6 +21,7 @@ const Zone = Vue.component('zone', {
   mixins: [dom],
 
   created() {
+    this.current.passGlobalFiltersToBanner();
     if (window.ZoneConnect === undefined) {
       window.ZoneConnect = {
         relativePlacement: [],
@@ -48,9 +49,31 @@ const Zone = Vue.component('zone', {
   },
 
   beforeMount() {
-    const currentShare = this.current.activeShare(false, '');
-    console.log('currentShare', currentShare);
-    this.$set(this, 'activeShareModel', currentShare);
+    console.log('zoneRelative', this.isRelative());
+    if (this.isRelative()) {
+      let currentShare = this.current.activeShare(false, '');
+      const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
+      console.log('isWait', isRelative);
+      if (isRelative) {
+        this.$set(this, 'activeShareModel', currentShare);
+      } else {
+        const vm = this;
+        let times = 0;
+        const loadRelative = setInterval(() => {
+          times += 1;
+          const relativePlacement = window.ZoneConnect.relativePlacement;
+          if (relativePlacement.length > 0) {
+            currentShare = vm.current.activeShare(false, '');
+            vm.$set(vm, 'activeShareModel', currentShare);
+            clearInterval(loadRelative);
+          }
+          if (times >= 10) {
+            vm.$set(vm, 'activeShareModel', currentShare);
+          }
+        }, 100);
+      }
+      console.log('currentShare', currentShare);
+    }
   },
 
   mounted() {
@@ -144,6 +167,18 @@ const Zone = Vue.component('zone', {
         })
         .build()
         .start();
+    },
+    isRelative() {
+      const allShare = this.current.allShares();
+      let isRelative = false;
+      for (let i = 0; i < allShare.length; i += 1) {
+        const share = allShare[i];
+        isRelative = share.allsharePlacements.reduce((res, sharePlacement) => (res !== true ? sharePlacement.placement.relative !== 0 : true), 0);
+        if (isRelative) {
+          break;
+        }
+      }
+      return isRelative;
     },
   },
 

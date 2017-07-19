@@ -1,6 +1,7 @@
 /**
  * Created by tlm on 14/03/2017.
  */
+import moment from 'moment';
 import { Banner, Placement } from '../models';
 
 const util = {
@@ -868,6 +869,15 @@ const util = {
       }
     }
     return r;
+  },
+
+  checkTime(startTime, endTime) {
+    let result = null;
+    if (startTime === null) result = true;
+    else result = moment(startTime) <= moment();
+    if (endTime === null) result = result && true;
+    else result = result && moment(endTime) >= moment();
+    return result;
   },
 };
 

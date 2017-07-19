@@ -68,7 +68,6 @@ const Banner = Vue.component('banner', {
     this.current.countFrequency();
     if (this.current.isRelative) {
       this.$parent.$emit('relativeBannerRender', this.current.keyword);
-      // window.ZoneConnect.setRelativeKeyword(this.current.keyword);
     }
   },
 

@@ -68,6 +68,7 @@
   },
   "homepage": "https://github.com/manhhailua/arf",
   "dependencies": {
+    "moment": "^2.18.1",
     "postscribe": "^2.0.8"
   }
 }
