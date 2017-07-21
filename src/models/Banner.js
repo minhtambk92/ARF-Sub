@@ -49,6 +49,7 @@ class Banner extends Entity {
     let strChk = '';
     for (let i = 0, length = globalFilters.length; i < length; i += 1) {
       console.log('testAAAA');
+      if (i > 0) strChk += '&&';
       const type = globalFilters[i].type;
       const startTime = globalFilters[i].startTime;
       const endTime = globalFilters[i].endTime;
@@ -60,8 +61,6 @@ class Banner extends Entity {
           strChk += (comparison === '==' ? valueInChannel === value : valueInChannel !== value);
         } else strChk += true;
       } else strChk += true;
-
-      if (i > 0) strChk += '&&';
       console.log('checkGlobalFilter', strChk, valueInChannel, comparison, value, isExpire, type, typeInChannel); // eslint-disable-line
     }
     return eval(strChk); // eslint-disable-line

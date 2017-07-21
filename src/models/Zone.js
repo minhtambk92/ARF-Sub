@@ -4,6 +4,7 @@
 
 import Entity from './Entity';
 import Share from './Share';
+import Placement from './Placement';
 import { util, adsStorage, term } from '../vendor';
 
 class Zone extends Entity {
@@ -25,6 +26,7 @@ class Zone extends Entity {
       throw new Error(err);
     }
   }
+
   fixZoneHeight(height) {
     this.height = height;
   }
@@ -34,6 +36,35 @@ class Zone extends Entity {
    */
   allShares() {
     return this.shares.map(share => new Share(share));
+  }
+
+  pageLoad() {
+    const allShare = this.allShares();
+    const allSharePlacements = allShare.reduce((acc, item, index) => { // eslint-disable-line
+      if (index === 0) {
+        return item.allsharePlacements;
+      }
+      return acc.concat(item.allsharePlacements);
+    }, 0);
+    const campaignContainPageLoad = allSharePlacements.reduce((result, sharePlacement) => {
+      const campaign = sharePlacement.placement.campaign;
+      if (campaign.pageLoad !== 0) {
+        if (result === 0) {
+          campaign.sharePlacements = [sharePlacement];
+          return [campaign];
+        }
+        const indexOfCampaign = result.map(item => item.id).indexOf(campaign.id);
+        if (indexOfCampaign === -1) {
+          campaign.sharePlacements = [sharePlacement];
+          result.push(campaign);
+          return result;
+        }
+        result[indexOfCampaign].sharePlacements.push(sharePlacement);
+        return result;
+      }
+      return result;
+    }, 0);
+    return campaignContainPageLoad;
   }
 
   get ZoneArea() {
@@ -55,6 +86,91 @@ class Zone extends Entity {
     const relativePlacement = window.ZoneConnect.relativePlacement;
     if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
     console.log('relativePlacement', relativePlacement, this.id);
+    /**
+     * setup page load
+     */
+    let pageLoads = this.pageLoad();
+    const activePageLoad = (pLs) => {
+      const randomNumber = Math.random() * 3;
+      const ratio = pLs.reduce((acc, campaignLoad) =>
+          (campaignLoad.pageLoad + acc), 0) / 3;
+      const result = pLs.reduce((acc, campaignLoad) => {
+        const nextRange = acc + (campaignLoad.pageLoad / ratio);
+
+        if (typeof acc === 'object') {
+          return acc;
+        }
+
+        if (randomNumber >= acc && randomNumber < nextRange) {
+          return campaignLoad;
+        }
+
+        return nextRange;
+      }, 0);
+      return result;
+    };
+    let currentCampaignLoad = null;
+
+
+    if (pageLoads !== 0) {
+      const currentDomain = encodeURIComponent(util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
+      const pageLoadCookie = adsStorage.getStorage('_pls');
+
+      let pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
+      console.log('pageLoadCampaign', pageLoadCampaign);
+      if (pageLoadCampaign === '') {
+        currentCampaignLoad = activePageLoad(pageLoads).id;
+      } else {
+        pageLoadCampaign = pageLoadCampaign.slice(pageLoadCampaign.indexOf(':') + 1);
+        const lastAllCampaignLoad = pageLoadCampaign.split('|').filter(item => item !== '');
+        let nearestCampaignLoad = lastAllCampaignLoad[lastAllCampaignLoad.length - 1].split('#')[1];
+        if (nearestCampaignLoad === 'undefined' || nearestCampaignLoad === 'null') {
+          console.log('pageLoadsTest', pageLoads);
+          nearestCampaignLoad = activePageLoad(pageLoads).id;
+        }
+        console.log('nearestCampaignLoad', nearestCampaignLoad);
+        const lastCampaignLoad = lastAllCampaignLoad.filter(item => item.indexOf(this.id) !== -1);
+        const lastTwoCampaignLoad = lastCampaignLoad.slice(Math.max(lastCampaignLoad.length - 2, 1));
+
+        const isExistNearestPageLoad = pageLoads.reduce((res, item) => (res !== true ? item.id === nearestCampaignLoad : true), 0);
+        if (isExistNearestPageLoad) {
+          const timesAppearOfNearestCampaignLoad = lastTwoCampaignLoad.reduce((result, item) => {
+            if (item.split('#')[1] === nearestCampaignLoad) return (result + 1);
+            return result;
+          }, 0);
+          console.log('timesAppearOfNearestCampaignLoad', timesAppearOfNearestCampaignLoad);
+          if (timesAppearOfNearestCampaignLoad === 0) {
+            currentCampaignLoad = nearestCampaignLoad;
+          } else {
+            const percentLoadOfNearest = pageLoads.filter(item => item.id === nearestCampaignLoad)[0].pageLoad;
+            console.log('percentLoadOfNearest', percentLoadOfNearest, timesAppearOfNearestCampaignLoad);
+            if (timesAppearOfNearestCampaignLoad >= percentLoadOfNearest) {
+              pageLoads = pageLoads.filter(item => item.id !== nearestCampaignLoad);
+              console.log('pageLoadsAfterFilter', pageLoads);
+              currentCampaignLoad = activePageLoad(pageLoads).id;
+            } else {
+              currentCampaignLoad = nearestCampaignLoad;
+            }
+          }
+        }
+        console.log('lastTwoCampaignLoad', lastCampaignLoad, lastTwoCampaignLoad);
+      }
+      console.log('currentCampaignLoad', this.id, currentCampaignLoad);
+    } else {
+      currentCampaignLoad = 'none';
+    }
+    // pageLoadCookie = pageLoadCampaign === '' ? `${pageLoadCookie};${currentDomain}:;` : pageLoadCookie;
+    // pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
+    // console.log('currentCampaignLoad', activePageLoad(pageLoads).id);
+    // const pageLoadCookieUpdate = `${pageLoadCookie}|${activePageLoad(pageLoads).id}`;
+    // adsStorage.setStorage('_pls', pageLoadCookieUpdate, '', '/', currentDomain);
+
+    console.log('pageLoad', pageLoads);
+
+    /**
+     * end setup page load
+     */
+
     /**
      * [region: create Share construct]
      *
@@ -483,7 +599,7 @@ class Zone extends Entity {
               console.log('placementsForShare', places);
               /*
 
-               filter place with relative keyword
+               filter place with relative
 
                 */
               let placesRelative = [];
@@ -539,12 +655,18 @@ class Zone extends Entity {
                     return acc && item.placement.id !== place.placement.id;
                   }, 0) : true));
                 }
-                const place = activePlacement(places, 'random');
-                const placeTemp = JSON.parse(JSON.stringify(place));
-                placeTemp.placement.default = true;
-                console.log('placeTemp', placeTemp);
-                places = [placeTemp];
-                console.log('defaultPlace', places);
+
+                if (places.length > 0) {
+                  const place = activePlacement(places, 'random');
+                  const placeTemp = JSON.parse(JSON.stringify(place));
+                  placeTemp.placement.default = true;
+                  console.log('placeTemp', placeTemp);
+                  places = [placeTemp];
+                  console.log('defaultPlace', places);
+                } else {
+                  const place = new Placement({ id: 'placement-backup', banners: [], default: true });
+                  places = [{ placement: place }];
+                }
               }
               let place;
               if (places.length === 1) {
@@ -574,7 +696,7 @@ class Zone extends Entity {
         const normalWeight = 100 / shares.length;
         let bestShare = shares.reduce((share, item, index, arr) => {
           const current = item.places.reduce((count, p) => {
-            if ((p.revenueType === 'cpd' || p.revenueType === 'pa') && p.default !== true) return count + 1;
+            if (p.default !== true && (p.revenueType === 'cpd' || p.revenueType === 'pa')) return count + 1;
             return count;
           }, 0);
           if (index === 0) {
@@ -700,8 +822,9 @@ class Zone extends Entity {
           const placements = shares[i].places;
           const type = shares[i].type;
           const isShareRotate = shares[i].isRotate;
+          const campaignLoad = currentCampaignLoad;
           console.log('checkRotate', shares[i].isRotate);
-          const newShare = new Share({ id, outputCss, placements, weight, type, isRotate: isShareRotate });
+          const newShare = new Share({ id, outputCss, placements, weight, type, isRotate: isShareRotate, currentCampaignLoad: campaignLoad });
           shareDatas.push(newShare);
         }
       }

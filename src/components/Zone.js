@@ -49,11 +49,32 @@ const Zone = Vue.component('zone', {
   },
 
   beforeMount() {
+    this.$on('shareRender', (currentCampaignLoad) => {
+      if (currentCampaignLoad !== 'none') {
+        const currentDomain = encodeURIComponent(util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
+        let pageLoadCookie = adsStorage.getStorage('_pls');
+        console.log('pageLoadCookie', pageLoadCookie);
+        if (adsStorage.subCookie(pageLoadCookie, 'Ver:', 0) === '') {
+          pageLoadCookie = 'Ver:25;';
+        }
+
+        let pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
+        pageLoadCookie = pageLoadCampaign === '' ? `${pageLoadCookie};${currentDomain}:;` : pageLoadCookie;
+        console.log('pageLoadCampaign', pageLoadCampaign);
+        pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
+        const pageLoadCookieUpdate = `${pageLoadCampaign}|${this.current.id}#${currentCampaignLoad}`;
+        pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, pageLoadCookieUpdate);
+        adsStorage.setStorage('_pls', pageLoadCookie, '', '/', currentDomain);
+      }
+    });
+
+
     console.log('zoneRelative', this.isRelative());
+    let currentShare = this.current.activeShare(false, '');
+  // && Object.keys(window.arfZones).length > 1
     if (this.isRelative()) {
-      let currentShare = this.current.activeShare(false, '');
       const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
-      console.log('isWait', isRelative);
+      console.log('isWait', !isRelative);
       if (isRelative) {
         this.$set(this, 'activeShareModel', currentShare);
       } else {
@@ -67,12 +88,14 @@ const Zone = Vue.component('zone', {
             vm.$set(vm, 'activeShareModel', currentShare);
             clearInterval(loadRelative);
           }
-          if (times >= 10) {
+          if (times >= 8) {
             vm.$set(vm, 'activeShareModel', currentShare);
           }
         }, 100);
       }
       console.log('currentShare', currentShare);
+    } else {
+      this.$set(this, 'activeShareModel', currentShare);
     }
   },
 
@@ -89,7 +112,11 @@ const Zone = Vue.component('zone', {
     // this.$on('shareHeight', (height) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     // });
+
     this.$on('placementRendered', (index, revenueType, placeID) => {
+      /**
+       * set cookie for build share
+       */
       console.log('compete', this.current.id, index, revenueType);
       const domain = util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2).join('.');
       let cookie = adsStorage.getStorage('_cpt');

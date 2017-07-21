@@ -17,6 +17,7 @@ class Share extends Entity {
     this.format = share.format;
     this.zoneId = share.zoneId;
     this.isRotate = share.isRotate;
+    this.currentCampaignLoad = share.currentCampaignLoad;
   }
 
   get shareArea() {
@@ -81,14 +82,15 @@ class Share extends Entity {
    */
   activePlacement() {
     const randomNumber = Math.random() * 100;
-    const ratio = this.allPlacements.reduce((tmp, place) => {
+    const allPlacement = this.allPlacements;
+    const ratio = allPlacement.reduce((tmp, place) => {
       if (place.weight === undefined) {
-        place.weight = 100 / this.allPlacements.length; // eslint-disable-line
+        place.weight = 100 / allPlacement.length; // eslint-disable-line
       }
       return (place.weight + tmp);
     }, 0) / 100;
-
-    const res = this.allPlacements.reduce((range, placement) => {
+    console.log('testt', allPlacement, ratio);
+    const res = allPlacement.reduce((range, placement) => {
       const nextRange = range + (placement.weight / ratio);
 
       if (typeof range === 'object') {
@@ -102,7 +104,7 @@ class Share extends Entity {
       return nextRange;
     }, 0);
 
-    console.log('abcc', res, this.allPlacements);
+    console.log('abcc', res, allPlacement);
 
     return res;
   }

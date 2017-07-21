@@ -57,6 +57,7 @@ const Share = Vue.component('share', {
     //     this.$parent.$emit('shareHeight', height);
     //   }
     // });
+    this.$parent.$emit('shareRender', this.current.currentCampaignLoad);
     this.$on('render', (placeID, revenueType) => {
       console.log('testEmit', placeID, revenueType);
       const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
