@@ -28965,6 +28965,20 @@ var Zone = function (_Entity) {
           return nextRange;
         }, 0);
       };
+      var isInPageLoad = function isInPageLoad(item) {
+        if (currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined') {
+          return item.placement.campaignId === currentCampaignLoad; // if currentCampaignLoad available => filter out all placement in this campaign
+        } else if (currentCampaignLoad !== 'none' && (currentCampaignLoad === '' || currentCampaignLoad === 'undefined')) {
+          /* if currentCampaignLoad in not available but exist pageLoads =>
+           => check campaign reach the limit page load then drop all placement in these campaigns. */
+          if (campaignRichLimit.length > 0) {
+            return campaignRichLimit.reduce(function (res, cLmt) {
+              return res !== true ? item.placement.campaignId !== cLmt : true;
+            }, 0);
+          }
+        }
+        return true;
+      };
       // const filterPlaceWithKeyword = (places, arrRelativeKeyword) => {
       //   const placesWithKeyword = places.filter(place =>
       //     place.data.allBanners.reduce((acc1, banner) => {
@@ -29010,18 +29024,7 @@ var Zone = function (_Entity) {
               });
               console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
               var allSharePlacementInPageLoad = allSharePlace.filter(function (item) {
-                if (currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined') {
-                  return item.placement.campaignId === currentCampaignLoad; // if currentCampaignLoad available => filter out all placement in this campaign
-                } else if (currentCampaignLoad !== 'none' && (currentCampaignLoad === '' || currentCampaignLoad === 'undefined')) {
-                  /* if currentCampaignLoad in not available but exist pageLoads =>
-                   => check campaign reach the limit page load then drop all placement in these campaigns. */
-                  if (campaignRichLimit.length > 0) {
-                    return campaignRichLimit.reduce(function (res, cLmt) {
-                      return res !== true ? item.placement.campaignId !== cLmt : true;
-                    }, 0);
-                  }
-                }
-                return true;
+                return isInPageLoad(item);
               });
               if (allSharePlacementInPageLoad.length > 0) allSharePlace = allSharePlacementInPageLoad;
               console.log('allSharePlace', _this3.id, allSharePlace, shareInfo);
@@ -29044,6 +29047,12 @@ var Zone = function (_Entity) {
                     }
                     return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === index + 1) && getNumberOfParts(_this3.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio;
                   });
+                  /* filter with pageLoads */
+                  var listMonopoliesInPageLoad = listMonopolies.filter(function (item) {
+                    return isInPageLoad(item);
+                  });
+                  if (listMonopoliesInPageLoad.length > 0) listMonopolies = listMonopoliesInPageLoad;
+
                   console.log('listMonopoliesAfterFilter', listMonopolies);
 
                   if (listMonopolies.length > 0) {

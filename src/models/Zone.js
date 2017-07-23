@@ -515,6 +515,18 @@ class Zone extends Entity {
         return nextRange;
       }, 0);
     };
+    const isInPageLoad = (item) => {
+      if ((currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined')) {
+        return item.placement.campaignId === currentCampaignLoad; // if currentCampaignLoad available => filter out all placement in this campaign
+      } else if (currentCampaignLoad !== 'none' && (currentCampaignLoad === '' || currentCampaignLoad === 'undefined')) {
+        /* if currentCampaignLoad in not available but exist pageLoads =>
+         => check campaign reach the limit page load then drop all placement in these campaigns. */
+        if (campaignRichLimit.length > 0) {
+          return campaignRichLimit.reduce((res, cLmt) => (res !== true ? item.placement.campaignId !== cLmt : true), 0);
+        }
+      }
+      return true;
+    };
     // const filterPlaceWithKeyword = (places, arrRelativeKeyword) => {
     //   const placesWithKeyword = places.filter(place =>
     //     place.data.allBanners.reduce((acc1, banner) => {
@@ -562,18 +574,7 @@ class Zone extends Entity {
             (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb')).filter(place =>
             place.placement.filterBanner().length > 0);
             console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
-            const allSharePlacementInPageLoad = allSharePlace.filter((item) => {
-              if ((currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined')) {
-                return item.placement.campaignId === currentCampaignLoad; // if currentCampaignLoad available => filter out all placement in this campaign
-              } else if (currentCampaignLoad !== 'none' && (currentCampaignLoad === '' || currentCampaignLoad === 'undefined')) {
-                /* if currentCampaignLoad in not available but exist pageLoads =>
-                 => check campaign reach the limit page load then drop all placement in these campaigns. */
-                if (campaignRichLimit.length > 0) {
-                  return campaignRichLimit.reduce((res, cLmt) => (res !== true ? item.placement.campaignId !== cLmt : true), 0);
-                }
-              }
-              return true;
-            });
+            const allSharePlacementInPageLoad = allSharePlace.filter(item => isInPageLoad(item));
             if (allSharePlacementInPageLoad.length > 0) allSharePlace = allSharePlacementInPageLoad;
             console.log('allSharePlace', this.id, allSharePlace, shareInfo);
             const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent };// eslint-disable-line
@@ -597,6 +598,10 @@ class Zone extends Entity {
                     return (x.positionOnShare === 0 ? x.positionOnShare === index : x.positionOnShare === (index + 1)) &&
                       (getNumberOfParts(this.zoneType === 'right' ? x.placement.height : x.placement.width) === placeRatio);
                   });
+                /* filter with pageLoads */
+                const listMonopoliesInPageLoad = listMonopolies.filter(item => isInPageLoad(item));
+                if (listMonopoliesInPageLoad.length > 0) listMonopolies = listMonopoliesInPageLoad;
+
                 console.log('listMonopoliesAfterFilter', listMonopolies);
 
                 if (listMonopolies.length > 0) {
