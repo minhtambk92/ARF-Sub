@@ -26,6 +26,7 @@ class Placement extends Entity {
     this.relative = placement.relative;
     this.shareType = placement.shareType;
     this.default = placement.default;
+    this.campaignId = placement.campaignId;
   }
 
   get PlacementArea() {

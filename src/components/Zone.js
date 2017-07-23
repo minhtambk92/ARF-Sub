@@ -45,12 +45,14 @@ const Zone = Vue.component('zone', {
       isReCompute: false,
       isRotate: false,
       activeShareModel: null,
+      pageLoad: null,
     };
   },
 
   beforeMount() {
     this.$on('shareRender', (currentCampaignLoad) => {
       if (currentCampaignLoad !== 'none') {
+        this.$set(this, 'pageLoad', currentCampaignLoad);
         const currentDomain = encodeURIComponent(util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
         let pageLoadCookie = adsStorage.getStorage('_pls');
         console.log('pageLoadCookie', pageLoadCookie);
@@ -59,9 +61,28 @@ const Zone = Vue.component('zone', {
         }
 
         let pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
-        pageLoadCookie = pageLoadCampaign === '' ? `${pageLoadCookie};${currentDomain}:;` : pageLoadCookie;
-        console.log('pageLoadCampaign', pageLoadCampaign);
+        if (pageLoadCampaign === '') {
+          pageLoadCookie = `${pageLoadCookie};${currentDomain}:;`;
+        } else {
+          const pageLoadCampaignTemp = pageLoadCampaign.slice(pageLoadCampaign.indexOf(':') + 1);
+          const ArrayLastCampaignLoad = pageLoadCampaignTemp.split('|').filter(item => item !== '').filter(item => item.indexOf(this.current.id) !== -1);
+          if (ArrayLastCampaignLoad.length > 3) {
+            const lastCampaignLoad = ArrayLastCampaignLoad.slice(Math.max(ArrayLastCampaignLoad.length - 3, 1));
+            const regex = new RegExp(`(${this.current.id})(.*?)([|])`, 'g');
+            let shortenedPageLoadCampaign = '';
+            if (pageLoadCampaign.slice(-1) !== '|') {
+              shortenedPageLoadCampaign = `${pageLoadCampaign}|`.replace(regex, '');
+            } else {
+              shortenedPageLoadCampaign = `${pageLoadCampaign}`.replace(regex, '');
+            }
+            const updatePageLoadCampaign = shortenedPageLoadCampaign + lastCampaignLoad.join('|');
+            console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
+            pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, updatePageLoadCampaign);
+            console.log('pageLoadCookieAfter', pageLoadCookie);
+          }
+        }
         pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
+        console.log('pageLoadCampaign', pageLoadCampaign);
         const pageLoadCookieUpdate = `${pageLoadCampaign}|${this.current.id}#${currentCampaignLoad}`;
         pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, pageLoadCookieUpdate);
         adsStorage.setStorage('_pls', pageLoadCookie, '', '/', currentDomain);
@@ -72,7 +93,7 @@ const Zone = Vue.component('zone', {
     console.log('zoneRelative', this.isRelative());
     let currentShare = this.current.activeShare(false, '');
   // && Object.keys(window.arfZones).length > 1
-    if (this.isRelative()) {
+    if (this.isRelative() && this.$data.pageLoad === null) {
       const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
       console.log('isWait', !isRelative);
       if (isRelative) {
@@ -93,7 +114,6 @@ const Zone = Vue.component('zone', {
           }
         }, 100);
       }
-      console.log('currentShare', currentShare);
     } else {
       this.$set(this, 'activeShareModel', currentShare);
     }
@@ -212,6 +232,7 @@ const Zone = Vue.component('zone', {
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
     const currentShare = vm.activeShareModel;
+    console.log('currentShare', currentShare);
     vm.$data.lastShare = currentShare ? JSON.stringify(currentShare.placements.map(x => x.id)) : null;
     if (currentShare && currentShare.placements.length > 0) {
       return (

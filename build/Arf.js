@@ -14465,6 +14465,7 @@ var Placement = function (_Entity) {
     _this.relative = placement.relative;
     _this.shareType = placement.shareType;
     _this.default = placement.default;
+    _this.campaignId = placement.campaignId;
     return _this;
   }
 
@@ -27787,7 +27788,8 @@ var Zone = _vue2.default.component('zone', {
       lastShare: null,
       isReCompute: false,
       isRotate: false,
-      activeShareModel: null
+      activeShareModel: null,
+      pageLoad: null
     };
   },
   beforeMount: function beforeMount() {
@@ -27795,6 +27797,7 @@ var Zone = _vue2.default.component('zone', {
 
     this.$on('shareRender', function (currentCampaignLoad) {
       if (currentCampaignLoad !== 'none') {
+        _this.$set(_this, 'pageLoad', currentCampaignLoad);
         var currentDomain = encodeURIComponent(_vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
         var pageLoadCookie = _vendor.adsStorage.getStorage('_pls');
         console.log('pageLoadCookie', pageLoadCookie);
@@ -27803,9 +27806,32 @@ var Zone = _vue2.default.component('zone', {
         }
 
         var pageLoadCampaign = _vendor.adsStorage.subCookie(pageLoadCookie, currentDomain + ':', 0);
-        pageLoadCookie = pageLoadCampaign === '' ? pageLoadCookie + ';' + currentDomain + ':;' : pageLoadCookie;
-        console.log('pageLoadCampaign', pageLoadCampaign);
+        if (pageLoadCampaign === '') {
+          pageLoadCookie = pageLoadCookie + ';' + currentDomain + ':;';
+        } else {
+          var pageLoadCampaignTemp = pageLoadCampaign.slice(pageLoadCampaign.indexOf(':') + 1);
+          var ArrayLastCampaignLoad = pageLoadCampaignTemp.split('|').filter(function (item) {
+            return item !== '';
+          }).filter(function (item) {
+            return item.indexOf(_this.current.id) !== -1;
+          });
+          if (ArrayLastCampaignLoad.length > 3) {
+            var lastCampaignLoad = ArrayLastCampaignLoad.slice(Math.max(ArrayLastCampaignLoad.length - 3, 1));
+            var regex = new RegExp('(' + _this.current.id + ')(.*?)([|])', 'g');
+            var shortenedPageLoadCampaign = '';
+            if (pageLoadCampaign.slice(-1) !== '|') {
+              shortenedPageLoadCampaign = (pageLoadCampaign + '|').replace(regex, '');
+            } else {
+              shortenedPageLoadCampaign = ('' + pageLoadCampaign).replace(regex, '');
+            }
+            var updatePageLoadCampaign = shortenedPageLoadCampaign + lastCampaignLoad.join('|');
+            console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
+            pageLoadCookie = ('' + pageLoadCookie).replace(pageLoadCampaign, updatePageLoadCampaign);
+            console.log('pageLoadCookieAfter', pageLoadCookie);
+          }
+        }
         pageLoadCampaign = _vendor.adsStorage.subCookie(pageLoadCookie, currentDomain + ':', 0);
+        console.log('pageLoadCampaign', pageLoadCampaign);
         var pageLoadCookieUpdate = pageLoadCampaign + '|' + _this.current.id + '#' + currentCampaignLoad;
         pageLoadCookie = ('' + pageLoadCookie).replace(pageLoadCampaign, pageLoadCookieUpdate);
         _vendor.adsStorage.setStorage('_pls', pageLoadCookie, '', '/', currentDomain);
@@ -27815,7 +27841,7 @@ var Zone = _vue2.default.component('zone', {
     console.log('zoneRelative', this.isRelative());
     var currentShare = this.current.activeShare(false, '');
     // && Object.keys(window.arfZones).length > 1
-    if (this.isRelative()) {
+    if (this.isRelative() && this.$data.pageLoad === null) {
       var isRelative = currentShare.placements.reduce(function (res, placement) {
         return res !== true ? placement.relative !== 0 : true;
       }, 0);
@@ -27838,7 +27864,6 @@ var Zone = _vue2.default.component('zone', {
           }
         }, 100);
       }
-      console.log('currentShare', currentShare);
     } else {
       this.$set(this, 'activeShareModel', currentShare);
     }
@@ -27963,6 +27988,7 @@ var Zone = _vue2.default.component('zone', {
     // eslint-disable-line no-unused-vars
     var vm = this;
     var currentShare = vm.activeShareModel;
+    console.log('currentShare', currentShare);
     vm.$data.lastShare = currentShare ? (0, _stringify2.default)(currentShare.placements.map(function (x) {
       return x.id;
     })) : null;
@@ -28409,18 +28435,18 @@ var Zone = function (_Entity) {
         var campaign = sharePlacement.placement.campaign;
         if (campaign.pageLoad !== 0) {
           if (result === 0) {
-            campaign.sharePlacements = [sharePlacement];
+            // campaign.sharePlacements = [sharePlacement];
             return [campaign];
           }
           var indexOfCampaign = result.map(function (item) {
             return item.id;
           }).indexOf(campaign.id);
           if (indexOfCampaign === -1) {
-            campaign.sharePlacements = [sharePlacement];
+            // campaign.sharePlacements = [sharePlacement];
             result.push(campaign);
             return result;
           }
-          result[indexOfCampaign].sharePlacements.push(sharePlacement);
+          // result[indexOfCampaign].sharePlacements.push(sharePlacement);
           return result;
         }
         return result;
@@ -28466,13 +28492,14 @@ var Zone = function (_Entity) {
         return result;
       };
       var currentCampaignLoad = null;
+      var campaignRichLimit = [];
 
       if (pageLoads !== 0) {
         var currentDomain = encodeURIComponent(_vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
         var pageLoadCookie = _vendor.adsStorage.getStorage('_pls');
 
         var pageLoadCampaign = _vendor.adsStorage.subCookie(pageLoadCookie, currentDomain + ':', 0);
-        console.log('pageLoadCampaign', pageLoadCampaign);
+        // console.log('pageLoadCampaign', pageLoadCampaign);
         if (pageLoadCampaign === '') {
           currentCampaignLoad = activePageLoad(pageLoads).id;
         } else {
@@ -28480,7 +28507,21 @@ var Zone = function (_Entity) {
           var lastAllCampaignLoad = pageLoadCampaign.split('|').filter(function (item) {
             return item !== '';
           });
-          var nearestCampaignLoad = lastAllCampaignLoad[lastAllCampaignLoad.length - 1].split('#')[1];
+          var nearestCampaignLoad = null;
+          // browse lastAllCampaignLoad to get nearestCampaignLoad.
+          lastAllCampaignLoad.reverse();
+          for (var i = 0, length = lastAllCampaignLoad.length; i < length; i += 1) {
+            var cpl = lastAllCampaignLoad[i].split('#');
+            if (i === 0) {
+              nearestCampaignLoad = cpl[1];
+              if (cpl[1] !== 'null' && cpl[1] !== 'undefined') break;
+            } else if (cpl[0] === this.id) break;else if (cpl[1] !== 'null' && cpl[1] !== 'undefined') {
+              nearestCampaignLoad = cpl[1];
+              break;
+            }
+          }
+          lastAllCampaignLoad.reverse();
+          console.log('testChooseNearest', nearestCampaignLoad, lastAllCampaignLoad);
           if (nearestCampaignLoad === 'undefined' || nearestCampaignLoad === 'null') {
             console.log('pageLoadsTest', pageLoads);
             nearestCampaignLoad = activePageLoad(pageLoads).id;
@@ -28511,14 +28552,16 @@ var Zone = function (_Entity) {
                 pageLoads = pageLoads.filter(function (item) {
                   return item.id !== nearestCampaignLoad;
                 });
+                campaignRichLimit.push(nearestCampaignLoad);
                 console.log('pageLoadsAfterFilter', pageLoads);
                 currentCampaignLoad = activePageLoad(pageLoads).id;
+                currentCampaignLoad = currentCampaignLoad === undefined ? 'undefined' : currentCampaignLoad;
               } else {
                 currentCampaignLoad = nearestCampaignLoad;
               }
             }
           }
-          console.log('lastTwoCampaignLoad', lastCampaignLoad, lastTwoCampaignLoad);
+          console.log('lastTwoCampaignLoad', lastAllCampaignLoad, lastCampaignLoad, lastTwoCampaignLoad);
         }
         console.log('currentCampaignLoad', this.id, currentCampaignLoad);
       } else {
@@ -28556,6 +28599,10 @@ var Zone = function (_Entity) {
       var allSharePlaceInCurrentChannel = allSharePlaces.filter(function (place) {
         return place.placement.filterBanner().length > 0;
       });
+      var allSharePlaceInPageLoadAndChannel = allSharePlaceInCurrentChannel.filter(function (item) {
+        return currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined' ? item.placement.campaignId === currentCampaignLoad : true;
+      });
+      if (allSharePlaceInPageLoadAndChannel.length > 0) allSharePlaceInCurrentChannel = allSharePlaceInPageLoadAndChannel;
       var allSharePlaceFilterGlobal = allSharePlaces.filter(function (place) {
         return place.placement.filterBannerGlobal().length > 0;
       });
@@ -28567,17 +28614,17 @@ var Zone = function (_Entity) {
       var getMinPlace = function getMinPlace(allSharePlacement) {
         if (_this3.zoneType === 'right') {
           var _min = allSharePlacement[0].placement.height;
-          for (var i = 0, length = allSharePlacement.length; i < length; i += 1) {
-            if (allSharePlacement[i].placement.height < _min) {
-              _min = allSharePlacement[i].placement.height;
+          for (var _i = 0, _length = allSharePlacement.length; _i < _length; _i += 1) {
+            if (allSharePlacement[_i].placement.height < _min) {
+              _min = allSharePlacement[_i].placement.height;
             }
           }
           return _min;
         }
         var min = allSharePlacement[0].placement.width;
-        for (var _i = 0, _length = allSharePlacement.length; _i < _length; _i += 1) {
-          if (allSharePlacement[_i].placement.width < min) {
-            min = allSharePlacement[_i].placement.width;
+        for (var _i2 = 0, _length2 = allSharePlacement.length; _i2 < _length2; _i2 += 1) {
+          if (allSharePlacement[_i2].placement.width < min) {
+            min = allSharePlacement[_i2].placement.width;
           }
         }
         return min;
@@ -28608,9 +28655,9 @@ var Zone = function (_Entity) {
       var countPositionOnShare = _vendor.util.uniqueItem(listPositionOnShare).length;
       console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
 
-      var _loop = function _loop(i) {
+      var _loop = function _loop(_i3) {
         var allSharePlaceInThisPosition = allSharePlaceInCurrentChannel.filter(function (place) {
-          return (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === i;
+          return (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === _i3;
         });
         console.log('allSharePlaceInThisPosition', allSharePlaceInThisPosition, allSharePlaceInCurrentChannel);
         var allPlaceTypeInPosition = [];
@@ -28649,8 +28696,8 @@ var Zone = function (_Entity) {
         shareConstruct.push(getAllPlaceType);
       };
 
-      for (var i = 0; i < countPositionOnShare; i += 1) {
-        _loop(i);
+      for (var _i3 = 0; _i3 < countPositionOnShare; _i3 += 1) {
+        _loop(_i3);
       }
       console.log('shareConstruct', shareConstruct);
       var cookie = _vendor.adsStorage.getStorage('_cpt');
@@ -28692,8 +28739,8 @@ var Zone = function (_Entity) {
         _vendor.adsStorage.setStorage('_cpt', cookie, '', '/', domain);
       }
 
-      var _loop2 = function _loop2(i) {
-        if (shareConstruct[i].filter(function (x) {
+      var _loop2 = function _loop2(_i4) {
+        if (shareConstruct[_i4].filter(function (x) {
           return x.type === 'pa';
         }).length > 0) {
           shareStructure.push('pa');
@@ -28704,14 +28751,14 @@ var Zone = function (_Entity) {
             var shareTemp = share.split('][');
             shareTemp.map(function (item) {
               // eslint-disable-line
-              if (item.split(')(')[1] === i.toString()) lastPlaceType.push(item.split(')(')[2]);
+              if (item.split(')(')[1] === _i4.toString()) lastPlaceType.push(item.split(')(')[2]);
             });
           });
-          console.log('lastPlaceType', lastPlaceType, i, numberOfPlaceInShare);
-          var indexOfCpd = shareConstruct[i].map(function (x) {
+          console.log('lastPlaceType', lastPlaceType, _i4, numberOfPlaceInShare);
+          var indexOfCpd = shareConstruct[_i4].map(function (x) {
             return x.type;
           }).indexOf('cpd');
-          var cpdPercent = indexOfCpd !== -1 ? shareConstruct[i][indexOfCpd].weight : 0;
+          var cpdPercent = indexOfCpd !== -1 ? shareConstruct[_i4][indexOfCpd].weight : 0;
           var cpdAppear = lastPlaceType.reduce(function (acc, place) {
             return place === 'cpd' ? acc + 1 : acc + 0;
           }, 0);
@@ -28720,48 +28767,48 @@ var Zone = function (_Entity) {
           }, 0);
           console.log('cpmAppear', cpmAppear, cpdAppear);
           console.log('everyThings1', shareConstruct);
-          if (shareConstruct[i].length > 1) {
+          if (shareConstruct[_i4].length > 1) {
             if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
               var isRemove = false;
               if (cpdAppear >= 1 && lastPlaceType.length >= 1) {
-                var index = shareConstruct[i].map(function (x) {
+                var index = shareConstruct[_i4].map(function (x) {
                   return x.type;
                 }).indexOf('cpd');
-                if (index !== -1) shareConstruct[i].splice(index, 1);
+                if (index !== -1) shareConstruct[_i4].splice(index, 1);
                 isRemove = true;
               }
               if (cpmAppear >= 2 && lastPlaceType.length >= 2) {
-                var _index = shareConstruct[i].map(function (x) {
+                var _index = shareConstruct[_i4].map(function (x) {
                   return x.type;
                 }).indexOf('cpm');
-                if (_index !== -1 && isRemove === false) shareConstruct[i].splice(_index, 1);
+                if (_index !== -1 && isRemove === false) shareConstruct[_i4].splice(_index, 1);
               }
             } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
               var _isRemove = false;
               if (cpdAppear >= 2 && lastPlaceType.length >= 2) {
-                var _index2 = shareConstruct[i].map(function (x) {
+                var _index2 = shareConstruct[_i4].map(function (x) {
                   return x.type;
                 }).indexOf('cpd');
-                if (_index2 !== -1) shareConstruct[i].splice(_index2, 1);
+                if (_index2 !== -1) shareConstruct[_i4].splice(_index2, 1);
                 _isRemove = true;
               }
               if (cpmAppear >= 1 && lastPlaceType.length >= 1) {
-                var _index3 = shareConstruct[i].map(function (x) {
+                var _index3 = shareConstruct[_i4].map(function (x) {
                   return x.type;
                 }).indexOf('cpm');
-                if (_index3 !== -1 && _isRemove === false) shareConstruct[i].splice(_index3, 1);
+                if (_index3 !== -1 && _isRemove === false) shareConstruct[_i4].splice(_index3, 1);
               }
             }
           }
           console.log('everyThings2', shareConstruct);
-          var activeType = activeRevenue(shareConstruct[i]);
+          var activeType = activeRevenue(shareConstruct[_i4]);
           console.log('everyThings3', activeType);
           shareStructure.push(activeType.type);
         }
       };
 
-      for (var i = 0; i < countPositionOnShare; i += 1) {
-        _loop2(i);
+      for (var _i4 = 0; _i4 < countPositionOnShare; _i4 += 1) {
+        _loop2(_i4);
       }
       console.log('buildShareConstructXXX', shareStructure);
       /**
@@ -28838,12 +28885,12 @@ var Zone = function (_Entity) {
       };
       var getShareInfo = function getShareInfo(format) {
         var result = null;
-        for (var i = 0, length = allShare.length; i < length; i += 1) {
-          if (format.length > 1 && allShare[i].format === format.join()) {
-            result = allShare[i];
+        for (var _i5 = 0, _length3 = allShare.length; _i5 < _length3; _i5 += 1) {
+          if (format.length > 1 && allShare[_i5].format === format.join()) {
+            result = allShare[_i5];
             break;
-          } else if (format.length === 1 && allShare[i].type === 'single') {
-            result = allShare[i];
+          } else if (format.length === 1 && allShare[_i5].type === 'single') {
+            result = allShare[_i5];
             break;
           }
         }
@@ -28935,15 +28982,15 @@ var Zone = function (_Entity) {
        * @param isRotate
        * @returns {Array}
        */
-      var createShare = function createShare(placeMonopolies, isRotate, format, lastShare) {
+      var createShare = function createShare(placeMonopolies, currentCampaignLoad, isRotate, format, lastShare) {
         // eslint-disable-line
         var shares = [];
         var shareDatas = [];
-        for (var i = 1; i <= numberOfPlaceInShare; i += 1) {
+        for (var _i6 = 1; _i6 <= numberOfPlaceInShare; _i6 += 1) {
           /*
             divide share base on free area and number of part.
              */
-          var createShareFormat = _vendor.util.ComputeShare(numberOfPlaceInShare, i);
+          var createShareFormat = _vendor.util.ComputeShare(numberOfPlaceInShare, _i6);
           console.log('createShareFormat', createShareFormat);
           /*
             Browse each shareRatio on above and create a share for it.
@@ -28961,7 +29008,23 @@ var Zone = function (_Entity) {
               }).filter(function (place) {
                 return place.placement.filterBanner().length > 0;
               });
-              console.log('allSharePlace', allSharePlace, shareInfo);
+              console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
+              var allSharePlacementInPageLoad = allSharePlace.filter(function (item) {
+                if (currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined') {
+                  return item.placement.campaignId === currentCampaignLoad; // if currentCampaignLoad available => filter out all placement in this campaign
+                } else if (currentCampaignLoad !== 'none' && (currentCampaignLoad === '' || currentCampaignLoad === 'undefined')) {
+                  /* if currentCampaignLoad in not available but exist pageLoads =>
+                   => check campaign reach the limit page load then drop all placement in these campaigns. */
+                  if (campaignRichLimit.length > 0) {
+                    return campaignRichLimit.reduce(function (res, cLmt) {
+                      return res !== true ? item.placement.campaignId !== cLmt : true;
+                    }, 0);
+                  }
+                }
+                return true;
+              });
+              if (allSharePlacementInPageLoad.length > 0) allSharePlace = allSharePlacementInPageLoad;
+              console.log('allSharePlace', _this3.id, allSharePlace, shareInfo);
               var share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent }; // eslint-disable-line
               console.log('shareInfo', share);
               /*
@@ -28997,7 +29060,7 @@ var Zone = function (_Entity) {
                 var normalPlace = allSharePlace.filter(function (place) {
                   return place.placement.revenueType !== 'pb' && place.placement.revenueType !== 'pa' && place.placement.revenueType !== 'cpd' && (place.positionOnShare === 0 ? place.positionOnShare === index : place.positionOnShare === index + 1);
                 });
-                console.log('normalPlace', normalPlace);
+                console.log('normalPlace', _this3.id, normalPlace);
                 var passBackPlaces = allSharePlace.filter(function (place) {
                   return place.placement.revenueType === 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : place.positionOnShare === index + 1);
                 });
@@ -29013,13 +29076,13 @@ var Zone = function (_Entity) {
                     isRotate ? true : place.placement.revenueType === shareStructure[index])
                   );
                 });
-                console.log('placementsForShare', places);
+                console.log('placementsForShare', _this3.id, places);
                 /*
                   filter place with relative
                    */
                 var placesRelative = [];
                 console.log('testRelative', relativePlacement);
-                if (relativePlacement.length > 0) {
+                if (relativePlacement.length > 0 && (currentCampaignLoad === '' || currentCampaignLoad === 'none' || currentCampaignLoad === 'undefined')) {
                   // placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
                   var filterRelative = function filterRelative(relativePlace, place) {
                     var campaignId = place.placement.campaign.id;
@@ -29221,24 +29284,24 @@ var Zone = function (_Entity) {
             }) : false;
             console.log('indexOfBestShare', bestShare);
 
-            var _loop3 = function _loop3(_i2) {
-              var isUsePassBack = shares[_i2].places.reduce(function (acc, item, index) {
+            var _loop3 = function _loop3(_i7) {
+              var isUsePassBack = shares[_i7].places.reduce(function (acc, item, index) {
                 if (index === 0) return item.revenueType === 'pb';
                 return acc || item.revenueType === 'pb';
               }, 0);
               var weight = 0;
               console.log('testBestShare', bestShare.reduce(function (res, item) {
-                var aa = res !== true ? item.index === _i2 : true;
+                var aa = res !== true ? item.index === _i7 : true;
                 console.log('checkcheck', aa, res, item);
                 return aa;
-              }, 0), _i2);
+              }, 0), _i7);
               if (bestShare && bestShare.reduce(function (res, item) {
-                return res !== true ? item.index === _i2 : true;
+                return res !== true ? item.index === _i7 : true;
               }, 0)) {
                 console.log('runBestShare', bestShare);
                 weight = bestShare.length === 1 ? 100 : bestShare.reduce(function (res, item) {
                   var r = 0;
-                  if (item.index === _i2) {
+                  if (item.index === _i7) {
                     if (item.item.places.reduce(function (c, itm) {
                       return c !== true ? itm.revenueType === 'pa' : true;
                     }, 0)) {
@@ -29250,28 +29313,28 @@ var Zone = function (_Entity) {
                     r = res;
                   }
                   if (r !== undefined) return r;
-                  return item.index === _i2 ? 100 / bestShare.length : res;
+                  return item.index === _i7 ? 100 / bestShare.length : res;
                 }, 0);
               } else if (bestShare && !bestShare.reduce(function (res, item) {
-                return res !== true ? item.index === _i2 : true;
+                return res !== true ? item.index === _i7 : true;
               }, 0)) {
                 weight = 0;
               } else {
                 weight = isUsePassBack && shares.length > 1 ? 0 : normalWeight;
               }
-              var id = shares[_i2].id.replace('share-', '');
-              var outputCss = shares[_i2].css;
-              var placements = shares[_i2].places;
-              var type = shares[_i2].type;
-              var isShareRotate = shares[_i2].isRotate;
+              var id = shares[_i7].id.replace('share-', '');
+              var outputCss = shares[_i7].css;
+              var placements = shares[_i7].places;
+              var type = shares[_i7].type;
+              var isShareRotate = shares[_i7].isRotate;
               var campaignLoad = currentCampaignLoad;
-              console.log('checkRotate', shares[_i2].isRotate);
+              console.log('checkRotate', shares[_i7].isRotate);
               var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type, isRotate: isShareRotate, currentCampaignLoad: campaignLoad });
               shareDatas.push(newShare);
             };
 
-            for (var _i2 = 0; _i2 < shares.length; _i2 += 1) {
-              _loop3(_i2);
+            for (var _i7 = 0; _i7 < shares.length; _i7 += 1) {
+              _loop3(_i7);
             }
           })();
         }
@@ -29314,9 +29377,9 @@ var Zone = function (_Entity) {
         /* 3 */
         console.log('lastShare', lastShare);
         var _result = [];
-        if (placementsInSharePosition.length <= 0) _result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
+        if (placementsInSharePosition.length <= 0) _result = createShare([], 'none', true, formatRotate, lastShare); // eslint-disable-line
         else combinationPlaceInShare.map(function (x) {
-            _result = _result.concat(createShare(x, true, formatRotate, lastShare));
+            _result = _result.concat(createShare(x, 'none', true, formatRotate, lastShare));
           }); // eslint-disable-line
         // const result = createShare(monopolyPlacesFitShareStructure);
         console.log('hohohoho', _result);
@@ -29325,7 +29388,7 @@ var Zone = function (_Entity) {
       }
       /* if isRotate = false -> just create share with truly monopoly placement
                         and share structure */
-      var result = createShare(monopolyPlacesFitShareStructure, allSharePlaceFitShareStructure);
+      var result = createShare(monopolyPlacesFitShareStructure, currentCampaignLoad);
       console.log('newShareFilter', result);
       return result;
       /**

@@ -50,16 +50,16 @@ class Zone extends Entity {
       const campaign = sharePlacement.placement.campaign;
       if (campaign.pageLoad !== 0) {
         if (result === 0) {
-          campaign.sharePlacements = [sharePlacement];
+          // campaign.sharePlacements = [sharePlacement];
           return [campaign];
         }
         const indexOfCampaign = result.map(item => item.id).indexOf(campaign.id);
         if (indexOfCampaign === -1) {
-          campaign.sharePlacements = [sharePlacement];
+          // campaign.sharePlacements = [sharePlacement];
           result.push(campaign);
           return result;
         }
-        result[indexOfCampaign].sharePlacements.push(sharePlacement);
+        // result[indexOfCampaign].sharePlacements.push(sharePlacement);
         return result;
       }
       return result;
@@ -110,6 +110,7 @@ class Zone extends Entity {
       return result;
     };
     let currentCampaignLoad = null;
+    const campaignRichLimit = [];
 
 
     if (pageLoads !== 0) {
@@ -117,13 +118,28 @@ class Zone extends Entity {
       const pageLoadCookie = adsStorage.getStorage('_pls');
 
       let pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
-      console.log('pageLoadCampaign', pageLoadCampaign);
+      // console.log('pageLoadCampaign', pageLoadCampaign);
       if (pageLoadCampaign === '') {
         currentCampaignLoad = activePageLoad(pageLoads).id;
       } else {
         pageLoadCampaign = pageLoadCampaign.slice(pageLoadCampaign.indexOf(':') + 1);
         const lastAllCampaignLoad = pageLoadCampaign.split('|').filter(item => item !== '');
-        let nearestCampaignLoad = lastAllCampaignLoad[lastAllCampaignLoad.length - 1].split('#')[1];
+        let nearestCampaignLoad = null;
+        // browse lastAllCampaignLoad to get nearestCampaignLoad.
+        lastAllCampaignLoad.reverse();
+        for (let i = 0, length = lastAllCampaignLoad.length; i < length; i += 1) {
+          const cpl = lastAllCampaignLoad[i].split('#');
+          if (i === 0) {
+            nearestCampaignLoad = cpl[1];
+            if (cpl[1] !== 'null' && cpl[1] !== 'undefined') break;
+          } else if (cpl[0] === this.id) break;
+          else if (cpl[1] !== 'null' && cpl[1] !== 'undefined') {
+            nearestCampaignLoad = cpl[1];
+            break;
+          }
+        }
+        lastAllCampaignLoad.reverse();
+        console.log('testChooseNearest', nearestCampaignLoad, lastAllCampaignLoad);
         if (nearestCampaignLoad === 'undefined' || nearestCampaignLoad === 'null') {
           console.log('pageLoadsTest', pageLoads);
           nearestCampaignLoad = activePageLoad(pageLoads).id;
@@ -146,14 +162,16 @@ class Zone extends Entity {
             console.log('percentLoadOfNearest', percentLoadOfNearest, timesAppearOfNearestCampaignLoad);
             if (timesAppearOfNearestCampaignLoad >= percentLoadOfNearest) {
               pageLoads = pageLoads.filter(item => item.id !== nearestCampaignLoad);
+              campaignRichLimit.push(nearestCampaignLoad);
               console.log('pageLoadsAfterFilter', pageLoads);
               currentCampaignLoad = activePageLoad(pageLoads).id;
+              currentCampaignLoad = (currentCampaignLoad === undefined ? 'undefined' : currentCampaignLoad);
             } else {
               currentCampaignLoad = nearestCampaignLoad;
             }
           }
         }
-        console.log('lastTwoCampaignLoad', lastCampaignLoad, lastTwoCampaignLoad);
+        console.log('lastTwoCampaignLoad', lastAllCampaignLoad, lastCampaignLoad, lastTwoCampaignLoad);
       }
       console.log('currentCampaignLoad', this.id, currentCampaignLoad);
     } else {
@@ -185,7 +203,9 @@ class Zone extends Entity {
       return acc.concat(item.allsharePlacements);
     }, 0);
                     /* filter place fit with current channel */
-    const allSharePlaceInCurrentChannel = allSharePlaces.filter(place => place.placement.filterBanner().length > 0);
+    let allSharePlaceInCurrentChannel = allSharePlaces.filter(place => place.placement.filterBanner().length > 0);
+    const allSharePlaceInPageLoadAndChannel = allSharePlaceInCurrentChannel.filter(item => ((currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined') ? item.placement.campaignId === currentCampaignLoad : true));
+    if (allSharePlaceInPageLoadAndChannel.length > 0) allSharePlaceInCurrentChannel = allSharePlaceInPageLoadAndChannel;
     const allSharePlaceFilterGlobal = allSharePlaces.filter(place => place.placement.filterBannerGlobal().length > 0);
     // allSharePlace.reduce((acc, item) => { // eslint-disable-line
     //   if (item.positionOnShare !== 0)
@@ -512,7 +532,7 @@ class Zone extends Entity {
      * @param isRotate
      * @returns {Array}
      */
-    const createShare = (placeMonopolies, isRotate, format, lastShare) => { // eslint-disable-line
+    const createShare = (placeMonopolies, currentCampaignLoad, isRotate, format, lastShare) => { // eslint-disable-line
       const shares = [];
       const shareDatas = [];
       for (let i = 1; i <= numberOfPlaceInShare; i += 1) {
@@ -538,10 +558,24 @@ class Zone extends Entity {
 
              */
             const shareInfo = getShareInfo(shareFormat);
-            const allSharePlace = shareInfo.allsharePlacements.filter(item =>
+            let allSharePlace = shareInfo.allsharePlacements.filter(item =>
             (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb')).filter(place =>
             place.placement.filterBanner().length > 0);
-            console.log('allSharePlace', allSharePlace, shareInfo);
+            console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
+            const allSharePlacementInPageLoad = allSharePlace.filter((item) => {
+              if ((currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined')) {
+                return item.placement.campaignId === currentCampaignLoad; // if currentCampaignLoad available => filter out all placement in this campaign
+              } else if (currentCampaignLoad !== 'none' && (currentCampaignLoad === '' || currentCampaignLoad === 'undefined')) {
+                /* if currentCampaignLoad in not available but exist pageLoads =>
+                 => check campaign reach the limit page load then drop all placement in these campaigns. */
+                if (campaignRichLimit.length > 0) {
+                  return campaignRichLimit.reduce((res, cLmt) => (res !== true ? item.placement.campaignId !== cLmt : true), 0);
+                }
+              }
+              return true;
+            });
+            if (allSharePlacementInPageLoad.length > 0) allSharePlace = allSharePlacementInPageLoad;
+            console.log('allSharePlace', this.id, allSharePlace, shareInfo);
             const share = { places: [], id: shareInfo.id, css: shareInfo.css, type: shareInfo.type, isRotate: shareInfo.isRotate, cpdWeightInOnePosition: shareInfo.cpdWeightInOnePosition.percent };// eslint-disable-line
             console.log('shareInfo', share);
             /*
@@ -583,7 +617,7 @@ class Zone extends Entity {
               place.placement.revenueType !== 'pa' &&
               place.placement.revenueType !== 'cpd' &&
               (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
-              console.log('normalPlace', normalPlace);
+              console.log('normalPlace', this.id, normalPlace);
               const passBackPlaces = allSharePlace.filter(place => place.placement.revenueType === 'pb' && (place.positionOnShare === 0 ? place.positionOnShare === index : (place.positionOnShare === (index + 1))));
               console.log('passBackPlaces', passBackPlaces, allSharePlace, index);
               let places = normalPlace.filter(place => (
@@ -596,7 +630,7 @@ class Zone extends Entity {
                   /* if isRotate = true -> check share structure will cancel */
                 (isRotate ? true :
                   place.placement.revenueType === shareStructure[index])));
-              console.log('placementsForShare', places);
+              console.log('placementsForShare', this.id, places);
               /*
 
                filter place with relative
@@ -604,7 +638,7 @@ class Zone extends Entity {
                 */
               let placesRelative = [];
               console.log('testRelative', relativePlacement);
-              if (relativePlacement.length > 0) {
+              if (relativePlacement.length > 0 && (currentCampaignLoad === '' || currentCampaignLoad === 'none' || currentCampaignLoad === 'undefined')) {
                 // placesWithKeyword = filterPlaceWithKeyword(places, relativePlacement);
                 const filterRelative = (relativePlace, place) => {
                   const campaignId = place.placement.campaign.id;
@@ -860,8 +894,8 @@ class Zone extends Entity {
       /* 3 */
       console.log('lastShare', lastShare);
       let result = [];
-      if (placementsInSharePosition.length <= 0) result = createShare([], true, formatRotate, lastShare); // eslint-disable-line
-      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, true, formatRotate, lastShare)); }); // eslint-disable-line
+      if (placementsInSharePosition.length <= 0) result = createShare([], 'none', true, formatRotate, lastShare); // eslint-disable-line
+      else combinationPlaceInShare.map((x) => { result = result.concat(createShare(x, 'none', true, formatRotate, lastShare)); }); // eslint-disable-line
       // const result = createShare(monopolyPlacesFitShareStructure);
       console.log('hohohoho', result);
       return result;
@@ -869,7 +903,7 @@ class Zone extends Entity {
     }
           /* if isRotate = false -> just create share with truly monopoly placement
                             and share structure */
-    const result = createShare(monopolyPlacesFitShareStructure, allSharePlaceFitShareStructure);
+    const result = createShare(monopolyPlacesFitShareStructure, currentCampaignLoad);
     console.log('newShareFilter', result);
     return result;
     /**
