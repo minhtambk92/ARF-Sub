@@ -90,7 +90,7 @@ class Placement extends Entity {
    * @returns {Banner}
    */
   activeBanner(isRotate, lastBanner) {
-    const allBanner = this.filterBanner(lastBanner);
+    const allBanner = this.preview === true ? this.allBanners : this.filterBanner(lastBanner);
     if (allBanner.length > 0) {
       const isExitsWeight = allBanner.reduce((acc, banner, index) => {
         if (index === 0) {

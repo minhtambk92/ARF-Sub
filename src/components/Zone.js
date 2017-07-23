@@ -50,72 +50,77 @@ const Zone = Vue.component('zone', {
   },
 
   beforeMount() {
-    this.$on('shareRender', (currentCampaignLoad) => {
-      if (currentCampaignLoad !== 'none') {
-        this.$set(this, 'pageLoad', currentCampaignLoad);
-        const currentDomain = encodeURIComponent(util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
-        let pageLoadCookie = adsStorage.getStorage('_pls');
-        console.log('pageLoadCookie', pageLoadCookie);
-        if (adsStorage.subCookie(pageLoadCookie, 'Ver:', 0) === '') {
-          pageLoadCookie = 'Ver:25;';
-        }
-
-        let pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
-        if (pageLoadCampaign === '') {
-          pageLoadCookie = `${pageLoadCookie};${currentDomain}:;`;
-        } else {
-          const pageLoadCampaignTemp = pageLoadCampaign.slice(pageLoadCampaign.indexOf(':') + 1);
-          const ArrayLastCampaignLoad = pageLoadCampaignTemp.split('|').filter(item => item !== '').filter(item => item.indexOf(this.current.id) !== -1);
-          if (ArrayLastCampaignLoad.length > 3) {
-            const lastCampaignLoad = ArrayLastCampaignLoad.slice(Math.max(ArrayLastCampaignLoad.length - 3, 1));
-            const regex = new RegExp(`(${this.current.id})(.*?)([|])`, 'g');
-            let shortenedPageLoadCampaign = '';
-            if (pageLoadCampaign.slice(-1) !== '|') {
-              shortenedPageLoadCampaign = `${pageLoadCampaign}|`.replace(regex, '');
-            } else {
-              shortenedPageLoadCampaign = `${pageLoadCampaign}`.replace(regex, '');
-            }
-            const updatePageLoadCampaign = shortenedPageLoadCampaign + lastCampaignLoad.join('|');
-            console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
-            pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, updatePageLoadCampaign);
-            console.log('pageLoadCookieAfter', pageLoadCookie);
-          }
-        }
-        pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
-        console.log('pageLoadCampaign', pageLoadCampaign);
-        const pageLoadCookieUpdate = `${pageLoadCampaign}|${this.current.id}#${currentCampaignLoad}`;
-        pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, pageLoadCookieUpdate);
-        adsStorage.setStorage('_pls', pageLoadCookie, '', '/', currentDomain);
-      }
-    });
-
-
-    console.log('zoneRelative', this.isRelative());
-    let currentShare = this.current.activeShare(false, '');
-  // && Object.keys(window.arfZones).length > 1
-    if (this.isRelative() && this.$data.pageLoad === null) {
-      const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
-      console.log('isWait', !isRelative);
-      if (isRelative) {
-        this.$set(this, 'activeShareModel', currentShare);
-      } else {
-        const vm = this;
-        let times = 0;
-        const loadRelative = setInterval(() => {
-          times += 1;
-          const relativePlacement = window.ZoneConnect.relativePlacement;
-          if (relativePlacement.length > 0) {
-            currentShare = vm.current.activeShare(false, '');
-            vm.$set(vm, 'activeShareModel', currentShare);
-            clearInterval(loadRelative);
-          }
-          if (times >= 8) {
-            vm.$set(vm, 'activeShareModel', currentShare);
-          }
-        }, 100);
-      }
-    } else {
+    if (this.current.preview === true) {
+      const currentShare = this.current.activeShare(false, '');
+      currentShare.preview = true;
       this.$set(this, 'activeShareModel', currentShare);
+    } else {
+      this.$on('shareRender', (currentCampaignLoad) => {
+        if (currentCampaignLoad !== 'none') {
+          this.$set(this, 'pageLoad', currentCampaignLoad);
+          const currentDomain = encodeURIComponent(util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
+          let pageLoadCookie = adsStorage.getStorage('_pls');
+          console.log('pageLoadCookie', pageLoadCookie);
+          if (adsStorage.subCookie(pageLoadCookie, 'Ver:', 0) === '') {
+            pageLoadCookie = 'Ver:25;';
+          }
+
+          let pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
+          if (pageLoadCampaign === '') {
+            pageLoadCookie = `${pageLoadCookie};${currentDomain}:;`;
+          } else {
+            const pageLoadCampaignTemp = pageLoadCampaign.slice(pageLoadCampaign.indexOf(':') + 1);
+            const ArrayLastCampaignLoad = pageLoadCampaignTemp.split('|').filter(item => item !== '').filter(item => item.indexOf(this.current.id) !== -1);
+            if (ArrayLastCampaignLoad.length > 3) {
+              const lastCampaignLoad = ArrayLastCampaignLoad.slice(Math.max(ArrayLastCampaignLoad.length - 3, 1));
+              const regex = new RegExp(`(${this.current.id})(.*?)([|])`, 'g');
+              let shortenedPageLoadCampaign = '';
+              if (pageLoadCampaign.slice(-1) !== '|') {
+                shortenedPageLoadCampaign = `${pageLoadCampaign}|`.replace(regex, '');
+              } else {
+                shortenedPageLoadCampaign = `${pageLoadCampaign}`.replace(regex, '');
+              }
+              const updatePageLoadCampaign = shortenedPageLoadCampaign + lastCampaignLoad.join('|');
+              console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
+              pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, updatePageLoadCampaign);
+              console.log('pageLoadCookieAfter', pageLoadCookie);
+            }
+          }
+          pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
+          console.log('pageLoadCampaign', pageLoadCampaign);
+          const pageLoadCookieUpdate = `${pageLoadCampaign}|${this.current.id}#${currentCampaignLoad}`;
+          pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, pageLoadCookieUpdate);
+          adsStorage.setStorage('_pls', pageLoadCookie, '', '/', currentDomain);
+        }
+      });
+
+      console.log('zoneRelative', this.isRelative());
+      let currentShare = this.current.activeShare(false, '');
+      // && Object.keys(window.arfZones).length > 1
+      if (this.isRelative() && this.$data.pageLoad === null) {
+        const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
+        console.log('isWait', !isRelative);
+        if (isRelative) {
+          this.$set(this, 'activeShareModel', currentShare);
+        } else {
+          const vm = this;
+          let times = 0;
+          const loadRelative = setInterval(() => {
+            times += 1;
+            const relativePlacement = window.ZoneConnect.relativePlacement;
+            if (relativePlacement.length > 0) {
+              currentShare = vm.current.activeShare(false, '');
+              vm.$set(vm, 'activeShareModel', currentShare);
+              clearInterval(loadRelative);
+            }
+            if (times >= 8) {
+              vm.$set(vm, 'activeShareModel', currentShare);
+            }
+          }, 100);
+        }
+      } else {
+        this.$set(this, 'activeShareModel', currentShare);
+      }
     }
   },
 

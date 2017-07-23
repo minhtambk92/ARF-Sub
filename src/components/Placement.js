@@ -34,8 +34,10 @@ const Placement = Vue.component('placement', {
 
   beforeMount() {
     const vm = this;
-    console.log('xxx', vm.current.relative);
     const currentBanner = this.current.activeBanner(false, '');
+    if (this.current.preview === true) {
+      currentBanner.preview = true;
+    }
     this.$set(this, 'activeBannerModel', currentBanner);
     if (this.current.relative !== 0) {
       this.$on('relativeBannerRender', (keywords) => {
@@ -63,14 +65,16 @@ const Placement = Vue.component('placement', {
     setTimeout(() => {
       this.setupRotate();
     }, 1000);
-    this.$on('renderFinish', () => {
-      console.log('renderFinish');
-      // make a trigger to parent component(share) and send place;
-      this.$parent.$emit('render', this.current.id, this.current.revenueType);
-    });
-    this.$on('callbackBanner', () => {
+    if (this.current.preview !== true) {
+      this.$on('renderFinish', () => {
+        console.log('renderFinish');
+        // make a trigger to parent component(share) and send place;
+        this.$parent.$emit('render', this.current.id, this.current.revenueType);
+      });
+      this.$on('callbackBanner', () => {
 
-    });
+      });
+    }
   },
 
   computed: {

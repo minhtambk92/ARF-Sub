@@ -59,14 +59,16 @@ const Banner = Vue.component('banner', {
     /**
      * send log
      */
-    this.$on('renderFinish', () => {
-      // log view
-      this.current.bannerLogging(0);
-      // log true view
-      this.setupLogging();
-    });
+    if (this.current.preview) {
+      this.$on('renderFinish', () => {
+        // log view
+        this.current.bannerLogging(0);
+        // log true view
+        this.setupLogging();
+      });
+    }
     this.current.countFrequency();
-    if (this.current.isRelative) {
+    if (this.current.isRelative && this.current.preview === true) {
       this.$parent.$emit('relativeBannerRender', this.current.keyword);
     }
   },
@@ -154,8 +156,10 @@ const Banner = Vue.component('banner', {
           try {
             // vm.$el.replaceChild(iframe, vm.$refs.banner); // Do the trick
             vm.$el.appendChild(iframe);
-            vm.$parent.$emit('renderFinish');
-            vm.$emit('renderFinish');
+            if (vm.current.preview !== true) {
+              vm.$parent.$emit('renderFinish');
+              vm.$emit('renderFinish');
+            }
             clearInterval(wait);
           } catch (error) {
             clearInterval(wait);
@@ -182,8 +186,10 @@ const Banner = Vue.component('banner', {
                 clearInterval(loadAsync);
               },
               done() {
-                vm.$parent.$emit('renderFinish');
-                vm.$emit('renderFinish');
+                if (vm.current.preview !== true) {
+                  vm.$parent.$emit('renderFinish');
+                  vm.$emit('renderFinish');
+                }
               },
             });
             clearInterval(loadAsync);
@@ -231,7 +237,7 @@ const Banner = Vue.component('banner', {
      * Callback other banner cpm > cpd
      */
     bannerCallback() {
-      this.$parent.$emit('callbackBanner');
+      if (this.current.preview !== false) this.$parent.$emit('callbackBanner');
     },
   },
 

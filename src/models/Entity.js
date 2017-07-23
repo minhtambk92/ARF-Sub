@@ -17,6 +17,7 @@ class Entity {
     this.outputCss = entity.outputCss;
     this.cpm = entity.cpm;
     this.globalFilters = entity.globalFilters;
+    this.preview = entity.preview;
   }
 
 }

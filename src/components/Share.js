@@ -26,24 +26,32 @@ const Share = Vue.component('share', {
   },
 
   beforeMount() {
-    this.$on('relativeKeywordsInPlacement', (campaignId, relativeCode, keywords) => {
-      console.log('relativeKeywordsInPlacement', relativeCode, keywords);
-      const isExistCampaignId = window.ZoneConnect.relativePlacement.reduce((acc, item, index) => {
-        if (index === 0) {
-          return item.campaignId === campaignId;
-        }
-        return acc || item.campaignId === campaignId;
-      }, 0);
-      if (!isExistCampaignId && relativeCode !== 0) {
-        window.ZoneConnect.relativePlacement.push({ campaignId, relativeCodes: [relativeCode] });
-      } else {
-        const indexOfCampaign = window.ZoneConnect.relativePlacement.map(x => x.campaignId).indexOf(campaignId);
-        const relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
-        const isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
-        if (!isExistRelativeCodes) relativeCodes.push(relativeCodes);
-        window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
+    if (this.current.preview === true) {
+      try {
+        this.activePlacementsModels.map(item => item.preview === true);
+      } catch (err) {
+        throw new Error(err);
       }
-    });
+    } else {
+      this.$on('relativeKeywordsInPlacement', (campaignId, relativeCode, keywords) => {
+        console.log('relativeKeywordsInPlacement', relativeCode, keywords);
+        const isExistCampaignId = window.ZoneConnect.relativePlacement.reduce((acc, item, index) => {
+          if (index === 0) {
+            return item.campaignId === campaignId;
+          }
+          return acc || item.campaignId === campaignId;
+        }, 0);
+        if (!isExistCampaignId && relativeCode !== 0) {
+          window.ZoneConnect.relativePlacement.push({ campaignId, relativeCodes: [relativeCode] });
+        } else {
+          const indexOfCampaign = window.ZoneConnect.relativePlacement.map(x => x.campaignId).indexOf(campaignId);
+          const relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
+          const isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
+          if (!isExistRelativeCodes) relativeCodes.push(relativeCodes);
+          window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
+        }
+      });
+    }
   },
 
   mounted() {
@@ -57,17 +65,19 @@ const Share = Vue.component('share', {
     //     this.$parent.$emit('shareHeight', height);
     //   }
     // });
-    this.$parent.$emit('shareRender', this.current.currentCampaignLoad);
-    this.$on('render', (placeID, revenueType) => {
-      console.log('testEmit', placeID, revenueType);
-      const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
-        if (item.id === placeID) {
-          return index;
-        }
-        return acc;
-      }, 0);
-      this.$parent.$emit('placementRendered', placeIndex, revenueType, placeID);
-    });
+    if (this.current.preview !== true) {
+      this.$parent.$emit('shareRender', this.current.currentCampaignLoad);
+      this.$on('render', (placeID, revenueType) => {
+        console.log('testEmit', placeID, revenueType);
+        const placeIndex = this.activePlacementsModels.reduce((acc, item, index) => {
+          if (item.id === placeID) {
+            return index;
+          }
+          return acc;
+        }, 0);
+        this.$parent.$emit('placementRendered', placeIndex, revenueType, placeID);
+      });
+    }
   },
 
   computed: {
