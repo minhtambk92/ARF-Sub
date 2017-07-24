@@ -28628,14 +28628,14 @@ var Zone = function (_Entity) {
       }, 0);
       /* filter place fit with current channel */
       var allSharePlaceInCurrentChannel = allSharePlaces.filter(function (place) {
-        return place.placement.filterBanner().length > 0;
+        return _this3.preview === true || place.placement.filterBanner().length > 0;
       });
       var allSharePlaceInPageLoadAndChannel = allSharePlaceInCurrentChannel.filter(function (item) {
         return currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined' ? item.placement.campaignId === currentCampaignLoad : true;
       });
       if (allSharePlaceInPageLoadAndChannel.length > 0) allSharePlaceInCurrentChannel = allSharePlaceInPageLoadAndChannel;
       var allSharePlaceFilterGlobal = allSharePlaces.filter(function (place) {
-        return place.placement.filterBannerGlobal().length > 0;
+        return _this3.preview === true || place.placement.filterBannerGlobal().length > 0;
       });
       // allSharePlace.reduce((acc, item) => { // eslint-disable-line
       //   if (item.positionOnShare !== 0)
@@ -29051,7 +29051,7 @@ var Zone = function (_Entity) {
               var allSharePlace = shareInfo.allsharePlacements.filter(function (item) {
                 return item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1] || item.placement.revenueType === 'pb';
               }).filter(function (place) {
-                return place.placement.filterBanner().length > 0;
+                return place.placement.filterBanner().length > 0 || _this3.preview === true;
               });
               console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
               var allSharePlacementInPageLoad = allSharePlace.filter(function (item) {

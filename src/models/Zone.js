@@ -203,10 +203,10 @@ class Zone extends Entity {
       return acc.concat(item.allsharePlacements);
     }, 0);
                     /* filter place fit with current channel */
-    let allSharePlaceInCurrentChannel = allSharePlaces.filter(place => place.placement.filterBanner().length > 0);
+    let allSharePlaceInCurrentChannel = allSharePlaces.filter(place => this.preview === true || place.placement.filterBanner().length > 0);
     const allSharePlaceInPageLoadAndChannel = allSharePlaceInCurrentChannel.filter(item => ((currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined') ? item.placement.campaignId === currentCampaignLoad : true));
     if (allSharePlaceInPageLoadAndChannel.length > 0) allSharePlaceInCurrentChannel = allSharePlaceInPageLoadAndChannel;
-    const allSharePlaceFilterGlobal = allSharePlaces.filter(place => place.placement.filterBannerGlobal().length > 0);
+    const allSharePlaceFilterGlobal = allSharePlaces.filter(place => this.preview === true || place.placement.filterBannerGlobal().length > 0);
     // allSharePlace.reduce((acc, item) => { // eslint-disable-line
     //   if (item.positionOnShare !== 0)
     // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
@@ -572,7 +572,7 @@ class Zone extends Entity {
             const shareInfo = getShareInfo(shareFormat);
             let allSharePlace = shareInfo.allsharePlacements.filter(item =>
             (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb')).filter(place =>
-            place.placement.filterBanner().length > 0);
+              (place.placement.filterBanner().length > 0 || this.preview === true));
             console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
             const allSharePlacementInPageLoad = allSharePlace.filter(item => isInPageLoad(item));
             if (allSharePlacementInPageLoad.length > 0) allSharePlace = allSharePlacementInPageLoad;
