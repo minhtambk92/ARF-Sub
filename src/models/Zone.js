@@ -113,7 +113,7 @@ class Zone extends Entity {
     const campaignRichLimit = [];
 
 
-    if (pageLoads !== 0) {
+    if (this.preview !== true && pageLoads !== 0) {
       const currentDomain = encodeURIComponent(util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
       const pageLoadCookie = adsStorage.getStorage('_pls');
 
@@ -146,7 +146,7 @@ class Zone extends Entity {
         }
         console.log('nearestCampaignLoad', nearestCampaignLoad);
         const lastCampaignLoad = lastAllCampaignLoad.filter(item => item.indexOf(this.id) !== -1);
-        const lastTwoCampaignLoad = lastCampaignLoad.slice(Math.max(lastCampaignLoad.length - 2, 1));
+        const lastTwoCampaignLoad = lastCampaignLoad.length > 2 ? lastCampaignLoad.slice(Math.max(lastCampaignLoad.length - 2, 1)) : lastCampaignLoad;
 
         const isExistNearestPageLoad = pageLoads.reduce((res, item) => (res !== true ? item.id === nearestCampaignLoad : true), 0);
         if (isExistNearestPageLoad) {

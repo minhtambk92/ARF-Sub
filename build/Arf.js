@@ -28523,7 +28523,7 @@ var Zone = function (_Entity) {
       var currentCampaignLoad = null;
       var campaignRichLimit = [];
 
-      if (pageLoads !== 0) {
+      if (this.preview !== true && pageLoads !== 0) {
         var currentDomain = encodeURIComponent(_vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
         var pageLoadCookie = _vendor.adsStorage.getStorage('_pls');
 
@@ -28559,7 +28559,7 @@ var Zone = function (_Entity) {
           var lastCampaignLoad = lastAllCampaignLoad.filter(function (item) {
             return item.indexOf(_this3.id) !== -1;
           });
-          var lastTwoCampaignLoad = lastCampaignLoad.slice(Math.max(lastCampaignLoad.length - 2, 1));
+          var lastTwoCampaignLoad = lastCampaignLoad.length > 2 ? lastCampaignLoad.slice(Math.max(lastCampaignLoad.length - 2, 1)) : lastCampaignLoad;
 
           var isExistNearestPageLoad = pageLoads.reduce(function (res, item) {
             return res !== true ? item.id === nearestCampaignLoad : true;
