@@ -68,7 +68,7 @@ const Banner = Vue.component('banner', {
       });
     }
     this.current.countFrequency();
-    if (this.current.isRelative && this.current.preview === true) {
+    if (this.current.isRelative && this.current.preview !== true) {
       this.$parent.$emit('relativeBannerRender', this.current.keyword);
     }
   },

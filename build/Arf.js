@@ -27117,7 +27117,7 @@ var Banner = _vue2.default.component('banner', {
       });
     }
     this.current.countFrequency();
-    if (this.current.isRelative && this.current.preview === true) {
+    if (this.current.isRelative && this.current.preview !== true) {
       this.$parent.$emit('relativeBannerRender', this.current.keyword);
     }
   },
@@ -27396,8 +27396,9 @@ var Placement = _vue2.default.component('placement', {
     var currentBanner = this.current.activeBanner(false, '');
     this.$set(this, 'activeBannerModel', currentBanner);
     if (this.current.relative !== 0) {
+      console.log('runRelative');
       this.$on('relativeBannerRender', function (keywords) {
-        console.log('abc', keywords, vm.current.relative);
+        console.log('emitToShare', keywords, vm.current.relative);
         _this.$parent.$emit('relativeKeywordsInPlacement', vm.current.campaign.id, vm.current.relative, keywords);
       });
       if (this.activeBannerModel) this.activeBannerModel.isRelative = true;
