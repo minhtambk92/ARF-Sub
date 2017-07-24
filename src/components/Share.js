@@ -28,7 +28,7 @@ const Share = Vue.component('share', {
   beforeMount() {
     if (this.current.preview === true) {
       try {
-        this.activePlacementsModels.map(item => item.preview === true);
+        this.current.placements.map(item => item.preview = true); // eslint-disable-line
       } catch (err) {
         throw new Error(err);
       }

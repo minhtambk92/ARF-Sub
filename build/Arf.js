@@ -27642,9 +27642,9 @@ var Share = _vue2.default.component('share', {
   beforeMount: function beforeMount() {
     if (this.current.preview === true) {
       try {
-        this.activePlacementsModels.map(function (item) {
-          return item.preview === true;
-        });
+        this.current.placements.map(function (item) {
+          return item.preview = true;
+        }); // eslint-disable-line
       } catch (err) {
         throw new Error(err);
       }
