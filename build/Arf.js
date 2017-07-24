@@ -28495,6 +28495,7 @@ var Zone = function (_Entity) {
     value: function filterShare(isRotate, formatRotate, lastShare) {
       var _this3 = this;
 
+      console.log('newUpdate');
       var relativePlacement = window.ZoneConnect.relativePlacement;
       if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
       console.log('relativePlacement', relativePlacement, this.id);

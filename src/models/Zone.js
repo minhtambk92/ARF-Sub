@@ -83,6 +83,7 @@ class Zone extends Entity {
    */
 
   filterShare(isRotate, formatRotate, lastShare) {
+    console.log('newUpdate');
     const relativePlacement = window.ZoneConnect.relativePlacement;
     if (relativePlacement.length > 0) console.log('relativePlacement', relativePlacement);
     console.log('relativePlacement', relativePlacement, this.id);
