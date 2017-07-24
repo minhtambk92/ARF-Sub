@@ -34,10 +34,10 @@ const Placement = Vue.component('placement', {
 
   beforeMount() {
     const vm = this;
-    const currentBanner = this.current.activeBanner(false, '');
     if (this.current.preview === true) {
-      currentBanner.preview = true;
+      this.current.banners.map(item => item.preview = true); // eslint-disable-line
     }
+    const currentBanner = this.current.activeBanner(false, '');
     this.$set(this, 'activeBannerModel', currentBanner);
     if (this.current.relative !== 0) {
       this.$on('relativeBannerRender', (keywords) => {

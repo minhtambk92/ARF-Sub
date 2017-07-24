@@ -27388,10 +27388,12 @@ var Placement = _vue2.default.component('placement', {
     var _this = this;
 
     var vm = this;
-    var currentBanner = this.current.activeBanner(false, '');
     if (this.current.preview === true) {
-      currentBanner.preview = true;
+      this.current.banners.map(function (item) {
+        return item.preview = true;
+      }); // eslint-disable-line
     }
+    var currentBanner = this.current.activeBanner(false, '');
     this.$set(this, 'activeBannerModel', currentBanner);
     if (this.current.relative !== 0) {
       this.$on('relativeBannerRender', function (keywords) {
