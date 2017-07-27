@@ -8,6 +8,7 @@ import Vue from 'vue';
 import { Share as ShareModel } from '../models';
 import { Placement } from '../components';
 import { dom } from '../mixins';
+import { util } from '../vendor';
 
 const Share = Vue.component('share', {
 
@@ -34,22 +35,8 @@ const Share = Vue.component('share', {
       }
     } else {
       this.$on('relativeKeywordsInPlacement', (campaignId, relativeCode, keywords) => {
-        console.log('relativeKeywordsInPlacement', relativeCode, keywords);
-        const isExistCampaignId = window.ZoneConnect.relativePlacement.reduce((acc, item, index) => {
-          if (index === 0) {
-            return item.campaignId === campaignId;
-          }
-          return acc || item.campaignId === campaignId;
-        }, 0);
-        if (!isExistCampaignId && relativeCode !== 0) {
-          window.ZoneConnect.relativePlacement.push({ campaignId, relativeCodes: [relativeCode] });
-        } else {
-          const indexOfCampaign = window.ZoneConnect.relativePlacement.map(x => x.campaignId).indexOf(campaignId);
-          const relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
-          const isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
-          if (!isExistRelativeCodes) relativeCodes.push(relativeCodes);
-          window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
-        }
+        console.log('relativeKeywordsInPlacement', relativeCode, keywords, this.current.zoneId);
+        if (relativeCode !== 0) util.setRelative(this.current.zoneId, campaignId, relativeCode);
       });
     }
   },

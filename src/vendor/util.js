@@ -879,6 +879,75 @@ const util = {
     else result = result && moment(endTime) >= moment();
     return result;
   },
+
+  setRelative(zoneId, campaignId, relativeCode) {
+    const isExistCampaignId = window.ZoneConnect.relativePlacement.reduce((acc, item, index) => {
+      if (index === 0) {
+        return item.campaignId === campaignId;
+      }
+      return acc || item.campaignId === campaignId;
+    }, 0);
+    if (!isExistCampaignId && relativeCode !== 0) {
+      window.ZoneConnect.relativePlacement.push({ campaignId, relativeCodes: [relativeCode], zones: [zoneId] });
+    } else {
+      const indexOfCampaign = window.ZoneConnect.relativePlacement.map(x => x.campaignId).indexOf(campaignId);
+      const relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
+      const zones = window.ZoneConnect.relativePlacement[indexOfCampaign].zones;
+      const isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
+      const isExitZone = zones.indexOf(zoneId) !== -1;
+      if (!isExistRelativeCodes) {
+        relativeCodes.push(relativeCodes);
+      }
+      if (!isExitZone) {
+        zones.push(zoneId);
+      }
+      window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
+      window.ZoneConnect.relativePlacement[indexOfCampaign].zones = zones;
+    }
+    // console.log('relativeKeywordsInPlacement', zoneId, relativeCode);
+    // const isExistCampaignId = window.ZoneConnect.relativePlacement.reduce((acc, item, index) => {
+    //   if (index === 0) {
+    //     return item.campaignId === campaignId;
+    //   }
+    //   return acc || item.campaignId === campaignId;
+    // }, 0);
+    // if (!isExistCampaignId) {
+    //   window.ZoneConnect.relativePlacement.push({ campaignId, relativeCodes: [relativeCode] });
+    // } else {
+    //   const indexOfCampaign = window.ZoneConnect.relativePlacement.map(x => x.campaignId).indexOf(campaignId);
+    //   const relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
+    //   const isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
+    //   if (!isExistRelativeCodes) relativeCodes.push(relativeCodes);
+    //   window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
+    // }
+  },
+
+  setRelative2(zoneId, campaignId, relativeCode, active) {
+    const zId = zoneId.indexOf('zone-') === -1 ? `zone-${zoneId}` : zoneId;
+    const isExistZone = window.ZoneConnect.relativePlacement.reduce((result, item) => (result !== true ? item.zoneId === zId : true), 0);
+    if (!isExistZone) {
+      window.ZoneConnect.relativePlacement.push({
+        zoneId: zId,
+        relatives: [{ campaignId, codes: [{ active, value: relativeCode }] }],
+      });
+    } else {
+      const indexOfZone = window.ZoneConnect.relativePlacement.map(item => item.zoneId).indexOf(zId);
+      const relatives = window.ZoneConnect.relativePlacement[indexOfZone].relatives;
+      const indexOfCampaign = relatives.map(item => item.campaignId).indexOf(campaignId);
+      if (indexOfCampaign !== -1) {
+        const campaign = relatives[indexOfCampaign];
+        const indexOfCode = campaign.codes.map(item => item.value).indexOf(relativeCode);
+        // update relative code
+        if (indexOfCode !== -1) {
+          window.ZoneConnect.relativePlacement[indexOfZone].relatives[indexOfCampaign].codes[indexOfCode].active = active;
+        } else {
+          window.ZoneConnect.relativePlacement[indexOfZone].relatives[indexOfCampaign].codes.push({ active, value: relativeCode });
+        }
+      } else {
+        window.ZoneConnect.relativePlacement[indexOfZone].relatives.push({ campaignId, codes: [{ active, value: relativeCode }] });
+      }
+    }
+  },
 };
 
 export default util;

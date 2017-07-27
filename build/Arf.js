@@ -4566,7 +4566,7 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 var store      = __webpack_require__(42)('wks')
   , uid        = __webpack_require__(30)
-  , Symbol     = __webpack_require__(3).Symbol
+  , Symbol     = __webpack_require__(4).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
 var $exports = module.exports = function(name){
@@ -4578,36 +4578,6 @@ $exports.store = store;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var anObject       = __webpack_require__(12)
-  , IE8_DOM_DEFINE = __webpack_require__(51)
-  , toPrimitive    = __webpack_require__(44)
-  , dP             = Object.defineProperty;
-
-exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
-  return O;
-};
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4661,6 +4631,36 @@ exports.VisSensePlugin = _VisSensePlugin2.default; /**
 exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default, macro: _macro2.default, VisSense: _VisSense2.default, VisSensePlugin: _VisSensePlugin2.default };
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject       = __webpack_require__(12)
+  , IE8_DOM_DEFINE = __webpack_require__(51)
+  , toPrimitive    = __webpack_require__(44)
+  , dP             = Object.defineProperty;
+
+exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4700,7 +4700,7 @@ module.exports = !__webpack_require__(16)(function(){
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global    = __webpack_require__(3)
+var global    = __webpack_require__(4)
   , core      = __webpack_require__(1)
   , ctx       = __webpack_require__(34)
   , hide      = __webpack_require__(13)
@@ -14049,7 +14049,7 @@ module.exports = function(it){
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP         = __webpack_require__(4)
+var dP         = __webpack_require__(5)
   , createDesc = __webpack_require__(20);
 module.exports = __webpack_require__(7) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
@@ -14439,7 +14439,7 @@ var _Banner = __webpack_require__(47);
 
 var _Banner2 = _interopRequireDefault(_Banner);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14760,7 +14760,7 @@ exports.f = {}.propertyIsEnumerable;
 /* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var def = __webpack_require__(4).f
+var def = __webpack_require__(5).f
   , has = __webpack_require__(9)
   , TAG = __webpack_require__(2)('toStringTag');
 
@@ -14782,7 +14782,7 @@ module.exports = function(key){
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(3)
+var global = __webpack_require__(4)
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
@@ -14821,11 +14821,11 @@ module.exports = function(it, S){
 /* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global         = __webpack_require__(3)
+var global         = __webpack_require__(4)
   , core           = __webpack_require__(1)
   , LIBRARY        = __webpack_require__(37)
   , wksExt         = __webpack_require__(46)
-  , defineProperty = __webpack_require__(4).f;
+  , defineProperty = __webpack_require__(5).f;
 module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
@@ -14872,7 +14872,7 @@ var _Entity2 = __webpack_require__(24);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15559,7 +15559,7 @@ var _Placement = __webpack_require__(31);
 
 var _Placement2 = _interopRequireDefault(_Placement);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15723,7 +15723,7 @@ module.exports = { "default": __webpack_require__(203), __esModule: true };
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(17)
-  , document = __webpack_require__(3).document
+  , document = __webpack_require__(4).document
   // in old IE typeof document.createElement is 'object'
   , is = isObject(document) && isObject(document.createElement);
 module.exports = function(it){
@@ -27051,7 +27051,7 @@ var _models = __webpack_require__(14);
 
 var _mixins = __webpack_require__(23);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27619,13 +27619,9 @@ var _components = __webpack_require__(21);
 
 var _mixins = __webpack_require__(23);
 
+var _vendor = __webpack_require__(3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Created by Manhhailua on 12/5/16.
- */
-
-/* eslint-disable import/no-extraneous-dependencies */
 
 var Share = _vue2.default.component('share', {
 
@@ -27643,6 +27639,8 @@ var Share = _vue2.default.component('share', {
     window.arfShares[this.current.id] = this;
   },
   beforeMount: function beforeMount() {
+    var _this = this;
+
     if (this.current.preview === true) {
       try {
         this.current.placements.map(function (item) {
@@ -27653,29 +27651,13 @@ var Share = _vue2.default.component('share', {
       }
     } else {
       this.$on('relativeKeywordsInPlacement', function (campaignId, relativeCode, keywords) {
-        console.log('relativeKeywordsInPlacement', relativeCode, keywords);
-        var isExistCampaignId = window.ZoneConnect.relativePlacement.reduce(function (acc, item, index) {
-          if (index === 0) {
-            return item.campaignId === campaignId;
-          }
-          return acc || item.campaignId === campaignId;
-        }, 0);
-        if (!isExistCampaignId && relativeCode !== 0) {
-          window.ZoneConnect.relativePlacement.push({ campaignId: campaignId, relativeCodes: [relativeCode] });
-        } else {
-          var indexOfCampaign = window.ZoneConnect.relativePlacement.map(function (x) {
-            return x.campaignId;
-          }).indexOf(campaignId);
-          var relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
-          var isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
-          if (!isExistRelativeCodes) relativeCodes.push(relativeCodes);
-          window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
-        }
+        console.log('relativeKeywordsInPlacement', relativeCode, keywords, _this.current.zoneId);
+        if (relativeCode !== 0) _vendor.util.setRelative(_this.current.zoneId, campaignId, relativeCode);
       });
     }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     // this.$on('PlaceHeight', (PlaceHeight) => {
     //   let count = 0;
@@ -27691,13 +27673,13 @@ var Share = _vue2.default.component('share', {
       this.$parent.$emit('shareRender', this.current.currentCampaignLoad);
       this.$on('render', function (placeID, revenueType) {
         console.log('testEmit', placeID, revenueType);
-        var placeIndex = _this.activePlacementsModels.reduce(function (acc, item, index) {
+        var placeIndex = _this2.activePlacementsModels.reduce(function (acc, item, index) {
           if (item.id === placeID) {
             return index;
           }
           return acc;
         }, 0);
-        _this.$parent.$emit('placementRendered', placeIndex, revenueType, placeID);
+        _this2.$parent.$emit('placementRendered', placeIndex, revenueType, placeID);
       });
     }
   },
@@ -27748,7 +27730,11 @@ var Share = _vue2.default.component('share', {
       []
     );
   }
-});
+}); /**
+     * Created by Manhhailua on 12/5/16.
+     */
+
+/* eslint-disable import/no-extraneous-dependencies */
 
 exports.default = Share;
 
@@ -27777,7 +27763,7 @@ var _components = __webpack_require__(21);
 
 var _mixins = __webpack_require__(23);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27869,6 +27855,131 @@ var Zone = _vue2.default.component('zone', {
         }
       });
 
+      // console.log('zoneRelative', this.isRelative() && this.$data.pageLoad === null);
+      // let currentShare = this.current.activeShare(false, '');
+      // // && Object.keys(window.arfZones).length > 1
+      // if (this.isRelative() && this.$data.pageLoad === null) {
+      //   const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
+      //   console.log('isWait', !isRelative);
+      //   let listCampaigns = null;
+      //   try {
+      //     listCampaigns = this.current.shares.map(item => ((item instanceof ShareModel) ? item : new ShareModel(item)))
+      //       .map(share => share.allsharePlacements.filter(sharePlacement => sharePlacement.placement.filterBanner().length > 0))
+      //       .reduce((result, item) => (Array.isArray(result) ? result.concat(item) : item), 0)
+      //       .filter(sharePlacement => sharePlacement.placement.relative !== 0)
+      //       .map(sharePlacement => ({ campaignId: sharePlacement.placement.campaignId, code: sharePlacement.placement.relative }));
+      //   } catch (err) {
+      //     listCampaigns = [];
+      //   }
+      //   console.log('listCampaigns', this.current.id, listCampaigns);
+      //   listCampaigns.map(item => util.setRelative(this.current.id, item.campaignId, item.code, false));
+      //   if (isRelative && window.ZoneConnect.relativePlacement.length === 0) {
+      //     // this.$set(this, 'activeShareModel', currentShare);
+      //     currentShare.placements.map(placement => { // eslint-disable-line
+      //       const relativeCode = placement.relative;
+      //       if (placement.relative !== 0) {
+      //         const campaignId = placement.campaignId;
+      //         util.setRelative(this.current.id, campaignId, relativeCode, true);
+      //       }
+      //     });
+      //   }
+      //   const vm = this;
+      //   let times = 0;
+      //   const loadRelative = setInterval(() => {
+      //     times += 1;
+      //     const relativePlacement = window.ZoneConnect.relativePlacement;
+      //       // const isContainCampaignInRelativePlacement = relativePlacement.reduce((result, item) =>
+      //       //   (result !== true ? listCampaigns.indexOf(item.campaignId) !== -1 : true), 0);
+      //     const intersect = util.getIntersect(relativePlacement.map(item => item.campaignId), listCampaigns);
+      //     const relativeIntersect = relativePlacement.filter(item => intersect.indexOf(item.campaignId) !== -1);
+      //     console.log('testIntersect', intersect, relativeIntersect);
+      //     const check = relativeIntersect.reduce((res, item) => {
+      //       const zones = item.zones;
+      //       if (res !== true) {
+      //         if (zones.length > 1) return true;
+      //         return false;
+      //       }
+      //       return true;
+      //     }, 0);
+      //     console.log('isContainCampaignInRelativePlacement', this.current.id, check);
+      //     if (check && relativePlacement.length > 0) {
+      //       console.log('recreateShare', this.current.id);
+      //       // currentShare = vm.current.activeShare(false, '');
+      //       vm.$set(vm, 'activeShareModel', currentShare);
+      //       clearInterval(loadRelative);
+      //     } else {
+      //       currentShare = vm.current.activeShare(false, '');
+      //       const isRelativeNew = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
+      //       if (isRelativeNew) currentShare.placements.map(placement => { // eslint-disable-line
+      //         const relativeCode = placement.relative;
+      //         if (placement.relative !== 0) {
+      //           const campaignId = placement.campaignId;
+      //           util.setRelative(this.current.id, campaignId, relativeCode);
+      //         }
+      //       });
+      //     }
+      //     if (times >= 8) {
+      //       vm.$set(vm, 'activeShareModel', currentShare);
+      //       clearInterval(loadRelative);
+      //     }
+      //   }, 100);
+      //
+      //
+      //   // const loadRelative2 = setInterval(() => {
+      //   //   // const othersRelatives = window.ZoneConnect.relativePlacement
+      //   //   //   .filter(item => item.zoneId !== this.current.zoneId)
+      //   //   //   .filter(item => item.relatives
+      //   //   //   .reduce((result, relative) => relative.codes.reduce((checkCode, code) => (checkCode !== true ? code.active === true : true), 0), 0));
+      //   //   // const thisRelaive = window.ZoneConnect.relativePlacement
+      //   //   //   .filter(item => item.zoneId === this.current.zoneId)
+      //   //   //   .filter(item => item.relatives
+      //   //   //     .reduce((result, relative) => relative.codes.reduce((checkCode, code) => (checkCode !== true ? code.active === true : true), 0), 0));
+      //   //   times += 1;
+      //   //   const thisZoneRelative = window.ZoneConnect.relativePlacement
+      //   //     .filter(item => item.zoneId === this.current.zoneId)[0].relatives;
+      //   //   const indexOfThisZone = window.ZoneConnect.relativePlacement.map(x => x.zoneId).indexOf(vm.current.id);
+      //   //   const findCampaign = window.ZoneConnect.relativePlacement.reduce((result, item, indexZone) => {
+      //   //     const zoneId = item.zoneId;
+      //   //     const relatives = item.relatives;
+      //   //     if (zoneId !== vm.current.id) {
+      //   //       const intersect = util.getIntersect(thisZoneRelative.map(x => x.campaignId), relatives.map(x => x.campaignId));
+      //   //       if (intersect.length > 0) {
+      //   //         const listActive = [];
+      //   //         if (indexOfThisZone < indexZone) {
+      //   //           thisZoneRelative.filter(x => intersect.indexOf(x.campaignId) !== -1)
+      //   //             .map(z => { // eslint-disable-line
+      //   //               z.codes.map(x => { // eslint-disable-line
+      //   //                 if (x.active) {
+      //   //                   const i = listActive.map(y => y.campaignId).indexOf(z.campaignId);
+      //   //                   if (i === -1) listActive.push({ campaignId: z.campaignId, codes: [x] });
+      //   //                   else listActive[i].codes.push(x);
+      //   //                 }
+      //   //               });
+      //   //             });
+      //   //         } else {
+      //   //           relatives.filter(x => intersect.indexOf(x.campaignId) !== -1)
+      //   //             .map(z => { // eslint-disable-line
+      //   //               z.codes.map(x => { // eslint-disable-line
+      //   //                 if (x.active) {
+      //   //                   const i = listActive.map(y => y.campaignId).indexOf(z.campaignId);
+      //   //                   if (i === -1) listActive.push({ campaignId: z.campaignId, codes: [x] });
+      //   //                   else listActive[i].codes.push(x);
+      //   //                 }
+      //   //               });
+      //   //             });
+      //   //         }
+      //   //       }
+      //   //     }
+      //   //     return [];
+      //   //   }, 0);
+      //   //   console.log('findCampaign', vm.current.id, findCampaign);
+      //   //   if (times === 8) {
+      //   //     clearInterval(loadRelative2);
+      //   //   }
+      //   // }, 100);
+      // } else {
+      //   this.$set(this, 'activeShareModel', currentShare);
+      // }
       console.log('zoneRelative', this.isRelative());
       var _currentShare = this.current.activeShare(false, '');
       // && Object.keys(window.arfZones).length > 1
@@ -27878,23 +27989,58 @@ var Zone = _vue2.default.component('zone', {
         }, 0);
         console.log('isWait', !isRelative);
         if (isRelative) {
-          this.$set(this, 'activeShareModel', _currentShare);
-        } else {
-          var vm = this;
-          var times = 0;
-          var loadRelative = setInterval(function () {
-            times += 1;
-            var relativePlacement = window.ZoneConnect.relativePlacement;
-            if (relativePlacement.length > 0) {
-              _currentShare = vm.current.activeShare(false, '');
-              vm.$set(vm, 'activeShareModel', _currentShare);
-              clearInterval(loadRelative);
+          // this.$set(this, 'activeShareModel', currentShare);
+          _currentShare.placements.map(function (placement) {
+            // eslint-disable-line
+            var relativeCode = placement.relative;
+            if (placement.relative !== 0) {
+              var campaignId = placement.campaignId;
+              _vendor.util.setRelative(_this.current.id, campaignId, relativeCode);
             }
-            if (times >= 8) {
-              vm.$set(vm, 'activeShareModel', _currentShare);
-            }
-          }, 100);
+          });
         }
+        var vm = this;
+        var times = 0;
+        var loadRelative = setInterval(function () {
+          times += 1;
+          var relativePlacement = window.ZoneConnect.relativePlacement;
+          var relativeFilter = relativePlacement.filter(function (item) {
+            return item.zones.indexOf(_this.current.id) !== -1 && item.zones.length > 1;
+          });
+          if (relativeFilter.length > 0) {
+            console.log('run2Cam1');
+            // const isMoreOnZone = relativeFilter.reduce((res, item) => (res !== true ? item.zones.length > 1 : true), 0);
+            // currentShare = vm.current.activeShare(false, '');
+            vm.$set(vm, 'activeShareModel', _currentShare);
+            clearInterval(loadRelative);
+          } else {
+            var previous = (0, _stringify2.default)(_currentShare);
+            _currentShare = vm.current.activeShare(false, '', previous);
+            var isRelative2 = _currentShare.placements.reduce(function (res, placement) {
+              return res !== true ? placement.relative !== 0 : true;
+            }, 0);
+            if (isRelative2) {
+              console.log('run2Cam2');
+              _currentShare.placements.map(function (placement) {
+                // eslint-disable-line
+                var relativeCode = placement.relative;
+                if (placement.relative !== 0) {
+                  var campaignId = placement.campaignId;
+                  _vendor.util.setRelative(_this.current.id, campaignId, relativeCode);
+                }
+              });
+              if (window.ZoneConnect.relativePlacement.filter(function (item) {
+                return item.zones.indexOf(_this.current.id) === -1;
+              }).length > 0 && window.ZoneConnect.relativePlacement.length > 1) {
+                vm.$set(vm, 'activeShareModel', _currentShare);
+                clearInterval(loadRelative);
+              }
+            }
+          }
+          if (times >= 8) {
+            vm.$set(vm, 'activeShareModel', _currentShare);
+          }
+        }, 100);
       } else {
         this.$set(this, 'activeShareModel', _currentShare);
       }
@@ -28021,9 +28167,12 @@ var Zone = _vue2.default.component('zone', {
     var vm = this;
     var currentShare = vm.activeShareModel;
     console.log('currentShare', currentShare);
-    vm.$data.lastShare = currentShare ? (0, _stringify2.default)(currentShare.placements.map(function (x) {
-      return x.id;
-    })) : null;
+    try {
+      vm.$data.lastShare = currentShare ? (0, _stringify2.default)(currentShare) : null;
+    } catch (err) {
+      // do nothing.
+      throw new Error(err);
+    }
     if (currentShare && currentShare.placements.length > 0) {
       return h(
         'div',
@@ -28063,9 +28212,11 @@ var Zone = _vue2.default.component('zone', {
       []
     );
   }
-}); /**
-     * Created by Manhhailua on 11/24/16.
-     */
+});
+// import { Zone as ZoneModel, Share as ShareModel } from '../models';
+/**
+ * Created by Manhhailua on 11/24/16.
+ */
 
 /* eslint-disable import/no-extraneous-dependencies */
 
@@ -28183,7 +28334,7 @@ var _vue = __webpack_require__(11);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28394,7 +28545,7 @@ var _Placement = __webpack_require__(31);
 
 var _Placement2 = _interopRequireDefault(_Placement);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29031,6 +29182,8 @@ var Zone = function (_Entity) {
        */
       var createShare = function createShare(placeMonopolies, currentCampaignLoad, isRotate, format, lastShare) {
         // eslint-disable-line
+        var lastShareTemp = lastShare !== '' && lastShare !== undefined && lastShare !== null ? JSON.parse(lastShare) : null;
+        console.log('lastShareInCreate', lastShareTemp);
         var shares = [];
         var shareDatas = [];
         for (var _i6 = 1; _i6 <= numberOfPlaceInShare; _i6 += 1) {
@@ -29055,6 +29208,17 @@ var Zone = function (_Entity) {
               }).filter(function (place) {
                 return place.placement.filterBanner().length > 0 || _this3.preview === true;
               });
+              if (lastShareTemp !== null) {
+                var listPreviousPlace = lastShareTemp.placements.map(function (item) {
+                  return item.id;
+                });
+                console.log('listPreviousPlace', _this3.id, listPreviousPlace);
+                var removePreviousPlace = allSharePlace.filter(function (item) {
+                  return listPreviousPlace.indexOf(item.placement.id) === -1;
+                }, 0);
+                console.log('removePreviousPlace', _this3.id, removePreviousPlace);
+                if (removePreviousPlace.length > 0) allSharePlace = removePreviousPlace;
+              }
               console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
               var allSharePlacementInPageLoad = allSharePlace.filter(function (item) {
                 return isInPageLoad(item);
@@ -29370,8 +29534,9 @@ var Zone = function (_Entity) {
               var type = shares[_i7].type;
               var isShareRotate = shares[_i7].isRotate;
               var campaignLoad = currentCampaignLoad;
+              var zoneId = _this3.id;
               console.log('checkRotate', shares[_i7].isRotate);
-              var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type, isRotate: isShareRotate, currentCampaignLoad: campaignLoad });
+              var newShare = new _Share2.default({ id: id, outputCss: outputCss, placements: placements, weight: weight, type: type, isRotate: isShareRotate, currentCampaignLoad: campaignLoad, zoneId: zoneId });
               shareDatas.push(newShare);
             };
 
@@ -29430,7 +29595,7 @@ var Zone = function (_Entity) {
       }
       /* if isRotate = false -> just create share with truly monopoly placement
                         and share structure */
-      var result = createShare(monopolyPlacesFitShareStructure, currentCampaignLoad);
+      var result = createShare(monopolyPlacesFitShareStructure, currentCampaignLoad, '', '', lastShare);
       console.log('newShareFilter', result);
       return result;
       /**
@@ -31584,6 +31749,83 @@ var util = {
     if (startTime === null) result = true;else result = (0, _moment2.default)(startTime) <= (0, _moment2.default)();
     if (endTime === null) result = result && true;else result = result && (0, _moment2.default)(endTime) >= (0, _moment2.default)();
     return result;
+  },
+  setRelative: function setRelative(zoneId, campaignId, relativeCode) {
+    var isExistCampaignId = window.ZoneConnect.relativePlacement.reduce(function (acc, item, index) {
+      if (index === 0) {
+        return item.campaignId === campaignId;
+      }
+      return acc || item.campaignId === campaignId;
+    }, 0);
+    if (!isExistCampaignId && relativeCode !== 0) {
+      window.ZoneConnect.relativePlacement.push({ campaignId: campaignId, relativeCodes: [relativeCode], zones: [zoneId] });
+    } else {
+      var indexOfCampaign = window.ZoneConnect.relativePlacement.map(function (x) {
+        return x.campaignId;
+      }).indexOf(campaignId);
+      var relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
+      var zones = window.ZoneConnect.relativePlacement[indexOfCampaign].zones;
+      var isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
+      var isExitZone = zones.indexOf(zoneId) !== -1;
+      if (!isExistRelativeCodes) {
+        relativeCodes.push(relativeCodes);
+      }
+      if (!isExitZone) {
+        zones.push(zoneId);
+      }
+      window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
+      window.ZoneConnect.relativePlacement[indexOfCampaign].zones = zones;
+    }
+    // console.log('relativeKeywordsInPlacement', zoneId, relativeCode);
+    // const isExistCampaignId = window.ZoneConnect.relativePlacement.reduce((acc, item, index) => {
+    //   if (index === 0) {
+    //     return item.campaignId === campaignId;
+    //   }
+    //   return acc || item.campaignId === campaignId;
+    // }, 0);
+    // if (!isExistCampaignId) {
+    //   window.ZoneConnect.relativePlacement.push({ campaignId, relativeCodes: [relativeCode] });
+    // } else {
+    //   const indexOfCampaign = window.ZoneConnect.relativePlacement.map(x => x.campaignId).indexOf(campaignId);
+    //   const relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
+    //   const isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
+    //   if (!isExistRelativeCodes) relativeCodes.push(relativeCodes);
+    //   window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes = relativeCodes;
+    // }
+  },
+  setRelative2: function setRelative2(zoneId, campaignId, relativeCode, active) {
+    var zId = zoneId.indexOf('zone-') === -1 ? 'zone-' + zoneId : zoneId;
+    var isExistZone = window.ZoneConnect.relativePlacement.reduce(function (result, item) {
+      return result !== true ? item.zoneId === zId : true;
+    }, 0);
+    if (!isExistZone) {
+      window.ZoneConnect.relativePlacement.push({
+        zoneId: zId,
+        relatives: [{ campaignId: campaignId, codes: [{ active: active, value: relativeCode }] }]
+      });
+    } else {
+      var indexOfZone = window.ZoneConnect.relativePlacement.map(function (item) {
+        return item.zoneId;
+      }).indexOf(zId);
+      var relatives = window.ZoneConnect.relativePlacement[indexOfZone].relatives;
+      var indexOfCampaign = relatives.map(function (item) {
+        return item.campaignId;
+      }).indexOf(campaignId);
+      if (indexOfCampaign !== -1) {
+        var campaign = relatives[indexOfCampaign];
+        var indexOfCode = campaign.codes.map(function (item) {
+          return item.value;
+        }).indexOf(relativeCode);
+        // update relative code
+        if (indexOfCode !== -1) {
+          window.ZoneConnect.relativePlacement[indexOfZone].relatives[indexOfCampaign].codes[indexOfCode].active = active;
+        } else {
+          window.ZoneConnect.relativePlacement[indexOfZone].relatives[indexOfCampaign].codes.push({ active: active, value: relativeCode });
+        }
+      } else {
+        window.ZoneConnect.relativePlacement[indexOfZone].relatives.push({ campaignId: campaignId, codes: [{ active: active, value: relativeCode }] });
+      }
+    }
   }
 };
 
@@ -31798,7 +32040,7 @@ module.exports = function(it){
 
 "use strict";
 
-var $defineProperty = __webpack_require__(4)
+var $defineProperty = __webpack_require__(5)
   , createDesc      = __webpack_require__(20);
 
 module.exports = function(object, index, value){
@@ -31830,7 +32072,7 @@ module.exports = function(it){
 /* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(3).document && document.documentElement;
+module.exports = __webpack_require__(4).document && document.documentElement;
 
 /***/ }),
 /* 214 */
@@ -31957,7 +32199,7 @@ module.exports = function(object, el){
 var META     = __webpack_require__(30)('meta')
   , isObject = __webpack_require__(17)
   , has      = __webpack_require__(9)
-  , setDesc  = __webpack_require__(4).f
+  , setDesc  = __webpack_require__(5).f
   , id       = 0;
 var isExtensible = Object.isExtensible || function(){
   return true;
@@ -32012,7 +32254,7 @@ var meta = module.exports = {
 /* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP       = __webpack_require__(4)
+var dP       = __webpack_require__(5)
   , anObject = __webpack_require__(12)
   , getKeys  = __webpack_require__(19);
 
@@ -32226,7 +32468,7 @@ $export($export.S, 'Object', {create: __webpack_require__(38)});
 
 var $export = __webpack_require__(8);
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !__webpack_require__(7), 'Object', {defineProperty: __webpack_require__(4).f});
+$export($export.S + $export.F * !__webpack_require__(7), 'Object', {defineProperty: __webpack_require__(5).f});
 
 /***/ }),
 /* 233 */
@@ -32277,7 +32519,7 @@ $export($export.S, 'Object', {setPrototypeOf: __webpack_require__(225).set});
 "use strict";
 
 // ECMAScript 6 symbols shim
-var global         = __webpack_require__(3)
+var global         = __webpack_require__(4)
   , has            = __webpack_require__(9)
   , DESCRIPTORS    = __webpack_require__(7)
   , $export        = __webpack_require__(8)
@@ -32300,7 +32542,7 @@ var global         = __webpack_require__(3)
   , _create        = __webpack_require__(38)
   , gOPNExt        = __webpack_require__(224)
   , $GOPD          = __webpack_require__(53)
-  , $DP            = __webpack_require__(4)
+  , $DP            = __webpack_require__(5)
   , $keys          = __webpack_require__(19)
   , gOPD           = $GOPD.f
   , dP             = $DP.f
@@ -32528,7 +32770,7 @@ __webpack_require__(45)('observable');
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(230);
-var global        = __webpack_require__(3)
+var global        = __webpack_require__(4)
   , hide          = __webpack_require__(13)
   , Iterators     = __webpack_require__(18)
   , TO_STRING_TAG = __webpack_require__(2)('toStringTag');

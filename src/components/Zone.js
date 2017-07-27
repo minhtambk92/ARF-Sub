@@ -6,6 +6,7 @@
 
 import Vue from 'vue';
 import { Zone as ZoneModel } from '../models';
+// import { Zone as ZoneModel, Share as ShareModel } from '../models';
 import { Share } from '../components';
 import { dom } from '../mixins';
 import { adsStorage, term, util } from '../vendor';
@@ -94,6 +95,131 @@ const Zone = Vue.component('zone', {
         }
       });
 
+      // console.log('zoneRelative', this.isRelative() && this.$data.pageLoad === null);
+      // let currentShare = this.current.activeShare(false, '');
+      // // && Object.keys(window.arfZones).length > 1
+      // if (this.isRelative() && this.$data.pageLoad === null) {
+      //   const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
+      //   console.log('isWait', !isRelative);
+      //   let listCampaigns = null;
+      //   try {
+      //     listCampaigns = this.current.shares.map(item => ((item instanceof ShareModel) ? item : new ShareModel(item)))
+      //       .map(share => share.allsharePlacements.filter(sharePlacement => sharePlacement.placement.filterBanner().length > 0))
+      //       .reduce((result, item) => (Array.isArray(result) ? result.concat(item) : item), 0)
+      //       .filter(sharePlacement => sharePlacement.placement.relative !== 0)
+      //       .map(sharePlacement => ({ campaignId: sharePlacement.placement.campaignId, code: sharePlacement.placement.relative }));
+      //   } catch (err) {
+      //     listCampaigns = [];
+      //   }
+      //   console.log('listCampaigns', this.current.id, listCampaigns);
+      //   listCampaigns.map(item => util.setRelative(this.current.id, item.campaignId, item.code, false));
+      //   if (isRelative && window.ZoneConnect.relativePlacement.length === 0) {
+      //     // this.$set(this, 'activeShareModel', currentShare);
+      //     currentShare.placements.map(placement => { // eslint-disable-line
+      //       const relativeCode = placement.relative;
+      //       if (placement.relative !== 0) {
+      //         const campaignId = placement.campaignId;
+      //         util.setRelative(this.current.id, campaignId, relativeCode, true);
+      //       }
+      //     });
+      //   }
+      //   const vm = this;
+      //   let times = 0;
+      //   const loadRelative = setInterval(() => {
+      //     times += 1;
+      //     const relativePlacement = window.ZoneConnect.relativePlacement;
+      //       // const isContainCampaignInRelativePlacement = relativePlacement.reduce((result, item) =>
+      //       //   (result !== true ? listCampaigns.indexOf(item.campaignId) !== -1 : true), 0);
+      //     const intersect = util.getIntersect(relativePlacement.map(item => item.campaignId), listCampaigns);
+      //     const relativeIntersect = relativePlacement.filter(item => intersect.indexOf(item.campaignId) !== -1);
+      //     console.log('testIntersect', intersect, relativeIntersect);
+      //     const check = relativeIntersect.reduce((res, item) => {
+      //       const zones = item.zones;
+      //       if (res !== true) {
+      //         if (zones.length > 1) return true;
+      //         return false;
+      //       }
+      //       return true;
+      //     }, 0);
+      //     console.log('isContainCampaignInRelativePlacement', this.current.id, check);
+      //     if (check && relativePlacement.length > 0) {
+      //       console.log('recreateShare', this.current.id);
+      //       // currentShare = vm.current.activeShare(false, '');
+      //       vm.$set(vm, 'activeShareModel', currentShare);
+      //       clearInterval(loadRelative);
+      //     } else {
+      //       currentShare = vm.current.activeShare(false, '');
+      //       const isRelativeNew = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
+      //       if (isRelativeNew) currentShare.placements.map(placement => { // eslint-disable-line
+      //         const relativeCode = placement.relative;
+      //         if (placement.relative !== 0) {
+      //           const campaignId = placement.campaignId;
+      //           util.setRelative(this.current.id, campaignId, relativeCode);
+      //         }
+      //       });
+      //     }
+      //     if (times >= 8) {
+      //       vm.$set(vm, 'activeShareModel', currentShare);
+      //       clearInterval(loadRelative);
+      //     }
+      //   }, 100);
+      //
+      //
+      //   // const loadRelative2 = setInterval(() => {
+      //   //   // const othersRelatives = window.ZoneConnect.relativePlacement
+      //   //   //   .filter(item => item.zoneId !== this.current.zoneId)
+      //   //   //   .filter(item => item.relatives
+      //   //   //   .reduce((result, relative) => relative.codes.reduce((checkCode, code) => (checkCode !== true ? code.active === true : true), 0), 0));
+      //   //   // const thisRelaive = window.ZoneConnect.relativePlacement
+      //   //   //   .filter(item => item.zoneId === this.current.zoneId)
+      //   //   //   .filter(item => item.relatives
+      //   //   //     .reduce((result, relative) => relative.codes.reduce((checkCode, code) => (checkCode !== true ? code.active === true : true), 0), 0));
+      //   //   times += 1;
+      //   //   const thisZoneRelative = window.ZoneConnect.relativePlacement
+      //   //     .filter(item => item.zoneId === this.current.zoneId)[0].relatives;
+      //   //   const indexOfThisZone = window.ZoneConnect.relativePlacement.map(x => x.zoneId).indexOf(vm.current.id);
+      //   //   const findCampaign = window.ZoneConnect.relativePlacement.reduce((result, item, indexZone) => {
+      //   //     const zoneId = item.zoneId;
+      //   //     const relatives = item.relatives;
+      //   //     if (zoneId !== vm.current.id) {
+      //   //       const intersect = util.getIntersect(thisZoneRelative.map(x => x.campaignId), relatives.map(x => x.campaignId));
+      //   //       if (intersect.length > 0) {
+      //   //         const listActive = [];
+      //   //         if (indexOfThisZone < indexZone) {
+      //   //           thisZoneRelative.filter(x => intersect.indexOf(x.campaignId) !== -1)
+      //   //             .map(z => { // eslint-disable-line
+      //   //               z.codes.map(x => { // eslint-disable-line
+      //   //                 if (x.active) {
+      //   //                   const i = listActive.map(y => y.campaignId).indexOf(z.campaignId);
+      //   //                   if (i === -1) listActive.push({ campaignId: z.campaignId, codes: [x] });
+      //   //                   else listActive[i].codes.push(x);
+      //   //                 }
+      //   //               });
+      //   //             });
+      //   //         } else {
+      //   //           relatives.filter(x => intersect.indexOf(x.campaignId) !== -1)
+      //   //             .map(z => { // eslint-disable-line
+      //   //               z.codes.map(x => { // eslint-disable-line
+      //   //                 if (x.active) {
+      //   //                   const i = listActive.map(y => y.campaignId).indexOf(z.campaignId);
+      //   //                   if (i === -1) listActive.push({ campaignId: z.campaignId, codes: [x] });
+      //   //                   else listActive[i].codes.push(x);
+      //   //                 }
+      //   //               });
+      //   //             });
+      //   //         }
+      //   //       }
+      //   //     }
+      //   //     return [];
+      //   //   }, 0);
+      //   //   console.log('findCampaign', vm.current.id, findCampaign);
+      //   //   if (times === 8) {
+      //   //     clearInterval(loadRelative2);
+      //   //   }
+      //   // }, 100);
+      // } else {
+      //   this.$set(this, 'activeShareModel', currentShare);
+      // }
       console.log('zoneRelative', this.isRelative());
       let currentShare = this.current.activeShare(false, '');
       // && Object.keys(window.arfZones).length > 1
@@ -101,23 +227,51 @@ const Zone = Vue.component('zone', {
         const isRelative = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
         console.log('isWait', !isRelative);
         if (isRelative) {
-          this.$set(this, 'activeShareModel', currentShare);
-        } else {
-          const vm = this;
-          let times = 0;
-          const loadRelative = setInterval(() => {
-            times += 1;
-            const relativePlacement = window.ZoneConnect.relativePlacement;
-            if (relativePlacement.length > 0) {
-              currentShare = vm.current.activeShare(false, '');
-              vm.$set(vm, 'activeShareModel', currentShare);
-              clearInterval(loadRelative);
+          // this.$set(this, 'activeShareModel', currentShare);
+          currentShare.placements.map(placement => { // eslint-disable-line
+            const relativeCode = placement.relative;
+            if (placement.relative !== 0) {
+              const campaignId = placement.campaignId;
+              util.setRelative(this.current.id, campaignId, relativeCode);
             }
-            if (times >= 8) {
-              vm.$set(vm, 'activeShareModel', currentShare);
-            }
-          }, 100);
+          });
         }
+        const vm = this;
+        let times = 0;
+        const loadRelative = setInterval(() => {
+          times += 1;
+          const relativePlacement = window.ZoneConnect.relativePlacement;
+          const relativeFilter = relativePlacement.filter(item => (item.zones.indexOf(this.current.id) !== -1 && item.zones.length > 1));
+          if (relativeFilter.length > 0) {
+            console.log('run2Cam1');
+            // const isMoreOnZone = relativeFilter.reduce((res, item) => (res !== true ? item.zones.length > 1 : true), 0);
+            // currentShare = vm.current.activeShare(false, '');
+            vm.$set(vm, 'activeShareModel', currentShare);
+            clearInterval(loadRelative);
+          } else {
+            const previous = JSON.stringify(currentShare);
+            currentShare = vm.current.activeShare(false, '', previous);
+            const isRelative2 = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
+            if (isRelative2) {
+              console.log('run2Cam2');
+              currentShare.placements.map(placement => { // eslint-disable-line
+                const relativeCode = placement.relative;
+                if (placement.relative !== 0) {
+                  const campaignId = placement.campaignId;
+                  util.setRelative(this.current.id, campaignId, relativeCode);
+                }
+              });
+              if (window.ZoneConnect.relativePlacement.filter(item => item.zones.indexOf(this.current.id) === -1).length > 0 &&
+              window.ZoneConnect.relativePlacement.length > 1) {
+                vm.$set(vm, 'activeShareModel', currentShare);
+                clearInterval(loadRelative);
+              }
+            }
+          }
+          if (times >= 8) {
+            vm.$set(vm, 'activeShareModel', currentShare);
+          }
+        }, 100);
       } else {
         this.$set(this, 'activeShareModel', currentShare);
       }
@@ -238,7 +392,12 @@ const Zone = Vue.component('zone', {
     const vm = this;
     const currentShare = vm.activeShareModel;
     console.log('currentShare', currentShare);
-    vm.$data.lastShare = currentShare ? JSON.stringify(currentShare.placements.map(x => x.id)) : null;
+    try {
+      vm.$data.lastShare = currentShare ? JSON.stringify(currentShare) : null;
+    } catch (err) {
+      // do nothing.
+      throw new Error(err);
+    }
     if (currentShare && currentShare.placements.length > 0) {
       return (
         <div

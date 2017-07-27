@@ -546,6 +546,9 @@ class Zone extends Entity {
      * @returns {Array}
      */
     const createShare = (placeMonopolies, currentCampaignLoad, isRotate, format, lastShare) => { // eslint-disable-line
+      const lastShareTemp = lastShare !== '' && lastShare !== undefined && lastShare !== null ?
+        JSON.parse(lastShare) : null;
+      console.log('lastShareInCreate', lastShareTemp);
       const shares = [];
       const shareDatas = [];
       for (let i = 1; i <= numberOfPlaceInShare; i += 1) {
@@ -574,6 +577,13 @@ class Zone extends Entity {
             let allSharePlace = shareInfo.allsharePlacements.filter(item =>
             (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb')).filter(place =>
               (place.placement.filterBanner().length > 0 || this.preview === true));
+            if (lastShareTemp !== null) {
+              const listPreviousPlace = lastShareTemp.placements.map(item => item.id);
+              console.log('listPreviousPlace', this.id, listPreviousPlace);
+              const removePreviousPlace = allSharePlace.filter(item => (listPreviousPlace.indexOf(item.placement.id) === -1), 0);
+              console.log('removePreviousPlace', this.id, removePreviousPlace);
+              if (removePreviousPlace.length > 0) allSharePlace = removePreviousPlace;
+            }
             console.log('campaignRichLimit', campaignRichLimit, currentCampaignLoad);
             const allSharePlacementInPageLoad = allSharePlace.filter(item => isInPageLoad(item));
             if (allSharePlacementInPageLoad.length > 0) allSharePlace = allSharePlacementInPageLoad;
@@ -863,8 +873,9 @@ class Zone extends Entity {
           const type = shares[i].type;
           const isShareRotate = shares[i].isRotate;
           const campaignLoad = currentCampaignLoad;
+          const zoneId = this.id;
           console.log('checkRotate', shares[i].isRotate);
-          const newShare = new Share({ id, outputCss, placements, weight, type, isRotate: isShareRotate, currentCampaignLoad: campaignLoad });
+          const newShare = new Share({ id, outputCss, placements, weight, type, isRotate: isShareRotate, currentCampaignLoad: campaignLoad, zoneId });
           shareDatas.push(newShare);
         }
       }
@@ -909,7 +920,7 @@ class Zone extends Entity {
     }
           /* if isRotate = false -> just create share with truly monopoly placement
                             and share structure */
-    const result = createShare(monopolyPlacesFitShareStructure, currentCampaignLoad);
+    const result = createShare(monopolyPlacesFitShareStructure, currentCampaignLoad, '', '', lastShare);
     console.log('newShareFilter', result);
     return result;
     /**
