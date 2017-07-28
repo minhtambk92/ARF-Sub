@@ -65,7 +65,7 @@ const Placement = Vue.component('placement', {
     // }
     setTimeout(() => {
       this.setupRotate();
-    }, 1000);
+    }, 3000);
     if (this.current.preview !== true) {
       this.$on('renderFinish', () => {
         console.log('renderFinish');

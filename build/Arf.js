@@ -27434,7 +27434,7 @@ var Placement = _vue2.default.component('placement', {
     // }
     setTimeout(function () {
       _this2.setupRotate();
-    }, 1000);
+    }, 3000);
     if (this.current.preview !== true) {
       this.$on('renderFinish', function () {
         console.log('renderFinish');
