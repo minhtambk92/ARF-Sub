@@ -14629,6 +14629,14 @@ var Placement = function (_Entity) {
       }
       return false;
     }
+  }, {
+    key: 'checkAvailable',
+    get: function get() {
+      var campaign = this.campaign;
+      var startTime = campaign.startTime;
+      var endTime = campaign.endTime;
+      return _vendor.util.checkTime(startTime, endTime);
+    }
   }]);
   return Placement;
 }(_Entity3.default); /**
@@ -15644,6 +15652,9 @@ var Share = function (_Entity) {
         var allPlace = this.placements.map(function (placement) {
           return new _Placement2.default(placement);
         });
+        allPlace = allPlace.filter(function (item) {
+          return item.checkAvailable;
+        });
         var isUsePlacePosition = allPlace.reduce(function (acc, item, index) {
           if (index === 0) {
             return item.positionOnShare !== undefined && item.positionOnShare !== 0;
@@ -15678,6 +15689,7 @@ var Share = function (_Entity) {
       var allPlace = this.sharePlacements.filter(function (sharePlacement) {
         return sharePlacement.placement !== null;
       });
+
       allPlace.map(function (item) {
         return item.placement.shareType = _this2.type;
       }); // eslint-disable-line

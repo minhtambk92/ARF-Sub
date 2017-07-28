@@ -149,6 +149,13 @@ class Placement extends Entity {
     return false;
   }
 
+  get checkAvailable() {
+    const campaign = this.campaign;
+    const startTime = campaign.startTime;
+    const endTime = campaign.endTime;
+    return util.checkTime(startTime, endTime);
+  }
+
 }
 
 export default Placement;

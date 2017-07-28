@@ -26,7 +26,8 @@ class Share extends Entity {
 
   get allPlacements() {
     try {
-      const allPlace = this.placements.map(placement => new Placement(placement));
+      let allPlace = this.placements.map(placement => new Placement(placement));
+      allPlace = allPlace.filter(item => item.checkAvailable);
       const isUsePlacePosition = allPlace.reduce((acc, item, index) => {
         if (index === 0) {
           return item.positionOnShare !== undefined && item.positionOnShare !== 0;
@@ -53,6 +54,7 @@ class Share extends Entity {
     // const allPlace = this.placements.map(placement => new Placement(placement));
     const allPlace = this.sharePlacements.filter(sharePlacement =>
     sharePlacement.placement !== null);
+
     allPlace.map(item => item.placement.shareType = this.type); // eslint-disable-line
     /* eslint-disable */
     allPlace.reduce((acc, item) => {
