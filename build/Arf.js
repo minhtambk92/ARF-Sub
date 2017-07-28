@@ -28069,9 +28069,11 @@ var Zone = _vue2.default.component('zone', {
     //     this.$forceUpdate();
     //   }, 5000);
     // }
-    setTimeout(function () {
-      _this2.setupRotate();
-    }, 7000);
+    if (!this.isRelative() || this.$data.pageLoad === null) {
+      setTimeout(function () {
+        _this2.setupRotate();
+      }, 7000);
+    }
     // this.$on('shareHeight', (height) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     // });

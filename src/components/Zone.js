@@ -287,9 +287,11 @@ const Zone = Vue.component('zone', {
     //     this.$forceUpdate();
     //   }, 5000);
     // }
-    setTimeout(() => {
-      this.setupRotate();
-    }, 7000);
+    if (!this.isRelative() || this.$data.pageLoad === null) {
+      setTimeout(() => {
+        this.setupRotate();
+      }, 7000);
+    }
     // this.$on('shareHeight', (height) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     // });
