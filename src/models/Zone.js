@@ -893,8 +893,15 @@ class Zone extends Entity {
          * 3. Create share with these sets after combination */
 
       /*  1  */
-      const sharePlacementsFitChannel = allSharePlaces.filter(place =>
+      const lastShareTemp = lastShare !== '' && lastShare !== undefined && lastShare !== null ?
+        JSON.parse(lastShare) : null;
+      let sharePlacementsFitChannel = allSharePlaces.filter(place =>
       place.placement.filterBanner().length > 0);
+      if (lastShareTemp !== null) {
+        const listPreviousPlace = lastShareTemp.placements.map(item => item.id);
+        const removePreviousPlace = sharePlacementsFitChannel.filter(item => (listPreviousPlace.indexOf(item.placement.id) === -1), 0);
+        if (removePreviousPlace.length > 0) sharePlacementsFitChannel = removePreviousPlace;
+      }
       let placementsInSharePosition = [];
       const monopolyPositions = util.uniqueItem(monopolyPlaces.map(x => (x.positionOnShare === 0 ? x.positionOnShare : (x.positionOnShare - 1))));
       monopolyPositions.reduce((acc, item) =>

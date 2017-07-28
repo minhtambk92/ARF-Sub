@@ -889,7 +889,7 @@ const util = {
     }, 0);
     if (!isExistCampaignId && relativeCode !== 0) {
       window.ZoneConnect.relativePlacement.push({ campaignId, relativeCodes: [relativeCode], zones: [zoneId] });
-    } else {
+    } else if (relativeCode !== 0) {
       const indexOfCampaign = window.ZoneConnect.relativePlacement.map(x => x.campaignId).indexOf(campaignId);
       const relativeCodes = window.ZoneConnect.relativePlacement[indexOfCampaign].relativeCodes;
       const zones = window.ZoneConnect.relativePlacement[indexOfCampaign].zones;

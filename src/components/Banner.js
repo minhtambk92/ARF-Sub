@@ -59,7 +59,7 @@ const Banner = Vue.component('banner', {
     /**
      * send log
      */
-    if (this.current.preview) {
+    if (this.current.preview !== true) {
       this.$on('renderFinish', () => {
         // log view
         this.current.bannerLogging(0);

@@ -248,21 +248,21 @@ const Zone = Vue.component('zone', {
             // currentShare = vm.current.activeShare(false, '');
             vm.$set(vm, 'activeShareModel', currentShare);
             clearInterval(loadRelative);
-          } else {
+          } else if (window.ZoneConnect.relativePlacement.length > 0) {
             const previous = JSON.stringify(currentShare);
             currentShare = vm.current.activeShare(false, '', previous);
             const isRelative2 = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
             if (isRelative2) {
-              console.log('run2Cam2');
-              currentShare.placements.map(placement => { // eslint-disable-line
-                const relativeCode = placement.relative;
-                if (placement.relative !== 0) {
-                  const campaignId = placement.campaignId;
-                  util.setRelative(this.current.id, campaignId, relativeCode);
-                }
-              });
+                currentShare.placements.map(placement => { // eslint-disable-line
+                  const relativeCode = placement.relative;
+                  if (placement.relative !== 0) {
+                    const campaignId = placement.campaignId;
+                    util.setRelative(this.current.id, campaignId, relativeCode);
+                  }
+                });
               if (window.ZoneConnect.relativePlacement.filter(item => item.zones.indexOf(this.current.id) === -1).length > 0 &&
-              window.ZoneConnect.relativePlacement.length > 1) {
+                  window.ZoneConnect.relativePlacement.length > 1) {
+                console.log('run2Cam2');
                 vm.$set(vm, 'activeShareModel', currentShare);
                 clearInterval(loadRelative);
               }
@@ -287,7 +287,9 @@ const Zone = Vue.component('zone', {
     //     this.$forceUpdate();
     //   }, 5000);
     // }
-    this.setupRotate();
+    setTimeout(() => {
+      this.setupRotate();
+    }, 7000);
     // this.$on('shareHeight', (height) => {
     //   document.getElementById(`${this.current.id}`).style.height = `${height}px`;
     // });
