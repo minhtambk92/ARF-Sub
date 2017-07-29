@@ -28799,10 +28799,13 @@ var Zone = function (_Entity) {
       var allSharePlaceInCurrentChannel = allSharePlaces.filter(function (place) {
         return _this3.preview === true || place.placement.filterBanner().length > 0;
       });
+
       var allSharePlaceInPageLoadAndChannel = allSharePlaceInCurrentChannel.filter(function (item) {
         return currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined' ? item.placement.campaignId === currentCampaignLoad : true;
       });
+
       if (allSharePlaceInPageLoadAndChannel.length > 0) allSharePlaceInCurrentChannel = allSharePlaceInPageLoadAndChannel;
+
       var allSharePlaceFilterGlobal = allSharePlaces.filter(function (place) {
         return _this3.preview === true || place.placement.filterBannerGlobal().length > 0;
       });
@@ -28810,6 +28813,8 @@ var Zone = function (_Entity) {
       //   if (item.positionOnShare !== 0)
       // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
       // }, 0);
+
+
       /* This function to get placement have smallest area */
       var getMinPlace = function getMinPlace(allSharePlacement) {
         if (_this3.zoneType === 'right') {
@@ -28829,8 +28834,11 @@ var Zone = function (_Entity) {
         }
         return min;
       };
+
       var minPlace = getMinPlace(allSharePlaces);
+
       console.log('minPlace', minPlace);
+
       /* This function to get number of part which take in zone like placement,.. */
       var getNumberOfParts = function getNumberOfParts(height, isRoundUp) {
         if (_this3.zoneType === 'right') {
@@ -28844,14 +28852,18 @@ var Zone = function (_Entity) {
         }
         return Math.round(height / minPlace);
       };
+
       var numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
+
       var shareConstruct = [];
 
       /* if cpdShare take all share percent in a place order -> filter */
       var shareStructure = [];
+
       var listPositionOnShare = allSharePlaceInCurrentChannel.map(function (x) {
         return x.positionOnShare === 0 ? 1 : x.positionOnShare;
       });
+
       var countPositionOnShare = _vendor.util.uniqueItem(listPositionOnShare).length;
       console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
 
@@ -28860,13 +28872,16 @@ var Zone = function (_Entity) {
           return (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === _i3;
         });
         console.log('allSharePlaceInThisPosition', allSharePlaceInThisPosition, allSharePlaceInCurrentChannel);
+
         var allPlaceTypeInPosition = [];
+
         allSharePlaceInThisPosition.reduce(function (acc, item) {
           //eslint-disable-line
           var type = item.placement.revenueType;
           if ((0, _stringify2.default)(allPlaceTypeInPosition).indexOf(type) !== -1 || type === 'pb') return acc;
           allPlaceTypeInPosition.push(type);
         }, 0);
+
         console.log('allPlaceTypeInPosition', allPlaceTypeInPosition);
         var getAllPlaceType = [];
         var isExistPlacePa = allPlaceTypeInPosition.indexOf('pa') !== -1;
@@ -28905,6 +28920,7 @@ var Zone = function (_Entity) {
       zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
       var ShareRendered = zoneCookie.split('|');
       console.log('shareRender', ShareRendered);
+
       var activeRevenue = function activeRevenue(allRevenueType) {
         var randomNumber = Math.random() * 100;
         var ratio = allRevenueType.reduce(function (acc, revenueType) {
@@ -29145,13 +29161,28 @@ var Zone = function (_Entity) {
       /**
        * end
        */
-      var activePlacement = function activePlacement(allPlaces, type) {
+      var activePlacement = function activePlacement(allPlaces, type, previousPlace) {
         if (type === 'random') return allPlaces[Math.floor(Math.random() * allPlaces.length)];
         var randomNumber = Math.random() * 100;
-        var ratio = allPlaces.reduce(function (tmp, place) {
+
+        var filterPlace = type === 'cpd' ? allPlaces.filter(function (sharePlace) {
+          var cpdPercent = sharePlace.placement.cpdPercent;
+          var timesCpdAppear = previousPlace.reduce(function (result, item) {
+            return sharePlace.placement.revenueType === 'cpd' && sharePlace.placement.id === item ? result + 1 : result;
+          }, 0);
+          console.log('testActiveCpd', sharePlace.placement.id, cpdPercent, timesCpdAppear);
+          if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
+            if (timesCpdAppear >= 1) return false;
+          } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
+            if (timesCpdAppear >= 2) return false;
+          }
+          return true;
+        }) : allPlaces;
+        console.log('testFilterPlace', filterPlace);
+        var ratio = filterPlace.reduce(function (tmp, place) {
           return (type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp;
         }, 0) / 100;
-        return allPlaces.reduce(function (range, placement) {
+        return filterPlace.reduce(function (range, placement) {
           var nextRange = range + (type === 'cpd' ? placement.placement.cpdPercent : placement.placement.weight) / ratio;
 
           if ((typeof range === 'undefined' ? 'undefined' : (0, _typeof3.default)(range)) === 'object') {
@@ -29270,7 +29301,17 @@ var Zone = function (_Entity) {
 
                   if (listMonopolies.length > 0) {
                     console.log('listMonopolies', listMonopolies.length);
-                    var _place = listMonopolies.length === 1 ? listMonopolies[0] : activePlacement(listMonopolies, shareStructure[index]);
+                    var previousPlace = [];
+                    lastThreeShare.map(function (share) {
+                      // eslint-disable-line
+                      var shareTemp = share.split('][');
+                      shareTemp.map(function (item) {
+                        // eslint-disable-line
+                        if (item.split(')(')[1] === index.toString()) previousPlace.push(item.split(')(')[3]);
+                      });
+                    });
+                    console.log('previousPlace', index, previousPlace);
+                    var _place = listMonopolies.length === 1 ? listMonopolies[0] : activePlacement(listMonopolies, shareStructure[index], previousPlace);
                     placeChosen.push(_place);
                     share.places.push(_place.placement);
                     return 0;

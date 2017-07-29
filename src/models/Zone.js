@@ -205,13 +205,18 @@ class Zone extends Entity {
     }, 0);
                     /* filter place fit with current channel */
     let allSharePlaceInCurrentChannel = allSharePlaces.filter(place => this.preview === true || place.placement.filterBanner().length > 0);
+
     const allSharePlaceInPageLoadAndChannel = allSharePlaceInCurrentChannel.filter(item => ((currentCampaignLoad !== '' && currentCampaignLoad !== 'none' && currentCampaignLoad !== 'undefined') ? item.placement.campaignId === currentCampaignLoad : true));
+
     if (allSharePlaceInPageLoadAndChannel.length > 0) allSharePlaceInCurrentChannel = allSharePlaceInPageLoadAndChannel;
+
     const allSharePlaceFilterGlobal = allSharePlaces.filter(place => this.preview === true || place.placement.filterBannerGlobal().length > 0);
     // allSharePlace.reduce((acc, item) => { // eslint-disable-line
     //   if (item.positionOnShare !== 0)
     // item.positionOnShare = item.positionOnShare - 1; // eslint-disable-line
     // }, 0);
+
+
           /* This function to get placement have smallest area */
     const getMinPlace = (allSharePlacement) => {
       if (this.zoneType === 'right') {
@@ -231,8 +236,11 @@ class Zone extends Entity {
       }
       return min;
     };
+
     const minPlace = getMinPlace(allSharePlaces);
+
     console.log('minPlace', minPlace);
+
           /* This function to get number of part which take in zone like placement,.. */
     const getNumberOfParts = (height, isRoundUp) => {
       if (this.zoneType === 'right') {
@@ -246,24 +254,33 @@ class Zone extends Entity {
       }
       return Math.round(height / minPlace);
     };
+
     const numberOfPlaceInShare = this.zoneType === 'right' ? getNumberOfParts(this.height) : getNumberOfParts(this.width);
+
     const shareConstruct = [];
+
 
         /* if cpdShare take all share percent in a place order -> filter */
     const shareStructure = [];
+
     const listPositionOnShare = allSharePlaceInCurrentChannel.map(x => (x.positionOnShare === 0 ? 1 : x.positionOnShare));
+
     const countPositionOnShare = util.uniqueItem(listPositionOnShare).length;
     console.log('countPositionOnShare', countPositionOnShare, listPositionOnShare);
+
     for (let i = 0; i < countPositionOnShare; i += 1) {
       const allSharePlaceInThisPosition = allSharePlaceInCurrentChannel.filter(place =>
       (place.positionOnShare === 0 ? place.positionOnShare : place.positionOnShare - 1) === i);
       console.log('allSharePlaceInThisPosition', allSharePlaceInThisPosition, allSharePlaceInCurrentChannel);
+
       const allPlaceTypeInPosition = [];
+
       allSharePlaceInThisPosition.reduce((acc, item) => { //eslint-disable-line
         const type = item.placement.revenueType;
         if (JSON.stringify(allPlaceTypeInPosition).indexOf(type) !== -1 || type === 'pb') return acc;
         allPlaceTypeInPosition.push(type);
       }, 0);
+
       console.log('allPlaceTypeInPosition', allPlaceTypeInPosition);
       const getAllPlaceType = [];
       const isExistPlacePa = allPlaceTypeInPosition.indexOf('pa') !== -1;
@@ -294,6 +311,7 @@ class Zone extends Entity {
     zoneCookie = zoneCookie.slice(zoneCookie.indexOf(':') + 1);
     const ShareRendered = zoneCookie.split('|');
     console.log('shareRender', ShareRendered);
+
     const activeRevenue = (allRevenueType) => {
       const randomNumber = Math.random() * 100;
       const ratio = allRevenueType.reduce((acc, revenueType) =>
@@ -498,11 +516,26 @@ class Zone extends Entity {
     /**
      * end
      */
-    const activePlacement = (allPlaces, type) => {
+    const activePlacement = (allPlaces, type, previousPlace) => {
       if (type === 'random') return allPlaces[Math.floor(Math.random() * allPlaces.length)];
       const randomNumber = Math.random() * 100;
-      const ratio = allPlaces.reduce((tmp, place) => ((type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp), 0) / 100;
-      return allPlaces.reduce((range, placement) => {
+
+      const filterPlace = (type === 'cpd') ? allPlaces.filter((sharePlace) => {
+        const cpdPercent = sharePlace.placement.cpdPercent;
+        const timesCpdAppear = previousPlace.reduce((result, item) => (
+          (sharePlace.placement.revenueType === 'cpd' && sharePlace.placement.id === item) ? result + 1 : result), 0);
+        console.log('testActiveCpd', sharePlace.placement.id, cpdPercent, timesCpdAppear);
+        if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
+          if (timesCpdAppear >= 1) return false;
+        } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
+          if (timesCpdAppear >= 2) return false;
+        }
+        return true;
+      }) : allPlaces;
+      console.log('testFilterPlace', filterPlace);
+      const ratio = filterPlace
+        .reduce((tmp, place) => ((type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp), 0) / 100;
+      return filterPlace.reduce((range, placement) => {
         const nextRange = range + ((type === 'cpd' ? placement.placement.cpdPercent : placement.placement.weight) / ratio);
 
         if (typeof range === 'object') {
@@ -574,9 +607,11 @@ class Zone extends Entity {
 
              */
             const shareInfo = getShareInfo(shareFormat);
-            let allSharePlace = shareInfo.allsharePlacements.filter(item =>
-            (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1]) || (item.placement.revenueType === 'pb')).filter(place =>
-              (place.placement.filterBanner().length > 0 || this.preview === true));
+            let allSharePlace = shareInfo.allsharePlacements
+              .filter(item =>
+                (item.placement.revenueType === shareStructure[item.positionOnShare === 0 ? item.positionOnShare : item.positionOnShare - 1])
+                || (item.placement.revenueType === 'pb'))
+              .filter(place => (place.placement.filterBanner().length > 0 || this.preview === true));
             if (lastShareTemp !== null) {
               const listPreviousPlace = lastShareTemp.placements.map(item => item.id);
               console.log('listPreviousPlace', this.id, listPreviousPlace);
@@ -617,8 +652,16 @@ class Zone extends Entity {
 
                 if (listMonopolies.length > 0) {
                   console.log('listMonopolies', listMonopolies.length);
+                  const previousPlace = [];
+                    lastThreeShare.map((share) => { // eslint-disable-line
+                      const shareTemp = share.split('][');
+                      shareTemp.map((item) => { // eslint-disable-line
+                        if (item.split(')(')[1] === index.toString()) previousPlace.push(item.split(')(')[3]);
+                      });
+                    });
+                  console.log('previousPlace', index, previousPlace);
                   const place = listMonopolies.length === 1 ? listMonopolies[0] :
-                    activePlacement(listMonopolies, shareStructure[index]);
+                    activePlacement(listMonopolies, shareStructure[index], previousPlace);
                   placeChosen.push(place);
                   share.places.push(place.placement);
                   return 0;

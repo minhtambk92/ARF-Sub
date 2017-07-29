@@ -6,9 +6,9 @@
 
 import gulp from 'gulp';
 import { exec } from 'child_process';
-import { StringDecoder } from 'string_decoder';  const pc = exec('NAME=Arf RELEASE=true node_modules/.bin/webpack --colors');
+import { StringDecoder } from 'string_decoder'; const pc = exec('NAME=Arf RELEASE=true node_modules/.bin/webpack --colors');
 
-  printLogs(pc);
+printLogs(pc);
 
 
 const decoder = new StringDecoder('utf8');
