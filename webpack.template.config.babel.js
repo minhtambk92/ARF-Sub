@@ -6,8 +6,8 @@ import webpack from 'webpack';
 import StringReplacePlugin from 'string-replace-webpack-plugin';
 import { version, author } from './package.json';
 
-const { NAME, RELEASE, ARF_HOST } = process.env;
-const libraryName = NAME || 'Template';
+const { RELEASE, ARF_HOST } = process.env;
+const libraryName = 'Template';
 
 const config = {
 
@@ -42,7 +42,7 @@ const config = {
             {
               pattern: '{{arfHost}}',
               replacement() {
-                return ARF_HOST || 'corejs.codek.org'; // Default host for ARF
+                return ARF_HOST || 'http://arf-dev.manhpt.com'; // Default host for ARF
               },
             },
           ],

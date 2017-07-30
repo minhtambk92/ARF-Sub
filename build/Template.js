@@ -12,9 +12,9 @@
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -38,9 +38,6 @@
 /******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
 /******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
@@ -89,7 +86,7 @@ var env = location.search.indexOf('corejs_env=dev') !== -1 ? '' : '.min';
 var script = document.createElement('script');
 script.id = 'arf-core-js';
 script.type = 'application/javascript';
-script.src = 'http://rawgit.com/minhtambk92/ARF-Sub/master/build/Arf' + env + '.js';
+script.src = 'http://arf-dev.manhpt.com/Arf' + env + '.js';
 
 // Async load core-js script
 if (!document.getElementById(script.id)) {
