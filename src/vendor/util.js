@@ -557,9 +557,9 @@ const util = {
   // check compete with shares
   isCompete2(shares, placeOrder) {
     let placeInShare = [];
-    shares.reduce((temp, share) =>
+    shares.map(share => // eslint-disable-line
       (placeInShare = placeInShare.concat(share.allPlacements.map((item, index) =>
-        ({ data: item, index })))), 0);
+        ({ data: item, index })))));
     return this.isCompete(placeInShare, placeOrder);
   },
 

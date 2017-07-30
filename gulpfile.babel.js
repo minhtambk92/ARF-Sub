@@ -6,10 +6,7 @@
 
 import gulp from 'gulp';
 import { exec } from 'child_process';
-import { StringDecoder } from 'string_decoder'; const pc = exec('NAME=Arf RELEASE=true node_modules/.bin/webpack --colors');
-
-printLogs(pc);
-
+import { StringDecoder } from 'string_decoder';
 
 const decoder = new StringDecoder('utf8');
 
@@ -51,7 +48,7 @@ gulp.task(CREATE_TEMPLATE_DEVELOPMENT_VERSION, () => {
   printLogs(pc);
 });
 
-gulp.task('create-template-release-version', () => {
+gulp.task(CREATE_TEMPLATE_RELEASE_VERSION, () => {
   const pc = exec('RELEASE=true node_modules/.bin/webpack --config=./webpack.template.config.babel.js --colors');
 
   printLogs(pc);
