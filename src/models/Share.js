@@ -91,7 +91,6 @@ class Share extends Entity {
       }
       return (place.weight + tmp);
     }, 0) / 100;
-    console.log('testt', allPlacement, ratio);
     const res = allPlacement.reduce((range, placement) => {
       const nextRange = range + (placement.weight / ratio);
 
@@ -105,9 +104,6 @@ class Share extends Entity {
 
       return nextRange;
     }, 0);
-
-    console.log('abcc', res, allPlacement);
-
     return res;
   }
 

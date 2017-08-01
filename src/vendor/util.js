@@ -896,7 +896,7 @@ const util = {
       const isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
       const isExitZone = zones.indexOf(zoneId) !== -1;
       if (!isExistRelativeCodes) {
-        relativeCodes.push(relativeCodes);
+        // relativeCodes.push(relativeCodes);
       }
       if (!isExitZone) {
         zones.push(zoneId);

@@ -15996,7 +15996,6 @@ var Share = function (_Entity) {
         }
         return place.weight + tmp;
       }, 0) / 100;
-      console.log('testt', allPlacement, ratio);
       var res = allPlacement.reduce(function (range, placement) {
         var nextRange = range + placement.weight / ratio;
 
@@ -16010,9 +16009,6 @@ var Share = function (_Entity) {
 
         return nextRange;
       }, 0);
-
-      console.log('abcc', res, allPlacement);
-
       return res;
     }
 
@@ -30762,7 +30758,7 @@ var Zone = function (_Entity) {
 
       /* if cpdShare take all share percent in a place order -> filter */
       var shareStructure = [];
-
+      console.log('allSharePlaces', allSharePlaces, allSharePlaceInCurrentChannel);
       var listPositionOnShare = allSharePlaceInCurrentChannel.map(function (x) {
         return x.positionOnShare === 0 ? 1 : x.positionOnShare;
       });
@@ -33732,7 +33728,7 @@ var util = {
       var isExistRelativeCodes = relativeCodes.indexOf(relativeCode) !== -1;
       var isExitZone = zones.indexOf(zoneId) !== -1;
       if (!isExistRelativeCodes) {
-        relativeCodes.push(relativeCodes);
+        // relativeCodes.push(relativeCodes);
       }
       if (!isExitZone) {
         zones.push(zoneId);
@@ -35684,7 +35680,7 @@ var Zone = _vue2.default.component('zone', {
           _this.$set(_this, 'pageLoad', currentCampaignLoad);
           var currentDomain = encodeURIComponent(_vendor.util.getThisChannel(_vendor.term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
           var pageLoadCookie = _vendor.adsStorage.getStorage('_pls');
-          console.log('pageLoadCookie', pageLoadCookie);
+          // console.log('pageLoadCookie', pageLoadCookie);
           if (_vendor.adsStorage.subCookie(pageLoadCookie, 'Ver:', 0) === '') {
             pageLoadCookie = 'Ver:25;';
           }
@@ -35709,13 +35705,13 @@ var Zone = _vue2.default.component('zone', {
                 shortenedPageLoadCampaign = ('' + pageLoadCampaign).replace(regex, '');
               }
               var updatePageLoadCampaign = shortenedPageLoadCampaign + lastCampaignLoad.join('|');
-              console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
+              // console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
               pageLoadCookie = ('' + pageLoadCookie).replace(pageLoadCampaign, updatePageLoadCampaign);
-              console.log('pageLoadCookieAfter', pageLoadCookie);
+              // console.log('pageLoadCookieAfter', pageLoadCookie);
             }
           }
           pageLoadCampaign = _vendor.adsStorage.subCookie(pageLoadCookie, currentDomain + ':', 0);
-          console.log('pageLoadCampaign', pageLoadCampaign);
+          // console.log('pageLoadCampaign', pageLoadCampaign);
           var pageLoadCookieUpdate = pageLoadCampaign + '|' + _this.current.id + '#' + currentCampaignLoad;
           pageLoadCookie = ('' + pageLoadCookie).replace(pageLoadCampaign, pageLoadCookieUpdate);
           _vendor.adsStorage.setStorage('_pls', pageLoadCookie, '', '/', currentDomain);
@@ -35868,19 +35864,29 @@ var Zone = _vue2.default.component('zone', {
         }
         var vm = this;
         var times = 0;
+        var isSet = false;
         var loadRelative = setInterval(function () {
           times += 1;
+          console.log('checkTimes', times);
           var relativePlacement = window.ZoneConnect.relativePlacement;
-          var relativeFilter = relativePlacement.filter(function (item) {
-            return item.zones.indexOf(_this.current.id) !== -1 && item.zones.length > 1;
-          });
-          if (relativeFilter.length > 0) {
-            console.log('run2Cam1');
+          if (relativePlacement.length > 0) {
+            // const listRelative = currentShare.placements.reduce((res, item) => (Array.isArray(res) ? res.push({ campaignId: item.campaignId, code: item.relative }) : [{ campaignId: item.campaignId, code: item.relative }]), 0);
+            // const isRelativeWithOthers = listRelative.reduce((res, item) => {
+            //   const result = relativePlacement.filter(itm => itm);
+            // }, 0);
+            var relativeFilter = relativePlacement.filter(function (item) {
+              return item.zones.indexOf(_this.current.id) !== -1 && item.zones.length > 1;
+            });
             // const isMoreOnZone = relativeFilter.reduce((res, item) => (res !== true ? item.zones.length > 1 : true), 0);
             // currentShare = vm.current.activeShare(false, '');
-            vm.$set(vm, 'activeShareModel', _currentShare);
-            clearInterval(loadRelative);
-          } else if (window.ZoneConnect.relativePlacement.length > 0) {
+            if (relativeFilter.length > 0 && !isSet) {
+              console.log('run2Cam1');
+              vm.$set(vm, 'activeShareModel', _currentShare);
+              isSet = true;
+              clearInterval(loadRelative);
+            }
+          } else if (window.ZoneConnect.relativePlacement.length > 0 && !isSet) {
+            console.log('run2Cam2');
             var previous = (0, _stringify2.default)(_currentShare);
             _currentShare = vm.current.activeShare(false, '', previous);
             var isRelative2 = _currentShare.placements.reduce(function (res, placement) {
@@ -35898,14 +35904,17 @@ var Zone = _vue2.default.component('zone', {
               if (window.ZoneConnect.relativePlacement.filter(function (item) {
                 return item.zones.indexOf(_this.current.id) === -1;
               }).length > 0 && window.ZoneConnect.relativePlacement.length > 1) {
-                console.log('run2Cam2');
                 vm.$set(vm, 'activeShareModel', _currentShare);
+                isSet = true;
                 clearInterval(loadRelative);
               }
             }
           }
-          if (times >= 8) {
+
+          if (times >= 8 && !isSet) {
             vm.$set(vm, 'activeShareModel', _currentShare);
+            isSet = true;
+            clearInterval(loadRelative);
           }
         }, 100);
       } else {
@@ -35925,6 +35934,7 @@ var Zone = _vue2.default.component('zone', {
     //   }, 5000);
     // }
     if (!this.isRelative() || this.$data.pageLoad === null) {
+      console.log('runRotateShare', this.current.id);
       setTimeout(function () {
         _this2.setupRotate();
       }, 7000);
@@ -35960,17 +35970,6 @@ var Zone = _vue2.default.component('zone', {
   computed: {
     current: function current() {
       return this.model instanceof _models.Zone ? this.model : new _models.Zone(this.model);
-    },
-
-    initActiveShareModel: {
-      cache: true,
-      get: function get() {
-        var res = this.current.activeShare(window.ZoneConnect.relativeKeyword, false, '');
-        this.$data.lastShare = (0, _stringify2.default)(res.placements.map(function (x) {
-          return x.id;
-        }));
-        return res;
-      }
     }
   },
 

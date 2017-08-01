@@ -61,7 +61,7 @@ const Zone = Vue.component('zone', {
           this.$set(this, 'pageLoad', currentCampaignLoad);
           const currentDomain = encodeURIComponent(util.getThisChannel(term.getCurrentDomain('Site:Pageurl')).slice(0, 2));
           let pageLoadCookie = adsStorage.getStorage('_pls');
-          console.log('pageLoadCookie', pageLoadCookie);
+          // console.log('pageLoadCookie', pageLoadCookie);
           if (adsStorage.subCookie(pageLoadCookie, 'Ver:', 0) === '') {
             pageLoadCookie = 'Ver:25;';
           }
@@ -82,13 +82,13 @@ const Zone = Vue.component('zone', {
                 shortenedPageLoadCampaign = `${pageLoadCampaign}`.replace(regex, '');
               }
               const updatePageLoadCampaign = shortenedPageLoadCampaign + lastCampaignLoad.join('|');
-              console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
+              // console.log('shortenedPageLoadCampaign', updatePageLoadCampaign, pageLoadCampaign);
               pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, updatePageLoadCampaign);
-              console.log('pageLoadCookieAfter', pageLoadCookie);
+              // console.log('pageLoadCookieAfter', pageLoadCookie);
             }
           }
           pageLoadCampaign = adsStorage.subCookie(pageLoadCookie, `${currentDomain}:`, 0);
-          console.log('pageLoadCampaign', pageLoadCampaign);
+          // console.log('pageLoadCampaign', pageLoadCampaign);
           const pageLoadCookieUpdate = `${pageLoadCampaign}|${this.current.id}#${currentCampaignLoad}`;
           pageLoadCookie = `${pageLoadCookie}`.replace(pageLoadCampaign, pageLoadCookieUpdate);
           adsStorage.setStorage('_pls', pageLoadCookie, '', '/', currentDomain);
@@ -238,17 +238,27 @@ const Zone = Vue.component('zone', {
         }
         const vm = this;
         let times = 0;
+        let isSet = false;
         const loadRelative = setInterval(() => {
           times += 1;
+          console.log('checkTimes', times);
           const relativePlacement = window.ZoneConnect.relativePlacement;
-          const relativeFilter = relativePlacement.filter(item => (item.zones.indexOf(this.current.id) !== -1 && item.zones.length > 1));
-          if (relativeFilter.length > 0) {
-            console.log('run2Cam1');
+          if (relativePlacement.length > 0) {
+            // const listRelative = currentShare.placements.reduce((res, item) => (Array.isArray(res) ? res.push({ campaignId: item.campaignId, code: item.relative }) : [{ campaignId: item.campaignId, code: item.relative }]), 0);
+            // const isRelativeWithOthers = listRelative.reduce((res, item) => {
+            //   const result = relativePlacement.filter(itm => itm);
+            // }, 0);
+            const relativeFilter = relativePlacement.filter(item => (item.zones.indexOf(this.current.id) !== -1 && item.zones.length > 1));
             // const isMoreOnZone = relativeFilter.reduce((res, item) => (res !== true ? item.zones.length > 1 : true), 0);
             // currentShare = vm.current.activeShare(false, '');
-            vm.$set(vm, 'activeShareModel', currentShare);
-            clearInterval(loadRelative);
-          } else if (window.ZoneConnect.relativePlacement.length > 0) {
+            if (relativeFilter.length > 0 && !isSet) {
+              console.log('run2Cam1');
+              vm.$set(vm, 'activeShareModel', currentShare);
+              isSet = true;
+              clearInterval(loadRelative);
+            }
+          } else if (window.ZoneConnect.relativePlacement.length > 0 && !isSet) {
+            console.log('run2Cam2');
             const previous = JSON.stringify(currentShare);
             currentShare = vm.current.activeShare(false, '', previous);
             const isRelative2 = currentShare.placements.reduce((res, placement) => (res !== true ? placement.relative !== 0 : true), 0);
@@ -262,14 +272,18 @@ const Zone = Vue.component('zone', {
                 });
               if (window.ZoneConnect.relativePlacement.filter(item => item.zones.indexOf(this.current.id) === -1).length > 0 &&
                   window.ZoneConnect.relativePlacement.length > 1) {
-                console.log('run2Cam2');
                 vm.$set(vm, 'activeShareModel', currentShare);
+                isSet = true;
                 clearInterval(loadRelative);
               }
             }
           }
-          if (times >= 8) {
+
+
+          if (times >= 8 && !isSet) {
             vm.$set(vm, 'activeShareModel', currentShare);
+            isSet = true;
+            clearInterval(loadRelative);
           }
         }, 100);
       } else {
@@ -288,6 +302,7 @@ const Zone = Vue.component('zone', {
     //   }, 5000);
     // }
     if (!this.isRelative() || this.$data.pageLoad === null) {
+      console.log('runRotateShare', this.current.id);
       setTimeout(() => {
         this.setupRotate();
       }, 7000);
@@ -323,14 +338,14 @@ const Zone = Vue.component('zone', {
     current() {
       return (this.model instanceof ZoneModel) ? this.model : new ZoneModel(this.model);
     },
-    initActiveShareModel: {
-      cache: true,
-      get() {
-        const res = this.current.activeShare(window.ZoneConnect.relativeKeyword, false, '');
-        this.$data.lastShare = JSON.stringify(res.placements.map(x => x.id));
-        return res;
-      },
-    },
+    // initActiveShareModel: {
+    //   cache: true,
+    //   get() {
+    //     const res = this.current.activeShare(window.ZoneConnect.relativeKeyword, false, '');
+    //     this.$data.lastShare = JSON.stringify(res.placements.map(x => x.id));
+    //     return res;
+    //   },
+    // },
   },
 
   methods: {

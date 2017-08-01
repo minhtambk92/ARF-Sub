@@ -262,7 +262,7 @@ class Zone extends Entity {
 
         /* if cpdShare take all share percent in a place order -> filter */
     const shareStructure = [];
-
+    console.log('allSharePlaces', allSharePlaces, allSharePlaceInCurrentChannel);
     const listPositionOnShare = allSharePlaceInCurrentChannel.map(x => (x.positionOnShare === 0 ? 1 : x.positionOnShare));
 
     const countPositionOnShare = util.uniqueItem(listPositionOnShare).length;
