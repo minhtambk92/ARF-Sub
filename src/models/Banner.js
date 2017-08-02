@@ -29,16 +29,21 @@ class Banner extends Entity {
     this.optionBanners = banner.optionBanners;
     this.isRotate = banner.isRotate;
     this.campaignId = banner.campaignId;
+    this.isAvailable = undefined;
   }
 
   // Banner Checking Process
   isRenderable() {
+    if (window.cacheBannerCheck && window.cacheBannerCheck[this.id]) return window.cacheBannerCheck[this.id];
+    console.log('runCheckBanner', this.isAvailable);
     const isBannerAvailable = this.id !== 'banner-undefined';
     const isFitChannel = this.checkChannel.check && this.checkChannel.checkGlobal;
     // const isFitLocation = this.checkLocation;
     const isFitFrequency = this.checkFrequency;
     const res = (isBannerAvailable && isFitChannel) && isFitFrequency;
     console.log(`${this.id}: fre:${isFitFrequency}, channel: ${isFitChannel}, isBannerAvailable: ${isBannerAvailable}, res: ${res}`);
+    window.cacheBannerCheck = window.cacheBannerCheck || {};
+    window.cacheBannerCheck[this.id] = res;
     return res;
   }
 

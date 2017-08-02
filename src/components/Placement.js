@@ -91,7 +91,6 @@ const Placement = Vue.component('placement', {
     // },
     setupRotate() {
       const conditional = (this.current.isRotate && this.current.filterBanner().length > 1);
-      console.log('conditional', this.current.filterBanner().length);
       if (conditional) {
         const placement = document.getElementById(this.current.id);
         const objMonitor = ViewTracking(placement);

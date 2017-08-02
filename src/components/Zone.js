@@ -303,6 +303,7 @@ const Zone = Vue.component('zone', {
     // }
     if (!this.isRelative() || this.$data.pageLoad === null) {
       console.log('runRotateShare', this.current.id);
+      /* track zone after 7 seconds for sure zone load completed */
       setTimeout(() => {
         this.setupRotate();
       }, 7000);
@@ -361,7 +362,7 @@ const Zone = Vue.component('zone', {
         .on('update', (track) => {
               /*  at least 80% -> setup rotate  */
           if (track.state().percentage >= 0.8 && isTrack === false) {
-            console.log('testMonitorZone', track.state().percentage);
+            console.log(`% Zone Display [${this.current.id}]: ${track.state().percentage * 100}`);
             isTrack = true;
             const aaa = ViewTracking(zone);
             aaa.onPercentageTimeTestPassed(() => {

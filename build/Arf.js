@@ -16180,6 +16180,7 @@ var Banner = function (_Entity) {
     _this.optionBanners = banner.optionBanners;
     _this.isRotate = banner.isRotate;
     _this.campaignId = banner.campaignId;
+    _this.isAvailable = undefined;
     return _this;
   }
 
@@ -16189,12 +16190,16 @@ var Banner = function (_Entity) {
   (0, _createClass3.default)(Banner, [{
     key: 'isRenderable',
     value: function isRenderable() {
+      if (window.cacheBannerCheck && window.cacheBannerCheck[this.id]) return window.cacheBannerCheck[this.id];
+      console.log('runCheckBanner', this.isAvailable);
       var isBannerAvailable = this.id !== 'banner-undefined';
       var isFitChannel = this.checkChannel.check && this.checkChannel.checkGlobal;
       // const isFitLocation = this.checkLocation;
       var isFitFrequency = this.checkFrequency;
       var res = isBannerAvailable && isFitChannel && isFitFrequency;
       console.log(this.id + ': fre:' + isFitFrequency + ', channel: ' + isFitChannel + ', isBannerAvailable: ' + isBannerAvailable + ', res: ' + res);
+      window.cacheBannerCheck = window.cacheBannerCheck || {};
+      window.cacheBannerCheck[this.id] = res;
       return res;
     }
   }, {
@@ -33408,6 +33413,8 @@ var util = {
     });
     return placesWithKeyword;
   },
+
+  /* get script tags and java script code in script tag */
   getScriptTag: function getScriptTag(html) {
     var element = html;
     var evlScript = [];
@@ -33444,6 +33451,9 @@ var util = {
     }
     return { scripts: scripts, evlScript: evlScript };
   },
+
+
+  /* setup script tag from link src */
   installScript: function installScript(el) {
     var newScriptTag = document.createElement('script');
     newScriptTag.type = 'text/javascript';
@@ -33474,6 +33484,9 @@ var util = {
       el.appendChild(newScriptTag);
     }
   },
+
+
+  /* execute js from html string */
   executeJS: function executeJS(html, id) {
     var scriptTag = this.getScriptTag(html);
     var elementContainer = document.getElementById(id);
@@ -33537,115 +33550,6 @@ var util = {
     iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
     /* eslint-enable */
   },
-
-
-  /* eslint-disable */
-  admExecJs: function admExecJs(html, id) {
-    var element = html,
-        evlScript = [],
-        script = [];
-    this.trim = function (str) {
-      str = str.replace(/^\s+/, '');
-      for (var i = str.length - 1; i >= 0; i--) {
-        if (/\S/.test(str.charAt(i))) {
-          str = str.substring(0, i + 1);
-          break;
-        }
-      }
-      return str;
-    };
-    this.explode = function () {
-      // boc tach script
-      var b = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi),
-          e = [];
-      if (b) {
-        var d = '';
-        for (var i = 0, len = b.length; i < len; i++) {
-          element = element.replace(b[i], '');
-          d = b[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
-          if (this.trim(d) != '') {
-            evlScript.push(this.trim(d));
-          }
-
-          var t = b[i].match(/src="([^\"]*)\"/gi);
-          if (t) {
-            script.push(t[0].replace(/src="([^\"]*)\"/gi, '$1'));
-          }
-        }
-      }
-    };
-    this.getFileScript = function () {
-      var a = document.createElement('script');
-      a.type = 'text/javascript';
-      a.async = true;
-
-      for (var _len3 = arguments.length, url = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-        url[_key3] = arguments[_key3];
-      }
-
-      a.src = url;
-      var c = document.getElementsByTagName('script')[0];
-      if (url.length >= 2) {
-        var arrLength = url[1];
-        a.onload = function () {
-          var arr = arrLength;
-          var strUrl = arr[0];
-          arr.shift();
-          if (arr.length >= 1) {
-            callScript(strUrl, arr);
-          } else {
-            callScript(strUrl);
-          }
-        };
-      }
-      c.parentNode.insertBefore(a, c);
-    };
-    var callScript = this.getFileScript;
-    this.explode();
-
-    var id1 = document.getElementById(id);
-    if (arguments.length >= 3) {
-      if (id1) {
-        var strDiv = element.match(/id=\"[^\"]+\"/i);
-        if (strDiv) {
-          var strId = strDiv[0].replace(/id="|"/gi, '');
-          if (strId) {
-            id1.innerHTML = element;
-            var id2 = document.getElementById(strId);
-            if (id2) {
-              id2.setAttribute('rel', id);
-              var parentNode = id1.parentNode;
-              parentNode.replaceChild(id2, id1);
-            }
-          }
-        }
-      }
-    } else if (id1) {
-      id1.innerHTML = element;
-      window.setTimeout(function () {
-        id1.style.display = '';
-      }, 1000);
-    }
-
-    if (script.length > 0) {
-      if (script.length > 1) {
-        var arr = script;
-        var strUrl = script[0];
-        arr.shift();
-        this.getFileScript(strUrl, arr);
-      } else {
-        this.getFileScript(script[0]);
-      }
-    }
-    if (evlScript.length > 0) {
-      for (var i = 0, len = evlScript.length; i < len; i++) {
-        eval(evlScript[i]);
-      }
-    }
-  },
-
-  /* eslint-enable */
-
   getCurrentBrowser: function getCurrentBrowser() {
     var tem = void 0;
     var M = void 0;
@@ -35311,7 +35215,6 @@ var Placement = _vue2.default.component('placement', {
       var _this3 = this;
 
       var conditional = this.current.isRotate && this.current.filterBanner().length > 1;
-      console.log('conditional', this.current.filterBanner().length);
       if (conditional) {
         var placement = document.getElementById(this.current.id);
         var objMonitor = ViewTracking(placement);
@@ -35935,6 +35838,7 @@ var Zone = _vue2.default.component('zone', {
     // }
     if (!this.isRelative() || this.$data.pageLoad === null) {
       console.log('runRotateShare', this.current.id);
+      /* track zone after 7 seconds for sure zone load completed */
       setTimeout(function () {
         _this2.setupRotate();
       }, 7000);
@@ -35986,7 +35890,7 @@ var Zone = _vue2.default.component('zone', {
       monitor.strategy(new ViewTracking.VisMon.Strategy.EventStrategy({ throttle: 200 })).on('update', function (track) {
         /*  at least 80% -> setup rotate  */
         if (track.state().percentage >= 0.8 && isTrack === false) {
-          console.log('testMonitorZone', track.state().percentage);
+          console.log('% Zone Display [' + _this3.current.id + ']: ' + track.state().percentage * 100);
           isTrack = true;
           var aaa = ViewTracking(zone);
           aaa.onPercentageTimeTestPassed(function () {

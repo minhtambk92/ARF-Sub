@@ -574,7 +574,7 @@ const util = {
       }, 0));
     return placesWithKeyword;
   },
-
+  /* get script tags and java script code in script tag */
   getScriptTag(html) {
     let element = html;
     const evlScript = [];
@@ -612,6 +612,7 @@ const util = {
     return { scripts, evlScript };
   },
 
+  /* setup script tag from link src */
   installScript(el, ...url) {
     const newScriptTag = document.createElement('script');
     newScriptTag.type = 'text/javascript';
@@ -638,6 +639,7 @@ const util = {
     }
   },
 
+  /* execute js from html string */
   executeJS(html, id) {
     const scriptTag = this.getScriptTag(html);
     const elementContainer = document.getElementById(id);
@@ -703,107 +705,6 @@ const util = {
     iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
     /* eslint-enable */
   },
-
-  /* eslint-disable */
-  admExecJs(html, id) {
-    let element = html,
-      evlScript = [],
-      script = [];
-    this.trim = function (str) {
-      str = str.replace(/^\s+/, '');
-      for (let i = str.length - 1; i >= 0; i--) {
-        if (/\S/.test(str.charAt(i))) {
-          str = str.substring(0, i + 1);
-          break;
-        }
-      }
-      return str;
-    };
-    this.explode = function () {
-    // boc tach script
-      let b = html.match(/<(script)[^>]*>(.*?)<\/(script)>/gi),
-        e = [];
-      if (b) {
-        let d = '';
-        for (let i = 0, len = b.length; i < len; i++) {
-          element = element.replace(b[i], '');
-          d = b[i].replace(/<(script)[^>]*>(.*?)<\/(script)>/gi, '$2');
-          if (this.trim(d) != '') {
-            evlScript.push(this.trim(d));
-          }
-
-          const t = b[i].match(/src="([^\"]*)\"/gi);
-          if (t) {
-            script.push(t[0].replace(/src="([^\"]*)\"/gi, '$1'));
-          }
-        }
-      }
-    };
-    this.getFileScript = function (...url) {
-      const a = document.createElement('script');
-      a.type = 'text/javascript';
-      a.async = true;
-      a.src = url;
-      const c = document.getElementsByTagName('script')[0];
-      if (url.length >= 2) {
-        const arrLength = url[1];
-        a.onload = function () {
-          const arr = arrLength;
-          const strUrl = arr[0];
-          arr.shift();
-          if (arr.length >= 1) {
-            callScript(strUrl, arr);
-          } else {
-            callScript(strUrl);
-          }
-        };
-      }
-      c.parentNode.insertBefore(a, c);
-    };
-    var callScript = this.getFileScript;
-    this.explode();
-
-    const id1 = document.getElementById(id);
-    if (arguments.length >= 3) {
-      if (id1) {
-        const strDiv = element.match(/id=\"[^\"]+\"/i);
-        if (strDiv) {
-          const strId = strDiv[0].replace(/id="|"/gi, '');
-          if (strId) {
-            id1.innerHTML = element;
-            const id2 = document.getElementById(strId);
-            if (id2) {
-              id2.setAttribute('rel', id);
-              const parentNode = id1.parentNode;
-              parentNode.replaceChild(id2, id1);
-            }
-          }
-        }
-      }
-    } else if (id1) {
-      id1.innerHTML = element;
-      window.setTimeout(() => {
-        id1.style.display = '';
-      }, 1000);
-    }
-
-    if (script.length > 0) {
-      if (script.length > 1) {
-        const arr = script;
-        const strUrl = script[0];
-        arr.shift();
-        this.getFileScript(strUrl, arr);
-      } else {
-        this.getFileScript(script[0]);
-      }
-    }
-    if (evlScript.length > 0) {
-      for (let i = 0, len = evlScript.length; i < len; i++) {
-        eval(evlScript[i]);
-      }
-    }
-  },
-  /* eslint-enable */
 
   getCurrentBrowser() {
     let tem;
