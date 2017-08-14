@@ -208,7 +208,7 @@ class Banner extends Entity {
 
   get checkChannel() {
     if (this.optionBanners !== undefined &&
-      (this.optionBanners.length === 0 || this.optionBanners === null)) return true;
+      (this.optionBanners.length === 0 || this.optionBanners === null)) return { check: true, checkGlobal: true };
     if (this.optionBanners !== undefined && this.optionBanners !== null) {
       const optionBanner = this.optionBanners;
       const checkLength = optionBanner.length;
@@ -464,7 +464,7 @@ class Banner extends Entity {
       // }
       return { check: eval(stringCheckTotal), checkGlobal: eval(stringCheckTotalGlobal) }; // eslint-disable-line
     }
-    return true;
+    return { check: true, checkGlobal: true };
   }
 
   // get CheckLocation() {

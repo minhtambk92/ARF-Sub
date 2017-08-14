@@ -16426,7 +16426,7 @@ var Banner = function (_Entity) {
     get: function get() {
       var _this2 = this;
 
-      if (this.optionBanners !== undefined && (this.optionBanners.length === 0 || this.optionBanners === null)) return true;
+      if (this.optionBanners !== undefined && (this.optionBanners.length === 0 || this.optionBanners === null)) return { check: true, checkGlobal: true };
       if (this.optionBanners !== undefined && this.optionBanners !== null) {
         var optionBanner = this.optionBanners;
         var checkLength = optionBanner.length;
@@ -16705,7 +16705,7 @@ var Banner = function (_Entity) {
         // }
         return { check: eval(stringCheckTotal), checkGlobal: eval(stringCheckTotalGlobal) }; // eslint-disable-line
       }
-      return true;
+      return { check: true, checkGlobal: true };
     }
 
     // get CheckLocation() {
