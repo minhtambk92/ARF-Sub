@@ -35196,8 +35196,10 @@ var Placement = _vue2.default.component('placement', {
     //     this.$forceUpdate();
     //   }, 5000);
     // }
+    var vm = this;
     setTimeout(function () {
-      _this2.setupRotate();
+      console.log('runPlaceRotate');
+      vm.setupRotate();
     }, 3000);
     if (this.current.preview !== true) {
       this.$on('renderFinish', function () {
