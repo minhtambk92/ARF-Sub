@@ -31069,19 +31069,29 @@ var Zone = function (_Entity) {
         if (type === 'random') return allPlaces[Math.floor(Math.random() * allPlaces.length)];
         var randomNumber = Math.random() * 100;
 
-        var filterPlace = type === 'cpd' ? allPlaces.filter(function (sharePlace) {
-          var cpdPercent = sharePlace.placement.cpdPercent;
-          var timesCpdAppear = previousPlace.reduce(function (result, item) {
-            return sharePlace.placement.revenueType === 'cpd' && sharePlace.placement.id === item ? result + 1 : result;
-          }, 0);
-          console.log('testActiveCpd', sharePlace.placement.id, cpdPercent, timesCpdAppear);
-          if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
-            if (timesCpdAppear >= 1) return false;
-          } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
-            if (timesCpdAppear >= 2) return false;
+        var filterPlace = null;
+        if (type === 'cpd') {
+          var filterLimitView = allPlaces.filter(function (sharePlace) {
+            var cpdPercent = sharePlace.placement.cpdPercent;
+            var timesCpdAppear = previousPlace.reduce(function (result, item) {
+              return sharePlace.placement.revenueType === 'cpd' && sharePlace.placement.id === item ? result + 1 : result;
+            }, 0);
+            console.log('testActiveCpd', sharePlace.placement.id, cpdPercent, timesCpdAppear);
+            if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
+              if (timesCpdAppear >= 1) return false;
+            } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
+              if (timesCpdAppear >= 2) return false;
+            }
+            return true;
+          });
+          if (filterLimitView.length > 0) {
+            filterPlace = filterLimitView;
+          } else {
+            filterPlace = allPlaces;
           }
-          return true;
-        }) : allPlaces;
+        } else {
+          filterPlace = allPlaces;
+        }
         console.log('testFilterPlace', filterPlace);
         var ratio = filterPlace.reduce(function (tmp, place) {
           return (type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp;

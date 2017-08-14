@@ -520,18 +520,28 @@ class Zone extends Entity {
       if (type === 'random') return allPlaces[Math.floor(Math.random() * allPlaces.length)];
       const randomNumber = Math.random() * 100;
 
-      const filterPlace = (type === 'cpd') ? allPlaces.filter((sharePlace) => {
-        const cpdPercent = sharePlace.placement.cpdPercent;
-        const timesCpdAppear = previousPlace.reduce((result, item) => (
-          (sharePlace.placement.revenueType === 'cpd' && sharePlace.placement.id === item) ? result + 1 : result), 0);
-        console.log('testActiveCpd', sharePlace.placement.id, cpdPercent, timesCpdAppear);
-        if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
-          if (timesCpdAppear >= 1) return false;
-        } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
-          if (timesCpdAppear >= 2) return false;
+      let filterPlace = null;
+      if (type === 'cpd') {
+        const filterLimitView = allPlaces.filter((sharePlace) => {
+          const cpdPercent = sharePlace.placement.cpdPercent;
+          const timesCpdAppear = previousPlace.reduce((result, item) => (
+              (sharePlace.placement.revenueType === 'cpd' && sharePlace.placement.id === item) ? result + 1 : result), 0);
+          console.log('testActiveCpd', sharePlace.placement.id, cpdPercent, timesCpdAppear);
+          if (cpdPercent > 0 && cpdPercent <= 100 / 3) {
+            if (timesCpdAppear >= 1) return false;
+          } else if (cpdPercent > 100 / 3 && cpdPercent <= 200 / 3) {
+            if (timesCpdAppear >= 2) return false;
+          }
+          return true;
+        });
+        if (filterLimitView.length > 0) {
+          filterPlace = filterLimitView;
+        } else {
+          filterPlace = allPlaces;
         }
-        return true;
-      }) : allPlaces;
+      } else {
+        filterPlace = allPlaces;
+      }
       console.log('testFilterPlace', filterPlace);
       const ratio = filterPlace
         .reduce((tmp, place) => ((type === 'cpd' ? place.placement.cpdPercent : place.placement.weight) + tmp), 0) / 100;
