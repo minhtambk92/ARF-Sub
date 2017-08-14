@@ -3,6 +3,7 @@
  */
 
 import webpack from 'webpack';
+// import WebpackStrip from 'strip-loader';
 import {
   version,
   description,
@@ -44,6 +45,10 @@ const config = {
         loader: 'eslint-loader',
         exclude: /node_modules/,
       },
+      // {
+      //   test: /\.js$/,
+      //   loader: WebpackStrip.loader('debug', 'console.log'),
+      // },
     ],
   },
 
@@ -60,7 +65,10 @@ const config = {
     }),
     ...RELEASE ? [
       new webpack.optimize.UglifyJsPlugin({
-        compress: { warnings: false },
+        compress: {
+          warnings: false,
+          pure_funcs: ['console.log'],
+        },
         comments: false,
       }),
     ] : [],

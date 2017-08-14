@@ -41,6 +41,7 @@
     "mocha": "latest",
     "pre-commit": "latest",
     "string-replace-webpack-plugin": "latest",
+    "strip-loader": "^0.1.2",
     "vue": "latest",
     "vue-loader": "latest",
     "webpack": "latest"
