@@ -8,6 +8,7 @@ import Vue from 'vue';
 import { Placement as PlacementModel } from '../models';
 import { Banner } from '../components';
 import { dom } from '../mixins';
+import { detectDevices } from '../vendor';
 
 const Placement = Vue.component('placement', {
 
@@ -137,6 +138,7 @@ const Placement = Vue.component('placement', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
+    const isMobile = detectDevices.isMobile().any;
     const dev = location.search.indexOf('checkPlace=dev') !== -1;
     const currentBanner = this.current.isRotateFromShare ? this.$set(this, 'activeBannerModel', this.current.activeBanner(true, null)) : this.activeBannerModel;
     vm.$data.lastBanner = currentBanner.id;
@@ -149,7 +151,7 @@ const Placement = Vue.component('placement', {
             id={vm.current.id}
             class="arf-placement"
             style={{
-              width: `${vm.current.width}px`,
+              // width: !isMobile ? `${vm.current.width}px` : '100%',
               height: `${vm.current.height}px`,
             }}
           >
@@ -195,7 +197,8 @@ const Placement = Vue.component('placement', {
           id={vm.current.id}
           class="arf-placement"
           style={{
-            width: `${vm.current.width}px`,
+            width: !isMobile ? `${vm.current.width}px` : '100%',
+            // width: `${vm.current.width}px`,
             // height: `${vm.current.height}px`,
           }}
         >

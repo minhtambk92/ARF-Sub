@@ -4563,7 +4563,7 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 var store      = __webpack_require__(39)('wks')
   , uid        = __webpack_require__(23)
-  , Symbol     = __webpack_require__(3).Symbol
+  , Symbol     = __webpack_require__(4).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
 var $exports = module.exports = function(name){
@@ -4575,36 +4575,6 @@ $exports.store = store;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var anObject       = __webpack_require__(13)
-  , IE8_DOM_DEFINE = __webpack_require__(49)
-  , toPrimitive    = __webpack_require__(35)
-  , dP             = Object.defineProperty;
-
-exports.f = __webpack_require__(8) ? Object.defineProperty : function defineProperty(O, P, Attributes){
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
-    return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
-  return O;
-};
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4613,7 +4583,7 @@ exports.f = __webpack_require__(8) ? Object.defineProperty : function defineProp
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.VisSensePlugin = exports.VisSense = exports.macro = exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
+exports.detectDevices = exports.VisSensePlugin = exports.VisSense = exports.macro = exports.util = exports.screen = exports.term = exports.adsStorage = undefined;
 
 var _adsStorage = __webpack_require__(219);
 
@@ -4643,7 +4613,15 @@ var _VisSensePlugin = __webpack_require__(239);
 
 var _VisSensePlugin2 = _interopRequireDefault(_VisSensePlugin);
 
+var _detectDevices = __webpack_require__(240);
+
+var _detectDevices2 = _interopRequireDefault(_detectDevices);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Created by tlm on 06/03/2017.
+ */
 
 exports.adsStorage = _adsStorage2.default;
 exports.term = _term2.default;
@@ -4651,11 +4629,39 @@ exports.screen = _screen2.default;
 exports.util = _util2.default;
 exports.macro = _macro2.default;
 exports.VisSense = _VisSense2.default;
-exports.VisSensePlugin = _VisSensePlugin2.default; /**
-                                                    * Created by tlm on 06/03/2017.
-                                                    */
+exports.VisSensePlugin = _VisSensePlugin2.default;
+exports.detectDevices = _detectDevices2.default;
+exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default, macro: _macro2.default, VisSense: _VisSense2.default, VisSensePlugin: _VisSensePlugin2.default, detectDevices: _detectDevices2.default };
 
-exports.default = { adsStorage: _adsStorage2.default, term: _term2.default, screen: _screen2.default, util: _util2.default, macro: _macro2.default, VisSense: _VisSense2.default, VisSensePlugin: _VisSensePlugin2.default };
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject       = __webpack_require__(13)
+  , IE8_DOM_DEFINE = __webpack_require__(49)
+  , toPrimitive    = __webpack_require__(35)
+  , dP             = Object.defineProperty;
+
+exports.f = __webpack_require__(8) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
 
 /***/ }),
 /* 6 */
@@ -4688,7 +4694,7 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global    = __webpack_require__(3)
+var global    = __webpack_require__(4)
   , core      = __webpack_require__(1)
   , ctx       = __webpack_require__(34)
   , hide      = __webpack_require__(12)
@@ -14878,7 +14884,7 @@ module.exports = Vue$3;
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP         = __webpack_require__(4)
+var dP         = __webpack_require__(5)
   , createDesc = __webpack_require__(17);
 module.exports = __webpack_require__(8) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
@@ -15023,15 +15029,15 @@ var _Banner2 = __webpack_require__(180);
 
 var _Banner3 = _interopRequireDefault(_Banner2);
 
-var _Placement2 = __webpack_require__(242);
+var _Placement2 = __webpack_require__(243);
 
 var _Placement3 = _interopRequireDefault(_Placement2);
 
-var _Share2 = __webpack_require__(243);
+var _Share2 = __webpack_require__(244);
 
 var _Share3 = _interopRequireDefault(_Share2);
 
-var _Zone2 = __webpack_require__(244);
+var _Zone2 = __webpack_require__(245);
 
 var _Zone3 = _interopRequireDefault(_Zone2);
 
@@ -15219,11 +15225,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.adsData = exports.dom = undefined;
 
-var _dom2 = __webpack_require__(240);
+var _dom2 = __webpack_require__(241);
 
 var _dom3 = _interopRequireDefault(_dom2);
 
-var _adsData2 = __webpack_require__(241);
+var _adsData2 = __webpack_require__(242);
 
 var _adsData3 = _interopRequireDefault(_adsData2);
 
@@ -15375,7 +15381,7 @@ module.exports = function(key){
 /* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(3)
+var global = __webpack_require__(4)
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
@@ -15395,7 +15401,7 @@ module.exports = (
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var def = __webpack_require__(4).f
+var def = __webpack_require__(5).f
   , has = __webpack_require__(9)
   , TAG = __webpack_require__(2)('toStringTag');
 
@@ -15413,11 +15419,11 @@ exports.f = __webpack_require__(2);
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global         = __webpack_require__(3)
+var global         = __webpack_require__(4)
   , core           = __webpack_require__(1)
   , LIBRARY        = __webpack_require__(33)
   , wksExt         = __webpack_require__(42)
-  , defineProperty = __webpack_require__(4).f;
+  , defineProperty = __webpack_require__(5).f;
 module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
@@ -15478,7 +15484,7 @@ var _Banner = __webpack_require__(60);
 
 var _Banner2 = _interopRequireDefault(_Banner);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15796,7 +15802,7 @@ module.exports = !__webpack_require__(8) && !__webpack_require__(16)(function(){
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(15)
-  , document = __webpack_require__(3).document
+  , document = __webpack_require__(4).document
   // in old IE typeof document.createElement is 'object'
   , is = isObject(document) && isObject(document.createElement);
 module.exports = function(it){
@@ -15957,7 +15963,7 @@ var _Placement = __webpack_require__(46);
 
 var _Placement2 = _interopRequireDefault(_Placement);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16145,7 +16151,7 @@ var _Entity2 = __webpack_require__(29);
 
 var _Entity3 = _interopRequireDefault(_Entity2);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28037,7 +28043,7 @@ var _models = __webpack_require__(14);
 
 var _mixins = __webpack_require__(30);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28085,8 +28091,9 @@ var Banner = _vue2.default.component('banner', {
     var _this = this;
 
     if (this.current.isIFrame) {
-      console.log('renderBannerIframe');
-      this.renderToIFrame();
+      var isMobile = _vendor.detectDevices.isMobile().any;
+      console.log('renderBannerIframe', isMobile);
+      this.renderToIFrame(isMobile);
     } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
@@ -28113,7 +28120,7 @@ var Banner = _vue2.default.component('banner', {
     /**
      * render ads inside an iframe
      */
-    renderToIFrame: function renderToIFrame() {
+    renderToIFrame: function renderToIFrame(isMobile) {
       var _this2 = this;
 
       var vm = this;
@@ -28125,7 +28132,7 @@ var Banner = _vue2.default.component('banner', {
 
           iframe.onload = function () {
             if (vm.$data.isRendered === false) {
-              iframe.width = vm.current.width;
+              iframe.width = isMobile ? _vendor.screen.getWidth() : vm.current.width;
               iframe.height = vm.current.height;
               iframe.id = 'iframe-' + vm.current.id;
               iframe.frameBorder = vm.iframe.frameBorder;
@@ -28200,7 +28207,6 @@ var Banner = _vue2.default.component('banner', {
             clearInterval(wait);
           } catch (error) {
             clearInterval(wait);
-            throw new Error(error);
           }
         }
       }, 500);
@@ -28234,7 +28240,6 @@ var Banner = _vue2.default.component('banner', {
           }
         } catch (error) {
           clearInterval(loadAsync);
-          throw new Error('Banner Error!');
         }
       }, 100);
       // const loadAsync = setInterval(() => {
@@ -28281,6 +28286,7 @@ var Banner = _vue2.default.component('banner', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
+    var isMobile = _vendor.detectDevices.isMobile().any;
     if (this.current.isRotate) {
       vm.$data.isRendered = false;
       vm.renderToIFrame();
@@ -28302,7 +28308,8 @@ var Banner = _vue2.default.component('banner', {
         },
         'class': 'arf-banner',
         style: {
-          width: vm.current.width + 'px'
+          width: !isMobile ? vm.current.width + 'px' : '100%'
+          // width: `${vm.current.width}px`,
           // height: `${vm.current.height}px`,
         }
       },
@@ -30465,7 +30472,7 @@ var _Placement = __webpack_require__(46);
 
 var _Placement2 = _interopRequireDefault(_Placement);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31795,7 +31802,7 @@ module.exports = function(Constructor, NAME, next){
 /* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP       = __webpack_require__(4)
+var dP       = __webpack_require__(5)
   , anObject = __webpack_require__(13)
   , getKeys  = __webpack_require__(19);
 
@@ -31861,14 +31868,14 @@ module.exports = function(index, length){
 /* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(3).document && document.documentElement;
+module.exports = __webpack_require__(4).document && document.documentElement;
 
 /***/ }),
 /* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(194);
-var global        = __webpack_require__(3)
+var global        = __webpack_require__(4)
   , hide          = __webpack_require__(12)
   , Iterators     = __webpack_require__(18)
   , TO_STRING_TAG = __webpack_require__(2)('toStringTag');
@@ -31958,7 +31965,7 @@ module.exports = __webpack_require__(1).Symbol;
 "use strict";
 
 // ECMAScript 6 symbols shim
-var global         = __webpack_require__(3)
+var global         = __webpack_require__(4)
   , has            = __webpack_require__(9)
   , DESCRIPTORS    = __webpack_require__(8)
   , $export        = __webpack_require__(7)
@@ -31981,7 +31988,7 @@ var global         = __webpack_require__(3)
   , _create        = __webpack_require__(36)
   , gOPNExt        = __webpack_require__(204)
   , $GOPD          = __webpack_require__(57)
-  , $DP            = __webpack_require__(4)
+  , $DP            = __webpack_require__(5)
   , $keys          = __webpack_require__(19)
   , gOPD           = $GOPD.f
   , dP             = $DP.f
@@ -32199,7 +32206,7 @@ setToStringTag(global.JSON, 'JSON', true);
 var META     = __webpack_require__(23)('meta')
   , isObject = __webpack_require__(15)
   , has      = __webpack_require__(9)
-  , setDesc  = __webpack_require__(4).f
+  , setDesc  = __webpack_require__(5).f
   , id       = 0;
 var isExtensible = Object.isExtensible || function(){
   return true;
@@ -32381,7 +32388,7 @@ module.exports = function defineProperty(it, key, desc){
 
 var $export = __webpack_require__(7);
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !__webpack_require__(8), 'Object', {defineProperty: __webpack_require__(4).f});
+$export($export.S + $export.F * !__webpack_require__(8), 'Object', {defineProperty: __webpack_require__(5).f});
 
 /***/ }),
 /* 213 */
@@ -34656,7 +34663,7 @@ module.exports = function(it){
 
 "use strict";
 
-var $defineProperty = __webpack_require__(4)
+var $defineProperty = __webpack_require__(5)
   , createDesc      = __webpack_require__(17);
 
 module.exports = function(object, index, value){
@@ -34945,6 +34952,124 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var detectDevice = {
+  isMobile: function isMobile() {
+    var _this = this;
+
+    var applePhone = /iPhone/i;
+    var appleIpod = /iPod/i;
+    var appleTablet = /iPad/i;
+    var androidPhone = /(?=.*\bAndroid\b)(?=.*\bMobile\b)/i; // Match 'Android' AND 'Mobile'
+    var androidTablet = /Android/i;
+    var amazonPhone = /(?=.*\bAndroid\b)(?=.*\bSD4930UR\b)/i;
+    var amazonTablet = /(?=.*\bAndroid\b)(?=.*\b(?:KFOT|KFTT|KFJWI|KFJWA|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|KFARWI|KFASWI|KFSAWI|KFSAWA)\b)/i;
+    var windowsPhone = /Windows Phone/i;
+    var windowsTablet = /(?=.*\bWindows\b)(?=.*\bARM\b)/i; // Match 'Windows' AND 'ARM'
+    var otherBlackberry = /BlackBerry/i;
+    var otherBlackberry10 = /BB10/i;
+    var otherOpera = /Opera Mini/i;
+    var otherChrome = /(CriOS|Chrome)(?=.*\bMobile\b)/i;
+    var otherFirefox = /(?=.*\bFirefox\b)(?=.*\bMobile\b)/i; // Match 'Firefox' AND 'Mobile'
+    var sevenInch = new RegExp('(?:' + // Non-capturing group
+
+    'Nexus 7' + // Nexus 7
+
+    '|' + // OR
+
+    'BNTV250' + // B&N Nook Tablet 7 inch
+
+    '|' + // OR
+
+    'Kindle Fire' + // Kindle Fire
+
+    '|' + // OR
+
+    'Silk' + // Kindle Fire, Silk Accelerated
+
+    '|' + // OR
+
+    'GT-P1000' + // Galaxy Tab 7 inch
+
+    ')', // End non-capturing group
+
+    'i'); // Case-insensitive matching
+    var match = function match(regex, userAgent) {
+      return regex.test(userAgent);
+    };
+    var isMobileClass = function isMobileClass(userAgent) {
+      var ua = userAgent || navigator.userAgent;
+
+      // Facebook mobile app's integrated browser adds a bunch of strings that
+      // match everything. Strip it out if it exists.
+      var tmp = ua.split('[FBAN');
+      if (typeof tmp[1] !== 'undefined') {
+        ua = tmp[0];
+      }
+
+      // Twitter mobile app's integrated browser on iPad adds a "Twitter for
+      // iPhone" string. Same probable happens on other tablet platforms.
+      // This will confuse detection so strip it out if it exists.
+      tmp = ua.split('Twitter');
+      if (typeof tmp[1] !== 'undefined') {
+        ua = tmp[0];
+      }
+
+      _this.apple = {
+        phone: match(applePhone, ua),
+        ipod: match(appleIpod, ua),
+        tablet: !match(applePhone, ua) && match(appleTablet, ua),
+        device: match(applePhone, ua) || match(appleIpod, ua) || match(appleTablet, ua)
+      };
+      _this.amazon = {
+        phone: match(amazonPhone, ua),
+        tablet: !match(amazonPhone, ua) && match(amazonTablet, ua),
+        device: match(amazonPhone, ua) || match(amazonTablet, ua)
+      };
+      _this.android = {
+        phone: match(amazonPhone, ua) || match(androidPhone, ua),
+        tablet: !match(amazonPhone, ua) && !match(androidPhone, ua) && (match(amazonTablet, ua) || match(androidTablet, ua)),
+        device: match(amazonPhone, ua) || match(amazonTablet, ua) || match(androidPhone, ua) || match(androidTablet, ua)
+      };
+      _this.windows = {
+        phone: match(windowsPhone, ua),
+        tablet: match(windowsTablet, ua),
+        device: match(windowsPhone, ua) || match(windowsTablet, ua)
+      };
+      _this.other = {
+        blackberry: match(otherBlackberry, ua),
+        blackberry10: match(otherBlackberry10, ua),
+        opera: match(otherOpera, ua),
+        firefox: match(otherFirefox, ua),
+        chrome: match(otherChrome, ua),
+        device: match(otherBlackberry, ua) || match(otherBlackberry10, ua) || match(otherOpera, ua) || match(otherFirefox, ua) || match(otherChrome, ua)
+      };
+      _this.seven_inch = match(sevenInch, ua);
+      _this.any = _this.apple.device || _this.android.device || _this.windows.device || _this.other.device || _this.seven_inch;
+
+      // excludes 'other' devices and ipods, targeting touchscreen phones
+      _this.phone = _this.apple.phone || _this.android.phone || _this.windows.phone;
+
+      // excludes 7 inch devices, classifying as phone or tablet is left to the user
+      _this.tablet = _this.apple.tablet || _this.android.tablet || _this.windows.tablet;
+
+      return _this;
+    };
+    return isMobileClass();
+  }
+};
+
+exports.default = detectDevice;
+
+/***/ }),
+/* 241 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 /**
  * Created by manhhailua on 1/17/17.
  *
@@ -35004,7 +35129,7 @@ var dom = {
 exports.default = dom;
 
 /***/ }),
-/* 241 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35018,7 +35143,7 @@ var _vue = __webpack_require__(11);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35111,7 +35236,7 @@ var adsData = _vue2.default.mixin({
 exports.default = adsData;
 
 /***/ }),
-/* 242 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35131,13 +35256,9 @@ var _components = __webpack_require__(22);
 
 var _mixins = __webpack_require__(30);
 
+var _vendor = __webpack_require__(3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Created by Manhhailua on 11/24/16.
- */
-
-/* eslint-disable import/no-extraneous-dependencies */
 
 var Placement = _vue2.default.component('placement', {
 
@@ -35268,6 +35389,7 @@ var Placement = _vue2.default.component('placement', {
   render: function render(h) {
     // eslint-disable-line no-unused-vars
     var vm = this;
+    var isMobile = _vendor.detectDevices.isMobile().any;
     var dev = location.search.indexOf('checkPlace=dev') !== -1;
     var currentBanner = this.current.isRotateFromShare ? this.$set(this, 'activeBannerModel', this.current.activeBanner(true, null)) : this.activeBannerModel;
     vm.$data.lastBanner = currentBanner.id;
@@ -35283,7 +35405,7 @@ var Placement = _vue2.default.component('placement', {
             },
             'class': 'arf-placement',
             style: {
-              width: vm.current.width + 'px',
+              // width: !isMobile ? `${vm.current.width}px` : '100%',
               height: vm.current.height + 'px'
             }
           },
@@ -35348,7 +35470,8 @@ var Placement = _vue2.default.component('placement', {
           },
           'class': 'arf-placement',
           style: {
-            width: vm.current.width + 'px'
+            width: !isMobile ? vm.current.width + 'px' : '100%'
+            // width: `${vm.current.width}px`,
             // height: `${vm.current.height}px`,
           }
         },
@@ -35372,12 +35495,16 @@ var Placement = _vue2.default.component('placement', {
       []
     );
   }
-});
+}); /**
+     * Created by Manhhailua on 11/24/16.
+     */
+
+/* eslint-disable import/no-extraneous-dependencies */
 
 exports.default = Placement;
 
 /***/ }),
-/* 243 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35397,7 +35524,7 @@ var _components = __webpack_require__(22);
 
 var _mixins = __webpack_require__(30);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35517,7 +35644,7 @@ var Share = _vue2.default.component('share', {
 exports.default = Share;
 
 /***/ }),
-/* 244 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35541,7 +35668,7 @@ var _components = __webpack_require__(22);
 
 var _mixins = __webpack_require__(30);
 
-var _vendor = __webpack_require__(5);
+var _vendor = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35952,6 +36079,8 @@ var Zone = _vue2.default.component('zone', {
     // eslint-disable-line no-unused-vars
     var vm = this;
     var currentShare = vm.activeShareModel;
+    var isMobile = _vendor.detectDevices.isMobile().any;
+    console.log('isMobile', isMobile);
     console.log('currentShare', currentShare);
     try {
       vm.$data.lastShare = currentShare ? (0, _stringify2.default)(currentShare) : null;
@@ -35968,7 +36097,7 @@ var Zone = _vue2.default.component('zone', {
           },
           'class': 'arf-zone',
           style: {
-            width: vm.current.width + 'px',
+            width: !isMobile ? vm.current.width + 'px' : '100%',
             height: 'auto',
             margin: 'auto'
           }
@@ -35990,7 +36119,7 @@ var Zone = _vue2.default.component('zone', {
         },
         'class': 'arf-zone',
         style: {
-          width: vm.current.width + 'px',
+          width: !isMobile ? vm.current.width + 'px' : '100%',
           height: 'auto',
           margin: 'auto'
         }

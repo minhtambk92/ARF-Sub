@@ -3,7 +3,6 @@
  */
 
 import webpack from 'webpack';
-// import WebpackStrip from 'strip-loader';
 import {
   version,
   description,
@@ -45,10 +44,6 @@ const config = {
         loader: 'eslint-loader',
         exclude: /node_modules/,
       },
-      // {
-      //   test: /\.js$/,
-      //   loader: WebpackStrip.loader('debug', 'console.log'),
-      // },
     ],
   },
 

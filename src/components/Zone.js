@@ -9,7 +9,7 @@ import { Zone as ZoneModel } from '../models';
 // import { Zone as ZoneModel, Share as ShareModel } from '../models';
 import { Share } from '../components';
 import { dom } from '../mixins';
-import { adsStorage, term, util } from '../vendor';
+import { adsStorage, term, util, detectDevices } from '../vendor';
 
 const Zone = Vue.component('zone', {
 
@@ -411,6 +411,8 @@ const Zone = Vue.component('zone', {
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
     const currentShare = vm.activeShareModel;
+    const isMobile = detectDevices.isMobile().any;
+    console.log('isMobile', isMobile);
     console.log('currentShare', currentShare);
     try {
       vm.$data.lastShare = currentShare ? JSON.stringify(currentShare) : null;
@@ -424,7 +426,7 @@ const Zone = Vue.component('zone', {
           id={vm.current.id}
           class="arf-zone"
           style={{
-            width: `${vm.current.width}px`,
+            width: !isMobile ? `${vm.current.width}px` : '100%',
             height: 'auto',
             margin: 'auto',
           }}
@@ -438,7 +440,7 @@ const Zone = Vue.component('zone', {
         id={vm.current.id}
         class="arf-zone"
         style={{
-          width: `${vm.current.width}px`,
+          width: !isMobile ? `${vm.current.width}px` : '100%',
           height: 'auto',
           margin: 'auto',
         }}

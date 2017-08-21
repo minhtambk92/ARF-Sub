@@ -8,7 +8,7 @@ import Vue from 'vue';
 import postscribe from 'postscribe';
 import { Banner as BannerModel } from '../models';
 import { dom } from '../mixins';
-import { util, macro } from '../vendor';
+import { util, macro, detectDevices, screen } from '../vendor';
 
 const Banner = Vue.component('banner', {
 
@@ -50,8 +50,9 @@ const Banner = Vue.component('banner', {
 
   mounted() {
     if (this.current.isIFrame) {
-      console.log('renderBannerIframe');
-      this.renderToIFrame();
+      const isMobile = detectDevices.isMobile().any;
+      console.log('renderBannerIframe', isMobile);
+      this.renderToIFrame(isMobile);
     } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
@@ -77,7 +78,7 @@ const Banner = Vue.component('banner', {
     /**
      * render ads inside an iframe
      */
-    renderToIFrame() {
+    renderToIFrame(isMobile) {
       const vm = this;
       const wait = setInterval(() => {
         const container = document.getElementById(vm.current.id);
@@ -87,7 +88,7 @@ const Banner = Vue.component('banner', {
 
           iframe.onload = () => {
             if (vm.$data.isRendered === false) {
-              iframe.width = vm.current.width;
+              iframe.width = isMobile ? screen.getWidth() : vm.current.width;
               iframe.height = vm.current.height;
               iframe.id = `iframe-${vm.current.id}`;
               iframe.frameBorder = vm.iframe.frameBorder;
@@ -163,7 +164,6 @@ const Banner = Vue.component('banner', {
             clearInterval(wait);
           } catch (error) {
             clearInterval(wait);
-            throw new Error(error);
           }
         }
       }, 500);
@@ -196,7 +196,6 @@ const Banner = Vue.component('banner', {
           }
         } catch (error) {
           clearInterval(loadAsync);
-          throw new Error('Banner Error!');
         }
       }, 100);
         // const loadAsync = setInterval(() => {
@@ -243,6 +242,7 @@ const Banner = Vue.component('banner', {
 
   render(h) { // eslint-disable-line no-unused-vars
     const vm = this;
+    const isMobile = detectDevices.isMobile().any;
     if (this.current.isRotate) {
       vm.$data.isRendered = false;
       vm.renderToIFrame();
@@ -261,7 +261,8 @@ const Banner = Vue.component('banner', {
         id={vm.current.id}
         class="arf-banner"
         style={{
-          width: `${vm.current.width}px`,
+          width: !isMobile ? `${vm.current.width}px` : '100%',
+          // width: `${vm.current.width}px`,
           // height: `${vm.current.height}px`,
         }}
       >
