@@ -28094,7 +28094,6 @@ var Banner = _vue2.default.component('banner', {
       var isMobile = _vendor.detectDevices.isMobile().any;
       this.renderToIFrame(isMobile);
       this.$on('bannerSize', function (bannerSize) {
-        console.log('runRRR');
         var bannerWrap = document.getElementById('' + _this.current.id);
         bannerWrap.style.height = bannerSize.height + 'px';
       });
@@ -31734,7 +31733,7 @@ var Zone = function (_Entity) {
   }, {
     key: 'zoneType',
     get: function get() {
-      if (this.height >= 257 && this.width <= 600 && this.width >= 160) {
+      if (this.height >= 257 && this.width <= 600 && this.width >= 160 || _vendor.detectDevices.isMobile().any) {
         return 'right';
       }
       return 'top';
