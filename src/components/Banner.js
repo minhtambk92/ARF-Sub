@@ -89,7 +89,7 @@ const Banner = Vue.component('banner', {
           iframe.onload = () => {
             if (vm.$data.isRendered === false) {
               iframe.width = isMobile ? screen.getWidth() : vm.current.width;
-              iframe.height = vm.current.height;
+              iframe.height = isMobile ? 0 : vm.current.height;
               iframe.id = `iframe-${vm.current.id}`;
               iframe.frameBorder = vm.iframe.frameBorder;
               iframe.marginWidth = vm.iframe.marginWidth;

@@ -106,7 +106,7 @@
               banners: [{
                 id: 'ab6d7c12-06a3-4347-a603-90fd96cb18b1',
                 name: 'BannerMobileTest',
-                html: '<script>_ADM_Channel="%2fstar%2f"</script>\n<script src="http://media1.admicro.vn/ads_codes/mb_box_7279.ads"></script>',
+                html: "<script>var _ADM_Channel = '%2fhome%2f';</script>\n<script src=\"http://media1.admicro.vn/ads_codes/mb_box_7249.ads\"></script>",
                 width: 600,
                 height: 600,
                 keyword: '',
@@ -127,7 +127,7 @@
                 expirationDate: null,
                 status: 'active',
                 createdAt: '2017-08-21T08:29:00.000Z',
-                updatedAt: '2017-08-21T09:51:21.000Z',
+                updatedAt: '2017-08-21T16:59:30.000Z',
                 deletedAt: null,
                 placementId: '94ce2dc1-2588-41af-a026-e737a4cf7345',
                 bannerHtmlTypeId: 'd2ac74ae-e9e4-4518-b68a-d5e45e19c2dd',

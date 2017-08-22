@@ -28133,7 +28133,7 @@ var Banner = _vue2.default.component('banner', {
           iframe.onload = function () {
             if (vm.$data.isRendered === false) {
               iframe.width = isMobile ? _vendor.screen.getWidth() : vm.current.width;
-              iframe.height = vm.current.height;
+              iframe.height = isMobile ? 0 : vm.current.height;
               iframe.id = 'iframe-' + vm.current.id;
               iframe.frameBorder = vm.iframe.frameBorder;
               iframe.marginWidth = vm.iframe.marginWidth;
