@@ -51,8 +51,11 @@ const Banner = Vue.component('banner', {
   mounted() {
     if (this.current.isIFrame) {
       const isMobile = detectDevices.isMobile().any;
-      console.log('renderBannerIframe', isMobile);
       this.renderToIFrame(isMobile);
+      this.$on('bannerSize', (bannerSize) => {
+        const bannerWrap = document.getElementById(`${this.current.id}`);
+        bannerWrap.style.height = `${bannerSize.height}px`;
+      });
     } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
@@ -90,6 +93,10 @@ const Banner = Vue.component('banner', {
             if (vm.$data.isRendered === false) {
               iframe.width = isMobile ? screen.getWidth() : vm.current.width;
               iframe.height = isMobile ? 0 : vm.current.height;
+              if (isMobile) {
+                iframe.style.position = 'absolute';
+                iframe.style.left = 0;
+              }
               iframe.id = `iframe-${vm.current.id}`;
               iframe.frameBorder = vm.iframe.frameBorder;
               iframe.marginWidth = vm.iframe.marginWidth;
@@ -128,12 +135,14 @@ const Banner = Vue.component('banner', {
                 iframe.contentWindow.document.body.style.margin = 0;
               }
 
+              let bannerSize;
               // resize iframe fit with content
               if (document.readyState === 'complete') {
                   // Already loaded!
                 setTimeout(() => {
                   if (document.getElementById(`iframe-${vm.current.id}`)) {
-                    util.resizeIFrameToFitContent(iframe);
+                    bannerSize = util.resizeIFrameToFitContent(iframe);
+                    this.$emit('bannerSize', bannerSize);
                   }
                 }, 1000);
               } else {
@@ -141,7 +150,8 @@ const Banner = Vue.component('banner', {
                 window.addEventListener('onload', () => {
                   setTimeout(() => {
                     if (document.getElementById(`iframe-${vm.current.id}`)) {
-                      util.resizeIFrameToFitContent(iframe);
+                      bannerSize = util.resizeIFrameToFitContent(iframe);
+                      this.$emit('bannerSize', bannerSize);
                     }
                   }, 1000);
                 }, false);

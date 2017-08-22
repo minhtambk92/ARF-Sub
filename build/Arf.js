@@ -28092,8 +28092,12 @@ var Banner = _vue2.default.component('banner', {
 
     if (this.current.isIFrame) {
       var isMobile = _vendor.detectDevices.isMobile().any;
-      console.log('renderBannerIframe', isMobile);
       this.renderToIFrame(isMobile);
+      this.$on('bannerSize', function (bannerSize) {
+        console.log('runRRR');
+        var bannerWrap = document.getElementById('' + _this.current.id);
+        bannerWrap.style.height = bannerSize.height + 'px';
+      });
     } else {
       console.log('renderBannerNoIframe');
       this.renderBannerNoIframe();
@@ -28134,6 +28138,10 @@ var Banner = _vue2.default.component('banner', {
             if (vm.$data.isRendered === false) {
               iframe.width = isMobile ? _vendor.screen.getWidth() : vm.current.width;
               iframe.height = isMobile ? 0 : vm.current.height;
+              if (isMobile) {
+                iframe.style.position = 'absolute';
+                iframe.style.left = 0;
+              }
               iframe.id = 'iframe-' + vm.current.id;
               iframe.frameBorder = vm.iframe.frameBorder;
               iframe.marginWidth = vm.iframe.marginWidth;
@@ -28171,12 +28179,14 @@ var Banner = _vue2.default.component('banner', {
                 iframe.contentWindow.document.body.style.margin = 0;
               }
 
+              var bannerSize = void 0;
               // resize iframe fit with content
               if (document.readyState === 'complete') {
                 // Already loaded!
                 setTimeout(function () {
                   if (document.getElementById('iframe-' + vm.current.id)) {
-                    _vendor.util.resizeIFrameToFitContent(iframe);
+                    bannerSize = _vendor.util.resizeIFrameToFitContent(iframe);
+                    _this2.$emit('bannerSize', bannerSize);
                   }
                 }, 1000);
               } else {
@@ -28184,7 +28194,8 @@ var Banner = _vue2.default.component('banner', {
                 window.addEventListener('onload', function () {
                   setTimeout(function () {
                     if (document.getElementById('iframe-' + vm.current.id)) {
-                      _vendor.util.resizeIFrameToFitContent(iframe);
+                      bannerSize = _vendor.util.resizeIFrameToFitContent(iframe);
+                      _this2.$emit('bannerSize', bannerSize);
                     }
                   }, 1000);
                 }, false);
@@ -33566,6 +33577,10 @@ var util = {
     iFrame.width = iFrame.contentWindow.document.body.scrollWidth;
     iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
     /* eslint-enable */
+    return {
+      width: iFrame.width,
+      height: iFrame.height
+    };
   },
   getCurrentBrowser: function getCurrentBrowser() {
     var tem = void 0;

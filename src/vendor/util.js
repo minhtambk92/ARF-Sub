@@ -704,6 +704,10 @@ const util = {
     iFrame.width = iFrame.contentWindow.document.body.scrollWidth;
     iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
     /* eslint-enable */
+    return {
+      width: iFrame.width,
+      height: iFrame.height,
+    };
   },
 
   getCurrentBrowser() {

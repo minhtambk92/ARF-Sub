@@ -5,7 +5,7 @@
 import Entity from './Entity';
 import Share from './Share';
 import Placement from './Placement';
-import { util, adsStorage, term } from '../vendor';
+import { util, adsStorage, term, detectDevices } from '../vendor';
 
 class Zone extends Entity {
 
@@ -72,7 +72,7 @@ class Zone extends Entity {
   }
 
   get zoneType() {
-    if ((this.height >= 257) && (this.width <= 600 && this.width >= 160)) {
+    if (((this.height >= 257) && (this.width <= 600 && this.width >= 160)) || detectDevices.isMobile().any) {
       return 'right';
     }
     return 'top';
